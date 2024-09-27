@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
+#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/09/27 10:23:23 by npigeon          ###   ########.fr        #
+#    Updated: 2024/09/27 10:27:53 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,8 +15,8 @@ NAME = cub3D
 PATH_SRC = ./src/
 PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
-INCLUDES = -I$(LIBFT_HEADERS) -I./includes/
-LIBS = -L$(LIBFT_DIR) -lft
+LIBS = -L$(MINILIBX_DIR) -lmlx -lX11 -lXext -lm -L$(LIBFT_DIR) -lft
+INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(GC_HEADERS) -I./includes/
 CFLAGS = -g3 -Wall -Wextra -Werror
 RM = rm -rf
 
@@ -25,7 +25,7 @@ SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
 
 
 SRC_ERROR =	$(addprefix $(PATH_SRC)error/, \
-			error.c \
+			error.c )
 
 SRC_EXEC =	$(addprefix $(PATH_SRC)exec/, \
 			split.c \
@@ -37,6 +37,12 @@ SRC_ALONE =	$(addprefix $(PATH_SRC), \
 
 SRC =	$(SRC_ALONE) $(SRC_ERROR) $(SRC_EXEC) $(SRC_PARSING)
 
+############### MINILIBX ###############
+
+MINILIBX_URL = https://github.com/42Paris/minilibx-linux.git
+MINILIBX_DIR = $(LIBS_DIR)minilibx-linux/
+MINILIBX_HEADERS = $(MINILIBX_DIR)
+MINILIBX = $(MINILIBX_DIR)/libmlx.a
 
 ################ LIBFT #################
 
@@ -56,11 +62,18 @@ $(PATH_OBJ):
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
 	cc -c $(CFLAGS) $(INCLUDES) $< -o $@
 
-$(NAME): $(LIBFT) $(OBJS) ./includes/* Makefile 
+$(NAME): $(MINILIBX) $(LIBFT) $(GC) $(OBJS) ./includes/* Makefile 
 	cc $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 
 $(LIBFT):
 	make -sC $(LIBFT_DIR)
+
+$(MINILIBX):
+	@echo "Downloading minilibx-linux..."
+	if [ ! -d $(MINILIBX_DIR) ]; then \
+		git clone $(MINILIBX_URL) $(MINILIBX_DIR); \
+	fi
+	make -sC $(MINILIBX_DIR)
 
 clean:
 	make clean -sC $(LIBFT_DIR)
@@ -72,43 +85,5 @@ fclean:
 	$(RM) $(NAME)
 
 re: fclean all
-
-valgrind: $(NAME)
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(NAME)
 	
 .PHONY: all clean fclean re
-
-
-
-
-LDFLAGS = -L./include/Libft -lftLibft -L./minilibx-linux/ -lmlx_Linux\
-		-lX11 -lXext -lm -march=native -O3 -flto -pipe
-
-
-CFLAGS = -Werror -Wall -Wextra -g3
-
-all: libftLibft.a minilibx.a $(NAME)
-
-$(NAME): $(SRC)
-	$(CC) $(SRC) -o $(NAME) $(LDFLAGS) $(CFLAGS)
-
-clean:
-	rm -f $(NAME)
-	make -C ./include/Libft clean
-	make -C ./minilibx-linux clean
-
-fclean: clean
-	rm -f $(NAME)
-	make fclean -C include/Libft 
-	make clean -C ./minilibx-linux
-
-re: fclean all
-
-libftLibft.a:
-	make -C ./include/libft
-
-minilibx.a :
-	make -C ./minilibx-linux
-
-.PHONY: all clean fclean re
-
