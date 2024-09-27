@@ -216,8 +216,8 @@ int main() {
     // }
 
 	
-	game.player->x = 22;
-	game.player->y = 12;
+	game.player->x = 10;
+	game.player->y = 2;
 	game.player->px = 0.66;
 
 	game.mlx = mlx_init();
