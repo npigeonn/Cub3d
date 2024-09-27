@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
+#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/09/27 10:27:53 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/09/27 11:56:46 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,26 +16,25 @@ PATH_SRC = ./src/
 PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
 LIBS = -L$(MINILIBX_DIR) -lmlx -lX11 -lXext -lm -L$(LIBFT_DIR) -lft
-INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(GC_HEADERS) -I./includes/
+INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(GC_HEADERS) -I./include/
 CFLAGS = -g3 -Wall -Wextra -Werror
 RM = rm -rf
 
-SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
-				parsing.c) \
+# SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
+# 				parsing.c) \
 
 
-SRC_ERROR =	$(addprefix $(PATH_SRC)error/, \
-			error.c )
+# SRC_ERROR =	$(addprefix $(PATH_SRC)error/, \
+# 			error.c )
 
-SRC_EXEC =	$(addprefix $(PATH_SRC)exec/, \
-			split.c \
-			split_utils.c)
+# SRC_EXEC =	$(addprefix $(PATH_SRC)exec/, \
+# 			split.c \
+# 			split_utils.c)
 
 SRC_ALONE =	$(addprefix $(PATH_SRC), \
-			ansii.c \
 			main.c)
 
-SRC =	$(SRC_ALONE) $(SRC_ERROR) $(SRC_EXEC) $(SRC_PARSING)
+SRC =	$(SRC_ALONE) #$(SRC_ERROR) $(SRC_EXEC) $(SRC_PARSING)
 
 ############### MINILIBX ###############
 
@@ -54,7 +53,7 @@ LIBFT = $(LIBFT_DIR)libft.a
 
 all: $(NAME)
 
-$(OBJS): ./includes/* Makefile
+$(OBJS): ./include/* Makefile
 
 $(PATH_OBJ):
 	mkdir -p $@ $@parsing $@exec  $@error
@@ -62,7 +61,7 @@ $(PATH_OBJ):
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
 	cc -c $(CFLAGS) $(INCLUDES) $< -o $@
 
-$(NAME): $(MINILIBX) $(LIBFT) $(GC) $(OBJS) ./includes/* Makefile 
+$(NAME): $(MINILIBX) $(LIBFT) $(GC) $(OBJS) ./include/* Makefile 
 	cc $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 
 $(LIBFT):
