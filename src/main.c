@@ -115,8 +115,8 @@
 
 
 #define TILE_SIZE 50
-#define MAP_WIDTH 14
-#define MAP_HEIGHT 60
+#define MAP_WIDTH 640
+#define MAP_HEIGHT 480
 
 typedef struct {
     void *img;
@@ -163,20 +163,21 @@ int can_move(t_game *game, int new_x, int new_y) {
 }
 
 int key_hook(int keycode, t_game *game) {
-    if (keycode == 65307) // Touche ESC pour quitter
-        exit(0);
-    if (keycode == 100 && can_move(game, game->player->x, game->player->y - 1)) // W - Haut
-        game->player->y--;
-    if (keycode == 115 && can_move(game, game->player->x, game->player->y + 1)) // S - Bas
-        game->player->y++;
-    if (keycode == 119 && can_move(game, game->player->x - 1, game->player->y)) // A - Gauche
-        game->player->x--;
-    if (keycode == 97 && can_move(game, game->player->x + 1, game->player->y)) // D - Droite
-        game->player->x++;
-    
-    // mlx_clear_window(game->mlx, game->win);
-    // draw_map(game);
-    return 0;
+	if (keycode == 65307) // Touche ESC pour quitter
+		exit(0);
+	if (keycode == 100 && can_move(game, game->player->x, game->player->y - 1)) // W - Haut
+		game->player->y--;
+	if (keycode == 115 && can_move(game, game->player->x, game->player->y + 1)) // S - Bas
+		game->player->y++;
+	if (keycode == 119 && can_move(game, game->player->x - 1, game->player->y)) // A - Gauche
+		game->player->x--;
+	if (keycode == 97 && can_move(game, game->player->x + 1, game->player->y)) // D - Droite
+		game->player->x++;
+		
+	mlx_clear_window(game->mlx, game->win);
+	// draw_map(game);
+	raycast(game->player, game->mlx, game->win);
+	return 0;
 }
 
 void load_texture(t_game *game, t_texture *texture, char *path) {
@@ -191,35 +192,36 @@ int main() {
     t_game game;
 
     // Initialisation de la carte
-    char map[MAP_HEIGHT][MAP_WIDTH + 1] = {
-        "11111111111111",
-        "10000000011111",
-        "10000000010001",
-        "10000N000D0001",
-        "10000000010001",
-        "11111111111111"
-    };
+    // char map[MAP_HEIGHT][MAP_WIDTH + 1] = {
+    //     "11111111111111",
+    //     "10000000011111",
+    //     "10000000010001",
+    //     "10000N000D0001",
+    //     "10000000010001",
+    //     "11111111111111"
+    // };
 	game.player = malloc(sizeof(t_player));
     ft_bzero(game.player, sizeof(t_player));
-	for (int i = 0; i < MAP_HEIGHT; i++)
-        for (int j = 0; j < MAP_WIDTH; j++)
-            game.map[i][j] = map[i][j];
-    // Initialiser la position du joueur (trouve la position N)
-    for (int y = 0; y < MAP_HEIGHT; y++) {
-        for (int x = 0; x < MAP_WIDTH; x++) {
-            if (game.map[y][x] == 'N') {
-                game.player->x = x;
-                game.player->y = y;
-            }
-        }	
-    }
+	// for (int i = 0; i < MAP_HEIGHT; i++)
+    //     for (int j = 0; j < MAP_WIDTH; j++)
+    //         game.map[i][j] = map[i][j];
+    // // Initialiser la position du joueur (trouve la position N)
+    // for (int y = 0; y < MAP_HEIGHT; y++) {
+    //     for (int x = 0; x < MAP_WIDTH; x++) {
+    //         if (game.map[y][x] == 'N') {
+    //             game.player->x = x;
+    //             game.player->y = y;
+    //         }
+    //     }	
+    // }
 
 	
 	game.player->x = 22;
-	game.player->y = 14;
+	game.player->y = 12;
+	game.player->px = 0.66;
 
-    game.mlx = mlx_init();
-    game.win = mlx_new_window(game.mlx, MAP_WIDTH * TILE_SIZE, MAP_HEIGHT * TILE_SIZE, "Mini Map with Textures");
+	game.mlx = mlx_init();
+    game.win = mlx_new_window(game.mlx, 640, 480, "Mini Map with Textures");
 
     // Charger les textures (mettre les chemins vers vos fichiers XPM)
     // load_texture(&game, &game.player_texture, "../assets/player.xpm"); // Texture du joueur
@@ -227,8 +229,7 @@ int main() {
     // load_texture(&game, &game.wall_texture, "../assets/wall.xpm"); // Texture du mur
     
     // draw_map(&game);
-	raycast(game.player, game.mlx, game.win);
-    
+
     mlx_key_hook(game.win, key_hook, &game);
     mlx_loop(game.mlx);
     return 0;
