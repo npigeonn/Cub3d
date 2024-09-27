@@ -162,19 +162,26 @@ int can_move(t_game *game, int new_x, int new_y) {
     return 0;
 }
 
+# define KEY_W 119
+# define KEY_Z 122
+# define KEY_A 97
+# define KEY_S 115
+# define KEY_D 100
+# define KEY_Q 113
+
 int key_hook(int keycode, t_game *game) {
 	if (keycode == 65307) // Touche ESC pour quitter
 		exit(0);
-	if (keycode == 100 && can_move(game, game->player->x, game->player->y - 1)) // W - Haut
+	if (keycode == 119)// && can_move(game, game->player->x, game->player->y - 1)) // W - Haut
 		game->player->y--;
-	if (keycode == 115 && can_move(game, game->player->x, game->player->y + 1)) // S - Bas
+	if (keycode == 115)// && can_move(game, game->player->x, game->player->y + 1)) // S - Bas
 		game->player->y++;
-	if (keycode == 119 && can_move(game, game->player->x - 1, game->player->y)) // A - Gauche
-		game->player->x--;
-	if (keycode == 97 && can_move(game, game->player->x + 1, game->player->y)) // D - Droite
-		game->player->x++;
-		
+	if (keycode == 97)// && can_move(game, game->player->x - 1, game->player->y)) // A - Gauche
+		game->player->x = game->player->x - 1;
+	if (keycode == 100)// && can_move(game, game->player->x + 1, game->player->y)) // D - Droite
+		game->player->x = game->player->x + 1;
 	mlx_clear_window(game->mlx, game->win);
+	printf("Pos x: %f || Pos y: %f\n", game->player->x, game->player->y);
 	// draw_map(game);
 	raycast(game->player, game->mlx, game->win);
 	return 0;
@@ -217,11 +224,11 @@ int main() {
 
 	
 	game.player->x = 22;
-	game.player->y = 12;
+	game.player->y = 20;
 	game.player->px = 0.66;
 
 	game.mlx = mlx_init();
-    game.win = mlx_new_window(game.mlx, 640, 480, "Mini Map with Textures");
+    game.win = mlx_new_window(game.mlx, 1920, 1080, "Mini Map with Textures");
 
     // Charger les textures (mettre les chemins vers vos fichiers XPM)
     // load_texture(&game, &game.player_texture, "../assets/player.xpm"); // Texture du joueur
