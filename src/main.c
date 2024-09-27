@@ -112,56 +112,6 @@
 #include <stdlib.h>
 #include "../include/cub3d.h"
 
-
-
-#define TILE_SIZE 50
-#define MAP_WIDTH 640
-#define MAP_HEIGHT 480
-
-typedef struct {
-    void *img;
-    int width;
-    int height;
-} t_texture;
-
-typedef struct {
-    void *mlx;
-    void *win;
-	t_player	*player;
-    t_texture wall_texture;
-    t_texture floor_texture;
-    t_texture player_texture;
-    char map[MAP_HEIGHT][MAP_WIDTH + 1];
-} t_game;
-
-void draw_texture(t_game *game, t_texture *texture, int x, int y) {
-    mlx_put_image_to_window(game->mlx, game->win, texture->img, x * TILE_SIZE, y * TILE_SIZE);
-}
-
-void draw_map(t_game *game) {
-    int x, y;
-
-    for (y = 0; y < MAP_HEIGHT; y++) {
-        for (x = 0; x < MAP_WIDTH; x++) {
-            if (game->map[y][x] == '1') {
-                draw_texture(game, &game->wall_texture, x, y); // Texture du mur
-            } else if (game->map[y][x] == '0' || game->map[y][x] == 'D') {
-                draw_texture(game, &game->floor_texture, x, y); // Texture du sol
-            }
-        }
-    }
-    // Afficher le joueur
-    draw_texture(game, &game->player_texture, game->player->x, game->player->y); // Texture du joueur
-}
-
-int can_move(t_game *game, int new_x, int new_y) {
-    if (new_x >= 0 && new_x < MAP_WIDTH && new_y >= 0 && new_y < MAP_HEIGHT &&
-        (game->map[new_y][new_x] == '0' || game->map[new_y][new_x] == 'D')) {
-        return 1;
-    }
-    return 0;
-}
-
 # define KEY_W 119
 # define KEY_Z 122
 # define KEY_A 97
@@ -173,9 +123,9 @@ int key_hook(int keycode, t_game *game) {
 	if (keycode == 65307) // Touche ESC pour quitter
 		exit(0);
 	if (keycode == 119)// && can_move(game, game->player->x, game->player->y - 1)) // W - Haut
-		game->player->y--;
+		game->player->y = game->player->y - 1;
 	if (keycode == 115)// && can_move(game, game->player->x, game->player->y + 1)) // S - Bas
-		game->player->y++;
+		game->player->y = game->player->y + 1;
 	if (keycode == 97)// && can_move(game, game->player->x - 1, game->player->y)) // A - Gauche
 		game->player->x = game->player->x - 1;
 	if (keycode == 100)// && can_move(game, game->player->x + 1, game->player->y)) // D - Droite

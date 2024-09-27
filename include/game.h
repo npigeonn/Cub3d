@@ -31,6 +31,25 @@ typedef struct s_player
 	int		weapon;
 }    t_player;
 
+#define TILE_SIZE 50
+#define MAP_WIDTH 640
+#define MAP_HEIGHT 480
+typedef struct {
+    void *img;
+    int width;
+    int height;
+} t_texture;
+
+typedef struct {
+    void *mlx;
+    void *win;
+	t_player	*player;
+    t_texture wall_texture;
+    t_texture floor_texture;
+    t_texture player_texture;
+    char map[MAP_HEIGHT][MAP_WIDTH + 1];
+} t_game;
+
 // typedef struct s_data
 // {
 // 	void	*mlx;
