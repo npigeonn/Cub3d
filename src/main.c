@@ -176,6 +176,7 @@ int main() {
 	game.player->x = 22;
 	game.player->y = 20;
 	game.player->px = 0.66;
+	game.player->py = 0.66;
 
 	game.mlx = mlx_init();
     game.win = mlx_new_window(game.mlx, 1920, 1080, "Mini Map with Textures");
