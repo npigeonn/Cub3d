@@ -110,10 +110,13 @@
 #include <mlx.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../include/cub3d.h"
+
+
 
 #define TILE_SIZE 50
 #define MAP_WIDTH 14
-#define MAP_HEIGHT 6
+#define MAP_HEIGHT 60
 
 typedef struct {
     void *img;
@@ -124,8 +127,7 @@ typedef struct {
 typedef struct {
     void *mlx;
     void *win;
-    int player_x;
-    int player_y;
+	t_player	*player;
     t_texture wall_texture;
     t_texture floor_texture;
     t_texture player_texture;
@@ -149,7 +151,7 @@ void draw_map(t_game *game) {
         }
     }
     // Afficher le joueur
-    draw_texture(game, &game->player_texture, game->player_x, game->player_y); // Texture du joueur
+    draw_texture(game, &game->player_texture, game->player->x, game->player->y); // Texture du joueur
 }
 
 int can_move(t_game *game, int new_x, int new_y) {
@@ -161,19 +163,19 @@ int can_move(t_game *game, int new_x, int new_y) {
 }
 
 int key_hook(int keycode, t_game *game) {
-    if (keycode == 53) // Touche ESC pour quitter
+    if (keycode == 65307) // Touche ESC pour quitter
         exit(0);
-    if (keycode == 13 && can_move(game, game->player_x, game->player_y - 1)) // W - Haut
-        game->player_y--;
-    if (keycode == 1 && can_move(game, game->player_x, game->player_y + 1)) // S - Bas
-        game->player_y++;
-    if (keycode == 0 && can_move(game, game->player_x - 1, game->player_y)) // A - Gauche
-        game->player_x--;
-    if (keycode == 2 && can_move(game, game->player_x + 1, game->player_y)) // D - Droite
-        game->player_x++;
+    if (keycode == 100 && can_move(game, game->player->x, game->player->y - 1)) // W - Haut
+        game->player->y--;
+    if (keycode == 115 && can_move(game, game->player->x, game->player->y + 1)) // S - Bas
+        game->player->y++;
+    if (keycode == 119 && can_move(game, game->player->x - 1, game->player->y)) // A - Gauche
+        game->player->x--;
+    if (keycode == 97 && can_move(game, game->player->x + 1, game->player->y)) // D - Droite
+        game->player->x++;
     
-    mlx_clear_window(game->mlx, game->win);
-    draw_map(game);
+    // mlx_clear_window(game->mlx, game->win);
+    // draw_map(game);
     return 0;
 }
 
@@ -197,29 +199,35 @@ int main() {
         "10000000010001",
         "11111111111111"
     };
-    for (int i = 0; i < MAP_HEIGHT; i++)
+	game.player = malloc(sizeof(t_player));
+    ft_bzero(game.player, sizeof(t_player));
+	for (int i = 0; i < MAP_HEIGHT; i++)
         for (int j = 0; j < MAP_WIDTH; j++)
             game.map[i][j] = map[i][j];
-
     // Initialiser la position du joueur (trouve la position N)
     for (int y = 0; y < MAP_HEIGHT; y++) {
         for (int x = 0; x < MAP_WIDTH; x++) {
             if (game.map[y][x] == 'N') {
-                game.player_x = x;
-                game.player_y = y;
+                game.player->x = x;
+                game.player->y = y;
             }
-        }
+        }	
     }
+
+	
+	game.player->x = 22;
+	game.player->y = 14;
 
     game.mlx = mlx_init();
     game.win = mlx_new_window(game.mlx, MAP_WIDTH * TILE_SIZE, MAP_HEIGHT * TILE_SIZE, "Mini Map with Textures");
 
     // Charger les textures (mettre les chemins vers vos fichiers XPM)
-    load_texture(&game, &game.player_texture, "../assets/player.xpm"); // Texture du joueur
-    load_texture(&game, &game.floor_texture, "../assets/floor.xpm"); // Texture du sol
-    load_texture(&game, &game.wall_texture, "../assets/wall.xpm"); // Texture du mur
+    // load_texture(&game, &game.player_texture, "../assets/player.xpm"); // Texture du joueur
+    // load_texture(&game, &game.floor_texture, "../assets/floor.xpm"); // Texture du sol
+    // load_texture(&game, &game.wall_texture, "../assets/wall.xpm"); // Texture du mur
     
-    draw_map(&game);
+    // draw_map(&game);
+	raycast(game.player, game.mlx, game.win);
     
     mlx_key_hook(game.win, key_hook, &game);
     mlx_loop(game.mlx);
