@@ -91,7 +91,7 @@
 // 	img.mlx = mlx_init();
 // 	img.window = mlx_new_window(img.mlx, WIDTH, HEIGHT, "Cub3D");
 // 	img.img = mlx_new_image(img.mlx, WIDTH, HEIGHT);
-// 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, \
+// 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel,
 // 			&img.line_length, &img.endian);
 // 	img.x_offset = 0;
 // 	img.y_offset = 0;
@@ -130,10 +130,10 @@ int key_hook(int keycode, t_game *game) {
 		game->player->x = game->player->x - 1;
 	if (keycode == 100)// && can_move(game, game->player->x + 1, game->player->y)) // D - Droite
 		game->player->x = game->player->x + 1;
-	mlx_clear_window(game->mlx, game->win);
+	// mlx_clear_window(game->mlx, game->win);
 	printf("Pos x: %f || Pos y: %f\n", game->player->x, game->player->y);
 	// draw_map(game);
-	raycast(game->player, game->mlx, game->win);
+	raycasting(game);
 	return 0;
 }
 

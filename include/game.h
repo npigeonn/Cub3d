@@ -21,33 +21,47 @@ typedef struct s_player
 {
 	float	x;
 	float	y;
-	float	dx;
-	float	dy;
-	float	px;
-	float	py;
+	float	dirX;
+	float	dirY;
+	float	planeX;
+	float	planeY;
 	float	speed;
 	int		armo;
+	float	height;
 	float	health;
 	int		weapon;
-}    t_player;
+	int		floor;
+	float	pitch;
+}	t_player;
 
 #define TILE_SIZE 50
-#define MAP_WIDTH 640
-#define MAP_HEIGHT 480
-typedef struct {
-    void *img;
-    int width;
-    int height;
-} t_texture;
+// #define MAP_WIDTH 640
+// #define MAP_HEIGHT 480
 
 typedef struct {
-    void *mlx;
-    void *win;
+	void *img;
+	int width;
+	int height;
+} t_texture;
+
+typedef struct s_image
+{
+	void	*img;
+	char	*data;
+	int		bpp;
+	int		size_line;
+	int		endian;
+} t_image;
+
+typedef struct s_game
+{
+	void *mlx;
+	void *win;
+	t_image		*img;
 	t_player	*player;
-    t_texture wall_texture;
-    t_texture floor_texture;
-    t_texture player_texture;
-    char map[MAP_HEIGHT][MAP_WIDTH + 1];
+	t_texture wall_texture;
+	t_texture floor_texture;
+	t_texture player_texture;
 } t_game;
 
 // typedef struct s_data
@@ -68,6 +82,6 @@ typedef struct {
 // 	int		yy;
 // }	t_data;
 
-void raycast(t_player *player, void *mlx_ptr, void *win_ptr);
+// void raycasting(t_game *data);
 
 #endif
