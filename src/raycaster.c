@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/30 11:53:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/09/30 13:42:31 by ybeaucou         ###   ########.fr       */
+/*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/10/02 00:04:56 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,12 +113,12 @@ void draw_vertical_line(t_game *game, int x, int start, int end, int color)
 {
 	for (int y = start; y < end; y++)
 	{
-		if (y >= '0' && y < SCREEN_HEIGHT)
+		if (y >= 0 && y < SCREEN_HEIGHT && *((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) == 0)
 			*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = color;
 	}
 }
 
-void draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, float rayDirX, float rayDirY, int side, int currentFloor, int hitFloor)
+int	draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, float rayDirX, float rayDirY, int side, int currentFloor, int hitFloor)
 {
 	float perpWallDist = (side == 0)
 		? (mapX - game->player->x + (1 - stepX) / 2) / rayDirX
@@ -128,23 +128,38 @@ void draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, fl
 	int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
 	drawStart -= (int)((hitFloor - currentFloor) * lineHeight);
 	drawEnd -= (int)((hitFloor - currentFloor) * lineHeight);
-	drawStart -= (int)(game->player->height * lineHeight);
+	drawStart -= (int)(game->player->height  * lineHeight);
 	drawEnd -= (int)(game->player->height * lineHeight);
 	if (drawStart < 0) drawStart = 0;
 	if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT - 1;
 	int color = (side == 0) ? 0xFF0000 : 0x00FF00;
-	draw_vertical_line(game, x, drawStart - 1, drawEnd, color);
-	(void)currentFloor;
-	(void)hitFloor;
+	float shadowFactor = fmax(0.1f, 1.0f - (perpWallDist / 100.0f));
+	int shadowedColor = ((int)((color & 0xFF0000) * shadowFactor) & 0xFF0000) |
+						((int)((color & 0x00FF00) * shadowFactor) & 0x00FF00) |
+						((int)((color & 0x0000FF) * shadowFactor) & 0x0000FF);
+	draw_vertical_line(game, x, drawStart - 1, drawEnd, shadowedColor);
+	return drawEnd;
+}
+
+bool	allFloorsHit(int *floorHit)
+{
+	for (int floor = 0; floor < MAP_FLOOR; floor++)
+	{
+		if (floorHit[floor] == 0)
+			return false;
+	}
+	return true;
 }
 
 void	cast_rays(t_game *game)
 {
 	for (int x = 0; x < SCREEN_WIDTH; x++)
 	{
+		int	floorHit[MAP_FLOOR] = {0};
 		float cameraX = 2 * x / (float)SCREEN_WIDTH - 1;
 		float rayDirX = game->player->dirX + game->player->planeX * cameraX;
-		float rayDirY = game->player->dirY + game->player->planeY * cameraX;
+		float rayDirY = game->player->dirY + game->player->planeY * cameraX - sin(game->player->pitch);
+		rayDirY += tan(game->player->pitch);
 
 		int mapX = (int)game->player->x;
 		int mapY = (int)game->player->y;
@@ -175,11 +190,9 @@ void	cast_rays(t_game *game)
 			stepY = 1;
 			sideDistY = (mapY + 1.0 - game->player->y) * deltaDistY;
 		}
-
-		int hit = 0;
 		int side;
 
-		while (hit == 0)
+		while (!allFloorsHit(floorHit))
 		{
 			if (sideDistX < sideDistY)
 			{
@@ -197,9 +210,11 @@ void	cast_rays(t_game *game)
 			{
 				if (map[floor][mapX][mapY] == '1')
 				{
-					hit = 1;
+					floorHit[floor] = 1;
 					draw_wall(game, x, mapX, mapY, stepX, stepY, rayDirX, rayDirY, side, (int)game->player->floor, floor);
 				}
+				// if (map[floor][mapX][mapY] == '0' && floor == 0)
+				// 	draw_floor(game, x, mapX, mapY, stepX, stepY, rayDirX, rayDirY, side, (int)game->player->floor, floor);
 			}
 		}
 	}
