@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/02 00:04:56 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/02 13:19:26 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,9 +118,54 @@ void draw_vertical_line(t_game *game, int x, int start, int end, int color)
 	}
 }
 
-int	draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, float rayDirX, float rayDirY, int side, int currentFloor, int hitFloor)
+void draw_horizontal_line(t_game *game, int y, int start, int end, int color)
 {
-	float perpWallDist = (side == 0)
+	// Limiter start et end pour s'assurer qu'ils sont dans les limites de l'écran
+	if (y < 0 || y >= SCREEN_HEIGHT)
+		return; // Si y est hors des limites, ne rien faire
+
+	// Ajuster start et end pour s'assurer qu'ils sont dans les limites de l'écran
+	if (start < 0) start = 0;
+	if (end >= SCREEN_WIDTH) end = SCREEN_WIDTH - 1;
+
+	// Dessiner la ligne horizontale
+	for (int x = start; x <= end; x++)
+	{
+		// Vérifiez si le pixel est noir (ou un autre critère pour le dessin)
+		if (*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) == 0)
+		{
+			*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = color;
+		}
+	}
+}
+
+
+void draw_floor(t_game *game)
+{
+	int horizon = (SCREEN_HEIGHT / 2) + game->player->height;
+	if (horizon < 0)
+		horizon = 0;
+	else if (horizon > SCREEN_HEIGHT)
+		horizon = SCREEN_HEIGHT;
+	for (int y = horizon; y < SCREEN_HEIGHT; y++)
+	{
+		int color = 0xaba89f;
+		int shadowFactor = (y - horizon) * 255 / (SCREEN_HEIGHT - horizon);
+		shadowFactor = fmin(1.0f, shadowFactor);
+		int shadowedColor = ((int)((color & 0xFF0000) * shadowFactor) & 0xFF0000) |
+						((int)((color & 0x00FF00) * shadowFactor) & 0x00FF00) |
+						((int)((color & 0x0000FF) * shadowFactor) & 0x0000FF);
+	   for (int x = 0; x < SCREEN_WIDTH; x++)
+		{
+			if (y >= 0 && y < SCREEN_HEIGHT && *(int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8)) == 0)
+				*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = shadowedColor;
+		}
+	}
+}
+
+void	draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, float rayDirX, float rayDirY, int side, int currentFloor, int hitFloor)
+{
+	float perpWallDist = (side == SIDE_EAST) || (side == SIDE_WEST)
 		? (mapX - game->player->x + (1 - stepX) / 2) / rayDirX
 		: (mapY - game->player->y + (1 - stepY) / 2) / rayDirY;
 	int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
@@ -132,13 +177,29 @@ int	draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, flo
 	drawEnd -= (int)(game->player->height * lineHeight);
 	if (drawStart < 0) drawStart = 0;
 	if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT - 1;
-	int color = (side == 0) ? 0xFF0000 : 0x00FF00;
+	int color;
+	if (side == SIDE_EAST)
+		color = 0x00FFFF;
+	else if (side == SIDE_NORTH)
+		color = 0xFF0000;
+	else if (side == SIDE_SOUTH)
+		color = 0x0000FF;
+	else
+		color = 0xFFFF00;
 	float shadowFactor = fmax(0.1f, 1.0f - (perpWallDist / 100.0f));
 	int shadowedColor = ((int)((color & 0xFF0000) * shadowFactor) & 0xFF0000) |
 						((int)((color & 0x00FF00) * shadowFactor) & 0x00FF00) |
 						((int)((color & 0x0000FF) * shadowFactor) & 0x0000FF);
 	draw_vertical_line(game, x, drawStart - 1, drawEnd, shadowedColor);
-	return drawEnd;
+	//PB
+	// if (game->player->height < -1.6) 
+	// {
+	// 	int roofColor = 0x808080;
+	// 	int roofStart = 0;
+	// 	int roofEnd = drawStart - 1;
+	// 	if (roofEnd >= 0)
+	// 		draw_vertical_line(game, x, roofStart, roofEnd, roofColor);
+	// }
 }
 
 bool	allFloorsHit(int *floorHit)
@@ -198,13 +259,20 @@ void	cast_rays(t_game *game)
 			{
 				sideDistX += deltaDistX;
 				mapX += stepX;
-				side = 0;
+				if (stepX > 0) 
+					side = SIDE_EAST;
+				else 
+					side = SIDE_WEST;
 			}
 			else
 			{
 				sideDistY += deltaDistY;
 				mapY += stepY;
-				side = 1;
+
+				if (stepY > 0)
+					side = SIDE_SOUTH;
+				else
+					side = SIDE_NORTH;
 			}
 			for (int floor = 0; floor < MAP_FLOOR; floor++)
 			{
@@ -213,8 +281,6 @@ void	cast_rays(t_game *game)
 					floorHit[floor] = 1;
 					draw_wall(game, x, mapX, mapY, stepX, stepY, rayDirX, rayDirY, side, (int)game->player->floor, floor);
 				}
-				// if (map[floor][mapX][mapY] == '0' && floor == 0)
-				// 	draw_floor(game, x, mapX, mapY, stepX, stepY, rayDirX, rayDirY, side, (int)game->player->floor, floor);
 			}
 		}
 	}
@@ -276,6 +342,7 @@ int	game_loop(t_game *game)
 		mlx_clear_window(game->mlx, game->win);
 		clear_image(game->img, 0x000000);
 		cast_rays(game);
+		draw_floor(game);
 		mlx_put_image_to_window(game->mlx, game->win, game->img->img, 0, 0);
 		return (0);
 }

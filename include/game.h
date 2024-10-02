@@ -17,6 +17,15 @@ enum Weapon {
 	Shotgun = 1,
 };
 
+enum Direction {
+	SIDE_EAST,
+	SIDE_WEST,
+	SIDE_NORTH,
+	SIDE_SOUTH,
+	SIDE_FLOOR,
+	SIDE_CEILING,
+};
+
 typedef struct s_player
 {
 	float	x;
