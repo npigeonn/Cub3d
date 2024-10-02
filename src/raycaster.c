@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/02 13:19:26 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/02 13:43:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,22 +120,14 @@ void draw_vertical_line(t_game *game, int x, int start, int end, int color)
 
 void draw_horizontal_line(t_game *game, int y, int start, int end, int color)
 {
-	// Limiter start et end pour s'assurer qu'ils sont dans les limites de l'écran
 	if (y < 0 || y >= SCREEN_HEIGHT)
-		return; // Si y est hors des limites, ne rien faire
-
-	// Ajuster start et end pour s'assurer qu'ils sont dans les limites de l'écran
+		return;
 	if (start < 0) start = 0;
 	if (end >= SCREEN_WIDTH) end = SCREEN_WIDTH - 1;
-
-	// Dessiner la ligne horizontale
 	for (int x = start; x <= end; x++)
 	{
-		// Vérifiez si le pixel est noir (ou un autre critère pour le dessin)
 		if (*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) == 0)
-		{
 			*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = color;
-		}
 	}
 }
 
@@ -192,14 +184,18 @@ void	draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, fl
 						((int)((color & 0x0000FF) * shadowFactor) & 0x0000FF);
 	draw_vertical_line(game, x, drawStart - 1, drawEnd, shadowedColor);
 	//PB
-	// if (game->player->height < -1.6) 
-	// {
-	// 	int roofColor = 0x808080;
-	// 	int roofStart = 0;
-	// 	int roofEnd = drawStart - 1;
-	// 	if (roofEnd >= 0)
-	// 		draw_vertical_line(game, x, roofStart, roofEnd, roofColor);
-	// }
+	if (game->player->height < -1.6 && map[hitFloor + 1][mapX][mapY] != '1') 
+	{
+		int floorColor = 0x808080;
+		int floorHeight = 2;
+		for (int y = drawStart; y < drawStart + floorHeight && y < SCREEN_HEIGHT; y++) 
+		{
+			for (int x = 0; x < SCREEN_WIDTH; x++) 
+			{
+				*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = floorColor;
+			}
+		}
+	}
 }
 
 bool	allFloorsHit(int *floorHit)
