@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/02 13:43:21 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/02 22:14:50 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,26 +111,14 @@ char map[MAP_FLOOR][MAP_WIDTH][MAP_HEIGHT] = {
 
 void draw_vertical_line(t_game *game, int x, int start, int end, int color)
 {
+	if (x > SCREEN_WIDTH || x < 0)
+		return;
 	for (int y = start; y < end; y++)
 	{
 		if (y >= 0 && y < SCREEN_HEIGHT && *((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) == 0)
 			*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = color;
 	}
 }
-
-void draw_horizontal_line(t_game *game, int y, int start, int end, int color)
-{
-	if (y < 0 || y >= SCREEN_HEIGHT)
-		return;
-	if (start < 0) start = 0;
-	if (end >= SCREEN_WIDTH) end = SCREEN_WIDTH - 1;
-	for (int x = start; x <= end; x++)
-	{
-		if (*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) == 0)
-			*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = color;
-	}
-}
-
 
 void draw_floor(t_game *game)
 {
@@ -155,46 +143,43 @@ void draw_floor(t_game *game)
 	}
 }
 
-void	draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, float rayDirX, float rayDirY, int side, int currentFloor, int hitFloor)
+void draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, float rayDirX, float rayDirY, int side, int currentFloor, int hitFloor)
 {
 	float perpWallDist = (side == SIDE_EAST) || (side == SIDE_WEST)
 		? (mapX - game->player->x + (1 - stepX) / 2) / rayDirX
 		: (mapY - game->player->y + (1 - stepY) / 2) / rayDirY;
+		
 	int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 	int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
 	int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
 	drawStart -= (int)((hitFloor - currentFloor) * lineHeight);
 	drawEnd -= (int)((hitFloor - currentFloor) * lineHeight);
-	drawStart -= (int)(game->player->height  * lineHeight);
+	drawStart -= (int)(game->player->height * lineHeight);
 	drawEnd -= (int)(game->player->height * lineHeight);
+
 	if (drawStart < 0) drawStart = 0;
 	if (drawEnd >= SCREEN_HEIGHT) drawEnd = SCREEN_HEIGHT - 1;
+
 	int color;
 	if (side == SIDE_EAST)
-		color = 0x00FFFF;
+		color = 0x00FFFF; // Cyan
 	else if (side == SIDE_NORTH)
-		color = 0xFF0000;
+		color = 0xFF0000; // Rouge
 	else if (side == SIDE_SOUTH)
-		color = 0x0000FF;
+		color = 0x0000FF; // Bleu
 	else
-		color = 0xFFFF00;
+		color = 0xFFFF00; // Jaune
+
 	float shadowFactor = fmax(0.1f, 1.0f - (perpWallDist / 100.0f));
 	int shadowedColor = ((int)((color & 0xFF0000) * shadowFactor) & 0xFF0000) |
 						((int)((color & 0x00FF00) * shadowFactor) & 0x00FF00) |
 						((int)((color & 0x0000FF) * shadowFactor) & 0x0000FF);
 	draw_vertical_line(game, x, drawStart - 1, drawEnd, shadowedColor);
-	//PB
-	if (game->player->height < -1.6 && map[hitFloor + 1][mapX][mapY] != '1') 
-	{
-		int floorColor = 0x808080;
-		int floorHeight = 2;
-		for (int y = drawStart; y < drawStart + floorHeight && y < SCREEN_HEIGHT; y++) 
-		{
-			for (int x = 0; x < SCREEN_WIDTH; x++) 
-			{
-				*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = floorColor;
-			}
-		}
+
+	int ceilingHeight = drawStart;
+	if (ceilingHeight > 0 && map[hitFloor + 1][mapX][mapY] != '1') {
+		int ceilingColor = 0x78945; // Très beau vert
+		draw_vertical_line(game, x, drawStart - 10, ceilingHeight - 1, ceilingColor);
 	}
 }
 
@@ -215,8 +200,8 @@ void	cast_rays(t_game *game)
 		int	floorHit[MAP_FLOOR] = {0};
 		float cameraX = 2 * x / (float)SCREEN_WIDTH - 1;
 		float rayDirX = game->player->dirX + game->player->planeX * cameraX;
-		float rayDirY = game->player->dirY + game->player->planeY * cameraX - sin(game->player->pitch);
-		rayDirY += tan(game->player->pitch);
+		float rayDirY = game->player->dirY + game->player->planeY * cameraX;
+		// rayDirY += tan(game->player->pitch);
 
 		int mapX = (int)game->player->x;
 		int mapY = (int)game->player->y;
