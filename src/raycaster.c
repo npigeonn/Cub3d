@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/02 22:14:50 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/03 15:14:33 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,17 +271,17 @@ int	handle_keypress(int keycode, t_game *game)
 {
 	if (keycode == 65307) // Echap
 		exit(0);
-	if (keycode == 119) // W pour avancer
+	if (keycode == 65362 || keycode == 119) // W pour avancer
 	{
 		game->player->x += game->player->dirX * 0.1;
 		game->player->y += game->player->dirY * 0.1;
 	}
-	if (keycode == 115) // S pour reculer
+	if (keycode == 65364 || keycode == 115) // S pour reculer
 	{
 		game->player->x -= game->player->dirX * 0.1;
 		game->player->y -= game->player->dirY * 0.1;
 	}
-	if (keycode == 100) // D pour tourner à gauche
+	if (keycode == 65363 || keycode == 100) // D pour tourner à gauche
 	{
 		float oldDirX = game->player->dirX;
 		game->player->dirX = oldDirX * cos(ROTATION_SPEED) - game->player->dirY * sin(ROTATION_SPEED);
@@ -290,7 +290,7 @@ int	handle_keypress(int keycode, t_game *game)
 		game->player->planeX = oldPlaneX * cos(ROTATION_SPEED) - game->player->planeY * sin(ROTATION_SPEED);
 		game->player->planeY = oldPlaneX * sin(ROTATION_SPEED) + game->player->planeY * cos(ROTATION_SPEED);
 	}
-	if (keycode == 97) // A pour tourner à droite
+	if (keycode == 65361 || keycode == 97) // A pour tourner à droite
 	{
 		float oldDirX = game->player->dirX;
 		game->player->dirX = oldDirX * cos(-ROTATION_SPEED) - game->player->dirY * sin(-ROTATION_SPEED);

@@ -119,23 +119,23 @@
 # define KEY_D 100
 # define KEY_Q 113
 
-int key_hook(int keycode, t_game *game) {
-	if (keycode == 65307) // Touche ESC pour quitter
-		exit(0);
-	if (keycode == 119)// && can_move(game, game->player->x, game->player->y - 1)) // W - Haut
-		game->player->y = game->player->y - 1;
-	if (keycode == 115)// && can_move(game, game->player->x, game->player->y + 1)) // S - Bas
-		game->player->y = game->player->y + 1;
-	if (keycode == 97)// && can_move(game, game->player->x - 1, game->player->y)) // A - Gauche
-		game->player->x = game->player->x - 1;
-	if (keycode == 100)// && can_move(game, game->player->x + 1, game->player->y)) // D - Droite
-		game->player->x = game->player->x + 1;
-	// mlx_clear_window(game->mlx, game->win);
-	printf("Pos x: %f || Pos y: %f\n", game->player->x, game->player->y);
-	// draw_map(game);
-	raycasting(game);
-	return 0;
-}
+// int key_hook(int keycode, t_game *game) {
+// 	if (keycode == 65307) // Touche ESC pour quitter
+// 		exit(0);
+// 	if (keycode == 65362 || keycode == 119)// && can_move(game, game->player->x, game->player->y - 1)) // W - Haut
+// 		game->player->y = game->player->y - 1;
+// 	if (keycode == 65364 || keycode == 115)// && can_move(game, game->player->x, game->player->y + 1)) // S - Bas
+// 		game->player->y = game->player->y + 1;
+// 	if (keycode == 65361 || keycode == 97)// && can_move(game, game->player->x - 1, game->player->y)) // A - Gauche
+// 		game->player->x = game->player->x - 1;
+// 	if (keycode == 65363 || keycode == 100)// && can_move(game, game->player->x + 1, game->player->y)) // D - Droite
+// 		game->player->x = game->player->x + 1;
+// 	// mlx_clear_window(game->mlx, game->win);
+// 	printf("Pos x: %f || Pos y: %f\n", game->player->x, game->player->y);
+// 	// draw_map(game);
+// 	raycasting(game);
+// 	return 0;
+// }
 
 void load_texture(t_game *game, t_texture *texture, char *path) {
     texture->img = mlx_xpm_file_to_image(game->mlx, path, &texture->width, &texture->height);
