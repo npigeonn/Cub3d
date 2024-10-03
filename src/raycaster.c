@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/03 15:14:33 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/03 16:14:00 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,11 +266,19 @@ void	cast_rays(t_game *game)
 		}
 	}
 }
+int	handle_close(t_game *game)
+{
+	mlx_destroy_image(game->mlx, game->img);
+	mlx_destroy_window(game->mlx, game->win);
+	// mlx_destroy_display(game->mlx);
+	// free(game->mlx);
+	exit(0);
+}
 
 int	handle_keypress(int keycode, t_game *game)
 {
-	if (keycode == 65307) // Echap
-		exit(0);
+	if (keycode == 65307) // TODO a proteger pour l'instant ca segfault
+		handle_close(game);
 	if (keycode == 65362 || keycode == 119) // W pour avancer
 	{
 		game->player->x += game->player->dirX * 0.1;
@@ -328,10 +336,12 @@ int	game_loop(t_game *game)
 		return (0);
 }
 
-int main()
+int main(int ac, char **av)
 {
 	t_game		game;
-
+	(void)ac;
+	(void)**av;
+	// parsing(av);
 	game.mlx = mlx_init();
 
 	game.player = malloc(sizeof(t_player));
@@ -348,6 +358,7 @@ int main()
 	game.img->img = mlx_new_image(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
 	game.img->data = mlx_get_data_addr(game.img->img, &game.img->bpp, &game.img->size_line, &game.img->endian);
 	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
+	mlx_hook(game.win, 33, 0, handle_close, &game);
 	mlx_loop_hook(game.mlx, game_loop, &game);
 	mlx_loop(game.mlx);
 	return 0;
