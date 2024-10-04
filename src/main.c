@@ -144,51 +144,31 @@ void load_texture(t_game *game, t_texture *texture, char *path) {
         exit(1);
     }
 }
+int main(int ac, char **av)
+{
+	t_game		game;
 
-int main() {
-    t_game game;
-
-    // Initialisation de la carte
-    // char map[MAP_HEIGHT][MAP_WIDTH + 1] = {
-    //     "11111111111111",
-    //     "10000000011111",
-    //     "10000000010001",
-    //     "10000N000D0001",
-    //     "10000000010001",
-    //     "11111111111111"
-    // };
-	game.player = malloc(sizeof(t_player));
-    ft_bzero(game.player, sizeof(t_player));
-	// for (int i = 0; i < MAP_HEIGHT; i++)
-    //     for (int j = 0; j < MAP_WIDTH; j++)
-    //         game.map[i][j] = map[i][j];
-    // // Initialiser la position du joueur (trouve la position N)
-    // for (int y = 0; y < MAP_HEIGHT; y++) {
-    //     for (int x = 0; x < MAP_WIDTH; x++) {
-    //         if (game.map[y][x] == 'N') {
-    //             game.player->x = x;
-    //             game.player->y = y;
-    //         }
-    //     }	
-    // }
-
-	
-	game.player->x = 22;
-	game.player->y = 20;
-	game.player->px = 0.66;
-	game.player->py = 0.66;
-
+	(void)ac;
+	(void)**av;
+	parsing(av, &game);
 	game.mlx = mlx_init();
-    game.win = mlx_new_window(game.mlx, 1920, 1080, "Mini Map with Textures");
 
-    // Charger les textures (mettre les chemins vers vos fichiers XPM)
-    // load_texture(&game, &game.player_texture, "../assets/player.xpm"); // Texture du joueur
-    // load_texture(&game, &game.floor_texture, "../assets/floor.xpm"); // Texture du sol
-    // load_texture(&game, &game.wall_texture, "../assets/wall.xpm"); // Texture du mur
-    
-    // draw_map(&game);
-
-    mlx_key_hook(game.win, key_hook, &game);
-    mlx_loop(game.mlx);
-    return 0;
+	// game.player = malloc(sizeof(t_player));
+	// game.player->x = 6;
+	// game.player->y = 6;
+	// game.player->height = 0;
+	// game.player->dirX = 1;
+	// game.player->dirY = 0;
+	// game.player->planeX = 0;
+	// game.player->planeY = 0.66;
+	// game.player->floor = 0;
+	// game.win = mlx_new_window(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Raycasting 3D");
+	// game.img = malloc(sizeof(t_image));
+	// game.img->img = mlx_new_image(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
+	// game.img->data = mlx_get_data_addr(game.img->img, &game.img->bpp, &game.img->size_line, &game.img->endian);
+	// mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
+	// mlx_hook(game.win, 33, 0, handle_close, &game);
+	// mlx_loop_hook(game.mlx, game_loop, &game);
+	// mlx_loop(game.mlx);
+	return 0;
 }

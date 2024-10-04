@@ -67,6 +67,7 @@ typedef struct s_game
 	void *mlx;
 	void *win;
 	t_image		*img;
+	char 		***map;
 	t_player	*player;
 	t_texture wall_texture;
 	t_texture floor_texture;
@@ -92,7 +93,7 @@ typedef struct s_game
 // }	t_data;
 
 // void raycasting(t_game *data);
-void	parsing(char **av);
+void	parsing(char **av, t_game *game);
 char	*get_next_line(int fd);
 
 #endif

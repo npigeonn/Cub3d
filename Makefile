@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
+#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/09/30 12:47:44 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/04 12:57:46 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
 LIBS = -L$(MINILIBX_DIR) -lmlx -lX11 -lXext -lm -L$(LIBFT_DIR) -lft
 INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(GC_HEADERS) -I./include/
-CFLAGS = -g3 -Wall -Wextra -Werror
+CFLAGS = -g3 #-Wall -Wextra -Werror
 RM = rm -rf
 
 # SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
@@ -32,7 +32,8 @@ RM = rm -rf
 # 			split_utils.c)
 
 SRC_ALONE =	$(addprefix $(PATH_SRC), \
-			raycaster.c)
+			main.c \
+			parsing.c)
 
 SRC =	$(SRC_ALONE) #$(SRC_ERROR) $(SRC_EXEC) $(SRC_PARSING)
 

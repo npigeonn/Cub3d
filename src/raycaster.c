@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/04 09:21:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/04 11:39:16 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,10 +275,10 @@ void	cast_rays(t_game *game)
 }
 int	handle_close(t_game *game)
 {
-	mlx_destroy_image(game->mlx, game->img);
+	mlx_destroy_image(game->mlx, game->img->img);
 	mlx_destroy_window(game->mlx, game->win);
-	// mlx_destroy_display(game->mlx);
-	// free(game->mlx);
+	mlx_destroy_display(game->mlx);
+	free(game->mlx);
 	exit(0);
 }
 
