@@ -68,7 +68,6 @@ typedef struct s_game
 	void *win;
 	char		***map;
 	t_image		*img;
-	char 		***map;
 	t_player	*player;
 	t_texture wall_texture;
 	t_texture floor_texture;

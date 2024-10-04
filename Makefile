@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
+#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/04 12:57:46 by npigeon          ###   ########.fr        #
+#    Updated: 2024/10/04 14:34:50 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,8 @@ RM = rm -rf
 
 SRC_ALONE =	$(addprefix $(PATH_SRC), \
 			main.c \
-			parsing.c)
+			parsing.c \
+			raycaster.c)
 
 SRC =	$(SRC_ALONE) #$(SRC_ERROR) $(SRC_EXEC) $(SRC_PARSING)
 
