@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/04 16:24:21 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/04 16:33:45 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,6 +269,8 @@ void	cast_rays(t_game *game)
 				else
 					side = SIDE_NORTH;
 			}
+			if (!game->map[game->player->floor][mapX] || !game->map[game->player->floor][mapX][mapY])
+				break;
 			if (game->map[game->player->floor][mapX][mapY] == '1')
 			{
 				draw_wall(game, x, mapX, mapY, stepX, stepY, rayDirX, rayDirY, side);
@@ -369,6 +371,39 @@ int	game_loop(t_game *game)
 	return (0);
 }
 
+void	set_dir(t_game *game, int dir)
+{
+	if (dir == 0) // Nord
+	{
+		game->player->dirX = 0;
+		game->player->dirY = -1;
+		game->player->planeX = 0.66; // Largeur du plan perpendiculaire
+		game->player->planeY = 0;
+	}
+	else if (dir == 1) // Sud
+	{
+		game->player->dirX = 0;
+		game->player->dirY = 1;
+		game->player->planeX = -0.66; // Inversé car Sud
+		game->player->planeY = 0;
+	}
+	else if (dir == 2) // Est
+	{
+		game->player->dirX = 1;
+		game->player->dirY = 0;
+		game->player->planeX = 0;
+		game->player->planeY = 0.66; // Plan perpendiculaire à droite (Y+)
+	}
+	else if (dir == 3) // Ouest
+	{
+		game->player->dirX = -1;
+		game->player->dirY = 0;
+		game->player->planeX = 0;
+		game->player->planeY = -0.66; // Plan perpendiculaire à gauche (Y-)
+	}
+}
+
+
 int main(int ac, char **av)
 {
 	t_game		game;
@@ -387,8 +422,7 @@ int main(int ac, char **av)
 	game.player->dirX = 1;
 	game.player->dirY = 0;
 	game.player->planeX = 0;
-	game.player->planeY = 0.66;
-	game.player->floor = 0;
+	set_dir(&game, 0);
 	game.win = mlx_new_window(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Raycasting 3D");
 	game.img = malloc(sizeof(t_image));
 	game.img->img = mlx_new_image(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
