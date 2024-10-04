@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/03 16:14:00 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/04 09:21:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,11 +175,18 @@ void draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, fl
 						((int)((color & 0x00FF00) * shadowFactor) & 0x00FF00) |
 						((int)((color & 0x0000FF) * shadowFactor) & 0x0000FF);
 	draw_vertical_line(game, x, drawStart - 1, drawEnd, shadowedColor);
+	if (map[hitFloor + 1][mapY][mapX] == '1')
+		return ;
+		// int floorHeight = drawStart; // Utilise drawStart comme point de départ pour le sol
 
-	int ceilingHeight = drawStart;
-	if (ceilingHeight > 0 && map[hitFloor + 1][mapX][mapY] != '1') {
-		int ceilingColor = 0x78945; // Très beau vert
-		draw_vertical_line(game, x, drawStart - 10, ceilingHeight - 1, ceilingColor);
+		// Limite la hauteur du sol pour qu'il ne dépasse pas une certaine valeur
+	int maxFloorHeight = drawStart - 20; // Par exemple, 20 pixels au-dessus du mur
+
+	for (int y = drawStart; y > maxFloorHeight; y--) {
+		if (y >= 0) {
+			int floorColor = 0x776655; // Couleur du sol
+			*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = floorColor;
+		}
 	}
 }
 
