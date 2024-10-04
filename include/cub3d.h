@@ -10,6 +10,6 @@
 # include "game.h"
 
 # define MOVEMENT_SPEED 0.1f
-# define ROTATION_SPEED 0.05f
+# define ROTATION_SPEED 0.001f
 
 #endif

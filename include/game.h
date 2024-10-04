@@ -66,6 +66,7 @@ typedef struct s_game
 {
 	void *mlx;
 	void *win;
+	char		***map;
 	t_image		*img;
 	char 		***map;
 	t_player	*player;

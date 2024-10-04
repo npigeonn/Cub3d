@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/04 11:39:16 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/04 14:32:41 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,29 @@ void draw_vertical_line(t_game *game, int x, int start, int end, int color)
 	}
 }
 
+void draw_ceilling(t_game *game)
+{
+	int horizon = (SCREEN_HEIGHT / 2) + game->player->height;
+	if (horizon < 0)
+		horizon = 0;
+	else if (horizon > SCREEN_HEIGHT)
+		horizon = SCREEN_HEIGHT;
+	for (int y = horizon; y > 0; y--)
+	{
+		int color = 0x896542;
+		int shadowFactor = (y + horizon) * 255 / (SCREEN_HEIGHT + horizon);
+		shadowFactor = fmin(1.0f, shadowFactor);
+		int shadowedColor = ((int)((color & 0xFF0000) * shadowFactor) & 0xFF0000) |
+						((int)((color & 0x00FF00) * shadowFactor) & 0x00FF00) |
+						((int)((color & 0x0000FF) * shadowFactor) & 0x0000FF);
+	   for (int x = 0; x < SCREEN_WIDTH; x++)
+		{
+			if (y >= 0 && y < SCREEN_HEIGHT && *(int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8)) == 0)
+				*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = shadowedColor;
+		}
+	}
+}
+
 void draw_floor(t_game *game)
 {
 	int horizon = (SCREEN_HEIGHT / 2) + game->player->height;
@@ -143,7 +166,7 @@ void draw_floor(t_game *game)
 	}
 }
 
-void draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, float rayDirX, float rayDirY, int side, int currentFloor, int hitFloor)
+void draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, float rayDirX, float rayDirY, int side)
 {
 	float perpWallDist = (side == SIDE_EAST) || (side == SIDE_WEST)
 		? (mapX - game->player->x + (1 - stepX) / 2) / rayDirX
@@ -152,8 +175,6 @@ void draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, fl
 	int lineHeight = (int)(SCREEN_HEIGHT / perpWallDist);
 	int drawStart = -lineHeight / 2 + SCREEN_HEIGHT / 2;
 	int drawEnd = lineHeight / 2 + SCREEN_HEIGHT / 2;
-	drawStart -= (int)((hitFloor - currentFloor) * lineHeight);
-	drawEnd -= (int)((hitFloor - currentFloor) * lineHeight);
 	drawStart -= (int)(game->player->height * lineHeight);
 	drawEnd -= (int)(game->player->height * lineHeight);
 
@@ -175,19 +196,6 @@ void draw_wall(t_game *game, int x, int mapX, int mapY, int stepX, int stepY, fl
 						((int)((color & 0x00FF00) * shadowFactor) & 0x00FF00) |
 						((int)((color & 0x0000FF) * shadowFactor) & 0x0000FF);
 	draw_vertical_line(game, x, drawStart - 1, drawEnd, shadowedColor);
-	if (map[hitFloor + 1][mapY][mapX] == '1')
-		return ;
-		// int floorHeight = drawStart; // Utilise drawStart comme point de départ pour le sol
-
-		// Limite la hauteur du sol pour qu'il ne dépasse pas une certaine valeur
-	int maxFloorHeight = drawStart - 20; // Par exemple, 20 pixels au-dessus du mur
-
-	for (int y = drawStart; y > maxFloorHeight; y--) {
-		if (y >= 0) {
-			int floorColor = 0x776655; // Couleur du sol
-			*((int *)(game->img->data + y * game->img->size_line + x * (game->img->bpp / 8))) = floorColor;
-		}
-	}
 }
 
 bool	allFloorsHit(int *floorHit)
@@ -204,7 +212,6 @@ void	cast_rays(t_game *game)
 {
 	for (int x = 0; x < SCREEN_WIDTH; x++)
 	{
-		int	floorHit[MAP_FLOOR] = {0};
 		float cameraX = 2 * x / (float)SCREEN_WIDTH - 1;
 		float rayDirX = game->player->dirX + game->player->planeX * cameraX;
 		float rayDirY = game->player->dirY + game->player->planeY * cameraX;
@@ -241,7 +248,7 @@ void	cast_rays(t_game *game)
 		}
 		int side;
 
-		while (!allFloorsHit(floorHit))
+		while (1)
 		{
 			if (sideDistX < sideDistY)
 			{
@@ -262,13 +269,10 @@ void	cast_rays(t_game *game)
 				else
 					side = SIDE_NORTH;
 			}
-			for (int floor = 0; floor < MAP_FLOOR; floor++)
+			if (map[game->player->floor][mapX][mapY] == '1')
 			{
-				if (map[floor][mapX][mapY] == '1')
-				{
-					floorHit[floor] = 1;
-					draw_wall(game, x, mapX, mapY, stepX, stepY, rayDirX, rayDirY, side, (int)game->player->floor, floor);
-				}
+				draw_wall(game, x, mapX, mapY, stepX, stepY, rayDirX, rayDirY, side);
+				break;
 			}
 		}
 	}
@@ -282,37 +286,55 @@ int	handle_close(t_game *game)
 	exit(0);
 }
 
+#include <mlx.h>
+
+int	handle_mouse_move(int x, int y, t_game *game)
+{
+
+    float deltaX = -(x - SCREEN_WIDTH / 2) * ROTATION_SPEED;
+
+    float oldDirX = game->player->dirX;
+    game->player->dirX = oldDirX * cos(-deltaX) - game->player->dirY * sin(-deltaX);
+    game->player->dirY = oldDirX * sin(-deltaX) + game->player->dirY * cos(-deltaX);
+    float oldPlaneX = game->player->planeX;
+    game->player->planeX = oldPlaneX * cos(-deltaX) - game->player->planeY * sin(-deltaX);
+    game->player->planeY = oldPlaneX * sin(-deltaX) + game->player->planeY * cos(-deltaX);
+	mlx_mouse_move(game->mlx, game->win, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+	(void)y;
+	return (0);
+}
+
+
 int	handle_keypress(int keycode, t_game *game)
 {
+	float x, y;
+	
 	if (keycode == 65307) // TODO a proteger pour l'instant ca segfault
 		handle_close(game);
 	if (keycode == 65362 || keycode == 119) // W pour avancer
 	{
-		game->player->x += game->player->dirX * 0.1;
-		game->player->y += game->player->dirY * 0.1;
+		x = game->player->x + game->player->dirX * 0.1;
+		y = game->player->y + game->player->dirY* 0.1;
+		if (map[game->player->floor][(int)x][(int)y] == '1')
+			return (0);
+		game->player->x = x;
+		game->player->y = y;
 	}
 	if (keycode == 65364 || keycode == 115) // S pour reculer
 	{
 		game->player->x -= game->player->dirX * 0.1;
 		game->player->y -= game->player->dirY * 0.1;
 	}
-	if (keycode == 65363 || keycode == 100) // D pour tourner à gauche
+	if (keycode == 65363 || keycode == 100) // D pour aller à droite
 	{
-		float oldDirX = game->player->dirX;
-		game->player->dirX = oldDirX * cos(ROTATION_SPEED) - game->player->dirY * sin(ROTATION_SPEED);
-		game->player->dirY = oldDirX * sin(ROTATION_SPEED) + game->player->dirY * cos(ROTATION_SPEED);
-		float oldPlaneX = game->player->planeX;
-		game->player->planeX = oldPlaneX * cos(ROTATION_SPEED) - game->player->planeY * sin(ROTATION_SPEED);
-		game->player->planeY = oldPlaneX * sin(ROTATION_SPEED) + game->player->planeY * cos(ROTATION_SPEED);
+		game->player->x += game->player->planeX * 0.1;
+		game->player->y += game->player->planeY * 0.1;
 	}
-	if (keycode == 65361 || keycode == 97) // A pour tourner à droite
+
+	if (keycode == 65361 || keycode == 97) // A pour aller à gauche
 	{
-		float oldDirX = game->player->dirX;
-		game->player->dirX = oldDirX * cos(-ROTATION_SPEED) - game->player->dirY * sin(-ROTATION_SPEED);
-		game->player->dirY = oldDirX * sin(-ROTATION_SPEED) + game->player->dirY * cos(-ROTATION_SPEED);
-		float oldPlaneX = game->player->planeX;
-		game->player->planeX = oldPlaneX * cos(-ROTATION_SPEED) - game->player->planeY * sin(-ROTATION_SPEED);
-		game->player->planeY = oldPlaneX * sin(-ROTATION_SPEED) + game->player->planeY * cos(-ROTATION_SPEED);
+		game->player->x -= game->player->planeX * 0.1;
+		game->player->y -= game->player->planeY * 0.1;
 	}
 	if (keycode == 32) // Espace pour sauter
 		game->player->height -= 0.1;
@@ -338,6 +360,7 @@ int	game_loop(t_game *game)
 		mlx_clear_window(game->mlx, game->win);
 		clear_image(game->img, 0x000000);
 		cast_rays(game);
+		draw_ceilling(game);
 		draw_floor(game);
 		mlx_put_image_to_window(game->mlx, game->win, game->img->img, 0, 0);
 		return (0);
@@ -359,12 +382,15 @@ int main(int ac, char **av)
 	game.player->dirY = 0;
 	game.player->planeX = 0;
 	game.player->planeY = 0.66;
-	game.player->floor = 0;
+	game.player->floor = 1;
 	game.win = mlx_new_window(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Raycasting 3D");
 	game.img = malloc(sizeof(t_image));
 	game.img->img = mlx_new_image(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
 	game.img->data = mlx_get_data_addr(game.img->img, &game.img->bpp, &game.img->size_line, &game.img->endian);
+	mlx_mouse_move(game.mlx, game.win, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+	mlx_mouse_hide(game.mlx, game.win);
 	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
+	mlx_hook(game.win, 6, 1L << 6, handle_mouse_move, &game);
 	mlx_hook(game.win, 33, 0, handle_close, &game);
 	mlx_loop_hook(game.mlx, game_loop, &game);
 	mlx_loop(game.mlx);
