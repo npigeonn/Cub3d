@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/04 14:36:46 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/04 15:29:54 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,6 +170,8 @@ void	map_set_up(char **av, t_game *game)
 		exit(err("error system\n"));
 	size_floors(av, game, floor);
 	map_ready(av, game, floor);
+	floodfill(game);
+	
 }
 
 void	parsing(char **av, t_game *game)

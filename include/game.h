@@ -93,7 +93,9 @@ typedef struct s_game
 // }	t_data;
 
 // void raycasting(t_game *data);
+int	err(char *str);
 void	parsing(char **av, t_game *game);
 char	*get_next_line(int fd);
+void	floodfill(t_game *game);
 
 #endif
