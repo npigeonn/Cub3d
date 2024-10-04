@@ -144,31 +144,33 @@ void load_texture(t_game *game, t_texture *texture, char *path) {
         exit(1);
     }
 }
-int main(int ac, char **av)
-{
-	t_game		game;
 
-	(void)ac;
-	(void)**av;
-	parsing(av, &game);
-	game.mlx = mlx_init();
 
-	// game.player = malloc(sizeof(t_player));
-	// game.player->x = 6;
-	// game.player->y = 6;
-	// game.player->height = 0;
-	// game.player->dirX = 1;
-	// game.player->dirY = 0;
-	// game.player->planeX = 0;
-	// game.player->planeY = 0.66;
-	// game.player->floor = 0;
-	// game.win = mlx_new_window(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Raycasting 3D");
-	// game.img = malloc(sizeof(t_image));
-	// game.img->img = mlx_new_image(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
-	// game.img->data = mlx_get_data_addr(game.img->img, &game.img->bpp, &game.img->size_line, &game.img->endian);
-	// mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
-	// mlx_hook(game.win, 33, 0, handle_close, &game);
-	// mlx_loop_hook(game.mlx, game_loop, &game);
-	// mlx_loop(game.mlx);
-	return 0;
-}
+// int main(int ac, char **av)
+// {
+// 	t_game		game;
+
+// 	(void)ac;
+// 	(void)**av;
+// 	parsing(av, &game);
+// 	game.mlx = mlx_init();
+
+// 	// game.player = malloc(sizeof(t_player));
+// 	// game.player->x = 6;
+// 	// game.player->y = 6;
+// 	// game.player->height = 0;
+// 	// game.player->dirX = 1;
+// 	// game.player->dirY = 0;
+// 	// game.player->planeX = 0;
+// 	// game.player->planeY = 0.66;
+// 	// game.player->floor = 0;
+// 	// game.win = mlx_new_window(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Raycasting 3D");
+// 	// game.img = malloc(sizeof(t_image));
+// 	// game.img->img = mlx_new_image(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
+// 	// game.img->data = mlx_get_data_addr(game.img->img, &game.img->bpp, &game.img->size_line, &game.img->endian);
+// 	// mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
+// 	// mlx_hook(game.win, 33, 0, handle_close, &game);
+// 	// mlx_loop_hook(game.mlx, game_loop, &game);
+// 	// mlx_loop(game.mlx);
+// 	return 0;
+// }

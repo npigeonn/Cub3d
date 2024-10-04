@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/04 14:35:43 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/04 14:36:46 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ void	size_floors(char **av, t_game *game, int floor)
 		}
 		game->map[j] = malloc((i + 1) * sizeof(char *));
 		if (!game->map[j])
-			exit(free_tab(floor, game, j, 0)); // free line !
+			exit(1); // free line !free_tab(floor, game, j, 0)
 		j++;
 	}
 	game->map[j] = NULL;
@@ -145,7 +145,7 @@ void	map_ready(char **av, t_game *game, int floor)
 		{
 			game->map[j][i] = ft_strdup(line);
 			if (!game->map[j][i])
-				exit(free_tab(floor, game, j, i)); // free line !
+				exit(1); // free line !free_tab(floor, game, j, i)
 			i++;
 			line = switch_line(line, fd);
 		}
