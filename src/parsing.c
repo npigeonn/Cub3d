@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/07 10:47:09 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/07 18:04:20 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,8 @@ int	nb_floors(char **av)
 	i = 0;
 	fd = open(av[1], O_RDONLY);
 	line = get_next_line(fd);
+	if (!line)
+		exit(err("Empty file\n"));
 	while (line)
 	{
 		while (line && line[0] == '\n')
@@ -143,7 +145,7 @@ void	size_floors(char **av, t_game *game, int floor)
 			exit(1); // free line !free_tab(floor, game, j, 0)
 		j++;
 	}
-	game->map[j] = NULL;
+	// game->map[j] = NULL;
 	close(fd);
 }
 
@@ -166,10 +168,11 @@ void	map_ready(char **av, t_game *game, int floor)
 		{
 			game->map[j][i] = ft_strdup(line);
 			if (!game->map[j][i])
-				exit(1); // free line !free_tab(floor, game, j, i)
+				exit(err("error system\n")); // free line !free_tab(floor, game, j, i)
 			i++;
 			line = switch_line(line, fd);
 		}
+		game->map[j][i] = NULL;
 		j++;
 	}
 	close(fd);
@@ -177,31 +180,25 @@ void	map_ready(char **av, t_game *game, int floor)
 
 void	map_set_up(char **av, t_game *game)
 {
-	int	floor;
+
 	int	k;
 
-	floor = nb_floors(av);
-	if (!floor)
+	game->nb_floor = nb_floors(av);
+	if (!game->nb_floor)
 		exit(err("Empty\n"));
-	printf("nbre d'etage = %d\n", floor);
+	printf("nbre d'etage = %d\n", game->nb_floor);
 	k = 0;
 	
-	game->map = malloc((floor + 1) * sizeof(char **));
+	game->map = malloc((game->nb_floor + 1) * sizeof(char **));
 	if (!game->map)
 		exit(err("error system\n"));
-	size_floors(av, game, floor);
-	map_ready(av, game, floor);
+	size_floors(av, game, game->nb_floor);
+	map_ready(av, game, game->nb_floor);
 	floodfill(game);
-	
 }
 
 void	parsing(char **av, t_game *game)
 {
-	// int	fd;
-	char *line;
-	int n_w_s_e;
-
-	n_w_s_e = 0;
 	op_in(av);
 	map_set_up(av, game);
 

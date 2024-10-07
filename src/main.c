@@ -99,7 +99,7 @@ int	main(int ac, char **av)
 	//////////////////////////
 	game.status = MAIN_MENU;
 	game.button_selected = 0;
-	game.map = malloc(sizeof(t_map));
+	// game.map = malloc(sizeof(t_map));
 
 	load_game_texture(&game);
 

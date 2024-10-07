@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 15:46:58 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/07 15:52:02 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,12 +259,12 @@ void	cast_rays(t_game *game)
 			//TODO: change to veritable info
 			if (map_x < 0 || map_x > 21 || map_y < 0 || map_y > 21)
 				break ;
-			if (game->map->map[game->player->floor][map_x][map_y] == '1')
+			if (game->map[game->player->floor][map_x][map_y] == '1')
 			{
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
 				break;
 			}
-			if (game->map->map[game->player->floor][map_x][map_y] == 'D')
+			if (game->map[game->player->floor][map_x][map_y] == 'D')
 			{
 				float perp_wall_dist = (side == SIDE_EAST) || (side == SIDE_WEST)
 					? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
@@ -378,7 +378,7 @@ int	handle_keypress(int keycode, t_game *game)
 	{
 		x = game->player->x + game->player->dirX * 0.1;
 		y = game->player->y + game->player->dirY * 0.1;
-		if (game->map->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+		if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
 			return (0);
 		game->player->x = x;
 		game->player->y = y;
@@ -387,7 +387,7 @@ int	handle_keypress(int keycode, t_game *game)
 	{
 		x = game->player->x - game->player->dirX * 0.1;
 		y = game->player->y - game->player->dirY * 0.1;
-		if (game->map->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+		if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
 			return (0);
 		game->player->x -= game->player->dirX * 0.1;
 		game->player->y -= game->player->dirY * 0.1;
@@ -396,7 +396,7 @@ int	handle_keypress(int keycode, t_game *game)
 	{
 		x = game->player->x + game->player->planeX * 0.1;
 		y = game->player->y + game->player->planeY * 0.1;
-		if (game->map->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+		if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
 			return (0);
 		game->player->x += game->player->planeX * 0.1;
 		game->player->y += game->player->planeY * 0.1;
@@ -406,7 +406,7 @@ int	handle_keypress(int keycode, t_game *game)
 	{
 		x = game->player->x - game->player->planeX * 0.1;
 		y = game->player->y - game->player->planeY * 0.1;
-		if (game->map->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+		if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
 			return (0);
 		game->player->x -= game->player->planeX * 0.1;
 		game->player->y -= game->player->planeY * 0.1;
@@ -447,7 +447,7 @@ int	game_loop(t_game *game)
 		draw_floor(game);
 	}
 	mlx_put_image_to_window(game->mlx, game->win, game->images->base->img, 0, 0);
-	if (game->map->map[0][(int)game->player->x][(int)game->player->y] == 'e')
+	if (game->map[0][(int)game->player->x][(int)game->player->y] == 'e')
 	{
 		ft_printf("VICTORY\n");
 		exit(EXIT_SUCCESS);

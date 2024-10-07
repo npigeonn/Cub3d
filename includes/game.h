@@ -98,7 +98,10 @@ typedef struct s_game
 	int			screen_height;
 	float		volume;
 	float		mouse_sensitivity;
-	t_map		*map;
+	// t_map		*map;
+	char		***map;
+	char 		***map_cy;
+	int			nb_floor;
 	t_images	*images;
 	t_player	*player;
 	t_textures	*textures;
@@ -134,5 +137,7 @@ int		err(char *str);
 void	parsing(char **av, t_game *game);
 char	*get_next_line(int fd);
 void	floodfill(t_game *game);
+int		map_copy(t_game *game);
+int 	free_map_copy(t_game *game);
 
 #endif
