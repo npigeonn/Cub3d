@@ -1,6 +1,13 @@
 {
 	"files.associations": {
 		"game.h": "c",
-		"stdlib.h": "c"
+		"stdlib.h": "c",
+		"cub3d.h": "c",
+		"array": "c",
+		"string": "c",
+		"string_view": "c",
+		"math.h": "c",
+		"mlx.h": "c",
+		"stdio.h": "c"
 	}
 }

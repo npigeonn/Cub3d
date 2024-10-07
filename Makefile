@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
+#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/04 15:29:07 by npigeon          ###   ########.fr        #
+#    Updated: 2024/10/07 01:43:22 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,28 +16,26 @@ PATH_SRC = ./src/
 PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
 LIBS = -L$(MINILIBX_DIR) -lmlx -lX11 -lXext -lm -L$(LIBFT_DIR) -lft
-INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(GC_HEADERS) -I./include/
+INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(GC_HEADERS) -I./includes/
 CFLAGS = -g3 #-Wall -Wextra -Werror
+LIBS_DIR = ./libs/
 RM = rm -rf
 
-# SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
-# 				parsing.c) \
+SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
+			raycaster.c \
+			draw.c )
 
-
-# SRC_ERROR =	$(addprefix $(PATH_SRC)error/, \
-# 			error.c )
-
-# SRC_EXEC =	$(addprefix $(PATH_SRC)exec/, \
-# 			split.c \
-# 			split_utils.c)
+SRC_MENU =	$(addprefix $(PATH_SRC)/game/menu/, \
+			main.c \
+			option.c \
+			multi.c )
 
 SRC_ALONE =	$(addprefix $(PATH_SRC), \
 			main.c \
 			parsing.c \
-			floodfill.c \
-			raycaster.c)
+			floodfill.c )
 
-SRC =	$(SRC_ALONE) #$(SRC_ERROR) $(SRC_EXEC) $(SRC_PARSING)
+SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU)
 
 ############### MINILIBX ###############
 
@@ -48,7 +46,7 @@ MINILIBX = $(MINILIBX_DIR)/libmlx.a
 
 ################ LIBFT #################
 
-LIBFT_DIR = ./Libft/
+LIBFT_DIR = $(LIBS_DIR)Libft/
 LIBFT_HEADERS = $(LIBFT_DIR)includes/
 LIBFT = $(LIBFT_DIR)libft.a
 
@@ -56,15 +54,15 @@ LIBFT = $(LIBFT_DIR)libft.a
 
 all: $(NAME)
 
-$(OBJS): ./include/* Makefile
+$(OBJS): ./includes/* Makefile
 
 $(PATH_OBJ):
-	mkdir -p $@ $@parsing $@exec  $@error
-	
+	mkdir -p $@ $@game $@game/menu
+
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
 	cc -c $(CFLAGS) $(INCLUDES) $< -o $@
 
-$(NAME): $(MINILIBX) $(LIBFT) $(GC) $(OBJS) ./include/* Makefile 
+$(NAME): $(MINILIBX) $(LIBFT) $(GC) $(OBJS) ./includes/* Makefile 
 	cc $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 
 $(LIBFT):

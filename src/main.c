@@ -21,96 +21,10 @@
 // // gestion de la minimap
 // // gerer le parsing, map trop grande /mal cerclee ...
 
-
-
-
-
-
-// int	handle_close(t_data *img)
-// {
-// 	mlx_destroy_image(img->mlx, img->img);
-// 	mlx_destroy_window(img->mlx, img->window);
-// 	mlx_destroy_display(img->mlx);
-// 	free(img->mlx);
-// 	exit(0);
-// }
-
-// int	mouse_move(int mousecode, int x, int y, t_data *img)
-// {
-// 	// if (mousecode == 1)
-// 	//	//tirer (3 = tire speciaux?)
-	
-// 	// if (mousecode == 4)
-// 	// 	img->zoom *= 0.9;
-// 	// if (mousecode == 5)
-// 	// 	img->zoom *= 1.11111;
-// 	// if (mousecode == 4 || mousecode == 5)
-// 	// {
-// 	// 	img->x_offset += img->zoom * 4 * (x - WIDTH * 0.5) / WIDTH;
-// 	// 	img->y_offset += img->zoom * 4 * (y - HEIGHT * 0.5) / HEIGHT;
-// 	// }
-// 	mlx_clear_window(img->mlx, img->window);
-// 	crafting_image(img);
-// 	mlx_put_image_to_window(img->mlx, img->window, img->img, 0, 0);
-// 	return (0);
-// }
-
-// int	key_move(int keycode, t_data *img)
-// {
-// 	// printf("%d\n", keycode);
-// 	if (keycode == 65361 || keycode == 97)
-// 		img->x_offset -= img->zoom;
-// 	if (keycode == 65362 || keycode == 119)
-// 		img->y_offset -= img->zoom;
-// 	if (keycode == 65363 || keycode == 100)
-// 		img->x_offset += img->zoom;
-// 	if (keycode == 65364 || keycode == 115)
-// 		img->y_offset += img->zoom;
-// 	if (keycode == 65307)
-// 	{
-// 		mlx_destroy_image(img->mlx, img->img);
-// 		mlx_destroy_window(img->mlx, img->window);
-// 		mlx_destroy_display(img->mlx);
-// 		free(img->mlx);
-// 		exit(0);
-// 	}
-// 	mlx_clear_window(img->mlx, img->window);
-// 	// crafting_image(img);
-// 	mlx_put_image_to_window(img->mlx, img->window, img->img, 0, 0);
-// 	return (0);
-// }
-
-// int	main(int argc, char **argv)
-// {
-// 	t_data	img;
-
-// 	img.color = 0;
-// 	img.fct = 0;
-// 	if (!verifglobal(argc, argv, &img))
-// 		return (0);
-// 	img.mlx = mlx_init();
-// 	img.window = mlx_new_window(img.mlx, WIDTH, HEIGHT, "Cub3D");
-// 	img.img = mlx_new_image(img.mlx, WIDTH, HEIGHT);
-// 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel,
-// 			&img.line_length, &img.endian);
-// 	img.x_offset = 0;
-// 	img.y_offset = 0;
-// 	img.zoom = 1;
-// 	// crafting_image(&img);
-// 	mlx_hook(img.window, 33, 0, handle_close, &img);
-// 	mlx_hook(img.window, 2, 1L << 0, key_move, &img);
-// 	mlx_hook(img.window, 4, 1L << 2, mouse_move, &img);
-// 	mlx_put_image_to_window(img.mlx, img.window, img.img, 0, 0);
-// 	mlx_loop(img.mlx);
-// 	return (0);
-// }
-
-
-
 #include <mlx.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/cub3d.h"
+#include "../includes/cub3d.h"
 
 # define KEY_W 119
 # define KEY_Z 122
@@ -119,58 +33,71 @@
 # define KEY_D 100
 # define KEY_Q 113
 
-// int key_hook(int keycode, t_game *game) {
-// 	if (keycode == 65307) // Touche ESC pour quitter
-// 		exit(0);
-// 	if (keycode == 65362 || keycode == 119)// && can_move(game, game->player->x, game->player->y - 1)) // W - Haut
-// 		game->player->y = game->player->y - 1;
-// 	if (keycode == 65364 || keycode == 115)// && can_move(game, game->player->x, game->player->y + 1)) // S - Bas
-// 		game->player->y = game->player->y + 1;
-// 	if (keycode == 65361 || keycode == 97)// && can_move(game, game->player->x - 1, game->player->y)) // A - Gauche
-// 		game->player->x = game->player->x - 1;
-// 	if (keycode == 65363 || keycode == 100)// && can_move(game, game->player->x + 1, game->player->y)) // D - Droite
-// 		game->player->x = game->player->x + 1;
-// 	// mlx_clear_window(game->mlx, game->win);
-// 	printf("Pos x: %f || Pos y: %f\n", game->player->x, game->player->y);
-// 	// draw_map(game);
-// 	raycasting(game);
-// 	return 0;
-// }
-
-void load_texture(t_game *game, t_texture *texture, char *path) {
-    texture->img = mlx_xpm_file_to_image(game->mlx, path, &texture->width, &texture->height);
-    if (!texture->img) {
-        printf("Erreur lors du chargement de la texture : %s\n", path);
-        exit(1);
-    }
+void	load_texture(t_game *game, t_image *img, char *path)
+{
+	img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width, &img->height);
+	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line, &img->endian);
+	if (!img->img)
+	{
+		printf("Erreur lors du chargement de la texture : %s\n", path);
+		exit(1);
+	}
 }
 
+void	init_img(t_game *game)
+{
+	t_image	*base;
 
-// int main(int ac, char **av)
-// {
-// 	t_game		game;
+	game->images = gc_malloc(game->mem, sizeof(t_images));
+	game->images->alphanum_sprite = gc_malloc(game->mem, sizeof(t_image));
+	base = gc_malloc(game->mem, sizeof(t_image));
+	base->img = mlx_new_image(game->mlx, game->screen_width, game->screen_height);
+	base->data = mlx_get_data_addr(base->img, &base->bpp, &base->size_line, &base->endian);
+	game->images->base = base;
+	load_texture(game, game->images->alphanum_sprite, "./assets/sprites/alphanum_sprite.xpm");
+}
 
-// 	(void)ac;
-// 	(void)**av;
-// 	parsing(av, &game);
-// 	game.mlx = mlx_init();
+void	init_player(t_game	*game)
+{
+	game->player = gc_malloc(game->mem, sizeof(t_player));
+	game->player->x = 0;
+	game->player->y = 0;
+	game->player->height = 0;
+	game->player->dirX = 1;
+	game->player->dirY = 0;
+	game->player->planeX = 0;
+	game->volume = 20;
+	game->mouse_sensitivity = 2;
+}
 
-// 	// game.player = malloc(sizeof(t_player));
-// 	// game.player->x = 6;
-// 	// game.player->y = 6;
-// 	// game.player->height = 0;
-// 	// game.player->dirX = 1;
-// 	// game.player->dirY = 0;
-// 	// game.player->planeX = 0;
-// 	// game.player->planeY = 0.66;
-// 	// game.player->floor = 0;
-// 	// game.win = mlx_new_window(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT, "Raycasting 3D");
-// 	// game.img = malloc(sizeof(t_image));
-// 	// game.img->img = mlx_new_image(game.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
-// 	// game.img->data = mlx_get_data_addr(game.img->img, &game.img->bpp, &game.img->size_line, &game.img->endian);
-// 	// mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
-// 	// mlx_hook(game.win, 33, 0, handle_close, &game);
-// 	// mlx_loop_hook(game.mlx, game_loop, &game);
-// 	// mlx_loop(game.mlx);
-// 	return 0;
-// }
+int	main(int ac, char **av)
+{
+	t_game		game;
+	(void)ac;
+	
+	game.mem = gc_init();
+	game.mlx = mlx_init();
+	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
+	//remove this
+	game.screen_width = 1920;
+	game.screen_height = 1080;
+	//////////////////////////
+	game.status = MAIN_MENU;
+	game.button_selected = 0;
+	init_player(&game);
+	parsing(av, &game);
+	game.player->x += 0.5;
+	game.player->y += 0.5;
+	set_direction(&game, 0);
+	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Raycasting 3D");
+	init_img(&game);
+	mlx_mouse_move(game.mlx, game.win, game.screen_width / 2, game.screen_height / 2);
+	// mlx_mouse_hide(game.mlx, game.win);
+	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
+	mlx_hook(game.win, 6, 1L << 6, handle_mouse_move, &game);
+	mlx_hook(game.win, 4, 1L << 2, handle_mouse_key, &game);
+	mlx_hook(game.win, 33, 0, handle_close, &game);
+	mlx_loop_hook(game.mlx, game_loop, &game);
+	mlx_loop(game.mlx);
+	return 0;
+}
