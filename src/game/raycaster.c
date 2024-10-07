@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 09:08:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/07 10:48:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,8 +161,9 @@ void	cast_rays(t_game *game)
 				else
 					side = SIDE_NORTH;
 			}
-			// if (map_x < 0 || map_y < 0 || map_x >= game->map_width || map_y >= game->map_height)
-			// 	break;
+			// printf("map[%d][%d]: %c\n", map_x, map_y, game->map[0][map_x][map_y]);
+			if (map_x < 0 || map_y < 0 || !game->map[game->player->floor][map_x] || !game->map[game->player->floor][map_x][map_y])
+				break;
 			if (game->map[game->player->floor][map_x][map_y] == '1')
 			{
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
@@ -218,6 +219,9 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 	return (0);
 }
 
+#define WIDTH_2 1920 * 0.5
+#define HEIGHT_2 1080 * 0.5
+
 int	handle_mouse_move(int x, int y, t_game *game)
 {
 	if (game->status == MAIN_MENU)
@@ -226,21 +230,23 @@ int	handle_mouse_move(int x, int y, t_game *game)
 		update_option_menu_button(game, x, y);
 	else if (game->status == SERVEURS)
 		update_multiplayer_menu(game, x, y);
-	if (game->status != PLAYING)
+	if (game->status != PLAYING || x == game->screen_width * 0.5)
 		return (0);
-	float deltaX = -(x - game->screen_width * 0.5) * ROTATION_SPEED;
-
+	int centerX = game->screen_width * 0.5;
+	int centerY = game->screen_height * 0.5;
+	int deltaX = x - centerX;
+	int deltaY = y - centerY;
+	float rotation = deltaX * ROTATION_SPEED;
 	float oldDirX = game->player->dirX;
-	game->player->dirX = oldDirX * cos(-deltaX) - game->player->dirY * sin(-deltaX);
-	game->player->dirY = oldDirX * sin(-deltaX) + game->player->dirY * cos(-deltaX);
+	game->player->dirX = oldDirX * cos(rotation) - game->player->dirY * sin(rotation);
+	game->player->dirY = oldDirX * sin(rotation) + game->player->dirY * cos(rotation);
 	float oldPlaneX = game->player->planeX;
-	game->player->planeX = oldPlaneX * cos(-deltaX) - game->player->planeY * sin(-deltaX);
-	game->player->planeY = oldPlaneX * sin(-deltaX) + game->player->planeY * cos(-deltaX);
-	mlx_mouse_move(game->mlx, game->win, game->screen_width * 0.5, game->screen_height * 0.5);
+	game->player->planeX = oldPlaneX * cos(rotation) - game->player->planeY * sin(rotation);
+	game->player->planeY = oldPlaneX * sin(rotation) + game->player->planeY * cos(rotation);
+	mlx_mouse_move(game->mlx, game->win, centerX, centerY);
 	(void)y;
 	return (0);
 }
-
 
 int	handle_keypress(int keycode, t_game *game)
 {

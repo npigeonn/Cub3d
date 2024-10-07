@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/07 01:43:22 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/07 10:49:38 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -83,6 +83,7 @@ fclean:
 	make fclean -sC $(LIBFT_DIR)
 	$(RM) $(PATH_OBJ)
 	$(RM) $(NAME)
+	$(RM) $(MINILIBX_DIR)
 
 re: fclean all
 	
