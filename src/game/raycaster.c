@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 01:46:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/07 09:08:03 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,12 +195,18 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		update_option_menu_slider(game, x, y, keycode);
 		return (0);
 	}
+	if (game->status == SERVEURS)
+	{
+		if (game->button_selected == 3)
+			game->status = MAIN_MENU;
+		return (0);
+	}
 	if (keycode == 1)
 	{
 		if (game->button_selected == 1)
 		{
 			game->status = PLAYING;
-			mlx_mouse_hide(game->mlx, game->win);
+			// mlx_mouse_hide(game->mlx, game->win);
 		}
 		else if (game->button_selected == 2)
 			game->status = SERVEURS;
@@ -215,16 +221,12 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 int	handle_mouse_move(int x, int y, t_game *game)
 {
 	if (game->status == MAIN_MENU)
-	{
 		update_main_menu_button(game, x, y);
-		return (0);
-	}
-	if (game->status == OPTIONS)
-	{
+	else if (game->status == OPTIONS)
 		update_option_menu_button(game, x, y);
-		return (0);
-	}
-	if (game->status == SERVEURS)
+	else if (game->status == SERVEURS)
+		update_multiplayer_menu(game, x, y);
+	if (game->status != PLAYING)
 		return (0);
 	float deltaX = -(x - game->screen_width * 0.5) * ROTATION_SPEED;
 

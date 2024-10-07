@@ -104,12 +104,19 @@ int		handle_mouse_key(int keycode, int x, int y, t_game *game);
 
 //menu
 void	draw_main_menu(t_game *game);
+void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y);
+void	update_option_menu_slider(t_game *game, int mouse_x, int mouse_y, int keycode);
+void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y);
+void	draw_options_menu(t_game *game);
+void	draw_multiplayer_menu(t_game *game);
 
 //draw
 void	pixel_put(t_game *game, int x, int y, int color);
 void	draw_rectangle(t_game *game, int x, int y, int width, int height, int color);
 void	draw_text(t_game *data, char *str, int x, int y, int height, int color);
-void	draw_char(t_game *data, int x, int y, int height, char c, t_image *img, int color);
+void	draw_text_left(t_game *game, char *str, int x, int y, int height, int color);
+void	draw_text_right(t_game *game, char *str, int x, int y, int height, int color);
+void	draw_char(t_game *data, int x, int y, int height, char c, int color);
 
 int		err(char *str);
 void	parsing(char **av, t_game *game);

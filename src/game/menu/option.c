@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 14:42:20 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 01:41:08 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/07 08:32:29 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y)
 }
 
 
-void	draw_slider(t_game *game, int x, int y, int width, int height, float value)
+static void	draw_slider(t_game *game, int x, int y, int width, int height, float value)
 {
 	const int	slider_width = width;
 	const int	slider_height = height * 0.33;
