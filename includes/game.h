@@ -70,29 +70,37 @@ typedef struct s_images
 	t_image	*base;
 }	t_images;
 
+
+typedef struct s_map
+{
+	int		map_width;
+	int		map_height;
+	char	***map;
+}	t_map;
+
+typedef	struct s_textures
+{
+	t_image	*zekrom;
+}	t_textures;
+
 typedef struct s_game
 {
 	t_memory_table	*mem;
 	void		*mlx;
 	void		*win;
-	char		***map;
 	int			status;
 	int			button_selected;
-	int			map_width;
-	int			map_height;
 	int			screen_width;
 	int			screen_height;
 	float		volume;
 	float		mouse_sensitivity;
+	t_map		*map;
 	t_images	*images;
 	t_player	*player;
-	t_texture	wall_texture;
-	t_texture	floor_texture;
-	t_texture	player_texture;
+	t_textures	*textures;
 
 	int			dragging;
 }	t_game;
-
 
 //game
 int		game_loop(t_game *game);

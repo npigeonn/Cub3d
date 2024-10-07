@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/01 23:37:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 10:48:04 by ybeaucou         ###   ########.fr       */
+/*   Created: 2024/10/07 12:01:18 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/10/07 13:47:05 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../includes/cub3d.h"
 
@@ -55,7 +56,7 @@ void draw_floor(t_game *game)
 		horizon = game->screen_height;
 	for (int y = horizon; y < game->screen_height; y++)
 	{
-		int color = 0xaba89f;
+		int color = 0x08c41b;
 		int shadow_factor = (y - horizon) * 255 / (game->screen_height - horizon);
 		shadow_factor = fmin(1.0f, shadow_factor);
 		int shadowed_color = ((int)((color & 0xFF0000) * shadow_factor) & 0xFF0000) |
@@ -69,8 +70,77 @@ void draw_floor(t_game *game)
 	}
 }
 
+// void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_image *texture) {
+//     float perp_wall_dist = (side == SIDE_EAST || side == SIDE_WEST)
+//         ? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
+//         : (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
+
+//     int line_height = (int)(game->screen_height / perp_wall_dist);
+//     int draw_start = (game->screen_height / 2) - (line_height / 2);
+//     int draw_end = (game->screen_height / 2) + (line_height / 2);
+
+//     // Correction de la gestion de la hauteur du joueur
+//     // draw_start -= (int)(game->player->height * line_height); 
+//     // draw_end -= (int)(game->player->height * line_height); 
+
+//     if (draw_start < 0) draw_start = 0;
+//     if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
+
+//     int tex_width = texture->width;
+//     int tex_height = texture->height;
+
+//     float wall_x;
+//     if (side == SIDE_EAST || side == SIDE_WEST) {
+//         wall_x = game->player->y + perp_wall_dist * ray_dir_y; 
+//     } else {
+//         wall_x = game->player->x + perp_wall_dist * ray_dir_x;
+//     }
+//     wall_x -= floor(wall_x);
+
+//     int tex_x = (int)(wall_x * tex_width);
+//     if ((side == SIDE_EAST || side == SIDE_WEST) && ray_dir_x < 0) tex_x = tex_width - tex_x - 1; 
+//     if ((side == SIDE_NORTH || side == SIDE_SOUTH) && ray_dir_y > 0) tex_x = tex_width - tex_x - 1; 
+
+//     for (int y = draw_start; y < draw_end; y++) {
+//         int tex_y = (int)(((y - draw_start) / (float)line_height) * tex_height);
+//         if (tex_y < 0) tex_y = 0;
+//         if (tex_y >= tex_height) tex_y = tex_height - 1;
+//         int color = texture->data[tex_y * tex_width + tex_x];
+//         pixel_put(game, x, y, color);
+//     }
+// }
+
+
+void draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height)
+{
+    if (x < 0 || x >= game->screen_width)
+        return;
+    if (draw_start < 0) draw_start = 0;
+    if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
+
+    float step = (float)texture->height / line_height; 
+    float tex_pos = (draw_start - game->screen_height / 2 + line_height / 2) * step;
+
+    for (int y = draw_start; y < draw_end; y++)
+    {
+        if (y < 0 || y >= game->screen_height)
+            return;
+        int tex_y = (int)tex_pos % texture->height;
+        tex_pos += step;
+        int texture_width = texture->width;
+        int tex_x = (int)(wall_x) % texture_width;
+        if (tex_y < 0 || tex_y >= texture->height || tex_x < 0 || tex_x >= texture_width)
+            continue;
+        int color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
+        pixel_put(game, x, y, color);
+    }
+}
+
+
 void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side)
 {
+	t_image *texture = game->textures->zekrom;
+
 	float perp_wall_dist = (side == SIDE_EAST) || (side == SIDE_WEST)
 		? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
 		: (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
@@ -84,22 +154,52 @@ void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 	if (draw_start < 0) draw_start = 0;
 	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
 
-	int color;
-	if (side == SIDE_EAST)
-		color = 0x00FFFF; // Cyan
-	else if (side == SIDE_NORTH)
-		color = 0xFF0000; // Rouge
-	else if (side == SIDE_SOUTH)
-		color = 0x0000FF; // Bleu
-	else
-		color = 0xFFFF00; // Jaune
+	float wall_x;
+	if (side == SIDE_EAST || side == SIDE_WEST) {
+		wall_x = game->player->y + perp_wall_dist * ray_dir_y; 
+	} else {
+		wall_x = game->player->x + perp_wall_dist * ray_dir_x;
+	}
+	wall_x -= floor(wall_x);
 
-	float shadow_factor = fmax(0.1f, 1.0f - (perp_wall_dist / 100.0f));
-	int shadowed_color = ((int)((color & 0xFF0000) * shadow_factor) & 0xFF0000) |
-						((int)((color & 0x00FF00) * shadow_factor) & 0x00FF00) |
-						((int)((color & 0x0000FF) * shadow_factor) & 0x0000FF);
-	draw_vertical_line(game, x, draw_start - 1, draw_end, shadowed_color);
+	int texture_width = texture->width;
+	wall_x *= texture_width;
+
+	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, wall_x, line_height);
 }
+
+
+
+// void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_image *da)
+// {
+// 	float perp_wall_dist = (side == SIDE_EAST) || (side == SIDE_WEST)
+// 		? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
+// 		: (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
+		
+// 	int line_height = (int)(game->screen_height / perp_wall_dist);
+// 	int draw_start = -line_height * 0.5 + game->screen_height * 0.5;
+// 	int draw_end = line_height * 0.5 + game->screen_height * 0.5;
+// 	draw_start -= (int)(game->player->height * line_height);
+// 	draw_end -= (int)(game->player->height * line_height);
+
+// 	if (draw_start < 0) draw_start = 0;
+// 	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
+
+// 	int color;
+// 	if (side == SIDE_EAST)
+// 		color = 0x00FFFF; // Cyan
+// 	else if (side == SIDE_NORTH)
+// 		color = 0xFF0000; // Rouge
+// 	else if (side == SIDE_SOUTH)
+// 		color = 0x0000FF; // Bleu
+// 	else
+// 		color = 0xFFFF00; // Jaune
+// 	float shadow_factor = fmax(0.1f, 1.0f - (perp_wall_dist / 100.0f));
+// 	int shadowed_color = ((int)((color & 0xFF0000) * shadow_factor) & 0xFF0000) |
+// 						((int)((color & 0x00FF00) * shadow_factor) & 0x00FF00) |
+// 						((int)((color & 0x0000FF) * shadow_factor) & 0x0000FF);
+// 	draw_vertical_line(game, x, draw_start - 1, draw_end, shadowed_color);
+// }
 
 void	cast_rays(t_game *game)
 {
@@ -161,10 +261,9 @@ void	cast_rays(t_game *game)
 				else
 					side = SIDE_NORTH;
 			}
-			// printf("map[%d][%d]: %c\n", map_x, map_y, game->map[0][map_x][map_y]);
-			if (map_x < 0 || map_y < 0 || !game->map[game->player->floor][map_x] || !game->map[game->player->floor][map_x][map_y])
-				break;
-			if (game->map[game->player->floor][map_x][map_y] == '1')
+			if (!game->map->map[game->player->floor][map_x] || !game->map->map[game->player->floor][map_x][map_y])
+				return ;
+			if (game->map->map[game->player->floor][map_x][map_y] == '1')
 			{
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
 				break;
@@ -260,7 +359,7 @@ int	handle_keypress(int keycode, t_game *game)
 	{
 		x = game->player->x + game->player->dirX * 0.1;
 		y = game->player->y + game->player->dirY * 0.1;
-		if (game->map[game->player->floor][(int)x][(int)y] == '1')
+		if (game->map->map[game->player->floor][(int)x][(int)y] == '1')
 			return (0);
 		game->player->x = x;
 		game->player->y = y;
@@ -302,7 +401,7 @@ void clear_image(t_game *game, int color)
 
 int	game_loop(t_game *game)
 {
-	mlx_clear_window(game->mlx, game->win);
+	// mlx_clear_window(game->mlx, game->win);
 	clear_image(game, 0x000000);
 	if (game->status == MAIN_MENU)
 		draw_main_menu(game);
@@ -317,7 +416,7 @@ int	game_loop(t_game *game)
 		draw_floor(game);
 	}
 	mlx_put_image_to_window(game->mlx, game->win, game->images->base->img, 0, 0);
-	if (game->map[0][(int)game->player->x][(int)game->player->y] == 'e')
+	if (game->map->map[0][(int)game->player->x][(int)game->player->y] == 'e')
 	{
 		ft_printf("VICTORY\n");
 		exit(EXIT_SUCCESS);

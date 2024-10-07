@@ -70,6 +70,11 @@ void	init_player(t_game	*game)
 	game->mouse_sensitivity = 2;
 }
 
+void	load_game_texture(t_game *game)
+{
+	load_texture(game, game->textures->zekrom, "./assets/sprites/zekrom.xpm");
+}
+
 int	main(int ac, char **av)
 {
 	t_game		game;
@@ -84,6 +89,10 @@ int	main(int ac, char **av)
 	//////////////////////////
 	game.status = MAIN_MENU;
 	game.button_selected = 0;
+	game.map = malloc(sizeof(t_map));
+
+	load_game_texture(&game);
+
 	init_player(&game);
 	parsing(av, &game);
 	game.player->x += 0.5;
