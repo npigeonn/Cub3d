@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/06 03:52:42 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/07 10:47:09 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,37 @@ int	err(char *str)
 	return (1);
 }
 
+
+int	file_dot_cub(char *file_map)
+{
+	int	i;
+
+	i = 0;
+	while (file_map[i])
+		i++;
+	if (i < 5)
+		return (0);
+	
+	return (!ft_strcmp(".cub", file_map + i - 4));
+}
+
 static int	op_in(char **av)
 {
+	int	fd;
 	if (!av[1])
 		exit(err("No map mentionned\n"));
 	if (av[2])
 		exit(err("Too many arguments\n"));
-	if (access(av[1], F_OK) != 0)
-		exit(err("This map doesn't exist\n"));
-	if (access(av[1], R_OK) != 0)
-		exit(err("Not allowed to open this file\n"));
+	if (!file_dot_cub(av[1]))
+		exit(err("File without .cub\n"));
+	fd = open(av[1], O_RDONLY);
+	if (fd <= 0)
+		exit(err("Impossible to open this file\n"));
+	close(fd);
+	fd = open(av[1], O_RDONLY | O_DIRECTORY);
+	if (fd > -1)
+		exit(err("Is a folder\n"));
+	close(fd);
 	return (0);
 }
 

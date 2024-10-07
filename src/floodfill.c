@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floodfill.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/06 14:46:05 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/07 10:24:39 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,14 +120,14 @@ void	search_departure_position(t_game *game)
 	int	j;
 	int	k;
 
-	i = 0;
-	while (game->map[i])
+	i = -1;
+	while (game->map[++i])
 	{
-		j = 0;
-		while (game->map[i][j])
+		j = -1;
+		while (game->map[i][++j])
 		{
-			k = 0;
-			while (game->map[i][j][k])
+			k = -1;
+			while (game->map[i][j][++k])
 			{
 				if (ft_strchr("EWNS", game->map[i][j][k]))
 				{
@@ -135,19 +135,29 @@ void	search_departure_position(t_game *game)
 					game->player->y = j;
 					return ;
 				}
-				k++;
 			}
-			j++;
 		}
-		i++;
 	}
+	exit(err("No player found\n"));
 }
+// verif que tous les caracteres sont possibles
+// transporteurs jumelles 
+// verif si ya qu'un seul player (NSWE)
+// clefs >= portes fermees
+// une seule sortie
+
+
+
+
+
 
 void	floodfill(t_game *game)
 {
 	search_departure_position(game);
 	if (!check_path(game, game->player->x, game->player->y))
 		exit(err("No exit...\n"));
+	// if (!check_walls(game, game->player->x, game->player->y))
+	// 	exit(err("Need wall all around the playable map\n"));
 	
 	
 }
