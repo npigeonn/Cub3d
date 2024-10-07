@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 14:42:20 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 08:32:29 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/07 22:45:15 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,10 @@ void	draw_options_menu(t_game *game)
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.25;
 
-	draw_text(game, "Volume", x + btn_width * 0.5, y - 20, btn_height * 0.5, MENU_BUTTON_COLOR);
+	draw_text(game, "Volume", x + btn_width * 0.5, y - 20, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
 	draw_slider(game, x, y + 30, btn_width, btn_height, game->volume / 100.0f); // Volume entre 0 et 100
 
-	draw_text(game, "Sensitivity", x + btn_width * 0.5, y + btn_height + spacing - 20, btn_height * 0.5, MENU_BUTTON_COLOR);
+	draw_text(game, "Sensitivity", x + btn_width * 0.5, y + btn_height + spacing - 20, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
 	draw_slider(game, x, y + btn_height + spacing + 30, btn_width, btn_height, game->mouse_sensitivity / 10.0f); // Sensibilité entre 0.1 et 10
 
 	if (game->button_selected == 3)
