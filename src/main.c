@@ -72,7 +72,17 @@ void	init_player(t_game	*game)
 
 void	load_game_texture(t_game *game)
 {
+	game->textures = malloc(sizeof(t_textures));
+	game->textures->zekrom = malloc(sizeof(t_image));
+	game->textures->artikodin = malloc(sizeof(t_image));
+	game->textures->mewtwo = malloc(sizeof(t_image));
+	game->textures->crefadet = malloc(sizeof(t_image));
+	game->textures->door = malloc(sizeof(t_image));
 	load_texture(game, game->textures->zekrom, "./assets/sprites/zekrom.xpm");
+	load_texture(game, game->textures->artikodin, "./assets/sprites/artikodin.xpm");
+	load_texture(game, game->textures->mewtwo, "./assets/sprites/mewtwo.xpm");
+	load_texture(game, game->textures->crefadet, "./assets/sprites/crefadet.xpm");
+	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
 }
 
 int	main(int ac, char **av)
@@ -95,8 +105,8 @@ int	main(int ac, char **av)
 
 	init_player(&game);
 	parsing(av, &game);
-	game.player->x += 0.5;
-	game.player->y += 0.5;
+	game.player->x = 1.5;
+	game.player->y = 1.5;
 	set_direction(&game, 0);
 	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Raycasting 3D");
 	init_img(&game);

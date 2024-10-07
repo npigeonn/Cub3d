@@ -81,6 +81,10 @@ typedef struct s_map
 typedef	struct s_textures
 {
 	t_image	*zekrom;
+	t_image	*crefadet;
+	t_image	*mewtwo;
+	t_image	*artikodin;
+	t_image	*door;
 }	t_textures;
 
 typedef struct s_game

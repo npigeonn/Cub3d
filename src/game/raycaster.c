@@ -5,15 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/07 12:01:18 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 13:47:05 by ybeaucou         ###   ########.fr       */
+/*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/10/07 15:46:58 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../includes/cub3d.h"
 
-void draw_vertical_line(t_game *game, int x, int start, int end, int color)
+void	draw_vertical_line(t_game *game, int x, int start, int end, int color)
 {
 	if (x > game->screen_width || x < 0)
 		return;
@@ -24,7 +23,7 @@ void draw_vertical_line(t_game *game, int x, int start, int end, int color)
 	}
 }
 
-void draw_ceilling(t_game *game)
+void	draw_ceilling(t_game *game)
 {
 	int horizon = (game->screen_height * 0.5) + game->player->height;
 	if (horizon < 0)
@@ -47,7 +46,7 @@ void draw_ceilling(t_game *game)
 	}
 }
 
-void draw_floor(t_game *game)
+void	draw_floor(t_game *game)
 {
 	int horizon = (game->screen_height * 0.5) + game->player->height;
 	if (horizon < 0)
@@ -70,76 +69,65 @@ void draw_floor(t_game *game)
 	}
 }
 
-// void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_image *texture) {
-//     float perp_wall_dist = (side == SIDE_EAST || side == SIDE_WEST)
-//         ? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
-//         : (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
-
-//     int line_height = (int)(game->screen_height / perp_wall_dist);
-//     int draw_start = (game->screen_height / 2) - (line_height / 2);
-//     int draw_end = (game->screen_height / 2) + (line_height / 2);
-
-//     // Correction de la gestion de la hauteur du joueur
-//     // draw_start -= (int)(game->player->height * line_height); 
-//     // draw_end -= (int)(game->player->height * line_height); 
-
-//     if (draw_start < 0) draw_start = 0;
-//     if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
-
-//     int tex_width = texture->width;
-//     int tex_height = texture->height;
-
-//     float wall_x;
-//     if (side == SIDE_EAST || side == SIDE_WEST) {
-//         wall_x = game->player->y + perp_wall_dist * ray_dir_y; 
-//     } else {
-//         wall_x = game->player->x + perp_wall_dist * ray_dir_x;
-//     }
-//     wall_x -= floor(wall_x);
-
-//     int tex_x = (int)(wall_x * tex_width);
-//     if ((side == SIDE_EAST || side == SIDE_WEST) && ray_dir_x < 0) tex_x = tex_width - tex_x - 1; 
-//     if ((side == SIDE_NORTH || side == SIDE_SOUTH) && ray_dir_y > 0) tex_x = tex_width - tex_x - 1; 
-
-//     for (int y = draw_start; y < draw_end; y++) {
-//         int tex_y = (int)(((y - draw_start) / (float)line_height) * tex_height);
-//         if (tex_y < 0) tex_y = 0;
-//         if (tex_y >= tex_height) tex_y = tex_height - 1;
-//         int color = texture->data[tex_y * tex_width + tex_x];
-//         pixel_put(game, x, y, color);
-//     }
-// }
-
-
-void draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height)
+void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height)
 {
-    if (x < 0 || x >= game->screen_width)
-        return;
-    if (draw_start < 0) draw_start = 0;
-    if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
+	if (x < 0 || x >= game->screen_width)
+		return;
+	if (draw_start < 0) draw_start = 0;
+	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
+	float step = (float)texture->height / line_height; 
+	float tex_pos = (draw_start - game->screen_height / 2 + line_height / 2 + game->player->height * line_height) * step;
 
-    float step = (float)texture->height / line_height; 
-    float tex_pos = (draw_start - game->screen_height / 2 + line_height / 2) * step;
+	for (int y = draw_start; y < draw_end; y++)
+	{
+		if (y < 0 || y >= game->screen_height)
+			return;
 
-    for (int y = draw_start; y < draw_end; y++)
-    {
-        if (y < 0 || y >= game->screen_height)
-            return;
-        int tex_y = (int)tex_pos % texture->height;
-        tex_pos += step;
-        int texture_width = texture->width;
-        int tex_x = (int)(wall_x) % texture_width;
-        if (tex_y < 0 || tex_y >= texture->height || tex_x < 0 || tex_x >= texture_width)
-            continue;
-        int color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
-        pixel_put(game, x, y, color);
-    }
+		int tex_y = (int)tex_pos % texture->height;
+		tex_pos += step;
+
+		int texture_width = texture->width;
+		int tex_x = (int)(wall_x) % texture_width;
+		if (tex_y < 0 || tex_y >= texture->height || tex_x < 0 || tex_x >= texture_width)
+			continue;
+		int color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
+		pixel_put(game, x, y, color);
+	}
+}
+
+void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side)
+{
+	t_image *door_texture = game->textures->door;
+
+	float perp_wall_dist = (side == SIDE_EAST || side == SIDE_WEST)
+		? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
+		: (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
+
+	int line_height = (int)(game->screen_height / perp_wall_dist);
+	int draw_start = -line_height * 0.5 + game->screen_height * 0.5;
+	int draw_end = line_height * 0.5 + game->screen_height * 0.5;
+
+	if (draw_start < 0) draw_start = 0;
+	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
+
+	float wall_x;
+	if (side == SIDE_EAST || side == SIDE_WEST)
+		wall_x = game->player->y + perp_wall_dist * ray_dir_y;
+	else
+		wall_x = game->player->x + perp_wall_dist * ray_dir_x;
+	wall_x -= floor(wall_x);
+
+	int texture_width = door_texture->width;
+	wall_x *= texture_width;
+
+	draw_vertical_line_with_texture(game, x, draw_start, draw_end, door_texture, wall_x, line_height);
 }
 
 
-void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side)
+
+void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side)
 {
-	t_image *texture = game->textures->zekrom;
+	t_image *texture;
 
 	float perp_wall_dist = (side == SIDE_EAST) || (side == SIDE_WEST)
 		? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
@@ -161,7 +149,14 @@ void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 		wall_x = game->player->x + perp_wall_dist * ray_dir_x;
 	}
 	wall_x -= floor(wall_x);
-
+	if (side == SIDE_EAST)
+		texture = game->textures->zekrom;
+	else if (side == SIDE_WEST)
+		texture = game->textures->crefadet;
+	else if (side == SIDE_NORTH)
+		texture = game->textures->artikodin;
+	else
+		texture = game->textures->mewtwo;
 	int texture_width = texture->width;
 	wall_x *= texture_width;
 
@@ -170,7 +165,7 @@ void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 
 
 
-// void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_image *da)
+// void	draw_wall(t_game *game, int x, int map_x, i./assets/sprites/zekrom.xpmnt map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_image *da)
 // {
 // 	float perp_wall_dist = (side == SIDE_EAST) || (side == SIDE_WEST)
 // 		? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
@@ -261,12 +256,36 @@ void	cast_rays(t_game *game)
 				else
 					side = SIDE_NORTH;
 			}
-			if (!game->map->map[game->player->floor][map_x] || !game->map->map[game->player->floor][map_x][map_y])
-				return ;
+			//TODO: change to veritable info
+			if (map_x < 0 || map_x > 21 || map_y < 0 || map_y > 21)
+				break ;
 			if (game->map->map[game->player->floor][map_x][map_y] == '1')
 			{
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
 				break;
+			}
+			if (game->map->map[game->player->floor][map_x][map_y] == 'D')
+			{
+				float perp_wall_dist = (side == SIDE_EAST) || (side == SIDE_WEST)
+					? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
+					: (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
+				float hit_position_x = game->player->x + perp_wall_dist * ray_dir_x - map_x;
+				float hit_position_y = game->player->y + perp_wall_dist * ray_dir_y - map_y;
+
+				float door_width_fraction = 0.5f;
+				float wall_fraction = (1.0f - door_width_fraction) * 0.5;
+				if ((side == SIDE_EAST || side == SIDE_WEST) && (hit_position_y >= wall_fraction && hit_position_y <= (1 - wall_fraction))) {
+					draw_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
+					break;
+				}
+				else if ((side == SIDE_NORTH || side == SIDE_SOUTH) && (hit_position_x >= wall_fraction && hit_position_x <= (1 - wall_fraction))) {
+					draw_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
+					break;
+				}
+				else {
+					draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
+					break;
+				}
 			}
 		}
 	}
@@ -359,24 +378,36 @@ int	handle_keypress(int keycode, t_game *game)
 	{
 		x = game->player->x + game->player->dirX * 0.1;
 		y = game->player->y + game->player->dirY * 0.1;
-		if (game->map->map[game->player->floor][(int)x][(int)y] == '1')
+		if (game->map->map[game->player->floor][(int)(x)][(int)(y)] == '1')
 			return (0);
 		game->player->x = x;
 		game->player->y = y;
 	}
 	if (keycode == 65364 || keycode == 115) // S pour reculer
 	{
+		x = game->player->x - game->player->dirX * 0.1;
+		y = game->player->y - game->player->dirY * 0.1;
+		if (game->map->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+			return (0);
 		game->player->x -= game->player->dirX * 0.1;
 		game->player->y -= game->player->dirY * 0.1;
 	}
 	if (keycode == 65363 || keycode == 100) // D pour aller à droite
 	{
+		x = game->player->x + game->player->planeX * 0.1;
+		y = game->player->y + game->player->planeY * 0.1;
+		if (game->map->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+			return (0);
 		game->player->x += game->player->planeX * 0.1;
 		game->player->y += game->player->planeY * 0.1;
 	}
 
 	if (keycode == 65361 || keycode == 97) // A pour aller à gauche
 	{
+		x = game->player->x - game->player->planeX * 0.1;
+		y = game->player->y - game->player->planeY * 0.1;
+		if (game->map->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+			return (0);
 		game->player->x -= game->player->planeX * 0.1;
 		game->player->y -= game->player->planeY * 0.1;
 	}
@@ -387,7 +418,7 @@ int	handle_keypress(int keycode, t_game *game)
 	return (0);
 }
 
-void clear_image(t_game *game, int color)
+void	clear_image(t_game *game, int color)
 {
 	for (int y = 0; y < game->screen_height; y++)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floodfill.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/07 10:24:39 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/07 13:48:09 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,16 +99,16 @@
 
 int    check_path(t_game *game, int x, int y)
 {
-	if (game->map[0][y][x] == 'e')
+	if (game->map->map[0][y][x] == 'e')
 		return (1);
-	game->map[0][y][x] = 'X';
-	if (game->map[0][y][x + 1] != 'X' && game->map[0][y][x + 1] != '1')
+	game->map->map[0][y][x] = 'X';
+	if (game->map->map[0][y][x + 1] != 'X' && game->map->map[0][y][x + 1] != '1')
 		return (check_path(game, x + 1, y));
-	if (game->map[0][y][x - 1] != 'X' && game->map[0][y][x - 1] != '1')
+	if (game->map->map[0][y][x - 1] != 'X' && game->map->map[0][y][x - 1] != '1')
 		return (check_path(game, x - 1, y));
-	if (game->map[0][y + 1][x] != 'X' && game->map[0][y + 1][x] != '1')
+	if (game->map->map[0][y + 1][x] != 'X' && game->map->map[0][y + 1][x] != '1')
 		return (check_path(game, x, y + 1));
-	if (game->map[0][y - 1][x] != 'X' && game->map[0][y - 1][x] != '1')
+	if (game->map->map[0][y - 1][x] != 'X' && game->map->map[0][y - 1][x] != '1')
 		return (check_path(game, x, y - 1));
 	return (0);
 	
@@ -121,15 +121,15 @@ void	search_departure_position(t_game *game)
 	int	k;
 
 	i = -1;
-	while (game->map[++i])
+	while (game->map->map[++i])
 	{
 		j = -1;
-		while (game->map[i][++j])
+		while (game->map->map[i][++j])
 		{
 			k = -1;
-			while (game->map[i][j][++k])
+			while (game->map->map[i][j][++k])
 			{
-				if (ft_strchr("EWNS", game->map[i][j][k]))
+				if (ft_strchr("EWNS", game->map->map[i][j][k]))
 				{
 					game->player->x = k;
 					game->player->y = j;
