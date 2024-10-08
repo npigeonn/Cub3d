@@ -5,6 +5,7 @@
 
 # include "mlx.h"
 # include "libft.h"
+#include <sys/time.h>
 
 enum Weapon {
 	Pistol = 0,
@@ -28,6 +29,14 @@ enum Direction {
 	SIDE_SOUTH,
 	SIDE_FLOOR,
 	SIDE_CEILING,
+};
+
+enum Message {
+	NOTHING,
+	OPEN_DOOR,
+	CLOSE_DOOR,
+	TELEPORT,
+	FINISH,
 };
 
 typedef struct s_player
@@ -87,6 +96,17 @@ typedef	struct s_textures
 	t_image	*door;
 }	t_textures;
 
+typedef	struct s_door
+{
+	int				x;
+	int				y;
+	bool			open;
+	bool			lock;
+	float			animation;
+	struct s_door	*next;
+}	t_door;
+
+
 typedef struct s_game
 {
 	t_memory_table	*mem;
@@ -98,14 +118,17 @@ typedef struct s_game
 	int			screen_height;
 	float		volume;
 	float		mouse_sensitivity;
-	// t_map		*map;
 	char		***map;
 	char 		***map_cy;
 	int			nb_floor;
+	t_door		*door;
 	t_images	*images;
 	t_player	*player;
 	t_textures	*textures;
 
+	float		delta_time;
+	struct timeval	last_time;
+	int			message;
 	int			dragging;
 }	t_game;
 
@@ -123,6 +146,7 @@ void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y);
 void	update_option_menu_slider(t_game *game, int mouse_x, int mouse_y, int keycode);
 void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y);
 void	draw_options_menu(t_game *game);
+void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y);
 void	draw_multiplayer_menu(t_game *game);
 
 //draw
@@ -132,6 +156,18 @@ void	draw_text(t_game *data, char *str, int x, int y, int height, int color);
 void	draw_text_left(t_game *game, char *str, int x, int y, int height, int color);
 void	draw_text_right(t_game *game, char *str, int x, int y, int height, int color);
 void	draw_char(t_game *data, int x, int y, int height, char c, int color);
+
+//door
+int		handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, float distance);
+void	add_door(t_game *game, int x, int y, bool lock);
+t_door	*get_door(t_game *game, int x, int y);
+void	use_door_in_view(t_game *game);
+	
+//wall
+void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side);
+void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height);
+void	draw_floor(t_game *game);
+void	draw_ceilling(t_game *game);
 
 int		err(char *str);
 void	parsing(char **av, t_game *game);

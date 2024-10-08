@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 15:34:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 08:50:32 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/08 10:37:28 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,12 @@
 void	pixel_put(t_game *game, int x, int y, int color)
 {
 	if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
-		*((int *)(game->images->base->data + y * game->images->base->size_line + x * (game->images->base->bpp / 8))) = color;
+	{
+		int	bpp = game->images->base->bpp * 0.125;
+		int	offset = y * game->images->base->size_line + x * bpp;
+		
+		*((int *)(game->images->base->data + offset)) = color;
+	}
 }
 
 int	is_pixel_transparent(t_image *img, int x, int y)
@@ -102,7 +107,7 @@ void	draw_char(t_game *game, int x, int y, int height, char c, int color)
 			original_pixel_index = ((y1 * 240 / height) + (pos_y * 240))
 				* game->images->alphanum_sprite->size_line
 				+ ((x1 * 240 / height) + (pos_x * 240))
-				* game->images->alphanum_sprite->bpp / 8;
+				* game->images->alphanum_sprite->bpp * 0.125;
 
 			if (game->images->alphanum_sprite->data[original_pixel_index] != 0)
 				pixel_put(game, x + x1, y + y1, color);
@@ -212,16 +217,24 @@ void	draw_text_right(t_game *game, char *str, int x, int y, int height, int colo
 	}
 }
 
-void	draw_rectangle(t_game *game, int x, int y, int width, int height, int color)
+void draw_rectangle(t_game *game, int x, int y, int width, int height, int color)
 {
-	int i;
-	int j;
-
-	i = -1;
-	while (++i < height)
-	{
-		j = -1;
-		while (++j < width)
-			pixel_put(game, x + j, y + i, color);
-	}
+	if (x < 0 || x >= game->screen_width || y < 0 || y >= game->screen_height)
+		return;
+	if (x + width > game->screen_width)
+		width = game->screen_width - x;
+	if (y + height > game->screen_height)
+		height = game->screen_height - y;
+		
+	int size_line = game->images->base->size_line;
+	char *data = game->images->base->data;
+	int offset_base = y * size_line + x * game->images->base->bpp * 0.125;
+	int *line_buffer = malloc(width * sizeof(int));
+	
+	if (!line_buffer) return;
+	for (int j = 0; j < width; j++)
+		line_buffer[j] = color;
+	for (int i = 0; i < height; i++)
+		ft_memcpy(data + offset_base + i * size_line, line_buffer, width * sizeof(int));
+	free(line_buffer); 
 }

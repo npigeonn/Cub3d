@@ -3,12 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/07 18:04:20 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/08 12:28:43 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
+/*
+	Quand tu parse il faut que tu ajoutes les portes a la liste chaine de game->door,
+	pour sa tu peux utiliser la fonction
+	add_door(t_game *game, int x, int y, bool lock);
+	(lock veux dire qu'il faut une clef pour l'ouvrir)
+	tu peux tester le resultat directement en jeux les portes sont fonctionnelle sauf
+	les lock qui peuvent etre ouverte sans clef
+*/
 
 #include "../includes/cub3d.h"
 

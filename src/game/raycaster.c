@@ -3,198 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 15:52:02 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/08 13:38:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
-
-void	draw_vertical_line(t_game *game, int x, int start, int end, int color)
-{
-	if (x > game->screen_width || x < 0)
-		return;
-	for (int y = start; y < end; y++)
-	{
-		if (y >= 0 && y < game->screen_height && *((int *)(game->images->base->data + y * game->images->base->size_line + x * (int)(game->images->base->bpp * 0.125))) == 0)
-			pixel_put(game, x, y, color);
-	}
-}
-
-void	draw_ceilling(t_game *game)
-{
-	int horizon = (game->screen_height * 0.5) + game->player->height;
-	if (horizon < 0)
-		horizon = 0;
-	else if (horizon > game->screen_height)
-		horizon = game->screen_height;
-	for (int y = horizon; y > 0; y--)
-	{
-		int color = 0x896542;
-		int shadow_factor = (y + horizon) * 255 / (game->screen_height + horizon);
-		shadow_factor = fmin(1.0f, shadow_factor);
-		int shadowed_color = ((int)((color & 0xFF0000) * shadow_factor) & 0xFF0000) |
-						((int)((color & 0x00FF00) * shadow_factor) & 0x00FF00) |
-						((int)((color & 0x0000FF) * shadow_factor) & 0x0000FF);
-	   for (int x = 0; x < game->screen_width; x++)
-		{
-			if (y >= 0 && y < game->screen_height && *(int *)(game->images->base->data + y * game->images->base->size_line + x * (int)(game->images->base->bpp * 0.125)) == 0)
-				pixel_put(game, x, y, shadowed_color);
-		}
-	}
-}
-
-void	draw_floor(t_game *game)
-{
-	int horizon = (game->screen_height * 0.5) + game->player->height;
-	if (horizon < 0)
-		horizon = 0;
-	else if (horizon > game->screen_height)
-		horizon = game->screen_height;
-	for (int y = horizon; y < game->screen_height; y++)
-	{
-		int color = 0x08c41b;
-		int shadow_factor = (y - horizon) * 255 / (game->screen_height - horizon);
-		shadow_factor = fmin(1.0f, shadow_factor);
-		int shadowed_color = ((int)((color & 0xFF0000) * shadow_factor) & 0xFF0000) |
-						((int)((color & 0x00FF00) * shadow_factor) & 0x00FF00) |
-						((int)((color & 0x0000FF) * shadow_factor) & 0x0000FF);
-	   for (int x = 0; x < game->screen_width; x++)
-		{
-			if (y >= 0 && y < game->screen_height && *(int *)(game->images->base->data + y * game->images->base->size_line + x * (int)(game->images->base->bpp * 0.125)) == 0)
-				pixel_put(game, x, y, shadowed_color);
-		}
-	}
-}
-
-void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height)
-{
-	if (x < 0 || x >= game->screen_width)
-		return;
-	if (draw_start < 0) draw_start = 0;
-	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
-	float step = (float)texture->height / line_height; 
-	float tex_pos = (draw_start - game->screen_height / 2 + line_height / 2 + game->player->height * line_height) * step;
-
-	for (int y = draw_start; y < draw_end; y++)
-	{
-		if (y < 0 || y >= game->screen_height)
-			return;
-
-		int tex_y = (int)tex_pos % texture->height;
-		tex_pos += step;
-
-		int texture_width = texture->width;
-		int tex_x = (int)(wall_x) % texture_width;
-		if (tex_y < 0 || tex_y >= texture->height || tex_x < 0 || tex_x >= texture_width)
-			continue;
-		int color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
-		pixel_put(game, x, y, color);
-	}
-}
-
-void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side)
-{
-	t_image *door_texture = game->textures->door;
-
-	float perp_wall_dist = (side == SIDE_EAST || side == SIDE_WEST)
-		? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
-		: (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
-
-	int line_height = (int)(game->screen_height / perp_wall_dist);
-	int draw_start = -line_height * 0.5 + game->screen_height * 0.5;
-	int draw_end = line_height * 0.5 + game->screen_height * 0.5;
-
-	if (draw_start < 0) draw_start = 0;
-	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
-
-	float wall_x;
-	if (side == SIDE_EAST || side == SIDE_WEST)
-		wall_x = game->player->y + perp_wall_dist * ray_dir_y;
-	else
-		wall_x = game->player->x + perp_wall_dist * ray_dir_x;
-	wall_x -= floor(wall_x);
-
-	int texture_width = door_texture->width;
-	wall_x *= texture_width;
-
-	draw_vertical_line_with_texture(game, x, draw_start, draw_end, door_texture, wall_x, line_height);
-}
-
-
-
-void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side)
-{
-	t_image *texture;
-
-	float perp_wall_dist = (side == SIDE_EAST) || (side == SIDE_WEST)
-		? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
-		: (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
-		
-	int line_height = (int)(game->screen_height / perp_wall_dist);
-	int draw_start = -line_height * 0.5 + game->screen_height * 0.5;
-	int draw_end = line_height * 0.5 + game->screen_height * 0.5;
-	draw_start -= (int)(game->player->height * line_height);
-	draw_end -= (int)(game->player->height * line_height);
-
-	if (draw_start < 0) draw_start = 0;
-	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
-
-	float wall_x;
-	if (side == SIDE_EAST || side == SIDE_WEST) {
-		wall_x = game->player->y + perp_wall_dist * ray_dir_y; 
-	} else {
-		wall_x = game->player->x + perp_wall_dist * ray_dir_x;
-	}
-	wall_x -= floor(wall_x);
-	if (side == SIDE_EAST)
-		texture = game->textures->zekrom;
-	else if (side == SIDE_WEST)
-		texture = game->textures->crefadet;
-	else if (side == SIDE_NORTH)
-		texture = game->textures->artikodin;
-	else
-		texture = game->textures->mewtwo;
-	int texture_width = texture->width;
-	wall_x *= texture_width;
-
-	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, wall_x, line_height);
-}
-
-
-
-// void	draw_wall(t_game *game, int x, int map_x, i./assets/sprites/zekrom.xpmnt map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_image *da)
-// {
-// 	float perp_wall_dist = (side == SIDE_EAST) || (side == SIDE_WEST)
-// 		? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
-// 		: (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
-		
-// 	int line_height = (int)(game->screen_height / perp_wall_dist);
-// 	int draw_start = -line_height * 0.5 + game->screen_height * 0.5;
-// 	int draw_end = line_height * 0.5 + game->screen_height * 0.5;
-// 	draw_start -= (int)(game->player->height * line_height);
-// 	draw_end -= (int)(game->player->height * line_height);
-
-// 	if (draw_start < 0) draw_start = 0;
-// 	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
-
-// 	int color;
-// 	if (side == SIDE_EAST)
-// 		color = 0x00FFFF; // Cyan
-// 	else if (side == SIDE_NORTH)
-// 		color = 0xFF0000; // Rouge
-// 	else if (side == SIDE_SOUTH)
-// 		color = 0x0000FF; // Bleu
-// 	else
-// 		color = 0xFFFF00; // Jaune
-// 	float shadow_factor = fmax(0.1f, 1.0f - (perp_wall_dist / 100.0f));
-// 	int shadowed_color = ((int)((color & 0xFF0000) * shadow_factor) & 0xFF0000) |
-// 						((int)((color & 0x00FF00) * shadow_factor) & 0x00FF00) |
-// 						((int)((color & 0x0000FF) * shadow_factor) & 0x0000FF);
-// 	draw_vertical_line(game, x, draw_start - 1, draw_end, shadowed_color);
-// }
 
 void	cast_rays(t_game *game)
 {
@@ -262,34 +78,15 @@ void	cast_rays(t_game *game)
 			if (game->map[game->player->floor][map_x][map_y] == '1')
 			{
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
-				break;
+				break ;
 			}
-			if (game->map[game->player->floor][map_x][map_y] == 'D')
-			{
-				float perp_wall_dist = (side == SIDE_EAST) || (side == SIDE_WEST)
-					? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
-					: (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
-				float hit_position_x = game->player->x + perp_wall_dist * ray_dir_x - map_x;
-				float hit_position_y = game->player->y + perp_wall_dist * ray_dir_y - map_y;
-
-				float door_width_fraction = 0.5f;
-				float wall_fraction = (1.0f - door_width_fraction) * 0.5;
-				if ((side == SIDE_EAST || side == SIDE_WEST) && (hit_position_y >= wall_fraction && hit_position_y <= (1 - wall_fraction))) {
-					draw_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
-					break;
-				}
-				else if ((side == SIDE_NORTH || side == SIDE_SOUTH) && (hit_position_x >= wall_fraction && hit_position_x <= (1 - wall_fraction))) {
-					draw_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
-					break;
-				}
-				else {
-					draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
-					break;
-				}
-			}
+			float distance = (side == SIDE_EAST || side == SIDE_WEST) ? side_dist_x - delta_dist_x : side_dist_y - delta_dist_y;
+			if (handle_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, distance))
+				break ;
 		}
 	}
 }
+
 int	handle_close(t_game *game)
 {
 	mlx_destroy_image(game->mlx, game->images->base->img);
@@ -325,7 +122,7 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		if (game->button_selected == 1)
 		{
 			game->status = PLAYING;
-			// mlx_mouse_hide(game->mlx, game->win);
+			mlx_mouse_hide(game->mlx, game->win);
 		}
 		else if (game->button_selected == 2)
 			game->status = SERVEURS;
@@ -336,9 +133,6 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 	}
 	return (0);
 }
-
-#define WIDTH_2 1920 * 0.5
-#define HEIGHT_2 1080 * 0.5
 
 int	handle_mouse_move(int x, int y, t_game *game)
 {
@@ -366,9 +160,29 @@ int	handle_mouse_move(int x, int y, t_game *game)
 	return (0);
 }
 
+bool	can_move(t_game *game, float x, float y)
+{
+	t_door	*door;
+
+	if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+		return (false);
+	if (game->map[game->player->floor][(int)(x)][(int)(y)] == 'D')
+	{
+		door = get_door(game, (int)x, (int)y);
+		if (!door || !door->open)
+			return (false);
+	}
+	return (true);
+}
+
+void	use_item(t_game *game)
+{
+	use_door_in_view(game);
+}
+
 int	handle_keypress(int keycode, t_game *game)
 {
-	float x, y;
+	t_player *p = game->player;
 	
 	if (keycode == 65307) // TODO a proteger pour l'instant ca segfault
 		handle_close(game);
@@ -376,45 +190,38 @@ int	handle_keypress(int keycode, t_game *game)
 		return (0);
 	if (keycode == 65362 || keycode == 119) // W pour avancer
 	{
-		x = game->player->x + game->player->dirX * 0.1;
-		y = game->player->y + game->player->dirY * 0.1;
-		if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+		if (!can_move(game, p->x + p->dirX * 0.1, p->y + p->dirY * 0.1))
 			return (0);
-		game->player->x = x;
-		game->player->y = y;
+		p->x += p->dirX * 0.1;
+		p->y += p->dirY * 0.1;
 	}
 	if (keycode == 65364 || keycode == 115) // S pour reculer
 	{
-		x = game->player->x - game->player->dirX * 0.1;
-		y = game->player->y - game->player->dirY * 0.1;
-		if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+		if (!can_move(game, p->x - p->dirX * 0.1, p->y - p->dirY * 0.1))
 			return (0);
-		game->player->x -= game->player->dirX * 0.1;
-		game->player->y -= game->player->dirY * 0.1;
+		p->x -= p->dirX * 0.1;
+		p->y -= p->dirY * 0.1;
 	}
 	if (keycode == 65363 || keycode == 100) // D pour aller à droite
 	{
-		x = game->player->x + game->player->planeX * 0.1;
-		y = game->player->y + game->player->planeY * 0.1;
-		if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+		if (!can_move(game, p->x + p->planeX * 0.1, p->y + p->planeY * 0.1))
 			return (0);
-		game->player->x += game->player->planeX * 0.1;
-		game->player->y += game->player->planeY * 0.1;
+		p->x += p->planeX * 0.1;
+		p->y += p->planeY * 0.1;
 	}
-
 	if (keycode == 65361 || keycode == 97) // A pour aller à gauche
 	{
-		x = game->player->x - game->player->planeX * 0.1;
-		y = game->player->y - game->player->planeY * 0.1;
-		if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+		if (!can_move(game, p->x - p->planeX * 0.1, p->y - p->planeY * 0.1))
 			return (0);
-		game->player->x -= game->player->planeX * 0.1;
-		game->player->y -= game->player->planeY * 0.1;
+		p->x -= p->planeX * 0.1;
+		p->y -= p->planeY * 0.1;
 	}
 	if (keycode == 32) // Espace pour sauter
-		game->player->height -= 0.1;
+		p->height -= 0.1;
 	if (keycode == 98) // b pour s'accroupir
-		game->player->height += 0.1;
+		p->height += 0.1;
+	if (keycode == 102 && game->message != NOTHING)
+		use_item(game);
 	return (0);
 }
 
@@ -430,9 +237,35 @@ void	clear_image(t_game *game, int color)
 	}	
 }
 
+void	show_message(t_game *game)
+{
+	int message_width = 350;
+	int message_height = 40;
+	int text_x = (game->screen_width - message_width) * 0.5;
+	int text_y = (game->screen_height - message_height) * 0.5 - 120;
+
+	draw_rectangle(game, text_x, text_y, message_width, message_height, MENU_BUTTON_COLOR);
+	if (game->message == OPEN_DOOR)
+		draw_text(game, "Appuyer sur F pour ouvrir", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
+	else if (game->message == CLOSE_DOOR)
+		draw_text(game, "Appuyer sur F pour fermer", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
+}
+
+void	calculate_delta_time(t_game *game)
+{
+	struct timeval current_time;
+	gettimeofday(&current_time, NULL);
+
+	float seconds = (current_time.tv_sec - game->last_time.tv_sec) +
+					(current_time.tv_usec - game->last_time.tv_usec) / 1000000.0f;
+
+	printf("%f\n", seconds);
+	game->delta_time = seconds;
+	game->last_time = current_time;
+}
+
 int	game_loop(t_game *game)
 {
-	// mlx_clear_window(game->mlx, game->win);
 	clear_image(game, 0x000000);
 	if (game->status == MAIN_MENU)
 		draw_main_menu(game);
@@ -442,9 +275,13 @@ int	game_loop(t_game *game)
 		draw_multiplayer_menu(game);
 	else if (game->status == PLAYING)
 	{
+		game->message = NOTHING;
+		calculate_delta_time(game);
 		cast_rays(game);
 		draw_ceilling(game);
 		draw_floor(game);
+		if (game->message != NOTHING)
+			show_message(game);
 	}
 	mlx_put_image_to_window(game->mlx, game->win, game->images->base->img, 0, 0);
 	if (game->map[0][(int)game->player->x][(int)game->player->y] == 'e')

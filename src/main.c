@@ -68,6 +68,7 @@ void	init_player(t_game	*game)
 	game->player->planeX = 0;
 	game->volume = 20;
 	game->mouse_sensitivity = 2;
+	game->message = NOTHING;
 }
 
 void	load_game_texture(t_game *game)
@@ -92,6 +93,8 @@ int	main(int ac, char **av)
 	
 	game.mem = gc_init();
 	game.mlx = mlx_init();
+	gettimeofday(&game.last_time, NULL);
+
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
 	//remove this
 	game.screen_width = 1920;
@@ -102,11 +105,11 @@ int	main(int ac, char **av)
 	// game.map = malloc(sizeof(t_map));
 
 	load_game_texture(&game);
-
+	add_door(&game, 1, 2, false);
 	init_player(&game);
 	parsing(av, &game);
-	game.player->x = 1.5;
-	game.player->y = 1.5;
+	game.player->x += 0.5;
+	game.player->y += 0.5;
 	set_direction(&game, 0);
 	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Raycasting 3D");
 	init_img(&game);

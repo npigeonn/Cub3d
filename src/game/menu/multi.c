@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 22:32:09 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/08 10:21:39 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 	}
 }
 
-void draw_filled_rectangle(t_game *game, int x, int y, int width, int height, int color)
+void	draw_filled_rectangle(t_game *game, int x, int y, int width, int height, int color)
 {
 	for (int i = y; i < y + height; i++)
 	{
@@ -67,7 +67,7 @@ void draw_filled_rectangle(t_game *game, int x, int y, int width, int height, in
 	}
 }
 
-void draw_arc(t_game *game, int cx, int cy, int radius, float start_angle, float end_angle, int color)
+void	draw_arc(t_game *game, int cx, int cy, int radius, float start_angle, float end_angle, int color)
 {
 	for (float angle = start_angle; angle <= end_angle; angle += 0.01)
 	{
@@ -77,7 +77,7 @@ void draw_arc(t_game *game, int cx, int cy, int radius, float start_angle, float
 	}
 }
 
-void draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, int radius, int color)
+void	draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, int radius, int color)
 {
 	if (radius > width * 0.5) radius = width * 0.5;
 	if (radius > height * 0.5) radius = height * 0.5;
@@ -104,16 +104,16 @@ void draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, i
 	}
 }
 
-void draw_multiplayer_menu(t_game *game)
+void	draw_multiplayer_menu(t_game *game)
 {
-	const int btn_width = game->screen_width * 0.25;
-	const int btn_height = game->screen_height * 0.1;
-	const int spacing = game->screen_height * 0.05;
+	const int	btn_width = game->screen_width * 0.25;
+	const int	btn_height = game->screen_height * 0.1;
+	const int	spacing = game->screen_height * 0.05;
 
-	const int list_width = game->screen_width * 0.65;
-	const int list_height = game->screen_height * 0.8;
-	const int list_x = (game->screen_width - list_width) * 0.1;
-	const int list_y = (game->screen_height - list_height) * 0.35;
+	const int	list_width = game->screen_width * 0.65;
+	const int	list_height = game->screen_height * 0.8;
+	const int	list_x = (game->screen_width - list_width) * 0.1;
+	const int	list_y = (game->screen_height - list_height) * 0.35;
 
 
 	draw_rectangle(game, list_x, list_y, list_width, list_height, MENU_BUTTON_COLOR);
