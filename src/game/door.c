@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/08 15:54:15 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/08 19:47:06 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ int	handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_
 {
 	t_door	*door;
 
-	if (game->map[game->player->floor][map_x][map_y] == 'D')
+	if (game->map[game->player->floor][map_y][map_x] == 'D')
 	{
 		door = get_door(game, map_x, map_y);
 		if (!door)
@@ -144,4 +144,28 @@ int	handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_
 		return (!door->open);
 	}
 	return (0);
+}
+
+void	door_mngmt(t_game *game)
+{
+	int	i;
+	int	j;
+	int	k;
+	
+	i = -1;
+	while (game->map[++i])
+	{
+		j = -1;
+		while (game->map[i][++j])
+		{
+			k = -1;
+			while (game->map[i][j][++k])
+			{
+				if (game->map[i][j][k] == 'L')
+					add_door(game, k, j, i, true);
+				else if (game->map[i][j][k] == 'D')
+					add_door(game, k, j, i, false);
+			}
+		}
+	}
 }

@@ -170,14 +170,31 @@ void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int dr
 void	draw_floor(t_game *game);
 void	draw_ceilling(t_game *game);
 
+// PARSING
+
 int		err(char *str);
 void	parsing(char **av, t_game *game);
 char	*get_next_line(int fd);
 void	floodfill(t_game *game);
-int		map_copy(t_game *game);
-int 	free_map_copy(t_game *game);
+int		check_path(t_game *game, int x, int y, int floor);
+void	door_mngmt(t_game *game);
+
+// walls
+int		check_walls(t_game *game, int x, int y, int floor);
+
 
 //teleporter
-int	is_a_teleporter(char c);
+int		is_a_teleporter(char c);
+void	teleportation_check(t_game *game);
+
+// map
+int		map_copy(t_game *game);
+void	map_set_up(char **av, t_game *game);
+
+// free
+int	free_map(t_game *game);
+int free_map_copy(t_game *game);
+
+
 
 #endif

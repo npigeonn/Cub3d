@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/08 13:38:55 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/08 19:39:11 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	cast_rays(t_game *game)
 			//TODO: change to veritable info
 			if (map_x < 0 || map_x > 21 || map_y < 0 || map_y > 21)
 				break ;
-			if (game->map[game->player->floor][map_x][map_y] == '1')
+			if (game->map[game->player->floor][map_y][map_x] == '1')
 			{
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
 				break ;
@@ -164,9 +164,9 @@ bool	can_move(t_game *game, float x, float y)
 {
 	t_door	*door;
 
-	if (game->map[game->player->floor][(int)(x)][(int)(y)] == '1')
+	if (game->map[game->player->floor][(int)(y)][(int)(x)] == '1')
 		return (false);
-	if (game->map[game->player->floor][(int)(x)][(int)(y)] == 'D')
+	if (game->map[game->player->floor][(int)(y)][(int)(x)] == 'D')
 	{
 		door = get_door(game, (int)x, (int)y);
 		if (!door || !door->open)
@@ -284,7 +284,7 @@ int	game_loop(t_game *game)
 			show_message(game);
 	}
 	mlx_put_image_to_window(game->mlx, game->win, game->images->base->img, 0, 0);
-	if (game->map[0][(int)game->player->x][(int)game->player->y] == 'e')
+	if (game->map[0][(int)game->player->y][(int)game->player->x] == 'e')
 	{
 		ft_printf("VICTORY\n");
 		exit(EXIT_SUCCESS);
