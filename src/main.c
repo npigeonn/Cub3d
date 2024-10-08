@@ -62,6 +62,7 @@ void	init_player(t_game	*game)
 	game->player = gc_malloc(game->mem, sizeof(t_player));
 	game->player->x = 0;
 	game->player->y = 0;
+	game->player->floor = 0;
 	game->player->height = 0;
 	game->player->dirX = 1;
 	game->player->dirY = 0;
@@ -105,7 +106,7 @@ int	main(int ac, char **av)
 	// game.map = malloc(sizeof(t_map));
 
 	load_game_texture(&game);
-	add_door(&game, 1, 2, false);
+	add_door(&game, 1, 2, 0, false);
 	init_player(&game);
 	parsing(av, &game);
 	game.player->x += 0.5;

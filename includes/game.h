@@ -100,6 +100,7 @@ typedef	struct s_door
 {
 	int				x;
 	int				y;
+	int				floor;
 	bool			open;
 	bool			lock;
 	float			animation;
@@ -159,7 +160,7 @@ void	draw_char(t_game *data, int x, int y, int height, char c, int color);
 
 //door
 int		handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, float distance);
-void	add_door(t_game *game, int x, int y, bool lock);
+void	add_door(t_game *game, int x, int y, int floor, bool lock);
 t_door	*get_door(t_game *game, int x, int y);
 void	use_door_in_view(t_game *game);
 	
@@ -175,5 +176,8 @@ char	*get_next_line(int fd);
 void	floodfill(t_game *game);
 int		map_copy(t_game *game);
 int 	free_map_copy(t_game *game);
+
+//teleporter
+int	is_a_teleporter(char c);
 
 #endif

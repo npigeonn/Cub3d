@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/08 12:28:43 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/08 15:30:21 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,40 +62,6 @@ static int	op_in(char **av)
 	close(fd);
 	return (0);
 }
-
-// void	verif_only_one(char *line)
-// {
-// 	while(*line)
-// 	{
-// 		if (ft_strcmp(*line, "1"))
-// 			exit(err("Need walls all around\n"));
-// 		line++;
-// 	}
-// }
-
-// void	verif_component_line(char *line, int *n_w_s_e)
-// {
-// 	if (ft_strcmp(*line, "1"))
-// 		exit(err("Need walls all around\n"));
-// 	while (*line)
-// 	{
-// 		if (!ft_strcmp(*line, "N") || !ft_strcmp(*line, "S")\
-// 			|| !ft_strcmp(*line, "W") || !ft_strcmp(*line, "E"))
-// 		{
-// 			(*n_w_s_e)++;
-// 			line++;
-// 			continue;
-// 		}
-// 		if (!(ft_strcmp(*line, "0") || ft_strcmp(*line, "1")\
-// 			|| ft_strcmp(*line, "2") || ft_strcmp(*line, "u")\
-// 			|| ft_strcmp(*line, "D") || ft_strcmp(*line, "d")))
-// 			exit(err("Unkown character\n"));
-// 		line++;
-// 	}
-// 	line--;
-// 	if (ft_strcmp(*line, "1"))
-// 		exit(err("Need walls all around\n"));
-// }
 
 char	*switch_line(char *line, int fd)
 {
@@ -168,8 +134,8 @@ void	map_ready(char **av, t_game *game, int floor)
 
 	fd = open(av[1], O_RDONLY);
 	line = get_next_line(fd);
-	j = 0;
-	while (j < floor)
+	j = -1;
+	while (++j < floor)
 	{
 		i = 0;
 		while (line && line[0] == '\n')
@@ -183,8 +149,8 @@ void	map_ready(char **av, t_game *game, int floor)
 			line = switch_line(line, fd);
 		}
 		game->map[j][i] = NULL;
-		j++;
 	}
+	game->map[j] = NULL;
 	close(fd);
 }
 

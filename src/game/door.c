@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   door.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/08 13:48:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/08 15:54:15 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,14 @@ void	use_door_in_view(t_game *game)
 		door->open = !door->open;
 }
 
-void	add_door(t_game *game, int x, int y, bool lock)
+void	add_door(t_game *game, int x, int y, int floor, bool lock)
 {
 	t_door *new_door;
 
 	new_door = malloc(sizeof(t_door));
 	new_door->x = x;
 	new_door->y = y;
+	new_door->floor = floor;
 	new_door->open = false;
 	new_door->lock = lock;
 	if (game->door)
