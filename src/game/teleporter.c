@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 10:55:50 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:10:59 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ void	add_teleporter(t_game *game, int x, int y, int floor)
 	tp->x1 = x;
 	tp->y1 = y;
 	tp->floor1 = floor;
-	tp->x1 = 0;
-	tp->y1 = 0;
-	tp->floor1 = 0;
+	tp->x2 = 0;
+	tp->y2 = 0;
+	tp->floor2 = 0;
 	tp->next = game->tp;
 	game->tp = tp;
 }
@@ -44,6 +44,8 @@ static t_teleporter	*get_teleporter(t_game *game, int x, int y)
 	while (current)
 	{
 		if (current->x1 == x && current->y1 == y)
+			return (current);
+		else if (current->x2 == x && current->y2 == y)
 			return (current);
 		current = current->next;
 	}
