@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:45:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/09 10:25:20 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/09 10:59:30 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,16 @@ void is_a_valid_teleporter(char c, t_game *game)
 		{
 			k = -1;
 			while (game->map[i][j][++k])
+			{
 				if (game->map[i][j][k] == c)
+				{
+					if (count == 0)
+						add_teleporter(game, k, j, i);
+					if (count == 1)
+						set_output_teleporter(game, k, j, i);
 					count++;
+				}
+			}
 		}
 	}
 	if (count != 2)
@@ -91,7 +99,7 @@ int	teleportation(t_game *game, int x, int y, int floor, char c)
 			while (game->map_cy[i][j][++k])
 				if (game->map_cy[i][j][k] == to_find
 					&& printf("game->map_cy[%d][%d][%d]\n", i, j, k))
-						return (teleport_changment(game, k, j, i, c));
+					return (teleport_changment(game, k, j, i, c));
 		}
 	}
 	return (1);
