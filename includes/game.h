@@ -139,6 +139,7 @@ typedef struct s_game
 	t_player	*player;
 	t_textures	*textures;
 
+	t_teleporter	*tp;
 	float		delta_time;
 	struct timeval	last_time;
 	int			message;
@@ -200,7 +201,7 @@ int		check_walls(t_game *game, int x, int y, int floor);
 //teleporter
 int		is_a_teleporter(char c);
 void	teleportation_check(t_game *game);
-void	use_teleporter(t_game *game, int x, int y);
+void	use_teleporter(t_game *game);
 void	set_output_teleporter(t_game *game, int x, int y, int floor);
 void	add_teleporter(t_game *game, int x, int y, int floor);
 int		teleportation(t_game *game, int x, int y, int floor, char c);

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
+#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/08 20:20:59 by npigeon          ###   ########.fr        #
+#    Updated: 2024/10/09 10:44:40 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,12 +25,13 @@ SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
 			raycaster.c \
 			draw.c \
 			door.c \
-			wall.c )
+			wall.c \
+			teleporter.c )
 
 SRC_MENU =	$(addprefix $(PATH_SRC)/game/menu/, \
 			main.c \
 			option.c \
-			multi.c )
+			multi.c)
 
 SRC_ALONE =	$(addprefix $(PATH_SRC), \
 			main.c )

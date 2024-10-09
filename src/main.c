@@ -105,6 +105,7 @@ int	main(int ac, char **av)
 	game.button_selected = 0;
 	// game.map = malloc(sizeof(t_map));
 	game.door = NULL;
+	game.tp = NULL;
 	load_game_texture(&game);
 	// add_door(&game, 2, 10, 0, false);
 	init_player(&game);
