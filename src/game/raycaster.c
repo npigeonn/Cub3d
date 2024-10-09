@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 10:43:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/09 10:49:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,13 +291,13 @@ int	game_loop(t_game *game)
 		cast_rays(game);
 		draw_ceilling(game);
 		draw_floor(game);
-		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->x][(int)game->player->y]))
+		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
 			game->message = TELEPORT;
 		if (game->message != NOTHING)
 			show_message(game);
 	}
 	mlx_put_image_to_window(game->mlx, game->win, game->images->base->img, 0, 0);
-	if (game->map[0][(int)game->player->y][(int)game->player->x] == 'e')
+	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'e')
 	{
 		ft_printf("VICTORY\n");
 		exit(EXIT_SUCCESS);
