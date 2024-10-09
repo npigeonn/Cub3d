@@ -105,16 +105,20 @@ void	init_player(t_game	*game)
 void	load_game_texture(t_game *game)
 {
 	game->textures = malloc(sizeof(t_textures));
-	game->textures->zekrom = malloc(sizeof(t_image));
-	game->textures->artikodin = malloc(sizeof(t_image));
-	game->textures->mewtwo = malloc(sizeof(t_image));
-	game->textures->crefadet = malloc(sizeof(t_image));
+	game->textures->east = malloc(sizeof(t_image));
+	game->textures->north = malloc(sizeof(t_image));
+	game->textures->sud = malloc(sizeof(t_image));
+	game->textures->west = malloc(sizeof(t_image));
 	game->textures->door = malloc(sizeof(t_image));
-	load_texture(game, game->textures->zekrom, "./assets/sprites/zekrom.xpm");
-	load_texture(game, game->textures->artikodin, "./assets/sprites/artikodin.xpm");
-	load_texture(game, game->textures->mewtwo, "./assets/sprites/mewtwo.xpm");
-	load_texture(game, game->textures->crefadet, "./assets/sprites/crefadet.xpm");
+	game->textures->tp = malloc(sizeof(t_image));
+	game->textures->floor = malloc(sizeof(t_image));
+	load_texture(game, game->textures->east, "./assets/sprites/zekrom.xpm");
+	load_texture(game, game->textures->north, "./assets/sprites/artikodin.xpm");
+	load_texture(game, game->textures->sud, "./assets/sprites/mewtwo.xpm");
+	load_texture(game, game->textures->west, "./assets/sprites/crefadet.xpm");
 	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
+	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");
+	load_texture(game, game->textures->floor, "./assets/sprites/floor.xpm");
 }
 
 int	main(int ac, char **av)

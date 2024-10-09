@@ -89,12 +89,23 @@ typedef struct s_map
 
 typedef	struct s_textures
 {
-	t_image	*zekrom;
-	t_image	*crefadet;
-	t_image	*mewtwo;
-	t_image	*artikodin;
+	t_image	*east;
+	t_image	*west;
+	t_image	*sud;
+	t_image	*north;
 	t_image	*door;
+	t_image	*tp;
+	t_image	*floor;
+	t_image	*ceil;
 }	t_textures;
+
+typedef struct s_prite
+{
+	t_image		*texture;
+	int			x;
+	int			y;
+	int 		floor;
+}	t_sprite;
 
 typedef	struct s_door
 {
@@ -110,11 +121,11 @@ typedef	struct s_door
 
 typedef	struct s_teleporter
 {
-	int					x1;
-	int					y1;
+	float				x1;
+	float				y1;
 	int					floor1;
-	int					x2;
-	int					y2;
+	float				x2;
+	float				y2;
 	int					floor2;
 	struct s_teleporter	*next;
 }	t_teleporter;
@@ -123,27 +134,28 @@ typedef	struct s_teleporter
 typedef struct s_game
 {
 	t_memory_table	*mem;
-	void		*mlx;
-	void		*win;
-	int			status;
-	int			button_selected;
-	int			screen_width;
-	int			screen_height;
-	float		volume;
-	float		mouse_sensitivity;
-	char		***map;
-	char 		***map_cy;
-	int			nb_floor;
-	t_door		*door;
-	t_images	*images;
-	t_player	*player;
-	t_textures	*textures;
+	void			*mlx;
+	void			*win;
+	int				status;
+	int				button_selected;
+	int				screen_width;
+	int				screen_height;
+	float			volume;
+	float			mouse_sensitivity;
+	char			***map;
+	char 			***map_cy;
+	int				nb_floor;
+	t_door			*door;
+	t_images		*images;
+	t_player		*player;
+	t_textures		*textures;
 
+	float			wall_distances[1920];
 	t_teleporter	*tp;
-	float		delta_time;
+	float			delta_time;
 	struct timeval	last_time;
-	int			message;
-	int			dragging;
+	int				message;
+	int				dragging;
 }	t_game;
 
 //game
@@ -175,7 +187,7 @@ void	draw_char(t_game *data, int x, int y, int height, char c, int color);
 //door
 int		handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, float distance);
 void	add_door(t_game *game, int x, int y, int floor, bool lock);
-t_door	*get_door(t_game *game, int x, int y);
+t_door	*get_door(t_game *game, int x, int y, int floor);
 void	use_door_in_view(t_game *game);
 void	update_door_animation(t_game *game);
 	

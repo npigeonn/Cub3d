@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:17:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 09:39:55 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:46:03 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,15 +120,16 @@ void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 	}
 	wall_x -= floor(wall_x);
 	if (side == SIDE_EAST)
-		texture = game->textures->zekrom;
+		texture = game->textures->east;
 	else if (side == SIDE_WEST)
-		texture = game->textures->crefadet;
+		texture = game->textures->west;
 	else if (side == SIDE_NORTH)
-		texture = game->textures->artikodin;
+		texture = game->textures->north;
 	else
-		texture = game->textures->mewtwo;
+		texture = game->textures->sud;
 	int texture_width = texture->width;
 	wall_x *= texture_width;
 
+	game->wall_distances[x] = perp_wall_dist;
 	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, wall_x, line_height);
 }

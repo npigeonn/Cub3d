@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 10:49:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:45:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,17 @@ void	cast_rays(t_game *game)
 				else
 					side = SIDE_NORTH;
 			}
-			//TODO: change to veritable info
-			if (map_x < 0 || map_x > 21 || map_y < 0 || map_y > 21)
-				break ;
 			if (game->map[game->player->floor][map_y][map_x] == '1')
 			{
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
 				break ;
 			}
+			// if (game->map[game->player->floor][map_y][map_x] == '0')
+			// {
+			// 	// draw_floor2(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
+			// 	//draw_floor here
+			// 	break;
+			// }
 			float distance = (side == SIDE_EAST || side == SIDE_WEST) ? side_dist_x - delta_dist_x : side_dist_y - delta_dist_y;
 			if (handle_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, distance))
 				break ;
@@ -177,7 +180,7 @@ bool	can_move(t_game *game, float x, float y)
 		return (false);
 	if (game->map[game->player->floor][(int)(y)][(int)(x)] == 'D')
 	{
-		door = get_door(game, (int)x, (int)y);
+		door = get_door(game, (int)x, (int)y, game->player->floor);
 		if (!door || !door->open)
 			return (false);
 	}
@@ -249,18 +252,21 @@ void	clear_image(t_game *game, int color)
 
 void	show_message(t_game *game)
 {
-	int message_width = 350;
-	int message_height = 40;
-	int text_x = (game->screen_width - message_width) * 0.5;
-	int text_y = (game->screen_height - message_height) * 0.5 - 120;
+	int width = 350;
+	int height = 40;
+	int text_x = (game->screen_width - width) * 0.5;
+	int text_y = (game->screen_height - height) * 0.5 - 120;
 
-	draw_rectangle(game, text_x, text_y, message_width, message_height, MENU_BUTTON_COLOR);
+	draw_rectangle(game, text_x, text_y, width, height, MENU_BUTTON_COLOR);
 	if (game->message == OPEN_DOOR)
 		draw_text(game, "Appuyer sur F pour ouvrir", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
 	else if (game->message == CLOSE_DOOR)
 		draw_text(game, "Appuyer sur F pour fermer", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
 	else if (game->message == TELEPORT)
+	{
+		draw_rectangle(game, text_x - 40, text_y, width + 80, height, MENU_BUTTON_COLOR);
 		draw_text(game, "Appuyer sur F pour vous teleportez", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
+	}
 }
 
 void	calculate_delta_time(t_game *game)
@@ -291,6 +297,7 @@ int	game_loop(t_game *game)
 		cast_rays(game);
 		draw_ceilling(game);
 		draw_floor(game);
+		draw_sprites(game);
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
 			game->message = TELEPORT;
 		if (game->message != NOTHING)

@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/09 10:44:40 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/09 13:35:32 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,8 @@ SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
 			draw.c \
 			door.c \
 			wall.c \
-			teleporter.c )
+			teleporter.c \
+			sprite.c)
 
 SRC_MENU =	$(addprefix $(PATH_SRC)/game/menu/, \
 			main.c \

@@ -6,13 +6,13 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 09:44:10 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/09 14:59:00 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-t_door	*get_door(t_game *game, int x, int y)
+t_door	*get_door(t_game *game, int x, int y, int floor)
 {
 	t_door	*current;
 
@@ -21,7 +21,8 @@ t_door	*get_door(t_game *game, int x, int y)
 		return (NULL);
 	while (current)
 	{
-		if (current->x == x && current->y == y)
+		// printf("%d, %d\n", (int)x, (int)y);
+		if ((int)current->x == x && (int)current->y == y && current->floor == floor)
 			return (current);
 		current = current->next;
 	}
@@ -32,26 +33,21 @@ void	use_door_in_view(t_game *game)
 {
 	const t_player	*player = game->player;
 	t_door			*door;
-	float			x;
-	float			y;
-	float			distance;
+	int				x;
+	int				y;
+	float			distance = 1;
 
 	if (game->message != CLOSE_DOOR && game->message != OPEN_DOOR)
 		return ;
-	x = player->x;
-	y = player->y;
-	if ((int)player->dirX == 1 && (int)player->dirY == 0)
-		x++;
-	if ((int)player->dirX == -1 && (int)player->dirY == 0)
-		x--;
-	if ((int)player->dirX == 0 && (int)player->dirY == 0)
-		y++;
-	if ((int)player->dirX == 0 && (int)player->dirY == -1)
-		y--;
-	door = get_door(game, (int)x, (int)y);
+
+	x = (int)(player->x + player->dirX * distance);
+	y = (int)(player->y + player->dirY * distance);
+
+	door = get_door(game, x, y, player->floor);
 	if (door)
 		door->open = !door->open;
 }
+
 
 
 void	add_door(t_game *game, int x, int y, int floor, bool lock)
@@ -93,6 +89,7 @@ void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 	} else {
 		wall_x = game->player->x + perp_wall_dist * ray_dir_x;
 	}
+	
 	wall_x -= floor(wall_x);
 		
 	int texture_width = texture->width;
@@ -135,7 +132,7 @@ int	handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_
 
 	if (game->map[game->player->floor][map_y][map_x] == 'D')
 	{
-		door = get_door(game, map_x, map_y);
+		door = get_door(game, map_x, map_y, game->player->floor);
 		if (!door)
 			return (0);
 		draw_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, door);
