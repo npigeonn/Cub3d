@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:17:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/08 10:18:24 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/09 09:39:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ void	draw_ceilling(t_game *game)
 						((int)((color & 0x0000FF) * shadow_factor) & 0x0000FF);
 	   for (int x = 0; x < game->screen_width; x++)
 		{
-			if (y >= 0 && y < game->screen_height && *(int *)(game->images->base->data + y * game->images->base->size_line + x * (int)(game->images->base->bpp * 0.125)) == 0)
-				pixel_put(game, x, y, shadowed_color);
+			if (y >= 0 && y < game->screen_height)
+				secure_pixel_put(game, x, y, shadowed_color);
 		}
 	}
 }
@@ -63,8 +63,8 @@ void	draw_floor(t_game *game)
 						((int)((color & 0x0000FF) * shadow_factor) & 0x0000FF);
 	   for (int x = 0; x < game->screen_width; x++)
 		{
-			if (y >= 0 && y < game->screen_height && *(int *)(game->images->base->data + y * game->images->base->size_line + x * (int)(game->images->base->bpp * 0.125)) == 0)
-				pixel_put(game, x, y, shadowed_color);
+			if (y >= 0 && y < game->screen_height)
+				secure_pixel_put(game, x, y, shadowed_color);
 		}
 	}
 }
@@ -91,7 +91,7 @@ void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int dr
 		if (tex_y < 0 || tex_y >= texture->height || tex_x < 0 || tex_x >= texture_width)
 			continue;
 		int color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
-		pixel_put(game, x, y, color);
+		secure_pixel_put(game, x, y, color);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 15:34:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/08 10:37:28 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/09 09:39:56 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,18 @@ void	pixel_put(t_game *game, int x, int y, int color)
 		int	offset = y * game->images->base->size_line + x * bpp;
 		
 		*((int *)(game->images->base->data + offset)) = color;
+	}
+}
+
+void	secure_pixel_put(t_game *game, int x, int y, int color)
+{
+	if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
+	{
+		int	bpp = game->images->base->bpp * 0.125;
+		int	offset = y * game->images->base->size_line + x * bpp;
+		
+		if (*((int *)(game->images->base->data + offset)) == 0)
+			*((int *)(game->images->base->data + offset)) = color;
 	}
 }
 

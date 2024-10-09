@@ -152,6 +152,7 @@ void	draw_multiplayer_menu(t_game *game);
 
 //draw
 void	pixel_put(t_game *game, int x, int y, int color);
+void	secure_pixel_put(t_game *game, int x, int y, int color);
 void	draw_rectangle(t_game *game, int x, int y, int width, int height, int color);
 void	draw_text(t_game *data, char *str, int x, int y, int height, int color);
 void	draw_text_left(t_game *game, char *str, int x, int y, int height, int color);
@@ -163,6 +164,7 @@ int		handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step
 void	add_door(t_game *game, int x, int y, int floor, bool lock);
 t_door	*get_door(t_game *game, int x, int y);
 void	use_door_in_view(t_game *game);
+void	update_door_animation(t_game *game);
 	
 //wall
 void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side);
@@ -186,6 +188,9 @@ int		check_walls(t_game *game, int x, int y, int floor);
 //teleporter
 int		is_a_teleporter(char c);
 void	teleportation_check(t_game *game);
+void	use_teleporter(t_game *game, int x, int y);
+void	set_output_teleporter(t_game *game, int x, int y, int floor);
+void	add_teleporter(t_game *game, int x, int y, int floor);
 
 // map
 int		map_copy(t_game *game);

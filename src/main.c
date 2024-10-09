@@ -104,9 +104,9 @@ int	main(int ac, char **av)
 	game.status = MAIN_MENU;
 	game.button_selected = 0;
 	// game.map = malloc(sizeof(t_map));
-
+	game.door = NULL;
 	load_game_texture(&game);
-	add_door(&game, 1, 2, 0, false);
+	// add_door(&game, 2, 10, 0, false);
 	init_player(&game);
 	parsing(av, &game);
 	game.player->x += 0.5;

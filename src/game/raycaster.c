@@ -3,12 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/08 19:39:11 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/09 10:19:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/*
+	Si ray_dir_x = 1 et ray_dir_y = 0, le joueur regarde vers l'Est.
+	Si ray_dir_x = -1 et ray_dir_y = 0, le joueur regarde vers l'Ouest.
+	Si ray_dir_x = 0 et ray_dir_y = 1, il regarde vers le Sud.
+	Si ray_dir_x = 0 et ray_dir_y = -1, il regarde vers le Nord.
+*/
 
 #include "../../includes/cub3d.h"
 
@@ -178,13 +185,14 @@ bool	can_move(t_game *game, float x, float y)
 void	use_item(t_game *game)
 {
 	use_door_in_view(game);
+	use_teleporter(game);
 }
 
 int	handle_keypress(int keycode, t_game *game)
 {
 	t_player *p = game->player;
 	
-	if (keycode == 65307) // TODO a proteger pour l'instant ca segfault
+	if (keycode == 65307)
 		handle_close(game);
 	if (game->status != PLAYING)
 		return (0);
@@ -220,7 +228,7 @@ int	handle_keypress(int keycode, t_game *game)
 		p->height -= 0.1;
 	if (keycode == 98) // b pour s'accroupir
 		p->height += 0.1;
-	if (keycode == 102 && game->message != NOTHING)
+	if (keycode == 102)
 		use_item(game);
 	return (0);
 }
@@ -249,6 +257,8 @@ void	show_message(t_game *game)
 		draw_text(game, "Appuyer sur F pour ouvrir", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
 	else if (game->message == CLOSE_DOOR)
 		draw_text(game, "Appuyer sur F pour fermer", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
+	else if (game->message == TELEPORT)
+		draw_text(game, "Appuyer sur F pour vous teleportez", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
 }
 
 void	calculate_delta_time(t_game *game)
@@ -258,8 +268,6 @@ void	calculate_delta_time(t_game *game)
 
 	float seconds = (current_time.tv_sec - game->last_time.tv_sec) +
 					(current_time.tv_usec - game->last_time.tv_usec) / 1000000.0f;
-
-	printf("%f\n", seconds);
 	game->delta_time = seconds;
 	game->last_time = current_time;
 }
@@ -277,9 +285,12 @@ int	game_loop(t_game *game)
 	{
 		game->message = NOTHING;
 		calculate_delta_time(game);
+		update_door_animation(game);
 		cast_rays(game);
 		draw_ceilling(game);
 		draw_floor(game);
+		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->x][(int)game->player->y]))
+			game->message = TELEPORT;
 		if (game->message != NOTHING)
 			show_message(game);
 	}

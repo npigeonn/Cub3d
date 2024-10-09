@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   door.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/08 19:47:06 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/09 09:44:10 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ t_door	*get_door(t_game *game, int x, int y)
 	t_door	*current;
 
 	current = game->door;
-	if (!current)
+	if (!game->door)
 		return (NULL);
 	while (current)
 	{
@@ -30,25 +30,29 @@ t_door	*get_door(t_game *game, int x, int y)
 
 void	use_door_in_view(t_game *game)
 {
-	const t_player *player = game->player;
-	
-	float dirX = player->dirX;
-	float dirY = player->dirY;
+	const t_player	*player = game->player;
+	t_door			*door;
+	float			x;
+	float			y;
+	float			distance;
 
-	float length = sqrt(dirX * dirX + dirY * dirY);
-	if (length != 0)
-	{
-		dirX /= length;
-		dirY /= length;
-	}
-	float door_check_distance = 0.3f;
-	float checkX = player->x + dirX * door_check_distance;
-	float checkY = player->y + dirY * door_check_distance;
-	
-	t_door *door = get_door(game, 1, 2);
+	if (game->message != CLOSE_DOOR && game->message != OPEN_DOOR)
+		return ;
+	x = player->x;
+	y = player->y;
+	if ((int)player->dirX == 1 && (int)player->dirY == 0)
+		x++;
+	if ((int)player->dirX == -1 && (int)player->dirY == 0)
+		x--;
+	if ((int)player->dirX == 0 && (int)player->dirY == 0)
+		y++;
+	if ((int)player->dirX == 0 && (int)player->dirY == -1)
+		y--;
+	door = get_door(game, (int)x, (int)y);
 	if (door)
 		door->open = !door->open;
 }
+
 
 void	add_door(t_game *game, int x, int y, int floor, bool lock)
 {
@@ -60,9 +64,9 @@ void	add_door(t_game *game, int x, int y, int floor, bool lock)
 	new_door->floor = floor;
 	new_door->open = false;
 	new_door->lock = lock;
-	if (game->door)
-		new_door->next = game->door;
-	game->door = new_door;
+	new_door->animation = 0;
+    new_door->next = game->door;
+    game->door = new_door;
 }
 
 void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_door *door)
@@ -101,23 +105,29 @@ void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 		draw_vertical_line_with_texture(game, x, animated_draw_start, draw_end, texture, wall_x, line_height);
 }
 
-
-void update_door_animation(t_door *door, float delta_time)
+void	update_door_animation(t_game *game)
 {
-	if (door->open)
+	t_door	*current;
+
+	current = game->door;
+	if (current)
+	while (current)
 	{
-		door->animation += 0.0005 * delta_time;
-		if (door->animation > 1.0f)
-			door->animation = 1.0f;
-	}
-	else
-	{
-		door->animation -= 0.0005 * delta_time;
-		if (door->animation < 0.0f)
-			door->animation = 0.0f;
+		if (current->open)
+		{
+			current->animation += 0.2 * game->delta_time;
+			if (current->animation > 1.0)
+				current->animation = 1.0;
+		}
+		else
+		{
+			current->animation -= 0.2 * game->delta_time;
+			if (current->animation < 0.0)
+				current->animation = 0.0;
+		}
+		current = current->next;
 	}
 }
-
 
 int	handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, float distance)
 {
@@ -128,7 +138,6 @@ int	handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_
 		door = get_door(game, map_x, map_y);
 		if (!door)
 			return (0);
-		update_door_animation(door, game->delta_time);
 		draw_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, door);
 		if (distance < 0.4f)
 		{
@@ -137,11 +146,6 @@ int	handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_
 			else
 				game->message = OPEN_DOOR;
 		}
-		// if (!door->open && door->animation <= 1)
-		// 	return (0);
-		// if (!door->open)
-		// 	return (1);
-		return (!door->open);
 	}
 	return (0);
 }
