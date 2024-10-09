@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 10:19:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/09 10:41:10 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 /*
 	Si ray_dir_x = 1 et ray_dir_y = 0, le joueur regarde vers l'Est.
@@ -100,6 +101,7 @@ int	handle_close(t_game *game)
 	mlx_destroy_image(game->mlx, game->images->alphanum_sprite->img);
 	mlx_destroy_window(game->mlx, game->win);
 	mlx_destroy_display(game->mlx);
+	free_map(game);
 	gc_free(game->mem, game->images->base);
 	gc_free(game->mem, game->images->alphanum_sprite);
 	free(game->mlx);

@@ -108,6 +108,18 @@ typedef	struct s_door
 }	t_door;
 
 
+typedef	struct s_teleporter
+{
+	int					x1;
+	int					y1;
+	int					floor1;
+	int					x2;
+	int					y2;
+	int					floor2;
+	struct s_teleporter	*next;
+}	t_teleporter;
+
+
 typedef struct s_game
 {
 	t_memory_table	*mem;
@@ -191,6 +203,7 @@ void	teleportation_check(t_game *game);
 void	use_teleporter(t_game *game, int x, int y);
 void	set_output_teleporter(t_game *game, int x, int y, int floor);
 void	add_teleporter(t_game *game, int x, int y, int floor);
+int		teleportation(t_game *game, int x, int y, int floor, char c);
 
 // map
 int		map_copy(t_game *game);

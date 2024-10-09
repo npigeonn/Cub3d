@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/08 20:02:04 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/09 09:42:12 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 	(lock veux dire qu'il faut une clef pour l'ouvrir)
 	tu peux tester le resultat directement en jeux les portes sont fonctionnelle sauf
 	les lock qui peuvent etre ouverte sans clef
+
+
+	PLUSIEURS SORTIES...	
 */
 
 #include "../../includes/cub3d.h"

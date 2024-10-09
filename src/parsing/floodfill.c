@@ -6,10 +6,9 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/08 20:03:52 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/09 10:36:50 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../../includes/cub3d.h"
 
@@ -21,46 +20,13 @@ int	check_allowed_char(t_game *game, int floor, int x, int y)
 	return (1);
 }
 
-int teleport_changment(t_game *game, int x, int y, int floor, char c)
-{
-	if (c == 'w')
-		return (check_walls(game, x, y, floor));
-	if (c == 'p')
-		return (check_path(game, x, y, floor));
-	return (0);
-}
-int	teleportation(t_game *game, int x, int y, int floor, char c)
-{
-	int	i;
-	int	j;
-	int	k;
-	char to_find;
-
-	to_find = game->map_cy[floor][y][x];
-	i = -1;
-	while (game->map_cy[++i])
-	{
-		j = -1;
-		while (game->map_cy[i][++j])
-		{
-			k = -1;
-			while (game->map_cy[i][j][++k])
-				if (game->map_cy[i][j][k] == to_find
-					&& !(i == floor && j == y && k == x)
-					&& !teleport_changment(game, k, j, i, c))
-						return (0);
-		}
-	}
-	return (1);
-}
-
 int	check_walls(t_game *game, int x, int y, int floor)
 {
 	if (x < 0 || y < 0 || !game->map_cy[floor][y]
 		|| x >= (int)ft_strlen(game->map_cy[floor][y]))
-		return (free_map_copy(game), 0);
+		return (0); //free_map_copy(game),
 	if (!check_allowed_char(game, floor, x, y))
-		return (free_map_copy(game), 0);
+		return (0);//free_map_copy(game),
 	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1')
 		return (1); // Already visited or wall
 	if (is_a_teleporter(game->map_cy[floor][y][x])
@@ -82,14 +48,14 @@ int	check_path(t_game *game, int x, int y, int floor)
 {
 	if (x < 0 || y < 0 || !game->map_cy[floor][y]
 		|| x >= (int)ft_strlen(game->map_cy[floor][y]))
-		return (free_map_copy(game), 0);
+		return (0); // free_map_copy(game), 
 	if (game->map_cy[floor][y][x] == 'e') 
-		return (free_map_copy(game), 1); // Exit found
+		return (1); // free_map_copy(game),  // Exit found
 	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1')
 		return (0); // Already visited or wall
 	if (is_a_teleporter(game->map_cy[floor][y][x])
-	&& !teleportation(game, x, y, floor, 'w'))
-		return (0); // TODO peutetre modif a 0; game->map_cy[floor][y][x] = '0';
+	&& !teleportation(game, x, y, floor, 'p'))
+		return (1); // TODO peutetre modif a 0; game->map_cy[floor][y][x] = '0';
 	game->map_cy[floor][y][x] = 'X'; // Mark visited
 	if (check_path(game, x + 1, y, floor))
 		return (1); // Right
@@ -165,9 +131,17 @@ void floodfill(t_game *game)
 	printf("player pos %d and %d\n", (int)game->player->x, (int)game->player->y);
 	teleportation_check(game);
 	if (!map_copy(game) || !check_walls(game, (int)game->player->x, (int)game->player->y, game->player->floor))
+	{
+		free_map_copy(game);
 		exit(err("Need walls all around the playable map\n"));
+	}	
+	free_map_copy(game);
 	if (!map_copy(game) || !check_path(game, game->player->x, game->player->y, game->player->floor))
+	{
+		free_map_copy(game);
 		exit(err("No exit...\n"));
+	}
+	free_map_copy(game);
 	door_mngmt(game);
 	printf("player pos %d and %d\n", (int)game->player->x, (int)game->player->y);
 
