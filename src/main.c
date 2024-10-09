@@ -12,14 +12,44 @@
 
 // # include "include/game.h"
 
-// // mettre des textures sur les murs / toit/ sol
-// // crafting d'image
-// // pouvoir se deplacer seulement avec les fleches
-// // gestion de la souris
-// // gestion des sauts
-// // gestion de la vie et des armes
-// // gestion de la minimap
-// // gerer le parsing, map trop grande /mal cerclee ...
+// mettre des textures sur les toit/ sol
+// gestion des sauts
+// gestion de la vie et des armes
+// gestion de la minimap
+// gerer le parsing, map trop grande /mal cerclee ...
+// gerer l'image sortie / ennemi / animation de sortie / hud
+// munitions / cle
+
+
+/* 
+MODES DE JEU
+
+sortir solo multi
+melee generale multi infini ou avec une lim de kill
+melee fornite
+
+9-11  
+N : parsing gestion des cles
+Y : mob ennemi/teleporteur/sortie/munition /cles / affichage pero
+
+
+14-19 
+N : gestion mode de jeu
+	preparer des maps
+	gere la minimap
+	gestion des armes / vie / munitions 
+
+Y :	mettre les textures toit/ sol
+	animations teleportation/ perte de vie / sortie
+
+	gestion des attaques ennemies 
+
+	serveur multijoueur
+*/
+
+
+
+
 
 #include <mlx.h>
 #include <stdio.h>

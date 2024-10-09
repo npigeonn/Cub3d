@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/09 10:36:50 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/09 11:39:34 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	check_path(t_game *game, int x, int y, int floor)
 	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1')
 		return (0); // Already visited or wall
 	if (is_a_teleporter(game->map_cy[floor][y][x])
-	&& !teleportation(game, x, y, floor, 'p'))
+	&& teleportation(game, x, y, floor, 'p'))
 		return (1); // TODO peutetre modif a 0; game->map_cy[floor][y][x] = '0';
 	game->map_cy[floor][y][x] = 'X'; // Mark visited
 	if (check_path(game, x + 1, y, floor))

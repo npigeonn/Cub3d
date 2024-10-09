@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:45:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/09 10:59:30 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/09 12:18:17 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,14 @@ void	teleportation_check(t_game *game)
 
 int teleport_changment(t_game *game, int x, int y, int floor, char c)
 {
-	if (c == 'w')
-		return (check_walls(game, x, y, floor));
+	if (c == 'w' && !check_walls(game, x, y, floor))
+		return (0);
+	if (c == 'p' && check_path(game, x, y, floor))
+		return (printf("issu\n"), 1);
 	if (c == 'p')
-		return (check_path(game, x, y, floor));
-	return (0);
+		return (printf("pas d'issu\n"), 0);
+	else
+		return (1);
 }
 int	teleportation(t_game *game, int x, int y, int floor, char c)
 {
@@ -97,9 +100,8 @@ int	teleportation(t_game *game, int x, int y, int floor, char c)
 		{
 			k = -1;
 			while (game->map_cy[i][j][++k])
-				if (game->map_cy[i][j][k] == to_find
-					&& printf("game->map_cy[%d][%d][%d]\n", i, j, k))
-					return (teleport_changment(game, k, j, i, c));
+				if (game->map_cy[i][j][k] == to_find)
+					return (game->map_cy[i][j][k] = '0', teleport_changment(game, k, j, i, c));
 		}
 	}
 	return (1);
