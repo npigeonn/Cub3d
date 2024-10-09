@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
+#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/09 13:35:32 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/09 19:04:25 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,6 +42,7 @@ SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
 				parsing.c \
 				teleportation.c \
 				floodfill.c \
+				textures.c \
 				map_crafting.c )
 
 SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING)

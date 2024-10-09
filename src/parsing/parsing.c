@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/09 09:42:12 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/09 18:56:36 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,16 @@
 
 
 	PLUSIEURS SORTIES...	
+	des teleporteurs jumellees
+	nb_keys >= nb_door_locks
+	nb_n_s_e_w >= nb_players
 */
 
 #include "../../includes/cub3d.h"
 
 int	err(char *str)
 {
+	write(2, "Error\n", 6);
 	while (*str)
 		write(2, str++, 1);
 	return (1);
@@ -66,10 +70,15 @@ static int	op_in(char **av)
 	return (0);
 }
 
+
 void	parsing(char **av, t_game *game)
 {
+	int begin;
+
 	op_in(av);
-	map_set_up(av, game);
+	begin = textures(av[1], game);
+	printf("textures bonnes\n");
+	map_set_up(av, game, begin);
 
 	// access to /regarder les permissions
 }

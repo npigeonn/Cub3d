@@ -39,6 +39,14 @@ enum Message {
 	FINISH,
 };
 
+typedef struct s_stuff
+{
+	int munitions;
+	int nb_keys;
+	int weapon;
+	int kit_hp;
+}	t_stuff;
+
 typedef struct s_player
 {
 	float	x;
@@ -48,19 +56,15 @@ typedef struct s_player
 	float	planeX;
 	float	planeY;
 	float	speed;
-	int		armo;
 	float	height;
 	float	health;
-	int		weapon;
 	int		floor;
 	float	pitch;
+	t_stuff	*stuff;
 }	t_player;
 
-typedef struct {
-	void *img;
-	int width;
-	int height;
-}	t_texture;
+
+
 
 typedef struct s_image
 {
@@ -97,6 +101,12 @@ typedef	struct s_textures
 	t_image	*tp;
 	t_image	*floor;
 	t_image	*ceil;
+	int		so;
+	int		no;
+	int		c;
+	int		f;
+	int		ea;
+	int		we;
 }	t_textures;
 
 typedef struct s_prite
@@ -209,7 +219,6 @@ void	door_mngmt(t_game *game);
 // walls
 int		check_walls(t_game *game, int x, int y, int floor);
 
-
 //teleporter
 int		is_a_teleporter(char c);
 void	teleportation_check(t_game *game);
@@ -220,7 +229,11 @@ int		teleportation(t_game *game, int x, int y, int floor, char c);
 
 // map
 int		map_copy(t_game *game);
-void	map_set_up(char **av, t_game *game);
+char	*switch_line(char *line, int fd);
+void	map_set_up(char **av, t_game *game, int begin);
+
+// texture check
+int	textures(char *to_open, t_game *game);
 
 // free
 int	free_map(t_game *game);

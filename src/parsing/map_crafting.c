@@ -6,12 +6,23 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:52:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/08 20:03:39 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/09 19:02:06 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
+char *go_to_the_map_line(int fd, int begin)
+{
+	int		i;
+	char	*line;
+
+	i = -1;
+	line = get_next_line(fd);
+	while (++i < begin)
+		line = switch_line(line, fd);
+	return (line);
+}
 
 char	*switch_line(char *line, int fd)
 {
@@ -19,7 +30,7 @@ char	*switch_line(char *line, int fd)
 	return (get_next_line(fd));
 }
 
-int	nb_floors(char **av)
+int	nb_floors(char **av, int begin)
 {
 	int		fd;
 	int		i;
@@ -27,7 +38,7 @@ int	nb_floors(char **av)
 
 	i = 0;
 	fd = open(av[1], O_RDONLY);
-	line = get_next_line(fd);
+	line = go_to_the_map_line(fd, begin);
 	if (!line)
 		exit(err("Empty file\n"));
 	while (line)
@@ -41,12 +52,10 @@ int	nb_floors(char **av)
 				line = switch_line(line, fd);
 		}
 	}
-	free(line);
-	close(fd);
-	return i;
+	return (free(line), close(fd), i);
 }
 
-void	size_floors(char **av, t_game *game, int floor)
+void	size_floors(char **av, t_game *game, int floor, int begin)
 {
 	int		j;
 	int		fd;
@@ -54,7 +63,7 @@ void	size_floors(char **av, t_game *game, int floor)
 	char	*line;
 
 	fd = open(av[1], O_RDONLY);
-	line = get_next_line(fd);
+	line = go_to_the_map_line(fd, begin);
 	j = 0;
 	while (j < floor)
 	{
@@ -71,11 +80,11 @@ void	size_floors(char **av, t_game *game, int floor)
 			exit(1); // free line !free_tab(floor, game, j, 0)
 		j++;
 	}
-	// game->map[j] = NULL;
+	free(line);
 	close(fd);
 }
 
-void	map_ready(char **av, t_game *game, int floor)
+void	map_ready(char **av, t_game *game, int floor, int begin)
 {
 	int		j;
 	int		fd;
@@ -83,7 +92,7 @@ void	map_ready(char **av, t_game *game, int floor)
 	char	*line;
 
 	fd = open(av[1], O_RDONLY);
-	line = get_next_line(fd);
+	line = go_to_the_map_line(fd, begin);
 	j = -1;
 	while (++j < floor)
 	{
@@ -101,15 +110,15 @@ void	map_ready(char **av, t_game *game, int floor)
 		game->map[j][i] = NULL;
 	}
 	game->map[j] = NULL;
-	close(fd);
+	return ((void)free(line), (void)close(fd));
 }
 
-void	map_set_up(char **av, t_game *game)
+void	map_set_up(char **av, t_game *game, int begin)
 {
 
 	int	k;
 
-	game->nb_floor = nb_floors(av);
+	game->nb_floor = nb_floors(av, begin);
 	if (!game->nb_floor)
 		exit(err("Empty\n"));
 	printf("nbre d'etage = %d\n", game->nb_floor);
@@ -118,7 +127,7 @@ void	map_set_up(char **av, t_game *game)
 	game->map = malloc((game->nb_floor + 1) * sizeof(char **));
 	if (!game->map)
 		exit(err("error system\n"));
-	size_floors(av, game, game->nb_floor);
-	map_ready(av, game, game->nb_floor);
+	size_floors(av, game, game->nb_floor, begin);
+	map_ready(av, game, game->nb_floor, begin);
 	floodfill(game);
 }
