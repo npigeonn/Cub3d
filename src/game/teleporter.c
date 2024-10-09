@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 11:10:59 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:20:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,17 +63,17 @@ void	use_teleporter(t_game *game)
 	tp = get_teleporter(game, (int)p->x, (int)p->y);
 	if (tp)
 	{
-		if (p->x == tp->x1 && p->y == tp->y1 && p->floor == tp->floor1)
+		if ((int)p->x == tp->x1 && (int)p->y == tp->y1 && p->floor == tp->floor1)
 		{
-			p->x = tp->x2;
-			p->y = tp->y2;
+			p->x = tp->x2 + 0.5;
+			p->y = tp->y2 + 0.5;
 			p->floor = tp->floor2;
 		}
 		else
 		{
-			p->x = tp->x2;
-			p->y = tp->y2;
-			p->floor = tp->floor2;
+			p->x = tp->x1 + 0.5;
+			p->y = tp->y1 + 0.5;
+			p->floor = tp->floor1;
 		}
 	}	
 }
