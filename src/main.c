@@ -62,7 +62,6 @@ Y :	mettre les textures toit/ sol
 
 void	load_texture(t_game *game, t_image *img, char *path)
 {
-	printf("yann = %s\n", path);
 	img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width, &img->height);
 	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line, &img->endian);
 	if (!img->img)

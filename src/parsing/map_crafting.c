@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:52:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/09 19:02:06 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/10 11:00:49 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,15 +115,9 @@ void	map_ready(char **av, t_game *game, int floor, int begin)
 
 void	map_set_up(char **av, t_game *game, int begin)
 {
-
-	int	k;
-
 	game->nb_floor = nb_floors(av, begin);
 	if (!game->nb_floor)
 		exit(err("Empty\n"));
-	printf("nbre d'etage = %d\n", game->nb_floor);
-	k = 0;
-	
 	game->map = malloc((game->nb_floor + 1) * sizeof(char **));
 	if (!game->map)
 		exit(err("error system\n"));

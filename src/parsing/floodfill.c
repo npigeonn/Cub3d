@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/09 11:39:34 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/10 11:00:22 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	check_allowed_char(t_game *game, int floor, int x, int y)
 {
 	const int	c = game->map_cy[floor][y][x];
 	if (!c || !(ft_strchr("01NSWEDLKMHX", c) || ('a' <= c && c <= 'z')))
-		return (printf("map[0][%d][%d]\n", x, y), 0);
+		return (0);
 	return (1);
 }
 
@@ -128,7 +128,7 @@ int map_copy(t_game *game)
 void floodfill(t_game *game)
 {
 	search_departure_position(game);
-	printf("player pos %d and %d\n", (int)game->player->x, (int)game->player->y);
+	// printf("player pos %d and %d\n", (int)game->player->x, (int)game->player->y);
 	teleportation_check(game);
 	if (!map_copy(game) || !check_walls(game, (int)game->player->x, (int)game->player->y, game->player->floor))
 	{
@@ -143,7 +143,4 @@ void floodfill(t_game *game)
 	}
 	free_map_copy(game);
 	door_mngmt(game);
-	printf("player pos %d and %d\n", (int)game->player->x, (int)game->player->y);
-
-		
 }

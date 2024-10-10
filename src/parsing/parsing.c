@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/09 18:56:36 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/10 11:01:00 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void	parsing(char **av, t_game *game)
 
 	op_in(av);
 	begin = textures(av[1], game);
-	printf("textures bonnes\n");
 	map_set_up(av, game, begin);
 
 	// access to /regarder les permissions

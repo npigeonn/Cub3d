@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:45:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/09 12:18:17 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/10 11:01:20 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,9 @@ int teleport_changment(t_game *game, int x, int y, int floor, char c)
 	if (c == 'w' && !check_walls(game, x, y, floor))
 		return (0);
 	if (c == 'p' && check_path(game, x, y, floor))
-		return (printf("issu\n"), 1);
+		return (1);
 	if (c == 'p')
-		return (printf("pas d'issu\n"), 0);
+		return (0);
 	else
 		return (1);
 }

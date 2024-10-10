@@ -107,6 +107,12 @@ typedef	struct s_textures
 	int		f;
 	int		ea;
 	int		we;
+	int		color_so;
+	int		color_no;
+	int		color_c;
+	int		color_f;
+	int		color_ea;
+	int		color_we;
 }	t_textures;
 
 typedef struct s_prite
@@ -155,6 +161,7 @@ typedef struct s_game
 	char			***map;
 	char 			***map_cy;
 	int				nb_floor;
+	int				clr
 	t_door			*door;
 	t_images		*images;
 	t_player		*player;

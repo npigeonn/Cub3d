@@ -6,13 +6,13 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:35:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/10 10:47:22 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/10 11:31:45 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-int	is_a_color(char *color)
+int	is_a_color(char *color, t_game *game)
 {
 	char **split;
 
@@ -28,7 +28,8 @@ int	is_a_color(char *color)
 		// free_split(split);
 		exit(err("Texture's color is not right"));
 	}
-	// TODO  split dans une couleur pour le Yann
+    game->clr = (atoi(split[0]) << 16) | (atoi(split[1]) << 8) | atoi(split[2]);
+	// TODO  free split
 	return (1);
 }
 
@@ -50,17 +51,14 @@ int	set_up_txtr(t_game *game, char *line)
 	char	**split;
 	int		fd;
 
+	game->clr = -1;
 	split = ft_split(line + 2, ' ');
 	if (split[0][ft_strlen(split[0]) - 1] == '\n')
 		split[0][ft_strlen(split[0]) - 1] = '\0';
 	if (!split || !split[0] || split[1])
-	{
-		// free_split(split);
-		exit(err("Texture cannot be opened\n"));
-	}
-	if (is_a_color(split[0]))
+		return (exit(err("Texture cannot be opened\n")), 0);// free_split(split);
+	if (is_a_color(split[0], game))
 		return (1); // free_split(split);
-	printf("la texture = %s\n", split[0]);
 	if (!file_dot_xpm(split[0]))
 		exit(err("Texture without .xpm\n"));// free_split(split);
 	fd = open(split[0], O_RDONLY);
@@ -82,17 +80,17 @@ int	txtre_or_nline(char *line, t_game *game)
 		return (0);
 	// printf(" la comp a%sa et NO , %d\n", line, ft_strncmp(line, "F ", 2));
 	if (!ft_strncmp(line, "C ", 2) && set_up_txtr(game, line))
-		return ((game->textures->c)++, 1);
+		return (game->textures->color_c = game->clr, game->textures->c++, 1);
 	else if (!ft_strncmp(line, "NO ", 3) && set_up_txtr(game, line))
-		return ((game->textures->no)++, 1);
+		return (game->textures->color_no = game->clr, game->textures->no++, 1);
 	else if (!ft_strncmp(line, "SO ", 3) && set_up_txtr(game, line))
-		return ((game->textures->so)++, 1);
+		return (game->textures->color_so = game->clr, game->textures->so++, 1);
 	else if (!ft_strncmp(line, "EA ", 3) && set_up_txtr(game, line))
-		return ((game->textures->ea)++, 1);
+		return (game->textures->color_ea = game->clr, game->textures->ea++, 1);
 	else if (!ft_strncmp(line, "WE ", 3) && set_up_txtr(game, line))
-		return ((game->textures->we)++, 1);
+		return (game->textures->color_we = game->clr, game->textures->we++, 1);
 	else if (!ft_strncmp(line, "F ", 2) && set_up_txtr(game, line))
-		return ((game->textures->f)++, 1);
+		return (game->textures->color_f = game->clr, game->textures->f++, 1);
 	else if (!ft_strcmp(line, "\n"))
 		return (1);
 	else
@@ -107,6 +105,13 @@ void	init_texture(t_game *game)
 	game->textures->f = 0;
 	game->textures->ea = 0;
 	game->textures->we = 0;
+	game->textures->color_so = -1;
+	game->textures->color_no = -1;
+	game->textures->color_c = -1;
+	game->textures->color_f = -1;
+	game->textures->color_ea = -1;
+	game->textures->color_we = -1;
+	
 }
 
 void	load_txtre_globale(t_game *game, char *line, char *path)
@@ -121,7 +126,7 @@ void	load_txtre_globale(t_game *game, char *line, char *path)
 		load_texture(game, game->textures->sud, path);
 	else if (!ft_strncmp(line, "EA ", 3))
 		load_texture(game, game->textures->east, path);
-	else if (!ft_strncmp(line, "F ", 2) && printf("ok\n"))
+	else if (!ft_strncmp(line, "F ", 2))
 		load_texture(game, game->textures->floor, path);
 	else if (!ft_strncmp(line, "WE ", 3))
 		load_texture(game, game->textures->west, path);
