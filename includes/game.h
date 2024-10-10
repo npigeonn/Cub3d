@@ -159,10 +159,14 @@ typedef struct s_game
 	void			*win;
 	int				screen_width;
 	int				screen_height;
+	int				map_begin;
 	char			***map;
 	char 			***map_cy;
 	int				nb_floor;
-	int				clr
+	int				nb_looked_door;
+	int				nb_keys;
+	int				keys_collected;
+	int				clr;
 	t_door			*door;
 	t_images		*images;
 	t_player		*player;
@@ -216,6 +220,7 @@ void	draw_ceilling(t_game *game);
 // PARSING
 
 int		err(char *str);
+void	init_data(t_game *game);
 void	parsing(char **av, t_game *game);
 char	*get_next_line(int fd);
 void	floodfill(t_game *game);
@@ -224,6 +229,9 @@ void	door_mngmt(t_game *game);
 
 // walls
 int		check_walls(t_game *game, int x, int y, int floor);
+
+// key looked doors
+void	compare_key_n_looked_door(t_game *game);
 
 //teleporter
 int		is_a_teleporter(char c);
@@ -236,10 +244,9 @@ int		teleportation(t_game *game, int x, int y, int floor, char c);
 // map
 int		map_copy(t_game *game);
 char	*switch_line(char *line, int fd);
-void	map_set_up(char **av, t_game *game, int begin);
+void	map_set_up(char **av, t_game *game);
 
 // texture check
-void	init_texture(t_game *game);
 int		textures(char *to_open, t_game *game);
 void	load_texture(t_game *game, t_image *img, char *path);
 void	load_txtre_globale(t_game *game, char *line, char *path);
@@ -247,6 +254,7 @@ void	load_txtre_globale(t_game *game, char *line, char *path);
 // free
 int	free_map(t_game *game);
 int free_map_copy(t_game *game);
+int	free_split(char **str);
 
 
 

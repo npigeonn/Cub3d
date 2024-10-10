@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/10 11:00:22 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/10 17:57:45 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@ int	check_walls(t_game *game, int x, int y, int floor)
 {
 	if (x < 0 || y < 0 || !game->map_cy[floor][y]
 		|| x >= (int)ft_strlen(game->map_cy[floor][y]))
-		return (0); //free_map_copy(game),
+		return (0); //
 	if (!check_allowed_char(game, floor, x, y))
-		return (0);//free_map_copy(game),
+		return (0);//
 	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1')
 		return (1); // Already visited or wall
 	if (is_a_teleporter(game->map_cy[floor][y][x])
@@ -44,18 +44,60 @@ int	check_walls(t_game *game, int x, int y, int floor)
 	return (1);
 }
 
-int	check_path(t_game *game, int x, int y, int floor)
+void	reinitialized_map_copy(t_game *game)
+{
+	int	i;
+	int	j;
+	int	k;
+	
+	i = -1;
+	while (game->map_cy[++i])
+	{
+		j = -1;
+		while (game->map_cy[i][++j])
+		{
+			k = -1;
+			while (game->map_cy[i][j][++k])
+			{
+				if ('a' <= game->map[i][j][k] && game->map[i][j][k] <= 'z')
+					game->map_cy[i][j][k] = game->map[i][j][k];
+				if (game->map_cy[i][j][k] == 'X')
+					game->map_cy[i][j][k] = 0;
+			}
+		}
+	}
+}
+
+void	keys_looked_door(t_game *game, int x, int y, int floor)
+{
+	if (game->map_cy[floor][y][x] == 'K') // Si on rencontre une clé
+	{
+		game->keys_collected++; // Collecte la clé
+		game->map_cy[floor][y][x] = 'X'; // Marque la position comme visitée
+		reinitialized_map_copy(game);
+	}
+	if (game->map_cy[floor][y][x] == 'L' || game->keys_collected > 0) // Si on rencontre une porte fermée
+	{
+		game->keys_collected--; // Utilise une clé
+		game->map_cy[floor][y][x] = 'X'; // Ouvre la porte et marque comme visitée
+	}
+	return ;
+}
+
+int	check_path(t_game *game, int x, int y, int floor) // si exit dans un autre etage ca ne marche pas 
 {
 	if (x < 0 || y < 0 || !game->map_cy[floor][y]
 		|| x >= (int)ft_strlen(game->map_cy[floor][y]))
-		return (0); // free_map_copy(game), 
+		return (0); // 
 	if (game->map_cy[floor][y][x] == 'e') 
-		return (1); // free_map_copy(game),  // Exit found
-	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1')
+		return (1); //   // Exit found
+	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1'
+		|| (game->map_cy[floor][y][x] == 'L' || !game->keys_collected))
 		return (0); // Already visited or wall
 	if (is_a_teleporter(game->map_cy[floor][y][x])
-	&& teleportation(game, x, y, floor, 'p'))
+		&& teleportation(game, x, y, floor, 'p'))
 		return (1); // TODO peutetre modif a 0; game->map_cy[floor][y][x] = '0';
+	keys_looked_door(game, x, y, floor);
 	game->map_cy[floor][y][x] = 'X'; // Mark visited
 	if (check_path(game, x + 1, y, floor))
 		return (1); // Right
@@ -125,11 +167,36 @@ int map_copy(t_game *game)
 	return (1);
 }
 
+void	compare_key_n_looked_door(t_game *game)
+{
+	int	i;
+	int	j;
+	int	k;
+	
+	i = -1;
+	while (game->map[++i])
+	{
+		j = -1;
+		while (game->map[i][++j])
+		{
+			k = -1;
+			while (game->map[i][j][++k])
+			{
+				if (game->map[i][j][k] == 'L')
+					game->nb_looked_door++;
+				if (game->map[i][j][k] == 'K')
+					game->nb_keys++;
+			}
+		}
+	}
+	if (game->nb_looked_door > game->nb_keys)
+		exit(err("Not enough keys\n"));
+}
+
 void floodfill(t_game *game)
 {
 	search_departure_position(game);
 	// printf("player pos %d and %d\n", (int)game->player->x, (int)game->player->y);
-	teleportation_check(game);
 	if (!map_copy(game) || !check_walls(game, (int)game->player->x, (int)game->player->y, game->player->floor))
 	{
 		free_map_copy(game);
@@ -142,5 +209,4 @@ void floodfill(t_game *game)
 		exit(err("No exit...\n"));
 	}
 	free_map_copy(game);
-	door_mngmt(game);
 }
