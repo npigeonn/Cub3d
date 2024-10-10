@@ -131,12 +131,9 @@ int	main(int ac, char **av)
 	gettimeofday(&game.last_time, NULL);
 
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
-	//remove this
-	game.screen_width = 1920;
-	game.screen_height = 1080;
-	//////////////////////////
 	game.status = MAIN_MENU;
 	game.button_selected = 0;
+	game.wall_distances = malloc(sizeof(float) * game.screen_width);
 	// game.map = malloc(sizeof(t_map));
 	game.door = NULL;
 	game.tp = NULL;

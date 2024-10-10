@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 15:45:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 08:58:16 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,18 +85,50 @@ void	cast_rays(t_game *game)
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
 				break ;
 			}
-			// if (game->map[game->player->floor][map_y][map_x] == '0')
-			// {
-			// 	// draw_floor2(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
-			// 	//draw_floor here
-			// 	break;
-			// }
 			float distance = (side == SIDE_EAST || side == SIDE_WEST) ? side_dist_x - delta_dist_x : side_dist_y - delta_dist_y;
 			if (handle_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, distance))
 				break ;
 		}
 	}
 }
+
+void cast_floor(t_game *game)
+{
+	t_image	*texture = game->textures->floor;
+
+
+	float ray_dir_x0 = game->player->dirX - game->player->planeX;
+	float ray_dir_x1 = game->player->dirX + game->player->planeX;
+	float ray_dir_y0 = game->player->dirY - game->player->planeY;
+	float ray_dir_y1 = game->player->dirY + game->player->planeY;
+
+	int y = game->screen_height * 2;
+	while (y < game->screen_height)
+	{
+		int p = y - game->screen_height * 2;
+		float pos_z = 0.5 * game->screen_height;
+		float row_distance = pos_z / p;
+
+		float floor_step_x = row_distance * (ray_dir_x1 - ray_dir_x0) / game->screen_width;
+		float floor_step_y = row_distance * (ray_dir_y1 - ray_dir_y0) / game->screen_width;
+
+		float floor_x = game->player->x + row_distance * ray_dir_x0;
+		float floor_y = game->player->y + row_distance * ray_dir_y0;
+
+		for (int x = 0; x < game->screen_width; x++)
+		{
+			float current_floor_x = floor_x + x * floor_step_x;
+			float current_floor_y = floor_y + x * floor_step_y;
+			int tex_x = (int)(texture->width * (current_floor_x - (int)current_floor_x)) % texture->width;
+			int tex_y = (int)(texture->height * (current_floor_y - (int)current_floor_y)) % texture->height;
+			int color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
+			secure_pixel_put(game, x, y, color);
+		}
+
+		y++;
+	}
+}
+
 
 int	handle_close(t_game *game)
 {
@@ -295,8 +327,9 @@ int	game_loop(t_game *game)
 		calculate_delta_time(game);
 		update_door_animation(game);
 		cast_rays(game);
+		cast_floor(game);
 		draw_ceilling(game);
-		draw_floor(game);
+		// draw_floor(game);
 		draw_sprites(game);
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
 			game->message = TELEPORT;

@@ -160,7 +160,7 @@ typedef struct s_game
 	t_player		*player;
 	t_textures		*textures;
 
-	float			wall_distances[1920];
+	float			*wall_distances;
 	t_teleporter	*tp;
 	float			delta_time;
 	struct timeval	last_time;
