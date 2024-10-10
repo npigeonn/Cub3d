@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:17:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/10 10:29:10 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 12:07:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 	int texture_width = texture->width;
 	wall_x *= texture_width;
 
-	game->wall_distances[x] = perp_wall_dist;
+	// if (game->wall_distances[x] > perp_wall_dist || game->wall_distances == 0)
+		game->wall_distances[x] = perp_wall_dist;
 	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, wall_x, line_height);
 }

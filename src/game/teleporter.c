@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 14:15:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 13:53:53 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	use_teleporter(t_game *game)
 	t_player		*p = game->player;
 
 	p = game->player;
-	if (game->message != TELEPORT)
+	if (game->menu->message != TELEPORT)
 		return ;
 	tp = get_teleporter(game, (int)p->x, (int)p->y);
 	if (tp)

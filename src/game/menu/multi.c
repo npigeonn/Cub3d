@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/08 10:21:39 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 12:47:57 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 	// 		mouse_y >= server_y_offset && mouse_y <= server_y_offset + btn_height * 0.4)
 	// 	{
 	// 		// game->server_selected = i + 1;
-	// 		game->button_selected = 0;
+	// 		game->menu->button_selected = 0;
 	// 		return;
 	// 	}
 	// 	server_y_offset += 60;
@@ -43,17 +43,17 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 	if (mouse_x >= btn_x && mouse_x <= btn_x + btn_width)
 	{
 		if (mouse_y >= btn_y_start && mouse_y <= btn_y_start + btn_height)
-			game->button_selected = 1;
+			game->menu->button_selected = 1;
 		else if (mouse_y >= btn_y_start + btn_height + spacing && mouse_y <= btn_y_start + 2 * btn_height + spacing)
-			game->button_selected = 2;
+			game->menu->button_selected = 2;
 		else if (mouse_y >= btn_y_start + 2 * (btn_height + spacing) && mouse_y <= btn_y_start + 3 * btn_height + 2 * spacing)
-			game->button_selected = 3;
+			game->menu->button_selected = 3;
 		else
-			game->button_selected = 0;
+			game->menu->button_selected = 0;
 	}
 	else
 	{
-		game->button_selected = 0;
+		game->menu->button_selected = 0;
 		// game->server_selected = 0;
 	}
 }
@@ -134,19 +134,19 @@ void	draw_multiplayer_menu(t_game *game)
 	const int btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
 	const int btn_y_start = game->screen_height * 0.25;
 
-	if (game->button_selected == 1)
+	if (game->menu->button_selected == 1)
 		draw_rectangle(game, btn_x - 2, btn_y_start - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
 	draw_rectangle(game, btn_x, btn_y_start, btn_width, btn_height, MENU_BUTTON_COLOR);
 	draw_text(game, "Join Server", btn_x + btn_width * 0.5, btn_y_start + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
 
 	const int create_btn_y = btn_y_start + btn_height + spacing;
-	if (game->button_selected == 2)
+	if (game->menu->button_selected == 2)
 		draw_rectangle(game, btn_x - 2, create_btn_y - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
 	draw_rectangle(game, btn_x, create_btn_y, btn_width, btn_height, MENU_BUTTON_COLOR);
 	draw_text(game, "Create Server", btn_x + btn_width * 0.5, create_btn_y + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
 
 	const int back_btn_y = create_btn_y + btn_height + spacing;
-	if (game->button_selected == 3)
+	if (game->menu->button_selected == 3)
 		draw_rectangle(game, btn_x - 2, back_btn_y - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
 	draw_rectangle(game, btn_x, back_btn_y, btn_width, btn_height, MENU_BUTTON_COLOR);
 	draw_text(game, "Back", btn_x + btn_width * 0.5, back_btn_y + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);

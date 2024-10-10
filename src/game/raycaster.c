@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/10 10:49:28 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 12:47:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,7 @@ void	cast_rays(t_game *game)
 
 void cast_floor(t_game *game)
 {
-	t_image	*texture = game->textures->floor;
-
+	t_image *texture = game->textures->floor;
 
 	float ray_dir_x0 = game->player->dirX - game->player->planeX;
 	float ray_dir_x1 = game->player->dirX + game->player->planeX;
@@ -112,7 +111,7 @@ void cast_floor(t_game *game)
 		float floor_step_x = row_distance * (ray_dir_x1 - ray_dir_x0) / game->screen_width;
 		float floor_step_y = row_distance * (ray_dir_y1 - ray_dir_y0) / game->screen_width;
 
-		float floor_x = game->player->x + row_distance * ray_dir_x0;
+		float floor_x = game->player->x + row_distance * ray_dir_x0; 
 		float floor_y = game->player->y + row_distance * ray_dir_y0;
 
 		for (int x = 0; x < game->screen_width; x++)
@@ -123,12 +122,10 @@ void cast_floor(t_game *game)
 			int tex_y = (int)(texture->height * (current_floor_y - (int)current_floor_y)) % texture->height;
 			int floor_color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
 			secure_pixel_put(game, x, y, floor_color);
-			// secure_pixel_put(game, x, y + game->screen_height, floor_color);
 		}
 		y++;
 	}
 }
-
 
 int	handle_close(t_game *game)
 {
@@ -145,34 +142,34 @@ int	handle_close(t_game *game)
 
 int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 {
-	if (game->status == OPTIONS)
+	if (game->menu->status == OPTIONS)
 	{
-		if (game->button_selected == 3)
+		if (game->menu->button_selected == 3)
 		{
-			game->status = MAIN_MENU;
+			game->menu->status = MAIN_MENU;
 			return (0);
 		}
 		update_option_menu_slider(game, x, y, keycode);
 		return (0);
 	}
-	if (game->status == SERVEURS)
+	if (game->menu->status == SERVEURS)
 	{
-		if (game->button_selected == 3)
-			game->status = MAIN_MENU;
+		if (game->menu->button_selected == 3)
+			game->menu->status = MAIN_MENU;
 		return (0);
 	}
 	if (keycode == 1)
 	{
-		if (game->button_selected == 1)
+		if (game->menu->button_selected == 1)
 		{
-			game->status = PLAYING;
+			game->menu->status = PLAYING;
 			mlx_mouse_hide(game->mlx, game->win);
 		}
-		else if (game->button_selected == 2)
-			game->status = SERVEURS;
-		else if (game->button_selected == 3)
-			game->status = OPTIONS;
-		else if (game->button_selected == 4)
+		else if (game->menu->button_selected == 2)
+			game->menu->status = SERVEURS;
+		else if (game->menu->button_selected == 3)
+			game->menu->status = OPTIONS;
+		else if (game->menu->button_selected == 4)
 			handle_close(game);
 	}
 	return (0);
@@ -180,13 +177,13 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 
 int	handle_mouse_move(int x, int y, t_game *game)
 {
-	if (game->status == MAIN_MENU)
+	if (game->menu->status == MAIN_MENU)
 		update_main_menu_button(game, x, y);
-	else if (game->status == OPTIONS)
+	else if (game->menu->status == OPTIONS)
 		update_option_menu_button(game, x, y);
-	else if (game->status == SERVEURS)
+	else if (game->menu->status == SERVEURS)
 		update_multiplayer_menu(game, x, y);
-	if (game->status != PLAYING || x == game->screen_width * 0.5)
+	if (game->menu->status != PLAYING || x == game->screen_width * 0.5)
 		return (0);
 	int centerX = game->screen_width * 0.5;
 	int centerY = game->screen_height * 0.5;
@@ -231,7 +228,7 @@ int	handle_keypress(int keycode, t_game *game)
 	
 	if (keycode == 65307)
 		handle_close(game);
-	if (game->status != PLAYING)
+	if (game->menu->status != PLAYING)
 		return (0);
 	if (keycode == 65362 || keycode == 119) // W pour avancer
 	{
@@ -282,7 +279,7 @@ void	clear_image(t_game *game, int color)
 	}	
 }
 
-void	show_message(t_game *game)
+void	show_menu_message(t_game *game)
 {
 	int width = 350;
 	int height = 40;
@@ -290,11 +287,11 @@ void	show_message(t_game *game)
 	int text_y = (game->screen_height - height) * 0.5 - 120;
 
 	draw_rectangle(game, text_x, text_y, width, height, MENU_BUTTON_COLOR);
-	if (game->message == OPEN_DOOR)
+	if (game->menu->message == OPEN_DOOR)
 		draw_text(game, "Appuyer sur F pour ouvrir", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
-	else if (game->message == CLOSE_DOOR)
+	else if (game->menu->message == CLOSE_DOOR)
 		draw_text(game, "Appuyer sur F pour fermer", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
-	else if (game->message == TELEPORT)
+	else if (game->menu->message == TELEPORT)
 	{
 		draw_rectangle(game, text_x - 40, text_y, width + 80, height, MENU_BUTTON_COLOR);
 		draw_text(game, "Appuyer sur F pour vous teleportez", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
@@ -315,24 +312,24 @@ void	calculate_delta_time(t_game *game)
 int	game_loop(t_game *game)
 {
 	clear_image(game, 0x000000);
-	if (game->status == MAIN_MENU)
+	if (game->menu->status == MAIN_MENU)
 		draw_main_menu(game);
-	else if (game->status == OPTIONS)
+	else if (game->menu->status == OPTIONS)
 		draw_options_menu(game);
-	else if (game->status == SERVEURS)
+	else if (game->menu->status == SERVEURS)
 		draw_multiplayer_menu(game);
-	else if (game->status == PLAYING)
+	else if (game->menu->status == PLAYING)
 	{
-		game->message = NOTHING;
+		game->menu->message = NOTHING;
 		calculate_delta_time(game);
 		update_door_animation(game);
 		cast_rays(game);
 		cast_floor(game);
 		draw_sprites(game);
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
-			game->message = TELEPORT;
-		if (game->message != NOTHING)
-			show_message(game);
+			game->menu->message = TELEPORT;
+		if (game->menu->message != NOTHING)
+			show_menu_message(game);
 	}
 	mlx_put_image_to_window(game->mlx, game->win, game->images->base->img, 0, 0);
 	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'e')

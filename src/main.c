@@ -94,9 +94,10 @@ void	init_player(t_game	*game)
 	game->player->dirX = 1;
 	game->player->dirY = 0;
 	game->player->planeX = 0;
-	game->volume = 20;
-	game->mouse_sensitivity = 2;
-	game->message = NOTHING;
+	game->menu = malloc(sizeof(t_menu));
+	game->menu->volume = 20;
+	game->menu->mouse_sensitivity = 2;
+	game->menu->message = NOTHING;
 }
 
 void	load_game_texture(t_game *game)
@@ -110,8 +111,10 @@ void	load_game_texture(t_game *game)
 	game->textures->tp = malloc(sizeof(t_image));
 	game->textures->floor = malloc(sizeof(t_image));
 	game->textures->ceil = malloc(sizeof(t_image));
+	game->textures->enemies = malloc(sizeof(t_image));
 	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
 	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");
+	load_texture(game, game->textures->enemies, "./assets/sprites/kadabra.xpm");
 }
 
 int	main(int ac, char **av)
@@ -124,23 +127,23 @@ int	main(int ac, char **av)
 	gettimeofday(&game.last_time, NULL);
 
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
-	game.status = MAIN_MENU;
-	game.button_selected = 0;
+	init_player(&game);
+	game.menu->status = MAIN_MENU;
+	game.menu->button_selected = 0;
 	game.wall_distances = malloc(sizeof(float) * game.screen_width);
-	// game.map = malloc(sizeof(t_map));
+	ft_bzero(game.wall_distances, game.screen_width);
 	game.door = NULL;
 	game.tp = NULL;
+	game.enemies = NULL;
 	load_game_texture(&game);
-	// add_door(&game, 2, 10, 0, false);
-	init_player(&game);
 	parsing(av, &game);
+	init_enemies(&game);
 	game.player->x += 0.5;
 	game.player->y += 0.5;
 	set_direction(&game, 0);
 	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Raycasting 3D");
 	init_img(&game);
 	mlx_mouse_move(game.mlx, game.win, game.screen_width * 0.5 , game.screen_height * 0.5 );
-	// mlx_mouse_hide(game.mlx, game.win);
 	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
 	mlx_hook(game.win, 6, 1L << 6, handle_mouse_move, &game);
 	mlx_hook(game.win, 4, 1L << 2, handle_mouse_key, &game);

@@ -64,8 +64,6 @@ typedef struct s_player
 }	t_player;
 
 
-
-
 typedef struct s_image
 {
 	void	*img;
@@ -83,14 +81,6 @@ typedef struct s_images
 	t_image	*base;
 }	t_images;
 
-
-typedef struct s_map
-{
-	int		map_width;
-	int		map_height;
-	char	***map;
-}	t_map;
-
 typedef	struct s_textures
 {
 	t_image	*east;
@@ -101,6 +91,7 @@ typedef	struct s_textures
 	t_image	*tp;
 	t_image	*floor;
 	t_image	*ceil;
+	t_image	*enemies;
 	int		so;
 	int		no;
 	int		c;
@@ -114,14 +105,6 @@ typedef	struct s_textures
 	int		color_ea;
 	int		color_we;
 }	t_textures;
-
-typedef struct s_prite
-{
-	t_image		*texture;
-	int			x;
-	int			y;
-	int 		floor;
-}	t_sprite;
 
 typedef	struct s_door
 {
@@ -146,18 +129,36 @@ typedef	struct s_teleporter
 	struct s_teleporter	*next;
 }	t_teleporter;
 
+typedef struct s_menu
+{
+	int		status;
+	int		button_selected;
+	int		dragging;
+	int		message;
+	float	volume;
+	float	mouse_sensitivity;
+}	t_menu;
+
+typedef struct s_enemies
+{
+	float		x;
+	float		y;
+	float		dirX;
+	float		dirY;
+	int			floor;
+	float		health;
+	struct s_enemies	*next;
+}	t_enemies;
+
 
 typedef struct s_game
 {
+	t_menu			*menu;
 	t_memory_table	*mem;
 	void			*mlx;
 	void			*win;
-	int				status;
-	int				button_selected;
 	int				screen_width;
 	int				screen_height;
-	float			volume;
-	float			mouse_sensitivity;
 	char			***map;
 	char 			***map_cy;
 	int				nb_floor;
@@ -166,13 +167,11 @@ typedef struct s_game
 	t_images		*images;
 	t_player		*player;
 	t_textures		*textures;
-
 	float			*wall_distances;
 	t_teleporter	*tp;
+	t_enemies		*enemies;
 	float			delta_time;
 	struct timeval	last_time;
-	int				message;
-	int				dragging;
 }	t_game;
 
 //game

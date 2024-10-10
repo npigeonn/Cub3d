@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 14:59:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 12:45:26 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	use_door_in_view(t_game *game)
 	int				y;
 	float			distance = 1;
 
-	if (game->message != CLOSE_DOOR && game->message != OPEN_DOOR)
+	if (game->menu->message != CLOSE_DOOR && game->menu->message != OPEN_DOOR)
 		return ;
 
 	x = (int)(player->x + player->dirX * distance);
@@ -65,7 +65,7 @@ void	add_door(t_game *game, int x, int y, int floor, bool lock)
     game->door = new_door;
 }
 
-void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_door *door)
+void	draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_door *door)
 {
 	t_image	*texture = game->textures->door;
 
@@ -99,7 +99,10 @@ void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 	if (animated_draw_start < draw_start)
 		animated_draw_start = draw_start;
 	if (door->animation < 1.0f)
+	{
+		game->wall_distances[x] = perp_wall_dist;
 		draw_vertical_line_with_texture(game, x, animated_draw_start, draw_end, texture, wall_x, line_height);
+	}
 }
 
 void	update_door_animation(t_game *game)
@@ -139,9 +142,9 @@ int	handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_
 		if (distance < 0.4f)
 		{
 			if (door->open)
-				game->message = CLOSE_DOOR;	
+				game->menu->message = CLOSE_DOOR;	
 			else
-				game->message = OPEN_DOOR;
+				game->menu->message = OPEN_DOOR;
 		}
 	}
 	return (0);
