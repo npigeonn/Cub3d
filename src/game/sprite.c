@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 14:13:37 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 14:18:28 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:29:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ void draw_vertical_sprite_line(t_game *game, int x, int draw_start, int draw_end
 	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
 
 	float step = (float)texture->height / sprite_height;
-	float tex_pos = (draw_start - game->screen_height / 2 + sprite_height / 2) * step;
+	float tex_pos = (draw_start - game->screen_height * 0.5 + sprite_height * 0.5 + game->player->height * sprite_height) * step;
 
 	for (int y = draw_start; y < draw_end; y++)
 	{
-		int tex_y = (int)tex_pos % texture->height;
+		int tex_y = (int)tex_pos % texture->height ;
 		tex_pos += step;
 
 		if (tex_y < 0 || tex_y >= texture->height)
@@ -98,33 +98,31 @@ void	draw_teleporter(t_game *game)
 	while(current)
 	{
 		if (current->floor1 == game->player->floor)
-			if (is_in_fov(game, current->x1, current->y1))
+		{
+			float sprite_distance = sqrt((current->x1 - game->player->x) * (current->x1 - game->player->x) +
+									(current->y1 - game->player->y) * (current->y1 - game->player->y));
+			for (int x = 0; x < game->screen_width; x++)
 			{
-				float sprite_distance = sqrt((current->x1 - game->player->x) * (current->x1 - game->player->x) +
-										(current->y1 - game->player->y) * (current->y1 - game->player->y));
-				for (int x = 0; x < game->screen_width; x++)
+				if (game->wall_distances[x] > sprite_distance)
 				{
-					if (game->wall_distances[x] > sprite_distance)
-					{
-						draw_sprite(game, game->textures->tp, current->x1, current->y1);
-						break;
-					}
+					draw_sprite(game, game->textures->tp, current->x1, current->y1);
+					break;
 				}
 			}
+		}
 		if (current->floor2 == game->player->floor)
-			if (is_in_fov(game, current->x2, current->y2))
+		{
+			float sprite_distance = sqrt((current->x2 - game->player->x) * (current->x2 - game->player->x) +
+									(current->y2 - game->player->y) * (current->y2 - game->player->y));
+			for (int x = 0; x < game->screen_width; x++)
 			{
-				float sprite_distance = sqrt((current->x2 - game->player->x) * (current->x2 - game->player->x) +
-										(current->y2 - game->player->y) * (current->y2 - game->player->y));
-				for (int x = 0; x < game->screen_width; x++)
+				if (game->wall_distances[x] > sprite_distance)
 				{
-					if (game->wall_distances[x] > sprite_distance)
-					{
-						draw_sprite(game, game->textures->tp, current->x2, current->y2);
-						break;
-					}
+					draw_sprite(game, game->textures->tp, current->x2, current->y2);
+					break;
 				}
 			}
+		}
 		current = current->next;
 	}
 }

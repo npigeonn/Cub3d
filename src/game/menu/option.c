@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 14:42:20 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/07 22:45:15 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:27:25 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	update_option_menu_slider(t_game *game, int mouse_x, int mouse_y, int keyco
 	const int		btn_width = game->screen_width * 0.25;
 	const int		btn_height = game->screen_height * 0.1;
 	const int		spacing = game->screen_height * 0.05;
-	const int		x = (game->screen_width - btn_width) / 2;
+	const int		x = (game->screen_width - btn_width) * 0.5;
 	const int		y = game->screen_height * 0.25;
 
 	if (keycode != 1)
@@ -41,7 +41,7 @@ void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y)
 	const int	btn_width = game->screen_width * 0.25;
 	const int	btn_height = game->screen_height * 0.1;
 	const int	spacing = game->screen_height * 0.05;
-	const int	x = (game->screen_width - btn_width) / 2;
+	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.25;
 
 	if (mouse_x >= x && mouse_x <= x + btn_width && mouse_y >= y && mouse_y <= y + btn_height)

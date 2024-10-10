@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/10 08:58:16 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:49:28 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,10 +102,10 @@ void cast_floor(t_game *game)
 	float ray_dir_y0 = game->player->dirY - game->player->planeY;
 	float ray_dir_y1 = game->player->dirY + game->player->planeY;
 
-	int y = game->screen_height * 2;
+	int y = game->screen_height * 0.5;
 	while (y < game->screen_height)
 	{
-		int p = y - game->screen_height * 2;
+		int p = y - game->screen_height * 0.5;
 		float pos_z = 0.5 * game->screen_height;
 		float row_distance = pos_z / p;
 
@@ -121,10 +121,10 @@ void cast_floor(t_game *game)
 			float current_floor_y = floor_y + x * floor_step_y;
 			int tex_x = (int)(texture->width * (current_floor_x - (int)current_floor_x)) % texture->width;
 			int tex_y = (int)(texture->height * (current_floor_y - (int)current_floor_y)) % texture->height;
-			int color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
-			secure_pixel_put(game, x, y, color);
+			int floor_color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
+			secure_pixel_put(game, x, y, floor_color);
+			// secure_pixel_put(game, x, y + game->screen_height, floor_color);
 		}
-
 		y++;
 	}
 }
@@ -328,8 +328,6 @@ int	game_loop(t_game *game)
 		update_door_animation(game);
 		cast_rays(game);
 		cast_floor(game);
-		draw_ceilling(game);
-		// draw_floor(game);
 		draw_sprites(game);
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
 			game->message = TELEPORT;

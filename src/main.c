@@ -140,7 +140,7 @@ int	main(int ac, char **av)
 	set_direction(&game, 0);
 	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Raycasting 3D");
 	init_img(&game);
-	mlx_mouse_move(game.mlx, game.win, game.screen_width / 2, game.screen_height / 2);
+	mlx_mouse_move(game.mlx, game.win, game.screen_width * 0.5 , game.screen_height * 0.5 );
 	// mlx_mouse_hide(game.mlx, game.win);
 	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
 	mlx_hook(game.win, 6, 1L << 6, handle_mouse_move, &game);

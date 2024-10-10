@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:17:48 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/09 15:46:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:29:10 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int dr
 	if (draw_start < 0) draw_start = 0;
 	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
 	float step = (float)texture->height / line_height; 
-	float tex_pos = (draw_start - game->screen_height / 2 + line_height / 2 + game->player->height * line_height) * step;
+	float tex_pos = (draw_start - game->screen_height * 0.5 + line_height * 0.5 + game->player->height * line_height) * step;
 
 	for (int y = draw_start; y < draw_end; y++)
 	{
