@@ -233,7 +233,10 @@ char	*switch_line(char *line, int fd);
 void	map_set_up(char **av, t_game *game, int begin);
 
 // texture check
-int	textures(char *to_open, t_game *game);
+void	init_texture(t_game *game);
+int		textures(char *to_open, t_game *game);
+void	load_texture(t_game *game, t_image *img, char *path);
+void	load_txtre_globale(t_game *game, char *line, char *path);
 
 // free
 int	free_map(t_game *game);

@@ -48,9 +48,6 @@ Y :	mettre les textures toit/ sol
 */
 
 
-
-
-
 #include <mlx.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,6 +62,7 @@ Y :	mettre les textures toit/ sol
 
 void	load_texture(t_game *game, t_image *img, char *path)
 {
+	printf("yann = %s\n", path);
 	img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width, &img->height);
 	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line, &img->endian);
 	if (!img->img)
@@ -112,13 +110,9 @@ void	load_game_texture(t_game *game)
 	game->textures->door = malloc(sizeof(t_image));
 	game->textures->tp = malloc(sizeof(t_image));
 	game->textures->floor = malloc(sizeof(t_image));
-	load_texture(game, game->textures->east, "./assets/sprites/zekrom.xpm");
-	load_texture(game, game->textures->north, "./assets/sprites/artikodin.xpm");
-	load_texture(game, game->textures->sud, "./assets/sprites/mewtwo.xpm");
-	load_texture(game, game->textures->west, "./assets/sprites/crefadet.xpm");
+	game->textures->ceil = malloc(sizeof(t_image));
 	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
 	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");
-	load_texture(game, game->textures->floor, "./assets/sprites/floor.xpm");
 }
 
 int	main(int ac, char **av)

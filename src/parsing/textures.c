@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:35:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/09 18:56:06 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/10 10:47:22 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,25 +50,28 @@ int	set_up_txtr(t_game *game, char *line)
 	char	**split;
 	int		fd;
 
-	// split = ft_split(line + 2, ' ');
-	// if (!split || !split[0] || split[1])
-	// {
-	// 	// free_split(split);
-	// 	exit(err("Texture cannot be opened\n"));
-	// }
-	// if (is_a_color(split[0]))
-	// 	return (1); // free_split(split);
-	// if (!file_dot_xpm(split[0]))
-	// 	exit(err("Texture without .xpm\n"));// free_split(split);
-	// fd = open(split[0], O_RDONLY);
-	// if (fd <= 0)
-	// 	exit(err("Impossible to open this texture\n"));// free_split(split);
-	// close(fd);
-	// fd = open(split[0], O_RDONLY | O_DIRECTORY);
-	// if (fd > -1)
-	// 	exit(err("Is a folder\n"));// free_split(split);
-	// close(fd);
-	// TODO ajouter qlq part pour le yann
+	split = ft_split(line + 2, ' ');
+	if (split[0][ft_strlen(split[0]) - 1] == '\n')
+		split[0][ft_strlen(split[0]) - 1] = '\0';
+	if (!split || !split[0] || split[1])
+	{
+		// free_split(split);
+		exit(err("Texture cannot be opened\n"));
+	}
+	if (is_a_color(split[0]))
+		return (1); // free_split(split);
+	printf("la texture = %s\n", split[0]);
+	if (!file_dot_xpm(split[0]))
+		exit(err("Texture without .xpm\n"));// free_split(split);
+	fd = open(split[0], O_RDONLY);
+	if (fd <= 0)
+		exit(err("Impossible to open this texture\n"));// free_split(split);
+	close(fd);
+	fd = open(split[0], O_RDONLY | O_DIRECTORY);
+	if (fd > -1)
+		exit(err("Is a folder\n"));// free_split(split);
+	close(fd);
+	load_txtre_globale(game, line, split[0]);
 	return (1); // free_split(split);
 }
 
@@ -96,23 +99,50 @@ int	txtre_or_nline(char *line, t_game *game)
 		return (0);
 }
 
-int	textures(char *to_open, t_game *game)
+void	init_texture(t_game *game)
 {
-	int		fd;
-	char	*line;
-	int		begin;
-
 	game->textures->so = 0;
 	game->textures->no = 0;
 	game->textures->c = 0;
 	game->textures->f = 0;
 	game->textures->ea = 0;
 	game->textures->we = 0;
+}
+
+void	load_txtre_globale(t_game *game, char *line, char *path)
+{
+	if (!path || path[0] == '\n')
+		return ;
+	if (!ft_strncmp(line, "C ", 2))
+		load_texture(game, game->textures->ceil, path);
+	else if (!ft_strncmp(line, "NO ", 3))
+		load_texture(game, game->textures->north, path);
+	else if (!ft_strncmp(line, "SO ", 3))
+		load_texture(game, game->textures->sud, path);
+	else if (!ft_strncmp(line, "EA ", 3))
+		load_texture(game, game->textures->east, path);
+	else if (!ft_strncmp(line, "F ", 2) && printf("ok\n"))
+		load_texture(game, game->textures->floor, path);
+	else if (!ft_strncmp(line, "WE ", 3))
+		load_texture(game, game->textures->west, path);
+	else
+		return ;
+	
+}
+
+int	textures(char *to_open, t_game *game)
+{
+	int		fd;
+	char	*line;
+	int		begin;
+
+	init_texture(game);
 	begin = 0;
 	fd = open(to_open, O_RDONLY);
 	line = get_next_line(fd);
 	while (txtre_or_nline(line, game))
 	{
+		
 		line = switch_line(line, fd);
 		begin++;
 	}
