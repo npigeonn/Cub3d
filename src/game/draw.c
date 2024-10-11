@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 15:34:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/10 12:50:14 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/11 13:30:03 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,15 @@ void	secure_pixel_put(t_game *game, int x, int y, int color)
 {
 	if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
 	{
-		int	bpp = game->images->base->bpp * 0.125;
-		int	offset = y * game->images->base->size_line + x * bpp;
+		int offset = y * game->images->base->size_line + x * (game->images->base->bpp >> 3);
 		
-		if (*((int *)(game->images->base->data + offset)) == 0)
-			*((int *)(game->images->base->data + offset)) = color;
+		int *pixel = (int *)(game->images->base->data + offset); 
+	
+		if (*pixel == 0) 
+			*pixel = color;
 	}
 }
+
 
 int	is_pixel_transparent(t_image *img, int x, int y)
 {
@@ -154,14 +156,14 @@ void	draw_text(t_game *game, char *str, int x, int y, int height, int color)
 	if (str == NULL)
 		return ;
 	int text_width = get_text_width(str, img, height);
-	x = x_base - text_width * 0.5;
+	x = x_base - (text_width >> 1);
 	i = -1;
 	while (str[++i])
 	{
 		if (str[i] == '\n')
 		{
 			text_width = get_text_width(&str[i + 1], img, height);
-			x = x_base - text_width * 0.5;
+			x = x_base - (text_width >> 1);
 			y += height * 0.33 + 5;
 		}
 		else if (str[i] == ' ')

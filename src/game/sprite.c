@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 12:09:23 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/10 13:28:54 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/11 10:53:57 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,55 +32,51 @@ void draw_vertical_sprite_line(t_game *game, int x, int draw_start, int draw_end
 		if (tex_y >= 0 && tex_y < texture->height)
 		{
 			int color = *((int *)(texture_data + tex_y * texture->size_line + tex_x * bpp_div_8));
-			if (color > 0) {
+			if (color > 0)
 				pixel_put(game, x, y, color);
-			}
 		}
 	}
 }
 
 
-void draw_sprite(t_game *game, t_image *texture, float x, float y)
+void	draw_sprite(t_game *game, t_image *texture, float x, float y)
 {
-	float sprite_x = x - game->player->x;
-	float sprite_y = y - game->player->y;
+	float	sprite_x = x - game->player->x;
+	float	sprite_y = y - game->player->y;
 
-	float inv_det = 1.0f / (game->player->planeX * game->player->dirY - game->player->dirX * game->player->planeY);
-	float transform_x = inv_det * (game->player->dirY * sprite_x - game->player->dirX * sprite_y);
-	float transform_y = inv_det * (-game->player->planeY * sprite_x + game->player->planeX * sprite_y);
+	float	inv_det = 1.0f / (game->player->planeX * game->player->dirY - game->player->dirX * game->player->planeY);
+	float	transform_x = inv_det * (game->player->dirY * sprite_x - game->player->dirX * sprite_y);
+	float	transform_y = inv_det * (-game->player->planeY * sprite_x + game->player->planeX * sprite_y);
 
 	if (transform_y <= 0) return;
 
-	int sprite_screen_x = (int)((game->screen_width * 0.5f) * (1 + transform_x / transform_y));
-	int sprite_height = abs((int)(game->screen_height / transform_y));
-	int draw_start_y = (-sprite_height * 0.5) + (game->screen_height * 0.5) - (int)(game->player->height * sprite_height);
-	int draw_end_y = (sprite_height * 0.5) + (game->screen_height * 0.5) - (int)(game->player->height * sprite_height);
-	int sprite_width = abs((int)(game->screen_height / transform_y));
+	int	sprite_screen_x = (int)((game->screen_width * 0.5f) * (1 + transform_x / transform_y));
+	int	sprite_height = abs((int)(game->screen_height / transform_y));
+	int	draw_start_y = (-sprite_height * 0.5) + (game->screen_height * 0.5) - (int)(game->player->height * sprite_height);
+	int	draw_end_y = (sprite_height * 0.5) + (game->screen_height * 0.5) - (int)(game->player->height * sprite_height);
+	int	sprite_width = abs((int)(game->screen_height / transform_y));
 
 	if (sprite_width <= 0 || draw_end_y <= 0 || draw_start_y >= game->screen_height) return;
 
-	float dist_to_sprite_squared = sprite_x * sprite_x + sprite_y * sprite_y;
-
-	int stripe_start = sprite_screen_x - (sprite_width * 0.5);
-	int stripe_end = sprite_screen_x + (sprite_width * 0.5);
+	int	stripe_start = sprite_screen_x - (sprite_width * 0.5);
+	int	stripe_end = sprite_screen_x + (sprite_width * 0.5);
 
 	for (int stripe = stripe_start; stripe < stripe_end; stripe++)
 	{
 		if (stripe >= 0 && stripe < game->screen_width)
 		{
-			float wall_distance = game->wall_distances[stripe];
-
-			if (wall_distance * wall_distance > dist_to_sprite_squared)
+			// printf("T %f\n, D %f\n", transform_y, game->wall_distances[stripe]);
+			if (transform_y < game->wall_distances[stripe])
 			{
-				int tex_x_base = (int)((stripe - stripe_start) * texture->width / sprite_width);
-				int y_start = draw_start_y < 0 ? 0 : draw_start_y;
-				int y_end = draw_end_y >= game->screen_height ? game->screen_height - 1 : draw_end_y;
+				int	tex_x_base = (int)((stripe - stripe_start) * texture->width / sprite_width);
+				int	y_start = draw_start_y < 0 ? 0 : draw_start_y;
+				int	y_end = draw_end_y >= game->screen_height ? game->screen_height - 1 : draw_end_y;
 
 				if (tex_x_base >= 0 && tex_x_base < texture->width)
 				{
 					for (int y_pos = y_start; y_pos <= y_end; y_pos++)
-						if (y_pos >= 0 && y_pos < game->screen_height)
-							draw_vertical_sprite_line(game, stripe, y_pos, y_pos + 1, texture, tex_x_base, sprite_height);
+						draw_vertical_sprite_line(game, stripe, y_pos, y_pos + 1, texture, tex_x_base, sprite_height);
+					game->wall_distances[stripe] = transform_y;
 				}
 			}
 		}

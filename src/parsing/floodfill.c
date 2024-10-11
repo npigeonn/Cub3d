@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floodfill.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/10 17:57:45 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/11 09:07:12 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,11 +202,11 @@ void floodfill(t_game *game)
 		free_map_copy(game);
 		exit(err("Need walls all around the playable map\n"));
 	}	
-	free_map_copy(game);
-	if (!map_copy(game) || !check_path(game, game->player->x, game->player->y, game->player->floor))
-	{
-		free_map_copy(game);
-		exit(err("No exit...\n"));
-	}
+	// free_map_copy(game);
+	// if (!map_copy(game) || !check_path(game, game->player->x, game->player->y, game->player->floor))
+	// {
+	// 	free_map_copy(game);
+	// 	exit(err("No exit...\n"));
+	// }
 	free_map_copy(game);
 }

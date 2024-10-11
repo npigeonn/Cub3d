@@ -114,7 +114,7 @@ void	load_game_texture(t_game *game)
 	game->textures->enemies = malloc(sizeof(t_image));
 	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
 	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");
-	load_texture(game, game->textures->enemies, "./assets/sprites/kadabra.xpm");
+	load_texture(game, game->textures->enemies, "./assets/sprites/enemies.xpm");
 }
 
 int	main(int ac, char **av)
@@ -125,6 +125,8 @@ int	main(int ac, char **av)
 	game.mem = gc_init();
 	game.mlx = mlx_init();
 	gettimeofday(&game.last_time, NULL);
+
+	srand(time(0));
 
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
 	init_player(&game);
@@ -143,7 +145,7 @@ int	main(int ac, char **av)
 	set_direction(&game, 0);
 	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Raycasting 3D");
 	init_img(&game);
-	mlx_mouse_move(game.mlx, game.win, game.screen_width * 0.5 , game.screen_height * 0.5 );
+	mlx_mouse_move(game.mlx, game.win, game.screen_width >> 1 , game.screen_height >> 1 );
 	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
 	mlx_hook(game.win, 6, 1L << 6, handle_mouse_move, &game);
 	mlx_hook(game.win, 4, 1L << 2, handle_mouse_key, &game);

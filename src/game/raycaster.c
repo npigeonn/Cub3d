@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/10 12:47:30 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/11 13:45:01 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,77 +20,53 @@
 
 #include "../../includes/cub3d.h"
 
-void	cast_rays(t_game *game)
+void cast_rays(t_game *game)
 {
+
 	for (int x = 0; x < game->screen_width; x++)
 	{
-		float camera_x = 2 * x / (float)game->screen_width - 1;
-		float ray_dir_x = game->player->dirX + game->player->planeX * camera_x;
-		float ray_dir_y = game->player->dirY + game->player->planeY * camera_x;
-
 		int map_x = (int)game->player->x;
 		int map_y = (int)game->player->y;
 
+		float camera_x = 2 * x / (float)game->screen_width - 1;
+		float ray_dir_x = game->player->dirX + game->player->planeX * camera_x;
+		float ray_dir_y = game->player->dirY + game->player->planeY * camera_x;
 		float delta_dist_x = (ray_dir_x == 0) ? 1e30 : fabs(1 / ray_dir_x);
 		float delta_dist_y = (ray_dir_y == 0) ? 1e30 : fabs(1 / ray_dir_y);
 
-		int step_x, step_y;
-		float side_dist_x, side_dist_y;
+		int step_x = (ray_dir_x < 0) ? -1 : 1;
+		int step_y = (ray_dir_y < 0) ? -1 : 1;
+		
+		float side_dist_x = (ray_dir_x < 0) ? (game->player->x - map_x) * delta_dist_x : (map_x + 1.0 - game->player->x) * delta_dist_x;
+		float side_dist_y = (ray_dir_y < 0) ? (game->player->y - map_y) * delta_dist_y : (map_y + 1.0 - game->player->y) * delta_dist_y;
 
-		if (ray_dir_x < 0)
-		{
-			step_x = -1;
-			side_dist_x = (game->player->x - map_x) * delta_dist_x;
-		}
-		else
-		{
-			step_x = 1;
-			side_dist_x = (map_x + 1.0 - game->player->x) * delta_dist_x;
-		}
-		if (ray_dir_y < 0)
-		{
-			step_y = -1;
-			side_dist_y = (game->player->y - map_y) * delta_dist_y;
-		}
-		else
-		{
-			step_y = 1;
-			side_dist_y = (map_y + 1.0 - game->player->y) * delta_dist_y;
-		}
 		int side;
-
 		while (1)
 		{
 			if (side_dist_x < side_dist_y)
 			{
 				side_dist_x += delta_dist_x;
 				map_x += step_x;
-				if (step_x > 0) 
-					side = SIDE_EAST;
-				else 
-					side = SIDE_WEST;
+				side = (step_x > 0) ? SIDE_EAST : SIDE_WEST;
 			}
 			else
 			{
 				side_dist_y += delta_dist_y;
 				map_y += step_y;
-
-				if (step_y > 0)
-					side = SIDE_SOUTH;
-				else
-					side = SIDE_NORTH;
+				side = (step_y > 0) ? SIDE_SOUTH : SIDE_NORTH;
 			}
 			if (game->map[game->player->floor][map_y][map_x] == '1')
 			{
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
-				break ;
+				break;
 			}
 			float distance = (side == SIDE_EAST || side == SIDE_WEST) ? side_dist_x - delta_dist_x : side_dist_y - delta_dist_y;
 			if (handle_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, distance))
-				break ;
+				 break;
 		}
 	}
 }
+
 
 void cast_floor(t_game *game)
 {
@@ -100,16 +76,28 @@ void cast_floor(t_game *game)
 	float ray_dir_x1 = game->player->dirX + game->player->planeX;
 	float ray_dir_y0 = game->player->dirY - game->player->planeY;
 	float ray_dir_y1 = game->player->dirY + game->player->planeY;
+	float pos_z = game->screen_height >> 1;
 
-	int y = game->screen_height * 0.5;
+	float diff_ray_dir_x = ray_dir_x1 - ray_dir_x0;
+	float diff_ray_dir_y = ray_dir_y1 - ray_dir_y0;
+
+	int texture_width = texture->width;
+	int texture_height = texture->height;
+	char *texture_data = texture->data;
+	int	bpp = texture->bpp / 8;
+
+	int y = game->screen_height >> 1;
+	float screen_width_inv = 1.0f / game->screen_width;
+
 	while (y < game->screen_height)
 	{
-		int p = y - game->screen_height * 0.5;
-		float pos_z = 0.5 * game->screen_height;
+		int p = y - (game->screen_height >> 1);
+		if (p <= 0)
+			p = 1;
 		float row_distance = pos_z / p;
 
-		float floor_step_x = row_distance * (ray_dir_x1 - ray_dir_x0) / game->screen_width;
-		float floor_step_y = row_distance * (ray_dir_y1 - ray_dir_y0) / game->screen_width;
+		float floor_step_x = row_distance * diff_ray_dir_x * screen_width_inv;
+		float floor_step_y = row_distance * diff_ray_dir_y * screen_width_inv;
 
 		float floor_x = game->player->x + row_distance * ray_dir_x0; 
 		float floor_y = game->player->y + row_distance * ray_dir_y0;
@@ -118,14 +106,16 @@ void cast_floor(t_game *game)
 		{
 			float current_floor_x = floor_x + x * floor_step_x;
 			float current_floor_y = floor_y + x * floor_step_y;
-			int tex_x = (int)(texture->width * (current_floor_x - (int)current_floor_x)) % texture->width;
-			int tex_y = (int)(texture->height * (current_floor_y - (int)current_floor_y)) % texture->height;
-			int floor_color = *((int *)(texture->data + tex_y * texture->size_line + tex_x * (texture->bpp / 8)));
-			secure_pixel_put(game, x, y, floor_color);
+			int tex_x = (int)(current_floor_x * texture_width) % texture_width;
+			int tex_y = (int)(current_floor_y * texture_height) % texture_height;
+			int floor_color = *((int *)(texture_data + tex_y * texture->size_line + tex_x * bpp));
+			if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
+				secure_pixel_put(game, x, y, floor_color);
 		}
 		y++;
 	}
 }
+
 
 int	handle_close(t_game *game)
 {
@@ -187,9 +177,7 @@ int	handle_mouse_move(int x, int y, t_game *game)
 		return (0);
 	int centerX = game->screen_width * 0.5;
 	int centerY = game->screen_height * 0.5;
-	int deltaX = x - centerX;
-	int deltaY = y - centerY;
-	float rotation = deltaX * ROTATION_SPEED;
+	float rotation = (x - centerX) * ROTATION_SPEED;
 	float oldDirX = game->player->dirX;
 	game->player->dirX = oldDirX * cos(rotation) - game->player->dirY * sin(rotation);
 	game->player->dirY = oldDirX * sin(rotation) + game->player->dirY * cos(rotation);
@@ -197,7 +185,6 @@ int	handle_mouse_move(int x, int y, t_game *game)
 	game->player->planeX = oldPlaneX * cos(rotation) - game->player->planeY * sin(rotation);
 	game->player->planeY = oldPlaneX * sin(rotation) + game->player->planeY * cos(rotation);
 	mlx_mouse_move(game->mlx, game->win, centerX, centerY);
-	(void)y;
 	return (0);
 }
 
@@ -286,11 +273,16 @@ void	show_menu_message(t_game *game)
 	int text_x = (game->screen_width - width) * 0.5;
 	int text_y = (game->screen_height - height) * 0.5 - 120;
 
-	draw_rectangle(game, text_x, text_y, width, height, MENU_BUTTON_COLOR);
 	if (game->menu->message == OPEN_DOOR)
+	{
+		draw_rectangle(game, text_x, text_y, width, height, MENU_BUTTON_COLOR);
 		draw_text(game, "Appuyer sur F pour ouvrir", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
+	}
 	else if (game->menu->message == CLOSE_DOOR)
+	{
+		draw_rectangle(game, text_x, text_y, width, height, MENU_BUTTON_COLOR);
 		draw_text(game, "Appuyer sur F pour fermer", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
+	}
 	else if (game->menu->message == TELEPORT)
 	{
 		draw_rectangle(game, text_x - 40, text_y, width + 80, height, MENU_BUTTON_COLOR);
@@ -309,6 +301,28 @@ void	calculate_delta_time(t_game *game)
 	game->last_time = current_time;
 }
 
+static double last_time = 0.0;
+static int frame_count = 0;
+static double fps = 0.0;
+
+void	calculate_fps(t_game *game)
+{
+	struct	timeval current_time;
+	gettimeofday(&current_time, NULL);
+	double	elapsed_time = (current_time.tv_sec + current_time.tv_usec / 1e6) - last_time;
+
+	frame_count++;
+
+	if (elapsed_time >= 1.0)
+	{
+		fps = frame_count / elapsed_time;
+		frame_count = 0;
+		last_time = current_time.tv_sec + current_time.tv_usec / 1e6;
+	}
+	draw_text_left(game, "FPS: ", 5, 20, 30, 0xFFFFF);
+	draw_text_left(game, ft_itoa(fps), 50, 20, 30, 0xFFFFF);
+}
+
 int	game_loop(t_game *game)
 {
 	clear_image(game, 0x000000);
@@ -325,12 +339,14 @@ int	game_loop(t_game *game)
 		update_door_animation(game);
 		cast_rays(game);
 		cast_floor(game);
+		update_enemies(game);
 		draw_sprites(game);
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
 			game->menu->message = TELEPORT;
 		if (game->menu->message != NOTHING)
 			show_menu_message(game);
 	}
+	calculate_fps(game);
 	mlx_put_image_to_window(game->mlx, game->win, game->images->base->img, 0, 0);
 	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'e')
 	{

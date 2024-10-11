@@ -203,6 +203,8 @@ void	draw_text(t_game *data, char *str, int x, int y, int height, int color);
 void	draw_text_left(t_game *game, char *str, int x, int y, int height, int color);
 void	draw_text_right(t_game *game, char *str, int x, int y, int height, int color);
 void	draw_char(t_game *data, int x, int y, int height, char c, int color);
+void	draw_sprite(t_game *game, t_image *texture, float x, float y);
+void	draw_sprites(t_game *game);
 
 //door
 int		handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, float distance);
@@ -214,8 +216,10 @@ void	update_door_animation(t_game *game);
 //wall
 void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side);
 void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height);
-void	draw_floor(t_game *game);
-void	draw_ceilling(t_game *game);
+
+//enemies
+void	draw_enemies(t_game *game);
+void	init_enemies(t_game *game);
 
 // PARSING
 
