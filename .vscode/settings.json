@@ -8,6 +8,7 @@
 		"string_view": "c",
 		"math.h": "c",
 		"mlx.h": "c",
-		"stdio.h": "c"
+		"stdio.h": "c",
+		"server.h": "c"
 	}
 }
