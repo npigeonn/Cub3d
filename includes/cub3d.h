@@ -8,6 +8,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include "game.h"
+# include "server.h"
 
 # define MOVEMENT_SPEED 0.1f
 # define ROTATION_SPEED 0.001f

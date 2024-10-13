@@ -2,7 +2,6 @@
 #define GAME_H
 
 # include <math.h>
-
 # include "mlx.h"
 # include "libft.h"
 #include <sys/time.h>
@@ -20,6 +19,8 @@ enum GameStatus {
 	OPTIONS = 4,
 	SERVEURS = 5,
 	SERVEUR_CREATE = 6,
+	JOIN_SERVER = 7,
+	MULTI_PLAYER = 8,
 };
 
 enum Direction {
@@ -55,11 +56,9 @@ typedef struct s_player
 	float	dirY;
 	float	planeX;
 	float	planeY;
-	float	speed;
 	float	height;
 	float	health;
 	int		floor;
-	float	pitch;
 	t_stuff	*stuff;
 }	t_player;
 
@@ -150,6 +149,16 @@ typedef struct s_enemies
 	struct s_enemies	*next;
 }	t_enemies;
 
+typedef struct s_server_info
+{
+	char					*name;
+	char					*ip;
+	int						port;
+	int						players;
+	int						ping;
+	int						max_players;
+	struct s_server_info	*next;
+}	t_server_info;
 
 typedef struct s_game
 {
@@ -176,6 +185,12 @@ typedef struct s_game
 	t_enemies		*enemies;
 	float			delta_time;
 	struct timeval	last_time;
+
+	int				player_id;
+	char			*pseudo;
+	t_server_info	*servers;
+	int				sock;
+	pthread_t		discover_servers_thread;
 }	t_game;
 
 //game
@@ -220,6 +235,7 @@ void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int dr
 //enemies
 void	draw_enemies(t_game *game);
 void	init_enemies(t_game *game);
+void	update_enemies(t_game *game);
 
 // PARSING
 
@@ -260,6 +276,12 @@ int	free_map(t_game *game);
 int free_map_copy(t_game *game);
 int	free_split(char **str);
 
+
+//server
+void	create_server(t_game *game);
+
+//client
+int	join_server(t_game *game);
 
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 15:34:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/11 13:30:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/12 14:47:58 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,18 +36,22 @@ void	secure_pixel_put(t_game *game, int x, int y, int color)
 	}
 }
 
-
 int	is_pixel_transparent(t_image *img, int x, int y)
 {
+	int	pixel;
+
+	if (!img || !img->data)
+		return (1);
 	if (x < 0 || x >= img->width || y < 0 || y >= img->height)
-		return 1;
-	int pixel = *(int *)(img->data + y * img->size_line + x * (img->bpp / 8));
-	return pixel == 0;
+		return (1);
+	pixel = *(int *)(img->data + y * img->size_line + x * (img->bpp / 8));
+	return (pixel <= 0);
 }
+
 
 int	get_index_char(char c)
 {
-	const char	list[41] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$:?!";
+	const char	list[95] = "!#$&().;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
 	int			i;
 
 	i = -1;
@@ -62,15 +66,14 @@ int	get_index_char(char c)
 int	get_char_width(t_image *img, char c)
 {
 	const int	index = get_index_char(c);
-	int			width = 0;
-	int			left_bound = img->width;
+	int			left_bound = 480;
 	int			right_bound = -1;
-	int			char_x = (index % 8) * 240;
-	int			char_y = (index / 8) * 240;
+	int			char_x = (index % 10) * 480;
+	int			char_y = (index / 10) * 480;
 
-	for (int y = 0; y < 240; y++)
+	for (int y = 0; y < 480; y++)
 	{
-		for (int x = 0; x < 240; x++)
+		for (int x = 0; x < 480; x++)
 		{
 			if (!is_pixel_transparent(img, x + char_x, y + char_y))
 			{
@@ -79,50 +82,37 @@ int	get_char_width(t_image *img, char c)
 			}
 		}
 	}
-	if (left_bound > right_bound) return (0);
-	width = right_bound - left_bound + 1;
-	return (width);
+	if (left_bound > right_bound)
+		return (0);
+	return (right_bound - left_bound + 1);
 }
 
 void	get_pos_char(char c, int *x, int *y)
 {
-	const char	list[41] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$:?!";
+	const char	list[95] = "!#$&().;@[]:?_'|!!/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
+	int			index;
 
-	*x = -1;
-	*y = 0;
-	while (list[++(*x)])
-	{
-		if (list[*x] == c)
-			break ;
-	}
-	while (*x > 7)
-	{
-		*x -= 8;
-		(*y)++;
-	}
+	index = get_index_char(c);
+	*x = index % 10;
+	*y = index / 10;
 }
 
 void	draw_char(t_game *game, int x, int y, int height, char c, int color)
 {
-	int			x1;
-	int			y1;
-	int			pos_x;
-	int			pos_y;
+	int			x1, y1;
+	int			pos_x, pos_y;
 	int			original_pixel_index;
 	t_image		*img = game->images->alphanum_sprite;
 
 	get_pos_char(ft_toupper(c), &pos_x, &pos_y);
-	y1 = -1;
-	while (++y1 < height)
+	for (y1 = 0; y1 < height; y1++)
 	{
-		x1 = -1;
-		while (++x1 < height)
+		for (x1 = 0; x1 < height; x1++)
 		{
-			original_pixel_index = ((y1 * 240 / height) + (pos_y * 240))
-				* game->images->alphanum_sprite->size_line
-				+ ((x1 * 240 / height) + (pos_x * 240))
-				* game->images->alphanum_sprite->bpp * 0.125;
-
+			int source_x = (x1 * 480 / height) + (pos_x * 480);
+			int source_y = (y1 * 480 / height) + (pos_y * 480);
+			original_pixel_index = source_y * img->size_line
+				+ source_x * img->bpp * 0.125;
 			if (game->images->alphanum_sprite->data[original_pixel_index] != 0)
 				pixel_put(game, x + x1, y + y1, color);
 		}
@@ -132,47 +122,44 @@ void	draw_char(t_game *game, int x, int y, int height, char c, int color)
 int	get_text_width(char *str, t_image *img, int height)
 {
 	int	total_width = 0;
-	int	i = -1;
+	int	i;
 
-	while (str[++i])
+	for (i = 0; str[i]; i++)
 	{
 		if (str[i] == ' ')
 			total_width += height * 0.33;
 		else if (str[i] != '\n')
 		{
 			int char_width = get_char_width(img, ft_toupper(str[i]));
-			total_width += char_width * height / 240 + 3;
+			total_width += (char_width * height / 480);
 		}
 	}
-	return total_width;
+	return (total_width);
 }
 
 void	draw_text(t_game *game, char *str, int x, int y, int height, int color)
 {
 	int			i;
-	const int	x_base = x;
-	t_image		*img = game->images->alphanum_sprite;
+	t_image		*img;
+	const int	x_start = x;
+	const int	text_width = get_text_width(str, img, height);
+	int			char_width;
 
+	img = game->images->alphanum_sprite;
 	if (str == NULL)
 		return ;
-	int text_width = get_text_width(str, img, height);
-	x = x_base - (text_width >> 1);
+	x = x_start - (text_width >> 1);
+	y -= 7;
 	i = -1;
 	while (str[++i])
 	{
-		if (str[i] == '\n')
-		{
-			text_width = get_text_width(&str[i + 1], img, height);
-			x = x_base - (text_width >> 1);
-			y += height * 0.33 + 5;
-		}
-		else if (str[i] == ' ')
+		if (str[i] == ' ')
 			x += height * 0.33;
 		else
 		{
 			draw_char(game, x, y, height, str[i], color);
-			int char_width = get_char_width(game->images->alphanum_sprite, ft_toupper(str[i]));
-			x += char_width * height / 240 + 3;
+			char_width = get_char_width(game->images->alphanum_sprite, ft_toupper(str[i]));
+			x += char_width * height / 480 + 3;
 		}
 	}
 }
@@ -180,53 +167,48 @@ void	draw_text(t_game *game, char *str, int x, int y, int height, int color)
 void	draw_text_left(t_game *game, char *str, int x, int y, int height, int color)
 {
 	int			i;
-	t_image		*img = game->images->alphanum_sprite;
+	int			char_width;
+	t_image		*img;
 
+	img = game->images->alphanum_sprite;
 	if (str == NULL)
 		return ;
 	i = -1;
+	y -= 7;
 	while (str[++i])
 	{
-		if (str[i] == '\n')
-		{
-			y += height * 0.33 + 5;
-			x = 0;
-		}
-		else if (str[i] == ' ')
+		if (str[i] == ' ')
 			x += height * 0.33;
 		else
 		{
 			draw_char(game, x, y, height, str[i], color);
-			int char_width = get_char_width(game->images->alphanum_sprite, ft_toupper(str[i]));
-			x += char_width * height / 240 + 3;
+			char_width = get_char_width(game->images->alphanum_sprite, ft_toupper(str[i]));
+			x += char_width * height / 480 + 3;
 		}
 	}
 }
 void	draw_text_right(t_game *game, char *str, int x, int y, int height, int color)
 {
 	int			i;
-	t_image		*img = game->images->alphanum_sprite;
+	t_image		*img;
+	const int	text_width = get_text_width(str, img, height);
+	int			char_width;
 
+	img = game->images->alphanum_sprite;
 	if (str == NULL)
 		return ;
-	int text_width = get_text_width(str, img, height);
 	x = x - text_width;
 	i = -1;
+	y -= 7;
 	while (str[++i])
 	{
-		if (str[i] == '\n')
-		{
-			text_width = get_text_width(&str[i + 1], img, height);
-			x = x - text_width;
-			y += height * 0.33 + 5;
-		}
-		else if (str[i] == ' ')
+		if (str[i] == ' ')
 			x += height * 0.33;
 		else
 		{
 			draw_char(game, x, y, height, str[i], color);
-			int char_width = get_char_width(game->images->alphanum_sprite, ft_toupper(str[i]));
-			x += char_width * height / 240 + 3;
+			char_width = get_char_width(game->images->alphanum_sprite, ft_toupper(str[i]));
+			x += char_width * height / 480 + 3;
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/11 13:42:41 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/13 19:11:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 		: (game->player->x + perp_wall_dist * ray_dir_x);
 	wall_x -= floor(wall_x);
 	int tex_x = (int)(wall_x * texture->width) % texture->width;
-	printf("%d\n", tex_x);
 	game->wall_distances[x] = perp_wall_dist;
 	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, tex_x, line_height);
 }

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/11 13:45:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/13 23:14:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,8 +146,12 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 	{
 		if (game->menu->button_selected == 3)
 			game->menu->status = MAIN_MENU;
+		if (game->menu->button_selected == 2)
+			game->menu->status = SERVEUR_CREATE;
 		return (0);
 	}
+	if (game->menu->status == MULTI_PLAYER || game->menu->status == PLAYING)
+		return (0);
 	if (keycode == 1)
 	{
 		if (game->menu->button_selected == 1)
@@ -156,7 +160,10 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 			mlx_mouse_hide(game->mlx, game->win);
 		}
 		else if (game->menu->button_selected == 2)
+		{
 			game->menu->status = SERVEURS;
+			pthread_create(&game->discover_servers_thread, NULL, discover_servers_thread, game);
+		}
 		else if (game->menu->button_selected == 3)
 			game->menu->status = OPTIONS;
 		else if (game->menu->button_selected == 4)
@@ -173,7 +180,7 @@ int	handle_mouse_move(int x, int y, t_game *game)
 		update_option_menu_button(game, x, y);
 	else if (game->menu->status == SERVEURS)
 		update_multiplayer_menu(game, x, y);
-	if (game->menu->status != PLAYING || x == game->screen_width * 0.5)
+	if ((game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER) || x == game->screen_width * 0.5)
 		return (0);
 	int centerX = game->screen_width * 0.5;
 	int centerY = game->screen_height * 0.5;
@@ -215,7 +222,7 @@ int	handle_keypress(int keycode, t_game *game)
 	
 	if (keycode == 65307)
 		handle_close(game);
-	if (game->menu->status != PLAYING)
+	if (game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER)
 		return (0);
 	if (keycode == 65362 || keycode == 119) // W pour avancer
 	{
@@ -224,26 +231,32 @@ int	handle_keypress(int keycode, t_game *game)
 		p->x += p->dirX * 0.1;
 		p->y += p->dirY * 0.1;
 	}
-	if (keycode == 65364 || keycode == 115) // S pour reculer
+	else if (keycode == 65364 || keycode == 115) // S pour reculer
 	{
 		if (!can_move(game, p->x - p->dirX * 0.1, p->y - p->dirY * 0.1))
 			return (0);
 		p->x -= p->dirX * 0.1;
 		p->y -= p->dirY * 0.1;
 	}
-	if (keycode == 65363 || keycode == 100) // D pour aller à droite
+	else if (keycode == 65363 || keycode == 100) // D pour aller à droite
 	{
 		if (!can_move(game, p->x + p->planeX * 0.1, p->y + p->planeY * 0.1))
 			return (0);
 		p->x += p->planeX * 0.1;
 		p->y += p->planeY * 0.1;
 	}
-	if (keycode == 65361 || keycode == 97) // A pour aller à gauche
+	else if (keycode == 65361 || keycode == 97) // A pour aller à gauche
 	{
 		if (!can_move(game, p->x - p->planeX * 0.1, p->y - p->planeY * 0.1))
 			return (0);
 		p->x -= p->planeX * 0.1;
 		p->y -= p->planeY * 0.1;
+	}
+	if (game->menu->status == MULTI_PLAYER)
+	{
+		GameMessage message = {.type = MSG_MOVE, .player_id = game->player_id, .x = p->x, .y = p->y};
+		strncpy(message.pseudo, game->pseudo, MAX_PSEUDO_LENGTH);
+		send(game->sock, &message, sizeof(GameMessage), 0);
 	}
 	if (keycode == 32) // Espace pour sauter
 		p->height -= 0.1;
@@ -252,18 +265,6 @@ int	handle_keypress(int keycode, t_game *game)
 	if (keycode == 102)
 		use_item(game);
 	return (0);
-}
-
-void	clear_image(t_game *game, int color)
-{
-	for (int y = 0; y < game->screen_height; y++)
-	{
-		for (int x = 0; x < game->screen_width; x++)
-		{
-			int *pixel = (int *)(game->images->base->data + y * game->images->base->size_line + x * (int)(game->images->base->bpp * 0.125));
-			*pixel = color;
-		}
-	}	
 }
 
 void	show_menu_message(t_game *game)
@@ -325,22 +326,33 @@ void	calculate_fps(t_game *game)
 
 int	game_loop(t_game *game)
 {
-	clear_image(game, 0x000000);
+	ft_memset(game->images->base->data, 0, game->screen_width * game->screen_height * 4);
 	if (game->menu->status == MAIN_MENU)
 		draw_main_menu(game);
 	else if (game->menu->status == OPTIONS)
 		draw_options_menu(game);
 	else if (game->menu->status == SERVEURS)
 		draw_multiplayer_menu(game);
-	else if (game->menu->status == PLAYING)
+	else if (game->menu->status == SERVEUR_CREATE)
+	{
+		create_server(game);
+		game->menu->status = JOIN_SERVER;
+	}
+	else if (game->menu->status == JOIN_SERVER)
+	{
+		join_server(game);
+		printf("Joined server\n");
+		game->menu->status = MULTI_PLAYER;
+	}
+	else if (game->menu->status == PLAYING || game->menu->status == MULTI_PLAYER)
 	{
 		game->menu->message = NOTHING;
 		calculate_delta_time(game);
 		update_door_animation(game);
 		cast_rays(game);
 		cast_floor(game);
-		update_enemies(game);
-		draw_sprites(game);
+		// update_enemies(game);
+		// draw_sprites(game);
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
 			game->menu->message = TELEPORT;
 		if (game->menu->message != NOTHING)

@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/11 13:21:34 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/13 19:01:26 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,13 @@ SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
 				textures.c \
 				map_crafting.c )
 
-SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING)
+SRC_SERVER =	$(addprefix $(PATH_SRC)server/, \
+				server.c )
+
+SRC_CLIENT =	$(addprefix $(PATH_SRC)client/, \
+				client.c )
+
+SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT)
 
 ############### MINILIBX ###############
 
@@ -68,7 +74,7 @@ all: $(NAME)
 $(OBJS): ./includes/* Makefile
 
 $(PATH_OBJ):
-	mkdir -p $@ $@game $@game/menu $@parsing
+	mkdir -p $@ $@game $@game/menu $@parsing $@server $@client
 
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
 	cc -c $(CFLAGS) $(INCLUDES) $< -o $@
