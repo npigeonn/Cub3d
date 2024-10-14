@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/11 13:43:41 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 10:42:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ bool	is_position_valid(t_game *game, float x, float y, int floor)
 		return (false);
 	if (!game->map[floor][(int)y])
 		return (false);
-	if (ft_strlen(game->map[floor][(int)y] < (size_t)x) || !game->map[floor][(int)y][(int)x]) //TODO: Segfault
+	if (ft_strlen(game->map[floor][(int)y]) < (size_t)x || !game->map[floor][(int)y][(int)x]) //TODO: Segfault
 		return (false);
 	if (game->map[floor][(int)y][(int)x] != '1' && game->map[floor][(int)y][(int)x] != 'D' && game->map[floor][(int)y][(int)x] != 'L')
 		return (true);
@@ -120,6 +120,19 @@ void	draw_enemies(t_game *game)
 	while (current)
 	{
 		if (current->floor == game->player->floor)
+			draw_sprite(game, game->textures->enemies, current->x, current->y);
+		current = current->next;
+	}
+}
+
+void	draw_players(t_game *game)
+{
+	t_player_info	*current;
+
+	current = game->server->players;
+	while (current)
+	{
+		// if (current->floor == game->player->floor)
 			draw_sprite(game, game->textures->enemies, current->x, current->y);
 		current = current->next;
 	}

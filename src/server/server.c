@@ -55,9 +55,9 @@ t_player_info	*find_player_by_pseudo(char *pseudo)
 	return (NULL);
 }
 
-t_player_info	*find_player_by_id(int id)
+t_player_info	*find_player_by_id(t_player_info *this_players, int id)
 {
-	t_player_info	*current = players;
+	t_player_info	*current = this_players;
 
 	while (current)
 	{
@@ -74,7 +74,7 @@ void	add_player_node(int id, char *pseudo)
 	t_player_info	*current;
 
 	new_node->player_id = id;
-	new_node->pseudo = strdup(pseudo);
+	strncpy(new_node->pseudo, pseudo, MAX_PSEUDO_LENGTH);
 	new_node->x = -1;
 	new_node->y = -1;
 	new_node->next = NULL;
@@ -129,7 +129,7 @@ void	notify_players_of_disconnection(int id)
 	GameMessage		disconnect_msg = { .type = MSG_DISCONNECT };
 	int				i;
 
-	player = find_player_by_id(id);
+	player = find_player_by_id(players, id);
 	if (player) {
 		disconnect_msg.player_id = player->player_id;
 		strncpy(disconnect_msg.pseudo, player->pseudo, MAX_PSEUDO_LENGTH);
@@ -183,7 +183,6 @@ void	handle_client_message(int client_socket)
 	valread = recv(client_socket, &msg, sizeof(GameMessage), 0);
 	if (valread <= 0)
 	{
-		printf("Player disconnected\n");
 		i = -1;
 		while (++i < MAX_PLAYERS)
 		{
@@ -374,7 +373,28 @@ void	init_server(int *server_fd, struct sockaddr_in *address, int *opt)
 	pthread_mutex_unlock(&game_lock);
 }
 
-void *logic_game(void *arg)
+void	send_all_players(int id)
+{
+	t_player_info	*current;
+	GameMessage		connect_msg;
+
+	current = players;
+	connect_msg.type = MSG_CONNECT;
+	while(current)
+	{
+		if (current->player_id >= 0 && current->player_id != id)
+		{
+			connect_msg.player_id = current->player_id;
+			connect_msg.x = current->x;
+			connect_msg.y = current->y;
+			strncpy(connect_msg.pseudo, current->pseudo, MAX_PSEUDO_LENGTH);
+			send(client_sockets[id], &connect_msg, sizeof(GameMessage), 0);
+		}
+		current = current->next;
+	}
+}
+
+void	*logic_game(void *arg)
 {
 	while (1)
 	{
@@ -387,10 +407,12 @@ void *logic_game(void *arg)
 			if (msg.type == MSG_CONNECT)
 			{
 				send(client_sockets[msg.player_id], &msg, sizeof(GameMessage), 0);
+				send_all_players(msg.player_id);
 				notify_players_of_connection(msg.player_id, msg.pseudo);
 			} else if (msg.type == MSG_RECONNECT)
 			{
 				send(client_sockets[msg.player_id], &msg, sizeof(GameMessage), 0);
+				send_all_players(msg.player_id);
 				notify_players_of_reconnection(msg.player_id, msg.pseudo);
 			} else if (msg.type == MSG_DISCONNECT)
 				notify_players_of_disconnection(msg.player_id);

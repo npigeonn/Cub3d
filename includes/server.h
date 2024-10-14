@@ -12,18 +12,8 @@
 #define MAX_PLAYERS 4
 #define MAX_PSEUDO_LENGTH 32
 #define PORT 12345
-#define BROADCAST_PORT 23456
+#define BROADCAST_PORT 12345
 
-typedef struct	s_player_info
-{
-	int						player_id;
-	char					*pseudo;
-	float					x;
-	float					y;
-	float					dir_x;
-	float					dir_y;
-	struct s_player_info	*next;
-}	t_player_info;
 
 typedef struct t_player_node
 {
@@ -56,7 +46,7 @@ typedef struct s_move_message
 	float	new_y;
 }	MoveMessage;
 
-t_player_info	*find_player_by_id(int id);
+t_player_info	*find_player_by_id(t_player_info *players, int id);
 void	*discover_servers_thread(void *arg);
 
 #endif

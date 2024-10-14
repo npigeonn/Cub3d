@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/13 23:14:04 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 10:42:35 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,9 @@ void cast_rays(t_game *game)
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
 				break;
 			}
-			float distance = (side == SIDE_EAST || side == SIDE_WEST) ? side_dist_x - delta_dist_x : side_dist_y - delta_dist_y;
-			if (handle_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, distance))
-				 break;
+			// float distance = (side == SIDE_EAST || side == SIDE_WEST) ? side_dist_x - delta_dist_x : side_dist_y - delta_dist_y;
+			// if (handle_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, distance))
+			// 	 break;
 		}
 	}
 }
@@ -148,6 +148,26 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 			game->menu->status = MAIN_MENU;
 		if (game->menu->button_selected == 2)
 			game->menu->status = SERVEUR_CREATE;
+		if (game->menu->server_selected != 0)
+		{
+			int	i = 1;
+			t_server_info *current;
+
+			current = game->servers;
+			while (current)
+			{
+				if (i == game->menu->server_selected)
+				{
+					game->server->ip = current->ip;
+					game->server->pseudo = "yoyoazs";
+					game->menu->server_selected = 0;
+					game->menu->status = JOIN_SERVER;
+					break;
+				}
+				current = current->next;
+				i++;
+			}
+		}
 		return (0);
 	}
 	if (game->menu->status == MULTI_PLAYER || game->menu->status == PLAYING)
@@ -254,9 +274,9 @@ int	handle_keypress(int keycode, t_game *game)
 	}
 	if (game->menu->status == MULTI_PLAYER)
 	{
-		GameMessage message = {.type = MSG_MOVE, .player_id = game->player_id, .x = p->x, .y = p->y};
-		strncpy(message.pseudo, game->pseudo, MAX_PSEUDO_LENGTH);
-		send(game->sock, &message, sizeof(GameMessage), 0);
+		GameMessage message = {.type = MSG_MOVE, .player_id = game->server->player_id, .x = p->x, .y = p->y};
+		strncpy(message.pseudo, game->server->pseudo, MAX_PSEUDO_LENGTH);
+		send(game->server->sock, &message, sizeof(GameMessage), 0);
 	}
 	if (keycode == 32) // Espace pour sauter
 		p->height -= 0.1;
@@ -321,7 +341,7 @@ void	calculate_fps(t_game *game)
 		last_time = current_time.tv_sec + current_time.tv_usec / 1e6;
 	}
 	draw_text_left(game, "FPS: ", 5, 20, 30, 0xFFFFF);
-	draw_text_left(game, ft_itoa(fps), 50, 20, 30, 0xFFFFF);
+	draw_text_left(game, ft_itoa(fps), 63, 20, 30, 0xFFFFF);
 }
 
 int	game_loop(t_game *game)
@@ -336,12 +356,13 @@ int	game_loop(t_game *game)
 	else if (game->menu->status == SERVEUR_CREATE)
 	{
 		create_server(game);
+		game->server->ip = "127.0.0.1";
+		game->server->pseudo = "max";
 		game->menu->status = JOIN_SERVER;
 	}
 	else if (game->menu->status == JOIN_SERVER)
 	{
 		join_server(game);
-		printf("Joined server\n");
 		game->menu->status = MULTI_PLAYER;
 	}
 	else if (game->menu->status == PLAYING || game->menu->status == MULTI_PLAYER)
@@ -351,6 +372,7 @@ int	game_loop(t_game *game)
 		update_door_animation(game);
 		cast_rays(game);
 		cast_floor(game);
+		draw_players(game);
 		// update_enemies(game);
 		// draw_sprites(game);
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))

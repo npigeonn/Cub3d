@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/13 23:55:50 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 10:21:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,23 +18,29 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 	const int	btn_height = game->screen_height * 0.1;
 	const int	spacing = game->screen_height * 0.05;
 		
-	const int	list_width = game->screen_width * 0.65;
-	// const int	list_height = game->screen_height * 0.8;
-	const int	list_x = (game->screen_width - list_width) * 0.1;
-	// const int	list_y = (game->screen_height - list_height) * 0.35;
-	// int			server_y_offset = list_y + 60;
+	const int	list_width = game->screen_width * 0.65 - 20;
+	const int	list_height = game->screen_height * 0.8;
+	const int	list_x = (game->screen_width - list_width) * 0.1 + 10;
+	const int	list_y = (game->screen_height - list_height) * 0.35;
+	int			server_y_offset = list_y + 80;
 	
-	// for (int i = 0; i < 3; i++)
-	// {
-	// 	if (mouse_x >= list_x && mouse_x <= list_x + list_width &&
-	// 		mouse_y >= server_y_offset && mouse_y <= server_y_offset + btn_height * 0.4)
-	// 	{
-	// 		// game->server_selected = i + 1;
-	// 		game->menu->button_selected = 0;
-	// 		return;
-	// 	}
-	// 	server_y_offset += 60;
-	// }
+	t_server_info	*current;
+	int				i = 1;
+
+	current = game->servers;
+	while (current)
+	{
+		if (mouse_x >= list_x && mouse_x <= list_x + list_width &&
+			mouse_y >= server_y_offset && mouse_y <= server_y_offset + 80)
+		{
+			game->menu->server_selected = i;
+			game->menu->button_selected = 0;
+			return;
+		}
+		server_y_offset += 60;
+		current = current->next;
+		i++;
+	}
 
 	const int	remaining_space = game->screen_width - (list_x + list_width);
 	const int	btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
@@ -54,7 +60,7 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 	else
 	{
 		game->menu->button_selected = 0;
-		// game->server_selected = 0;
+		game->menu->server_selected = 0;
 	}
 }
 
@@ -136,6 +142,7 @@ void	*discover_servers_thread(void *arg)
 		tv.tv_usec = 0;
 		setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
 
+		time_t now = time(NULL);
 		int bytes_received = recvfrom(sockfd, buffer, sizeof(buffer) - 1, 0, (struct sockaddr *)&recv_addr, &addr_len);
 		if (bytes_received > 0)
 		{
@@ -158,38 +165,62 @@ void	*discover_servers_thread(void *arg)
 				sscanf(buffer, "ServerInfo:%[^;];Players:%d/%d;Ping:%dms", new_server->name, &new_server->players, &new_server->max_players, &new_server->ping);
 				new_server->ip = strdup(inet_ntoa(recv_addr.sin_addr));
 				new_server->port = ntohs(recv_addr.sin_port);
+				new_server->last_seen = now;
 				new_server->next = NULL;
 				if (game->servers == NULL)
 					game->servers = new_server;
 				else
 				{
 					t_server_info *current = game->servers;
+					t_server_info *last_server = NULL;
 					int server_exists = 0;
+
 					while (current != NULL)
 					{
 						if (strcmp(current->ip, new_server->ip) == 0 && current->port == new_server->port)
 						{
-							server_exists = 1;
+							current->last_seen = now;
+							current->players = new_server->players;
+							current->ping = new_server->ping;
 							free(new_server->name);
 							free(new_server->ip);
 							free(new_server);
+							server_exists = 1;
 							break;
 						}
+						last_server = current;
 						current = current->next;
 					}
 					if (!server_exists)
-					{
-						last_server = game->servers;
-						while (last_server->next != NULL)
-							last_server = last_server->next;
 						last_server->next = new_server;
-					}
 				}
+			}
+		}
+		t_server_info *prev = NULL;
+		t_server_info *current = game->servers;
+		while (current != NULL)
+		{
+			if (difftime(now, current->last_seen) > 10)
+			{
+				if (prev == NULL)
+					game->servers = current->next;
+				else
+					prev->next = current->next;
+				t_server_info *to_delete = current;
+				current = current->next;
+				free(to_delete->name);
+				free(to_delete->ip);
+				free(to_delete);
+			}
+			else
+			{
+				prev = current;
+				current = current->next;
 			}
 		}
 	}
 	close(sockfd);
-	return NULL;
+	return (NULL);
 }
 
 
@@ -210,37 +241,37 @@ void	draw_multiplayer_menu(t_game *game)
 		draw_text(game, "Searching for servers...", list_x + list_width * 0.5, server_y_offset, 20, MENU_BUTTON_TEXT_COLOR);
 	else
 	{
+		int i = 1;
 		t_server_info *current = game->servers;
 		while (current)
 		{
-			char server_info[256];
-			sprintf(server_info, "%s:%d; Players: %d/%d; Ping: %dms", current->ip, current->port, current->players, current->max_players, current->ping);
-			draw_rounded_rectangle(game, list_x + 20, server_y_offset, list_width - 40, 40, 10, MENU_BUTTON_COLOR);
-			draw_text(game, server_info, list_x + list_width * 0.5, server_y_offset + 20, 20, MENU_BUTTON_TEXT_COLOR);
-			server_y_offset += 60;
+			if (game->menu->server_selected == i)
+				draw_rounded_rectangle(game, list_x + 8, server_y_offset - 2, list_width - 16, 84, 15, 0xda1254);
+			draw_rounded_rectangle(game, list_x + 10, server_y_offset, list_width - 20, 80, 15, MENU_BUTTON_SELECTED_COLOR);
+			draw_text_left(game, current->name, list_x + 40, server_y_offset + 10, btn_height * 0.4, MENU_BUTTON_TEXT_COLOR);
+			draw_text_right(game, "1/4", list_x + list_width - 80, server_y_offset + 22, btn_height * 0.4, MENU_BUTTON_TEXT_COLOR);
+			draw_text_left(game, "Ping: 30ms", list_x + 40, server_y_offset + 50, btn_height * 0.3, MENU_BUTTON_TEXT_COLOR);
+			server_y_offset += 90;
 			current = current->next;
+			i++;
 		}
 	}
 
-	// Dessin des boutons "Join", "Create", et "Back"
 	const int remaining_space = game->screen_width - (list_x + list_width);
 	const int btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
 	const int btn_y_start = game->screen_height * 0.25;
 
-	// Bouton "Join Server"
 	if (game->menu->button_selected == 1)
 		draw_rectangle(game, btn_x - 2, btn_y_start - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
 	draw_rectangle(game, btn_x, btn_y_start, btn_width, btn_height, MENU_BUTTON_COLOR);
 	draw_text(game, "Join Server", btn_x + btn_width * 0.5, btn_y_start + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
 
-	// Bouton "Create Server"
 	const int create_btn_y = btn_y_start + btn_height + spacing;
 	if (game->menu->button_selected == 2)
 		draw_rectangle(game, btn_x - 2, create_btn_y - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
 	draw_rectangle(game, btn_x, create_btn_y, btn_width, btn_height, MENU_BUTTON_COLOR);
 	draw_text(game, "Create Server", btn_x + btn_width * 0.5, create_btn_y + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
 
-	// Bouton "Back"
 	const int back_btn_y = create_btn_y + btn_height + spacing;
 	if (game->menu->button_selected == 3)
 		draw_rectangle(game, btn_x - 2, back_btn_y - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);

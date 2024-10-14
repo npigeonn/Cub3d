@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/13 19:01:26 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/14 08:15:18 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,8 @@ SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
 				map_crafting.c )
 
 SRC_SERVER =	$(addprefix $(PATH_SRC)server/, \
-				server.c )
+				server.c \
+				broadcast.c )
 
 SRC_CLIENT =	$(addprefix $(PATH_SRC)client/, \
 				client.c )

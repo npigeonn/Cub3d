@@ -136,6 +136,7 @@ typedef struct s_menu
 	int		message;
 	float	volume;
 	float	mouse_sensitivity;
+	int		server_selected;
 }	t_menu;
 
 typedef struct s_enemies
@@ -157,8 +158,29 @@ typedef struct s_server_info
 	int						players;
 	int						ping;
 	int						max_players;
+	time_t					last_seen;
 	struct s_server_info	*next;
 }	t_server_info;
+
+typedef struct	s_player_info
+{
+	int						player_id;
+	char					pseudo[32];
+	float					x;
+	float					y;
+	float					dir_x;
+	float					dir_y;
+	struct s_player_info	*next;
+}	t_player_info;
+
+typedef struct s_server
+{
+	int				player_id;
+	char			*pseudo;
+	int				sock;
+	char			*ip;
+	t_player_info	*players;
+}	t_server;
 
 typedef struct s_game
 {
@@ -186,10 +208,8 @@ typedef struct s_game
 	float			delta_time;
 	struct timeval	last_time;
 
-	int				player_id;
-	char			*pseudo;
+	t_server		*server;
 	t_server_info	*servers;
-	int				sock;
 	pthread_t		discover_servers_thread;
 }	t_game;
 
