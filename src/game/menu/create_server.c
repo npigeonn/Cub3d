@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 13:49:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 14:38:35 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 16:00:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,12 @@ void	handle_text_input(char *field, int keycode)
 
 	if (keycode >= 32 && keycode <= 126)
 	{
-		if (len < 15 - 1)
+		if (len < 14 - 1)
 		{
-			field[len] = (char)keycode;
+			if (keycode == 32)
+				field[len] = '_';
+			else
+				field[len] = (char)keycode;
 			field[len + 1] = '\0';
 		}
 	}
@@ -53,24 +56,50 @@ void	draw_text_field(t_game *game, int x, int y, int width, int height, char *te
 
 void	draw_create_server_menu(t_game *game)
 {
-	const int btn_width = game->screen_width * 0.25;
-	const int btn_height = game->screen_height * 0.1;
-	const int spacing = game->screen_height * 0.05;
+	const int btn_width = game->screen_width * 0.25;  // Largeur des champs de texte
+	const int btn_height = game->screen_height * 0.08;
+	const int spacing = game->screen_height * 0.06;
 	const int x = (game->screen_width - btn_width) * 0.5;
-	const int y = game->screen_height * 0.25;
+	const int y = game->screen_height * 0.22;
 
-	draw_text(game, "Create Server", game->screen_width >> 1, y - 120, btn_height * 0.7, MENU_BUTTON_TEXT_COLOR);
+	// Titre principal du menu
+	draw_text(game, "Create Server", game->screen_width >> 1, y - 140, btn_height * 0.9, 0xFFFFF);
+
+	// Champ "Server Name"
 	if (game->menu->button_selected == 1)
-		draw_rectangle(game, x - 2, y + 30 - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_text(game, "Server Name", game->screen_width >> 1, y - 20, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+		draw_rounded_rectangle(game, x - 4, y + 30 - 4, btn_width + 8, btn_height + 8, 10, MENU_BUTTON_SELECTED_COLOR);
+	draw_text(game, "Server Name", game->screen_width >> 1, y - 10, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
 	draw_text_field(game, x, y + 30, btn_width, btn_height, game->server->name);
+
+	// Champ "Pseudo"
 	if (game->menu->button_selected == 2)
-		draw_rectangle(game, x - 2, y + btn_height + spacing + 30 - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_text(game, "Server IP", game->screen_width >> 1, y + btn_height + spacing - 20, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-	draw_text_field(game, x, y + btn_height + spacing + 30, btn_width, btn_height, "127.0.0.1");
+		draw_rounded_rectangle(game, x - 4, y + btn_height + spacing + 30 - 4, btn_width + 8, btn_height + 8, 10, MENU_BUTTON_SELECTED_COLOR);
+	draw_text(game, "Pseudo", game->screen_width >> 1, y + btn_height + spacing - 10, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+	draw_text_field(game, x, y + btn_height + spacing + 30, btn_width, btn_height, game->server->pseudo);
+
+	// Champ "Server IP"
 	if (game->menu->button_selected == 3)
-		draw_rectangle(game, x - 2, y + 2 * (btn_height + spacing) - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, x, y + 2 * (btn_height + spacing), btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Create", game->screen_width >> 1, y + 2 * (btn_height + spacing) + btn_height / 3 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+		draw_rounded_rectangle(game, x - 4, y + 2 * (btn_height + spacing) + 30 - 4, btn_width + 8, btn_height + 8, 10, MENU_BUTTON_SELECTED_COLOR);
+	draw_text(game, "Server IP", game->screen_width >> 1, y + 2 * (btn_height + spacing) - 10, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+	draw_text_field(game, x, y + 2 * (btn_height + spacing) + 30, btn_width, btn_height, "127.0.0.1");
+
+	// Aligner les boutons "Create" et "Back" sur la même ligne
+	const int btn_half_width = btn_width * 0.45; // Largeur réduite des boutons
+	const int total_btn_width = 2 * btn_half_width + game->screen_width * 0.02; // Largeur totale des boutons + espacement
+	const int btn_x_start = (game->screen_width - total_btn_width) / 2; // Centrage des deux boutons
+
+	// Bouton "Back"
+	if (game->menu->button_selected == 4)
+		draw_rounded_rectangle(game, btn_x_start - 4, y + 3 * (btn_height + spacing) - 4, btn_half_width + 8, btn_height + 8, 10, MENU_BUTTON_SELECTED_COLOR);
+	draw_rounded_rectangle(game, btn_x_start, y + 3 * (btn_height + spacing), btn_half_width, btn_height, 10, MENU_BUTTON_COLOR);
+	draw_text(game, "Back", btn_x_start + (btn_half_width / 2), y + 3 * (btn_height + spacing) + btn_height / 3 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+
+	// Bouton "Create"
+	if (game->menu->button_selected == 5)
+		draw_rounded_rectangle(game, btn_x_start + btn_half_width + game->screen_width * 0.02 - 4, y + 3 * (btn_height + spacing) - 4, btn_half_width + 8, btn_height + 8, 10, MENU_BUTTON_SELECTED_COLOR);
+	draw_rounded_rectangle(game, btn_x_start + btn_half_width + game->screen_width * 0.02, y + 3 * (btn_height + spacing), btn_half_width, btn_height, 10, MENU_BUTTON_COLOR);
+	draw_text(game, "Create", btn_x_start + btn_half_width + game->screen_width * 0.02 + (btn_half_width / 2), y + 3 * (btn_height + spacing) + btn_height / 3 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
 }
+
+
 

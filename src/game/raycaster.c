@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 14:46:06 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 15:09:13 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,8 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		game->menu->server_selected = 0;
 		return (0);
 	}
+	if (game->menu->status == SERVEUR_CREATE)
+		return (0);
 	if (game->menu->status == MULTI_PLAYER || game->menu->status == PLAYING)
 		return (0);
 	if (keycode == 1)
@@ -364,11 +366,11 @@ int	game_loop(t_game *game)
 		draw_multiplayer_menu(game);
 	else if (game->menu->status == SERVEUR_CREATE)
 	{
-		// draw_create_server_menu(game);
-		create_server(game);
-		game->server->ip = "127.0.0.1";
-		game->server->pseudo = "max";
-		game->menu->status = JOIN_SERVER;
+		draw_create_server_menu(game);
+		// create_server(game);
+		// game->server->ip = "127.0.0.1";
+		// game->server->pseudo = "max";
+		// game->menu->status = JOIN_SERVER;
 	}
 	else if (game->menu->status == JOIN_SERVER)
 	{
