@@ -130,6 +130,7 @@ int	main(int ac, char **av)
 	game.mem = gc_init();
 	game.mlx = mlx_init();
 	game.server = malloc(sizeof(t_server));
+	game.server->players = NULL;
 	gettimeofday(&game.last_time, NULL);
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
 	game.screen_height = 1080;
