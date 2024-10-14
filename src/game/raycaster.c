@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 15:09:13 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 18:12:11 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 /*
@@ -387,6 +388,7 @@ int	game_loop(t_game *game)
 		draw_players(game);
 		// update_enemies(game);
 		draw_sprites(game);
+		mini_map(game); // modif de nico
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
 			game->menu->message = TELEPORT;
 		if (game->menu->message != NOTHING)

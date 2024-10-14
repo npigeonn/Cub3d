@@ -37,6 +37,10 @@ Y : mob ennemi/teleporteur/sortie/munition /cles / affichage pero
 N : gestion mode de jeu
 	preparer des maps
 	gere la minimap
+	la barre de vie
+	viseur
+	affichage des armes
+	munitions
 	gestion des armes / vie / munitions 
 
 Y :	mettre les textures toit/ sol

@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/10 16:27:58 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/14 16:07:10 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	parsing(char **av, t_game *game)
 	textures(av[1], game);
 	map_set_up(av, game);
 	teleportation_check(game);
-	compare_key_n_looked_door(game);
+	// compare_key_n_looked_door(game);
 	floodfill(game);
 	door_mngmt(game);
 	// access to /regarder les permissions

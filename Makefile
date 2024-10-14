@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
+#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/14 13:55:08 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/14 15:55:33 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
 			wall.c \
 			teleporter.c \
 			sprite.c \
+			minimap.c \
 			enemies.c )
 
 SRC_MENU =	$(addprefix $(PATH_SRC)/game/menu/, \

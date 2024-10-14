@@ -197,6 +197,10 @@ typedef struct s_game
 	int				map_begin;
 	char			***map;
 	char 			***map_cy;
+	int				x_minimap;
+	int				x_mid_minimap;
+	int				y_minimap;
+	int				y_mid_minimap;
 	int				nb_floor;
 	int				nb_looked_door;
 	int				nb_keys;
@@ -245,6 +249,10 @@ void	draw_char(t_game *data, int x, int y, int height, char c, int color);
 void	draw_sprite(t_game *game, t_image *texture, float x, float y);
 void	draw_sprites(t_game *game);
 void	draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, int radius, int color);
+
+// mini map
+void	mini_map(t_game *game);
+void	print_wall_door_player(t_game *game);
 
 //door
 int		handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, float distance);

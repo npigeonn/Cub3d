@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floodfill.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/11 09:07:12 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 15:08:45 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,21 +68,21 @@ void	reinitialized_map_copy(t_game *game)
 	}
 }
 
-void	keys_looked_door(t_game *game, int x, int y, int floor)
-{
-	if (game->map_cy[floor][y][x] == 'K') // Si on rencontre une clé
-	{
-		game->keys_collected++; // Collecte la clé
-		game->map_cy[floor][y][x] = 'X'; // Marque la position comme visitée
-		reinitialized_map_copy(game);
-	}
-	if (game->map_cy[floor][y][x] == 'L' || game->keys_collected > 0) // Si on rencontre une porte fermée
-	{
-		game->keys_collected--; // Utilise une clé
-		game->map_cy[floor][y][x] = 'X'; // Ouvre la porte et marque comme visitée
-	}
-	return ;
-}
+// void	keys_looked_door(t_game *game, int x, int y, int floor)
+// {
+// 	if (game->map_cy[floor][y][x] == 'K') // Si on rencontre une clé
+// 	{
+// 		game->keys_collected++; // Collecte la clé
+// 		game->map_cy[floor][y][x] = 'X'; // Marque la position comme visitée
+// 		reinitialized_map_copy(game);
+// 	}
+// 	if (game->map_cy[floor][y][x] == 'L' || game->keys_collected > 0) // Si on rencontre une porte fermée
+// 	{
+// 		game->keys_collected--; // Utilise une clé
+// 		game->map_cy[floor][y][x] = 'X'; // Ouvre la porte et marque comme visitée
+// 	}
+// 	return ;
+// }
 
 int	check_path(t_game *game, int x, int y, int floor) // si exit dans un autre etage ca ne marche pas 
 {
@@ -92,12 +92,12 @@ int	check_path(t_game *game, int x, int y, int floor) // si exit dans un autre e
 	if (game->map_cy[floor][y][x] == 'e') 
 		return (1); //   // Exit found
 	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1'
-		|| (game->map_cy[floor][y][x] == 'L' || !game->keys_collected))
+		|| (game->map_cy[floor][y][x] == 'L' && !game->keys_collected))
 		return (0); // Already visited or wall
 	if (is_a_teleporter(game->map_cy[floor][y][x])
 		&& teleportation(game, x, y, floor, 'p'))
 		return (1); // TODO peutetre modif a 0; game->map_cy[floor][y][x] = '0';
-	keys_looked_door(game, x, y, floor);
+	// keys_looked_door(game, x, y, floor);
 	game->map_cy[floor][y][x] = 'X'; // Mark visited
 	if (check_path(game, x + 1, y, floor))
 		return (1); // Right
@@ -167,31 +167,31 @@ int map_copy(t_game *game)
 	return (1);
 }
 
-void	compare_key_n_looked_door(t_game *game)
-{
-	int	i;
-	int	j;
-	int	k;
+// void	compare_key_n_looked_door(t_game *game)
+// {
+// 	int	i;
+// 	int	j;
+// 	int	k;
 	
-	i = -1;
-	while (game->map[++i])
-	{
-		j = -1;
-		while (game->map[i][++j])
-		{
-			k = -1;
-			while (game->map[i][j][++k])
-			{
-				if (game->map[i][j][k] == 'L')
-					game->nb_looked_door++;
-				if (game->map[i][j][k] == 'K')
-					game->nb_keys++;
-			}
-		}
-	}
-	if (game->nb_looked_door > game->nb_keys)
-		exit(err("Not enough keys\n"));
-}
+// 	i = -1;
+// 	while (game->map[++i])
+// 	{
+// 		j = -1;
+// 		while (game->map[i][++j])
+// 		{
+// 			k = -1;
+// 			while (game->map[i][j][++k])
+// 			{
+// 				if (game->map[i][j][k] == 'L')
+// 					game->nb_looked_door++;
+// 				if (game->map[i][j][k] == 'K')
+// 					game->nb_keys++;
+// 			}
+// 		}
+// 	}
+// 	if (game->nb_looked_door > game->nb_keys)
+// 		exit(err("Not enough keys\n"));
+// }
 
 void floodfill(t_game *game)
 {
@@ -202,11 +202,11 @@ void floodfill(t_game *game)
 		free_map_copy(game);
 		exit(err("Need walls all around the playable map\n"));
 	}	
-	// free_map_copy(game);
-	// if (!map_copy(game) || !check_path(game, game->player->x, game->player->y, game->player->floor))
-	// {
-	// 	free_map_copy(game);
-	// 	exit(err("No exit...\n"));
-	// }
+	free_map_copy(game);
+	if (!map_copy(game) || !check_path(game, game->player->x, game->player->y, game->player->floor))
+	{
+		free_map_copy(game);
+		exit(err("No exit...\n"));
+	}
 	free_map_copy(game);
 }
