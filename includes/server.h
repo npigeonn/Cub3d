@@ -22,21 +22,30 @@ typedef struct t_player_node
 	struct t_player_node	*next;
 }	t_player_node;
 
-typedef enum {
+typedef enum s_message_type
+{
 	MSG_CONNECT = 0,
 	MSG_RECONNECT = 1,
 	MSG_MOVE = 2,
 	MSG_DISCONNECT = 3,
 	MSG_FULL = 4,
 	MSG_BROADCAST = 5,
-}	MessageType;
+	MSG_DOOR = 6,
+}	t_message_type;
 
 typedef struct s_game_message
 {
-	MessageType type;
-	int player_id;
-	char pseudo[MAX_PSEUDO_LENGTH];
-	float x, y;
+	t_message_type	type;
+	int			player_id;
+	char		pseudo[MAX_PSEUDO_LENGTH];
+	float		x;
+	float		y;
+	float		dir_x;
+	float		dir_y;
+	float		height;
+	float		health;
+	int			floor;
+	int			open;
 }	GameMessage;
 
 typedef struct s_move_message

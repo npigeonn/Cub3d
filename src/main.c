@@ -99,6 +99,7 @@ void	init_player(t_game	*game)
 	game->menu->mouse_sensitivity = 2;
 	game->menu->message = NOTHING;
 	game->servers = NULL;
+	game->server->name[0] = '\0';
 }
 
 void	load_game_texture(t_game *game)

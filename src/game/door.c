@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/13 19:11:55 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 11:56:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,17 @@ void	use_door_in_view(t_game *game)
 
 	door = get_door(game, x, y, player->floor);
 	if (door)
+	{
 		door->open = !door->open;
+		GameMessage	msg_door;
+		msg_door.type = MSG_DOOR;
+		msg_door.x = door->x;
+		msg_door.y = door->y;
+		msg_door.floor = door->floor;
+		msg_door.open = door->open;
+		msg_door.player_id = game->server->player_id;
+		send(game->server->sock, &msg_door, sizeof(GameMessage), 0);
+	}
 }
 
 

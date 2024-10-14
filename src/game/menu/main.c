@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 23:32:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 08:29:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 14:29:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,7 @@ void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y)
 			game->menu->button_selected = 3;
 		else if (mouse_y >= y + 3 * (btn_height + spacing) && mouse_y <= y + 3 * (btn_height + spacing) + btn_height)
 			game->menu->button_selected = 4;
-		else 
-			game->menu->button_selected = 0;
 	}
-	else
-		game->menu->button_selected = 0;
 }
 
 void	draw_main_menu(t_game *game)

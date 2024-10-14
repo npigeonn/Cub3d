@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 10:42:08 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 12:18:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void	draw_players(t_game *game)
 	current = game->server->players;
 	while (current)
 	{
-		// if (current->floor == game->player->floor)
+		if (current->floor == game->player->floor)
 			draw_sprite(game, game->textures->enemies, current->x, current->y);
 		current = current->next;
 	}
@@ -154,7 +154,6 @@ void	update_enemies(t_game *game)
 			current->x -= move_speed;
 		else if (direction == 3 && is_position_valid(game, current->x + move_speed, current->y, current->floor))
 			current->x += move_speed;
-	//
 	current = current->next;
 	}
 }

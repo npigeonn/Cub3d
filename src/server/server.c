@@ -77,6 +77,11 @@ void	add_player_node(int id, char *pseudo)
 	strncpy(new_node->pseudo, pseudo, MAX_PSEUDO_LENGTH);
 	new_node->x = -1;
 	new_node->y = -1;
+	new_node->dir_x = 0;
+	new_node->dir_y = 1;
+	new_node->floor = 0;
+	new_node->health = 100;
+	new_node->height = 0;
 	new_node->next = NULL;
 	if (!players)
 		players = new_node;
@@ -87,6 +92,22 @@ void	add_player_node(int id, char *pseudo)
 			current = current->next;
 		current->next = new_node;
 	}
+}
+
+void	update_player_node(char *pseudo, GameMessage msg)
+{
+	t_player_info	*player;
+
+	player = find_player_by_pseudo(pseudo);
+	if (!player)
+		return ;
+	player->x = msg.x;
+	player->y = msg.y;
+	player->dir_x = msg.dir_x;
+	player->dir_y = msg.dir_y;
+	player->floor = msg.floor;
+	player->health = msg.health;
+	player->height = msg.height;	
 }
 
 void	notify_players_of_connection(int player_id, char *pseudo)
@@ -100,6 +121,11 @@ void	notify_players_of_connection(int player_id, char *pseudo)
 		return ;
 	connect_msg.x = player->x;
 	connect_msg.y = player->y;
+	connect_msg.floor = player->floor;
+	connect_msg.height = player->height;
+	connect_msg.dir_x = player->dir_x;
+	connect_msg.dir_y = player->dir_y;
+	connect_msg.health = player->health;
 	strcpy(connect_msg.pseudo, pseudo);
 	i = -1;
 	while (++i < MAX_PLAYERS)
@@ -116,6 +142,11 @@ void	notify_players_of_reconnection(int player_id, char *pseudo)
 	player = find_player_by_pseudo(pseudo);
 	connect_msg.x = player->x;
 	connect_msg.y = player->y;
+	connect_msg.floor = player->floor;
+	connect_msg.height = player->height;
+	connect_msg.dir_x = player->dir_x;
+	connect_msg.dir_y = player->dir_y;
+	connect_msg.health = player->health;
 	strcpy(connect_msg.pseudo, pseudo);
 	i = -1;
 	while (++i < MAX_PLAYERS)
@@ -142,19 +173,39 @@ void	notify_players_of_disconnection(int id)
 	}
 }
 
-void	notify_players_of_move(int player_id, char *pseudo, float x, float y)
+void	notify_players_of_move(GameMessage msg)
 {
-	GameMessage		move_msg = { .type = MSG_MOVE, .player_id = player_id, .x = x, .y = y };
+	GameMessage		move_msg;
 	int				i;
 
-	strcpy(move_msg.pseudo, pseudo);
+	move_msg.type = MSG_MOVE;
+	move_msg.player_id = msg.player_id;
+	move_msg.x = msg.x;
+	move_msg.y = msg.y;
+	move_msg.floor = msg.floor;
+	move_msg.height = msg.height;
+	move_msg.dir_x = msg.dir_x;
+	move_msg.dir_y = msg.dir_y;
+	move_msg.health = msg.health;
+	update_player_node(msg.pseudo, msg);
+	strcpy(move_msg.pseudo, msg.pseudo);
 	i = -1;
 	while (++i < MAX_PLAYERS)
-		if (client_sockets[i] > 0 && i != player_id)
+		if (client_sockets[i] > 0 && i != msg.player_id)
 			send(client_sockets[i], &move_msg, sizeof(GameMessage), 0);
 }
 
-void	handle_client_move(GameMessage msg)
+void	notify_players_of_door(GameMessage msg)
+{
+	int	i;
+
+	i = -1;
+	while (++i < MAX_PLAYERS)
+		if (client_sockets[i] > 0 && i != msg.player_id)
+			send(client_sockets[i], &msg, sizeof(GameMessage), 0);	
+}
+
+void	handle_client_msg(GameMessage msg)
 {
 	int				i;
 	t_player_info	*player;
@@ -165,12 +216,17 @@ void	handle_client_move(GameMessage msg)
 		player = find_player_by_pseudo(msg.pseudo);
 		if (player)
 		{
-			printf("Player %d (%s) moved to (%.2f, %.2f)\n", msg.player_id, msg.pseudo, msg.x, msg.y);
 			player->x = msg.x;
 			player->y = msg.y;
+			player->dir_x = msg.dir_x;
+			player->dir_y = msg.dir_y;
+			player->floor = msg.floor;
+			player->height = msg.height;
 			add_game_message_to_queue(msg);
 		}
 	}
+	if (msg.type == MSG_DOOR)
+		add_game_message_to_queue(msg);
 	pthread_mutex_unlock(&game_lock);
 }
 
@@ -198,7 +254,7 @@ void	handle_client_message(int client_socket)
 		}
 		return ;
 	}
-	handle_client_move(msg);
+	handle_client_msg(msg);
 }
 
 void	new_player(int new_socket, char *pseudo)
@@ -277,7 +333,16 @@ char *existing_player(int server_fd, struct sockaddr_in address, int addrlen, in
 				pthread_mutex_unlock(&game_lock);
 				return (NULL);
 			}
-			GameMessage connect_msg = {.type = MSG_RECONNECT, .player_id = player->player_id, .x = player->x, .y = player->y};
+			GameMessage connect_msg;
+			connect_msg.type = MSG_RECONNECT;
+			connect_msg.player_id = player->player_id;
+			connect_msg.x = player->x;
+			connect_msg.y = player->y;
+			connect_msg.dir_x = player->dir_x;
+			connect_msg.dir_y = player->dir_y;
+			connect_msg.floor = player->floor;
+			connect_msg.health = player->health;
+			connect_msg.height = player->height;
 			strcpy(connect_msg.pseudo, pseudo);
 			add_game_message_to_queue(connect_msg);
 			pthread_mutex_unlock(&game_lock);
@@ -387,6 +452,10 @@ void	send_all_players(int id)
 			connect_msg.player_id = current->player_id;
 			connect_msg.x = current->x;
 			connect_msg.y = current->y;
+			connect_msg.dir_x = current->dir_x;
+			connect_msg.dir_y = current->dir_y;
+			connect_msg.floor = current->floor;
+			connect_msg.height = current->height;
 			strncpy(connect_msg.pseudo, current->pseudo, MAX_PSEUDO_LENGTH);
 			send(client_sockets[id], &connect_msg, sizeof(GameMessage), 0);
 		}
@@ -417,7 +486,9 @@ void	*logic_game(void *arg)
 			} else if (msg.type == MSG_DISCONNECT)
 				notify_players_of_disconnection(msg.player_id);
 			else if (msg.type == MSG_MOVE)
-				notify_players_of_move(msg.player_id, msg.pseudo, msg.x, msg.y);
+				notify_players_of_move(msg);
+			else if (msg.type == MSG_DOOR)
+				notify_players_of_door(msg);
 			else
 				printf("Unknown message type received: %d\n", msg.type);
 			free(current); 

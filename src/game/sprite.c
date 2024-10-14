@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 12:09:23 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/11 10:53:57 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 14:53:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	draw_sprite(t_game *game, t_image *texture, float x, float y)
 
 	if (transform_y <= 0) return;
 
-	int	sprite_screen_x = (int)((game->screen_width * 0.5f) * (1 + transform_x / transform_y));
+	int	sprite_screen_x = (int)((game->screen_width * 0.5) * (1 + transform_x / transform_y));
 	int	sprite_height = abs((int)(game->screen_height / transform_y));
 	int	draw_start_y = (-sprite_height * 0.5) + (game->screen_height * 0.5) - (int)(game->player->height * sprite_height);
 	int	draw_end_y = (sprite_height * 0.5) + (game->screen_height * 0.5) - (int)(game->player->height * sprite_height);
@@ -65,7 +65,6 @@ void	draw_sprite(t_game *game, t_image *texture, float x, float y)
 	{
 		if (stripe >= 0 && stripe < game->screen_width)
 		{
-			// printf("T %f\n, D %f\n", transform_y, game->wall_distances[stripe]);
 			if (transform_y < game->wall_distances[stripe])
 			{
 				int	tex_x_base = (int)((stripe - stripe_start) * texture->width / sprite_width);
@@ -100,5 +99,5 @@ void draw_teleporter(t_game *game)
 void	draw_sprites(t_game *game)
 {
 	draw_teleporter(game);
-	draw_enemies(game);
+	// draw_enemies(game);
 }

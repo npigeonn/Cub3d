@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 15:34:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 08:39:39 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 14:52:18 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	is_pixel_transparent(t_image *img, int x, int y)
 
 int	get_index_char(char c)
 {
-	const char	list[95] = "!#$&().;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
+	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
 	int			i;
 
 	i = -1;
@@ -144,14 +144,14 @@ void	draw_text(t_game *game, char *str, int x, int y, int height, int color)
 {
 	int			i;
 	t_image		*img;
-	const int	x_start = x;
-	const int	text_width = get_text_width(str, img, height);
+	int			text_width;
 	int			char_width;
 
 	img = game->images->alphanum_sprite;
+	text_width = get_text_width(str, img, height);
 	if (str == NULL)
 		return ;
-	x = x_start - (text_width >> 1);
+	x = x - (text_width >> 1);
 	y -= 7;
 	i = -1;
 	while (str[++i])
@@ -194,10 +194,11 @@ void	draw_text_right(t_game *game, char *str, int x, int y, int height, int colo
 {
 	int			i;
 	t_image		*img;
-	const int	text_width = get_text_width(str, img, height);
+	int			text_width;
 	int			char_width;
 
 	img = game->images->alphanum_sprite;
+	text_width = get_text_width(str, img, height);
 	if (str == NULL)
 		return ;
 	x = x - text_width;

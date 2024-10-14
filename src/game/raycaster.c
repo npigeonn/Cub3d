@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 10:42:35 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 14:46:06 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,12 @@ void cast_rays(t_game *game)
 				draw_wall(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side);
 				break;
 			}
-			// float distance = (side == SIDE_EAST || side == SIDE_WEST) ? side_dist_x - delta_dist_x : side_dist_y - delta_dist_y;
-			// if (handle_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, distance))
-			// 	 break;
+			float distance = (side == SIDE_EAST || side == SIDE_WEST) ? side_dist_x - delta_dist_x : side_dist_y - delta_dist_y;
+			if (handle_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, distance))
+				 break;
 		}
 	}
 }
-
 
 void cast_floor(t_game *game)
 {
@@ -116,7 +115,6 @@ void cast_floor(t_game *game)
 	}
 }
 
-
 int	handle_close(t_game *game)
 {
 	mlx_destroy_image(game->mlx, game->images->base->img);
@@ -137,6 +135,7 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		if (game->menu->button_selected == 3)
 		{
 			game->menu->status = MAIN_MENU;
+			game->menu->button_selected = 0;
 			return (0);
 		}
 		update_option_menu_slider(game, x, y, keycode);
@@ -168,6 +167,8 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 				i++;
 			}
 		}
+		game->menu->button_selected = 0;
+		game->menu->server_selected = 0;
 		return (0);
 	}
 	if (game->menu->status == MULTI_PLAYER || game->menu->status == PLAYING)
@@ -188,6 +189,7 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 			game->menu->status = OPTIONS;
 		else if (game->menu->button_selected == 4)
 			handle_close(game);
+		game->menu->button_selected = 0;
 	}
 	return (0);
 }
@@ -200,6 +202,8 @@ int	handle_mouse_move(int x, int y, t_game *game)
 		update_option_menu_button(game, x, y);
 	else if (game->menu->status == SERVEURS)
 		update_multiplayer_menu(game, x, y);
+	else if (game->menu->status == SERVEUR_CREATE)
+		update_create_server_menu_button(game, x, y);
 	if ((game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER) || x == game->screen_width * 0.5)
 		return (0);
 	int centerX = game->screen_width * 0.5;
@@ -242,6 +246,11 @@ int	handle_keypress(int keycode, t_game *game)
 	
 	if (keycode == 65307)
 		handle_close(game);
+	else if (game->menu->status == SERVEUR_CREATE)
+	{
+		handle_text_input(game->server->name, keycode);
+		return (0);
+	}
 	if (game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER)
 		return (0);
 	if (keycode == 65362 || keycode == 119) // W pour avancer
@@ -272,18 +281,18 @@ int	handle_keypress(int keycode, t_game *game)
 		p->x -= p->planeX * 0.1;
 		p->y -= p->planeY * 0.1;
 	}
-	if (game->menu->status == MULTI_PLAYER)
-	{
-		GameMessage message = {.type = MSG_MOVE, .player_id = game->server->player_id, .x = p->x, .y = p->y};
-		strncpy(message.pseudo, game->server->pseudo, MAX_PSEUDO_LENGTH);
-		send(game->server->sock, &message, sizeof(GameMessage), 0);
-	}
 	if (keycode == 32) // Espace pour sauter
 		p->height -= 0.1;
 	if (keycode == 98) // b pour s'accroupir
 		p->height += 0.1;
 	if (keycode == 102)
 		use_item(game);
+	if (game->menu->status == MULTI_PLAYER)
+	{
+		GameMessage message = {.type = MSG_MOVE, .player_id = game->server->player_id, .x = p->x, .y = p->y, .floor = p->floor, .height = p->height};
+		strncpy(message.pseudo, game->server->pseudo, MAX_PSEUDO_LENGTH);
+		send(game->server->sock, &message, sizeof(GameMessage), 0);
+	}
 	return (0);
 }
 
@@ -306,8 +315,8 @@ void	show_menu_message(t_game *game)
 	}
 	else if (game->menu->message == TELEPORT)
 	{
-		draw_rectangle(game, text_x - 40, text_y, width + 80, height, MENU_BUTTON_COLOR);
-		draw_text(game, "Appuyer sur F pour vous teleportez", game->screen_width * 0.5, game->screen_height * 0.5 - 135, 30, MENU_BUTTON_TEXT_COLOR);
+		draw_rectangle(game, text_x - 60, text_y, width + 220, height, MENU_BUTTON_COLOR);
+		draw_text(game, "Appuyer sur F pour vous teleportez", game->screen_width * 0.5, game->screen_height * 0.5 - 130, 30, MENU_BUTTON_TEXT_COLOR);
 	}
 }
 
@@ -355,6 +364,7 @@ int	game_loop(t_game *game)
 		draw_multiplayer_menu(game);
 	else if (game->menu->status == SERVEUR_CREATE)
 	{
+		// draw_create_server_menu(game);
 		create_server(game);
 		game->server->ip = "127.0.0.1";
 		game->server->pseudo = "max";
@@ -374,7 +384,7 @@ int	game_loop(t_game *game)
 		cast_floor(game);
 		draw_players(game);
 		// update_enemies(game);
-		// draw_sprites(game);
+		draw_sprites(game);
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
 			game->menu->message = TELEPORT;
 		if (game->menu->message != NOTHING)

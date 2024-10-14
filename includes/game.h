@@ -170,6 +170,9 @@ typedef struct	s_player_info
 	float					y;
 	float					dir_x;
 	float					dir_y;
+	float					height;
+	float					health;
+	int						floor;
 	struct s_player_info	*next;
 }	t_player_info;
 
@@ -179,6 +182,7 @@ typedef struct s_server
 	char			*pseudo;
 	int				sock;
 	char			*ip;
+	char			name[20];
 	t_player_info	*players;
 }	t_server;
 
@@ -258,7 +262,6 @@ void	init_enemies(t_game *game);
 void	update_enemies(t_game *game);
 
 // PARSING
-
 int		err(char *str);
 void	init_data(t_game *game);
 void	parsing(char **av, t_game *game);
@@ -301,7 +304,9 @@ int	free_split(char **str);
 void	create_server(t_game *game);
 
 //client
-int	join_server(t_game *game);
+int		join_server(t_game *game);
+void	draw_players(t_game *game);
+
 
 
 #endif

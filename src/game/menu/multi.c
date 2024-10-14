@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 10:21:55 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/14 14:51:25 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,6 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 			game->menu->button_selected = 2;
 		else if (mouse_y >= btn_y_start + 2 * (btn_height + spacing) && mouse_y <= btn_y_start + 3 * btn_height + 2 * spacing)
 			game->menu->button_selected = 3;
-		else
-			game->menu->button_selected = 0;
-	}
-	else
-	{
-		game->menu->button_selected = 0;
-		game->menu->server_selected = 0;
 	}
 }
 
@@ -223,7 +216,6 @@ void	*discover_servers_thread(void *arg)
 	return (NULL);
 }
 
-
 void	draw_multiplayer_menu(t_game *game)
 {
 	const int btn_width = game->screen_width * 0.25;
@@ -238,7 +230,7 @@ void	draw_multiplayer_menu(t_game *game)
 	draw_text(game, "Available Servers", list_x + list_width * 0.5, list_y + 20, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
 	int server_y_offset = list_y + 80;
 	if (game->servers == NULL)
-		draw_text(game, "Searching for servers...", list_x + list_width * 0.5, server_y_offset, 20, MENU_BUTTON_TEXT_COLOR);
+		draw_text(game, "Searching for servers...", list_x + list_width * 0.5, game->screen_height >> 1, 20, MENU_BUTTON_TEXT_COLOR);
 	else
 	{
 		int i = 1;
