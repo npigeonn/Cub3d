@@ -3,12 +3,13 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
+#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/15 11:03:26 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/15 12:10:50 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
 
 NAME = cub3D
 
@@ -29,6 +30,7 @@ SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
 			teleporter.c \
 			sprite.c \
 			minimap.c \
+			crosshair.c \
 			enemies.c )
 
 SRC_MENU =	$(addprefix $(PATH_SRC)/game/menu/, \

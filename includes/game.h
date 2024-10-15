@@ -206,9 +206,7 @@ typedef struct s_game
 	char			***map;
 	char 			***map_cy;
 	int				x_minimap;
-	int				x_mid_minimap;
 	int				y_minimap;
-	int				y_mid_minimap;
 	int				nb_floor;
 	int				nb_looked_door;
 	int				nb_keys;
@@ -257,6 +255,11 @@ void	draw_char(t_game *data, int x, int y, int height, char c, int color);
 void	draw_sprite(t_game *game, t_image *texture, float x, float y);
 void	draw_sprites(t_game *game);
 void	draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, int radius, int color);
+void	crosshair(t_game *game);
+int 	blend_colors(int bg_color, int fg_color, float alpha);
+int 	get_pixel_color_from_image(t_game *game, int x, int y);
+void	gun_draw(t_game *game);
+void	hp(t_game *game);
 
 // mini map
 void	mini_map(t_game *game);
