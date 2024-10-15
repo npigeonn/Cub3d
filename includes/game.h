@@ -26,6 +26,7 @@ enum GameStatus
 	VALID_JOIN_SERVER = 9,
 	MULTI_PLAYER = 10,
 	SERVER_DISCONNECTED = 11,
+	SERVER_FULL = 12,
 };
 
 enum Direction {
@@ -192,6 +193,7 @@ typedef struct s_server
 	int				sock_bc;
 	char			*ip;
 	char			name[20];
+	int				nb_player;
 	t_player_info	*players;
 }	t_server;
 

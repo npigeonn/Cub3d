@@ -100,7 +100,12 @@ void	*receive_updates(void *args)
 			break;
 		}
  		if (msg.type == MSG_FULL)
-			printf("Server is full\n");
+		{
+			printf("IS FULL");
+			game->menu->status = SERVER_DISCONNECTED;
+			close(sock);
+			break;
+		}
 		else if (msg.type == MSG_MOVE)
 		{
 			printf("Player %d (%s) moved to x = %.2f, y = %.2f, floor = %d\n", msg.player_id, msg.pseudo, msg.x, msg.y, msg.floor);
@@ -136,35 +141,35 @@ int	join_server(t_game *game)
 	ft_strcpy(pseudo, game->server->pseudo);
 	if ((game->server->sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		printf("\nSocket creation error\n");
-		return (-1);
+		game->menu->status = SERVER_DISCONNECTED;
+		return (0);
 	}
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(PORT);
 	if (inet_pton(AF_INET, game->server->ip, &serv_addr.sin_addr) <= 0)
 	{
-		printf("\nInvalid address / Address not supported\n");
-		return (-1);
+		game->menu->status = SERVER_DISCONNECTED;
+		return (0);
 	}
 	if (connect(game->server->sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0)
 	{
-		printf("\nConnection Failed\n");
-		return (-1);
+		game->menu->status = SERVER_DISCONNECTED;
+		return (0);
 	}
 	send(game->server->sock, pseudo, ft_strlen(pseudo) + 1, 0);
 	GameMessage connect_msg;
 	ssize_t recv_size = recv(game->server->sock, &connect_msg, sizeof(GameMessage), 0);
 	if (recv_size <= 0)
 	{
-		printf("Error receiving connection message from server.\n");
+		game->menu->status = SERVER_DISCONNECTED;
 		close(game->server->sock);
-		return (-1);
+		return (0);
 	}
 	if (connect_msg.type == MSG_FULL)
 	{
-		printf("Server is full\n");
+		game->menu->status = SERVER_FULL;
 		close(game->server->sock);
-		return (-1);
+		return (0);
 	}
 	game->server->player_id = connect_msg.player_id;
 	if (connect_msg.x < 0 || connect_msg.y < 0)
@@ -188,4 +193,5 @@ int	join_server(t_game *game)
 	printf("Connected as player %d (%s) at x = %f, y = %f, floor = %d\n", connect_msg.player_id, connect_msg.pseudo, connect_msg.x, connect_msg.y, connect_msg.floor);
 	pthread_t thread_id;
 	pthread_create(&thread_id, NULL, receive_updates, game);
+	return (1);
 }

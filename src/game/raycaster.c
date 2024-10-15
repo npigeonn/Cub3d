@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 13:35:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 15:13:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		update_join_server_menu_text(game, x, y, keycode);
 	else if (game->menu->status == MAIN_MENU)
 		update_main_menu_click(game, x, y, keycode);
-	else if (game->menu->status == SERVER_DISCONNECTED)
+	else if (game->menu->status == SERVER_DISCONNECTED || game->menu->status == SERVER_FULL)
 		update_server_error_click(game, x, y, keycode);
 	return (0);
 }
@@ -191,7 +191,7 @@ int	handle_mouse_move(int x, int y, t_game *game)
 		update_create_server_menu_button(game, x, y);
 	else if (game->menu->status == JOIN_SERVER)
 		update_join_server_menu_button(game, x, y);
-	else if (game->menu->status == SERVER_DISCONNECTED)
+	else if (game->menu->status == SERVER_DISCONNECTED || game->menu->status == SERVER_FULL)
 		update_server_error_button(game, x, y);
 	if ((game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER) || x == game->screen_width * 0.5)
 		return (0);
@@ -360,10 +360,10 @@ int	game_loop(t_game *game)
 		draw_join_server_menu(game);
 	else if (game->menu->status == VALID_JOIN_SERVER)
 	{
-		join_server(game);
-		game->menu->status = MULTI_PLAYER;
+		if (join_server(game) == 1)
+			game->menu->status = MULTI_PLAYER;
 	}
-	else if (game->menu->status == SERVER_DISCONNECTED)
+	else if (game->menu->status == SERVER_DISCONNECTED || game->menu->status == SERVER_FULL)
 		draw_server_error_menu(game);
 	else if (game->menu->status == PLAYING || game->menu->status == MULTI_PLAYER)
 	{

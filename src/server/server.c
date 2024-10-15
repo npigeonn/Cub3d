@@ -283,10 +283,16 @@ void	new_player(int new_socket, char *pseudo)
 			break;
 		}
 	}
+	if (i >= MAX_PLAYERS)
+    {
+		GameMessage full_msg = {.type = MSG_FULL};
+		send(new_socket, &full_msg, sizeof(GameMessage), 0);
+        close(new_socket);
+    }
 	pthread_mutex_unlock(&game_lock);
 }
 
-char *existing_player(int server_fd, struct sockaddr_in address, int addrlen, int *new_socket, int epoll_fd)
+char *existing_player(int *nb_player, int server_fd, struct sockaddr_in address, int addrlen, int *new_socket, int epoll_fd)
 {
 	char pseudo[MAX_PSEUDO_LENGTH];
 	t_player_info *player;
@@ -294,7 +300,8 @@ char *existing_player(int server_fd, struct sockaddr_in address, int addrlen, in
 	int i;
 
 	*new_socket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-	if (*new_socket < 0) {
+	if (*new_socket < 0)
+	{
 		perror("accept");
 		return strdup("");
 	}
@@ -324,6 +331,7 @@ char *existing_player(int server_fd, struct sockaddr_in address, int addrlen, in
 			}
 			client_sockets[player->player_id] = *new_socket;
 			printf("Reconnecting player: %s (Player ID: %d)\n", pseudo, player->player_id);
+			(*nb_player)++;
 			event.events = EPOLLIN;
 			event.data.fd = *new_socket;
 			if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, *new_socket, &event) < 0)
@@ -353,7 +361,7 @@ char *existing_player(int server_fd, struct sockaddr_in address, int addrlen, in
 	return strdup(pseudo);
 }
 
-void	loop_server(int server_fd, struct sockaddr_in address, int addrlen)
+void	loop_server(int *nb_player, int server_fd, struct sockaddr_in address, int addrlen)
 {
 	int					epoll_fd, new_socket;
 	struct epoll_event	event, events[MAX_PLAYERS];
@@ -381,17 +389,16 @@ void	loop_server(int server_fd, struct sockaddr_in address, int addrlen)
 			perror("epoll_wait");
 			exit(EXIT_FAILURE);
 		}
-
 		for (i = 0; i < num_events; i++)
 		{
 			if (events[i].data.fd == server_fd)
 			{
-				printf("New connection\n");
-				pseudo = existing_player(server_fd, address, addrlen, &new_socket, epoll_fd);
+				pseudo = existing_player(nb_player, server_fd, address, addrlen, &new_socket, epoll_fd);
 				if (pseudo && pseudo[0] == '\0')
 					continue;
 				if (pseudo)
 				{
+					(nb_player)++;
 					event.events = EPOLLIN;
 					event.data.fd = new_socket;
 					epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_socket, &event);
@@ -499,6 +506,7 @@ void	*logic_game(void *arg)
 
 void	server(void)
 {
+	int					nb_player;
 	int					server_fd;
 	int					opt;
 	struct sockaddr_in	address;
@@ -506,17 +514,19 @@ void	server(void)
 	pthread_t			logic_game_thread;
 
 	opt = 1;
+	nb_player = 0;
 	addrlen = sizeof(address);
 	pthread_mutex_init(&game_lock, NULL);
 	init_server(&server_fd, &address, &opt);
 	pthread_create(&logic_game_thread, NULL, logic_game, NULL);
-	loop_server(server_fd, address, addrlen);
+	loop_server(&nb_player, server_fd, address, addrlen);
 }
 
 void create_server(t_game *game)
 {
 	pthread_t server_thread;
 
+	game->server->nb_player = 0;
 	pthread_create(&server_thread, NULL, (void *)server, NULL);
 	pthread_mutex_lock(&game_lock);
 	while (!server_ready)

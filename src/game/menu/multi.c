@@ -6,12 +6,11 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 12:43:18 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 15:48:36 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
-
 
 void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode)
 {
@@ -34,7 +33,6 @@ void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode
 			if (i == game->menu->server_selected)
 			{
 				game->server->ip = current->ip;
-				game->menu->server_selected = 0;
 				game->menu->status = JOIN_SERVER;
 				break;
 			}
@@ -43,7 +41,6 @@ void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode
 		}
 	}
 	game->menu->button_selected = 0;
-	game->menu->server_selected = 0;
 }
 
 void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
@@ -129,12 +126,12 @@ void	draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, i
 
 void	*discover_servers_thread(void *arg)
 {
-	t_game *game = (t_game *)arg;
-	int sockfd;
-	struct sockaddr_in recv_addr;
-	char buffer[256];
-	socklen_t addr_len = sizeof(recv_addr);
-	t_server_info *last_server = NULL;
+	t_game			*game = (t_game *)arg;
+	int				sockfd;
+	struct sockaddr_in	recv_addr;
+	char			buffer[256];
+	socklen_t		addr_len = sizeof(recv_addr);
+	t_server_info	*last_server = NULL;
 
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sockfd < 0)
@@ -179,7 +176,7 @@ void	*discover_servers_thread(void *arg)
 					break;
 				}
 				sscanf(buffer, "ServerInfo:%[^;];Players:%d/%d;Ping:%dms", new_server->name, &new_server->players, &new_server->max_players, &new_server->ping);
-				new_server->ip = strdup(inet_ntoa(recv_addr.sin_addr));
+				new_server->ip = ft_strdup(inet_ntoa(recv_addr.sin_addr));
 				new_server->port = ntohs(recv_addr.sin_port);
 				new_server->last_seen = now;
 				new_server->next = NULL;

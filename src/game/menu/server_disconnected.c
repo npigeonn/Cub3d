@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:21:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 12:44:49 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 13:41:45 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,12 @@ void	draw_server_error_menu(t_game *game)
 	const int	spacing = game->screen_height * 0.05;
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.25;
+	const char	*message;
 
-	const char *message = "You have been disconnected from the server.";
+	if (game->menu->status == SERVER_FULL)
+		message = "Server is full.";
+	else
+		message = "You have been disconnected from the server.";
 	draw_text(game, message, game->screen_width >> 1, game->screen_height * 0.4, 70, MENU_BUTTON_TEXT_COLOR);
 	if (game->menu->button_selected == 1)
 		draw_rectangle(game, x - 2, y + 2 * (btn_height + spacing) - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);

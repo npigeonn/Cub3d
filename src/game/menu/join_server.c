@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:55:57 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 12:15:55 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 15:59:14 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	handle_join_server(t_game *game)
 	else
 		game->menu->status = VALID_JOIN_SERVER;
 	close(sockfd);
+	game->menu->server_selected = 0;
 }
 
 void	update_join_server_menu_button(t_game *game, int mouse_x, int mouse_y)
@@ -94,6 +95,7 @@ void	update_join_server_menu_text(t_game *game, int mouse_x, int mouse_y, int mo
 		game->server->ip[0] = '\0';
 		game->server->pseudo[0] = '\0';
 		game->menu->status = SERVERS;
+		game->menu->server_selected = 0;
 	}
 	if (game->menu->button_selected == 2 && mouse_button == 1)
 		handle_join_server(game);

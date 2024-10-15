@@ -56,6 +56,6 @@ typedef struct s_move_message
 }	MoveMessage;
 
 t_player_info	*find_player_by_id(t_player_info *players, int id);
-void	*discover_servers_thread(void *arg);
+void			*discover_servers_thread(void *arg);
 
 #endif
