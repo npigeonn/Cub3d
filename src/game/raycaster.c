@@ -3,23 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/10/15 12:11:03 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/15 13:35:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
-
-=======
-/*   Updated: 2024/10/15 12:48:21 by ybeaucou         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
->>>>>>> b46f39e (add screen to disconnected)
 /*
 	Si ray_dir_x = 1 et ray_dir_y = 0, le joueur regarde vers l'Est.
 	Si ray_dir_x = -1 et ray_dir_y = 0, le joueur regarde vers l'Ouest.
