@@ -6,11 +6,45 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 10:44:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:43:18 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
+
+
+void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode)
+{
+	if (keycode != 1)
+		return ;
+	if (game->menu->button_selected == 3)
+		game->menu->status = MAIN_MENU;
+	else if (game->menu->button_selected == 2)
+		game->menu->status = SERVER_CREATE;
+	else if (game->menu->button_selected == 1)
+		game->menu->status = JOIN_SERVER;
+	else if (game->menu->server_selected != 0)
+	{
+		int	i = 1;
+		t_server_info *current;
+
+		current = game->servers;
+		while (current)
+		{
+			if (i == game->menu->server_selected)
+			{
+				game->server->ip = current->ip;
+				game->menu->server_selected = 0;
+				game->menu->status = JOIN_SERVER;
+				break;
+			}
+			current = current->next;
+			i++;
+		}
+	}
+	game->menu->button_selected = 0;
+	game->menu->server_selected = 0;
+}
 
 void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 {
@@ -28,6 +62,7 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 	int				i = 1;
 
 	game->menu->button_selected = 0;
+	game->menu->server_selected = 0;
 	current = game->servers;
 	while (current)
 	{
@@ -55,15 +90,6 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 	}
 }
 
-void	draw_filled_rectangle(t_game *game, int x, int y, int width, int height, int color)
-{
-	for (int i = y; i < y + height; i++)
-	{
-		for (int j = x; j < x + width; j++)
-			pixel_put(game, j, i, color);
-	}
-}
-
 void	draw_arc(t_game *game, int cx, int cy, int radius, float start_angle, float end_angle, int color)
 {
 	for (float angle = start_angle; angle <= end_angle; angle += 0.01)
@@ -79,8 +105,8 @@ void	draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, i
 	if (radius > width * 0.5) radius = width * 0.5;
 	if (radius > height * 0.5) radius = height * 0.5;
 
-	draw_filled_rectangle(game, x + radius, y, width - 2 * radius, height, color);
-	draw_filled_rectangle(game, x, y + radius, width, height - 2 * radius, color);
+	draw_rectangle(game, x + radius, y, width - 2 * radius, height, color);
+	draw_rectangle(game, x, y + radius, width, height - 2 * radius, color);
 	draw_arc(game, x + radius, y + radius, radius, M_PI, M_PI * 1.5, MENU_BUTTON_SELECTED_COLOR);
 	draw_arc(game, x + width - radius, y + radius, radius, M_PI * 1.5, 0, MENU_BUTTON_SELECTED_COLOR);
 	draw_arc(game, x + width - radius, y + height - radius, radius, 0, M_PI * 0.5, MENU_BUTTON_SELECTED_COLOR);

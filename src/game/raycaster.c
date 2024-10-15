@@ -6,6 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/10/15 12:11:03 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -13,6 +14,12 @@
 
 
 
+=======
+/*   Updated: 2024/10/15 12:48:21 by ybeaucou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+>>>>>>> b46f39e (add screen to disconnected)
 /*
 	Si ray_dir_x = 1 et ray_dir_y = 0, le joueur regarde vers l'Est.
 	Si ray_dir_x = -1 et ray_dir_y = 0, le joueur regarde vers l'Ouest.
@@ -168,71 +175,17 @@ int	handle_close(t_game *game)
 int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 {
 	if (game->menu->status == OPTIONS)
-	{
-		if (game->menu->button_selected == 3)
-		{
-			game->menu->status = MAIN_MENU;
-			game->menu->button_selected = 0;
-			return (0);
-		}
-		update_option_menu_slider(game, x, y, keycode);
-		return (0);
-	}
-	if (game->menu->status == SERVERS)
-	{
-		if (game->menu->button_selected == 3)
-			game->menu->status = MAIN_MENU;
-		else if (game->menu->button_selected == 2)
-			game->menu->status = SERVER_CREATE;
-		else if (game->menu->button_selected == 1)
-			game->menu->status = JOIN_SERVER;
-		else if (game->menu->server_selected != 0)
-		{
-			int	i = 1;
-			t_server_info *current;
-
-			current = game->servers;
-			while (current)
-			{
-				if (i == game->menu->server_selected)
-				{
-					game->server->ip = current->ip;
-					game->menu->server_selected = 0;
-					game->menu->status = JOIN_SERVER;
-					break;
-				}
-				current = current->next;
-				i++;
-			}
-		}
-		game->menu->button_selected = 0;
-		game->menu->server_selected = 0;
-		return (0);
-	}
+		update_option_menu_click(game, x, y, keycode);
+	else if (game->menu->status == SERVERS)
+		update_multiplayer_click(game, x, y, keycode);
 	else if (game->menu->status == SERVER_CREATE)
 		update_create_server_menu_text(game, x, y, keycode);
 	else if (game->menu->status == JOIN_SERVER)
 		update_join_server_menu_text(game, x, y, keycode);
-	else if (game->menu->status == MULTI_PLAYER || game->menu->status == PLAYING)
-		return (0);
-	else if (keycode == 1)
-	{
-		if (game->menu->button_selected == 1)
-		{
-			game->menu->status = PLAYING;
-			mlx_mouse_hide(game->mlx, game->win);
-		}
-		else if (game->menu->button_selected == 2)
-		{
-			game->menu->status = SERVERS;
-			pthread_create(&game->discover_servers_thread, NULL, discover_servers_thread, game);
-		}
-		else if (game->menu->button_selected == 3)
-			game->menu->status = OPTIONS;
-		else if (game->menu->button_selected == 4)
-			handle_close(game);
-		game->menu->button_selected = 0;
-	}
+	else if (game->menu->status == MAIN_MENU)
+		update_main_menu_click(game, x, y, keycode);
+	else if (game->menu->status == SERVER_DISCONNECTED)
+		update_server_error_click(game, x, y, keycode);
 	return (0);
 }
 
@@ -248,6 +201,8 @@ int	handle_mouse_move(int x, int y, t_game *game)
 		update_create_server_menu_button(game, x, y);
 	else if (game->menu->status == JOIN_SERVER)
 		update_join_server_menu_button(game, x, y);
+	else if (game->menu->status == SERVER_DISCONNECTED)
+		update_server_error_button(game, x, y);
 	if ((game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER) || x == game->screen_width * 0.5)
 		return (0);
 	int centerX = game->screen_width * 0.5;
@@ -418,6 +373,8 @@ int	game_loop(t_game *game)
 		join_server(game);
 		game->menu->status = MULTI_PLAYER;
 	}
+	else if (game->menu->status == SERVER_DISCONNECTED)
+		draw_server_error_menu(game);
 	else if (game->menu->status == PLAYING || game->menu->status == MULTI_PLAYER)
 	{
 		game->menu->message = NOTHING;

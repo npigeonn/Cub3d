@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 14:42:20 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 14:29:51 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:47:01 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,19 @@ void	update_option_menu_slider(t_game *game, int mouse_x, int mouse_y, int keyco
 		if (game->menu->mouse_sensitivity < 0.1f) game->menu->mouse_sensitivity = 0.1f;
 		if (game->menu->mouse_sensitivity > 10.0f) game->menu->mouse_sensitivity = 10.0f;
 	}
+}
+
+void	update_option_menu_click(t_game *game, int mouse_x, int mouse_y, int keycode)
+{
+	if (keycode != 1)
+		return ;
+	if (game->menu->button_selected == 3)
+	{
+		game->menu->status = MAIN_MENU;
+		game->menu->button_selected = 0;
+		return ;
+	}
+	update_option_menu_slider(game, mouse_x, mouse_y, keycode);
 }
 
 void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y)

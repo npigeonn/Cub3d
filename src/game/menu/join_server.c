@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:55:57 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 11:58:46 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:15:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,27 @@ void	handle_join_server(t_game *game)
 		game->menu->error_name = true;
 	if (game->server->pseudo[0] == '\0')
 		game->menu->error_pseudo = true;
-	if (game->server->pseudo[0] != '\0' && game->server->ip[0] != '\0')
+	if (game->server->pseudo[0] == '\0' || game->server->ip[0] == '\0')
+		return ;
+	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	struct sockaddr_in server_addr;
+	if (sockfd < 0)
+		return;
+	ft_memset(&server_addr, 0, sizeof(server_addr));
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(PORT);
+
+	if (inet_pton(AF_INET, game->server->ip, &server_addr.sin_addr) <= 0)
 	{
-	    // Création du socket
-		int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-		struct sockaddr_in server_addr;
-		if (sockfd < 0)
-			return;
-		ft_memset(&server_addr, 0, sizeof(server_addr));
-		server_addr.sin_family = AF_INET;
-		server_addr.sin_port = htons(PORT);
-
-		if (inet_pton(AF_INET, game->server->ip, &server_addr.sin_addr) <= 0)
-		{
-			game->menu->error_name = true;
-			close(sockfd);
-			return;
-		}
-
-		if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
-			game->menu->error_name = true;
-		else
-			game->menu->status = VALID_JOIN_SERVER;
+		game->menu->error_name = true;
 		close(sockfd);
+		return;
 	}
+	if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
+		game->menu->error_name = true;
+	else
+		game->menu->status = VALID_JOIN_SERVER;
+	close(sockfd);
 }
 
 void	update_join_server_menu_button(t_game *game, int mouse_x, int mouse_y)
@@ -53,7 +50,7 @@ void	update_join_server_menu_button(t_game *game, int mouse_x, int mouse_y)
 	const int btn_half_width = btn_width * 0.45;
 	const int total_btn_width = 2 * btn_half_width + game->screen_width * 0.02;
 	const int btn_x_start = (game->screen_width - total_btn_width) / 2;
-	const int btn_y_start = game->screen_height * 0.22 + 2 * (btn_height + spacing);
+	const int btn_y_start = game->screen_height * 0.33 + 2 * (btn_height + spacing);
 
 	if (mouse_x >= btn_x_start && mouse_x <= btn_x_start + btn_half_width && 
 		mouse_y >= btn_y_start && mouse_y <= btn_y_start + btn_height)
@@ -72,7 +69,7 @@ void	update_join_server_menu_text(t_game *game, int mouse_x, int mouse_y, int mo
 	const int btn_height = game->screen_height * 0.08;
 	const int spacing = game->screen_height * 0.06;
 	const int x = (game->screen_width - btn_width) * 0.5;
-	const int y = game->screen_height * 0.22;
+	const int y = game->screen_height * 0.33;
 
 	if (mouse_x >= x && mouse_x <= x + btn_width && mouse_y >= y + 30 && mouse_y <= y + 30 + btn_height)
 	{
@@ -108,7 +105,7 @@ void	draw_join_server_menu(t_game *game)
 	const int btn_height = game->screen_height * 0.08;
 	const int spacing = game->screen_height * 0.06;
 	const int x = (game->screen_width - btn_width) * 0.5;
-	const int y = game->screen_height * 0.22;
+	const int y = game->screen_height * 0.33;
 
 	draw_text(game, "Join Server", game->screen_width >> 1, y - 140, btn_height * 0.9, 0xFFFFF);
 		

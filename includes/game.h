@@ -25,6 +25,7 @@ enum GameStatus
 	JOIN_SERVER = 8,
 	VALID_JOIN_SERVER = 9,
 	MULTI_PLAYER = 10,
+	SERVER_DISCONNECTED = 11,
 };
 
 enum Direction {

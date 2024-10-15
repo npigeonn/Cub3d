@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
+#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/15 12:10:50 by npigeon          ###   ########.fr        #
+#    Updated: 2024/10/15 13:35:14 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,8 @@ SRC_MENU =	$(addprefix $(PATH_SRC)/game/menu/, \
 			option.c \
 			multi.c \
 			create_server.c \
-			join_server.c )
+			join_server.c \
+			server_disconnected.c )
 
 SRC_ALONE =	$(addprefix $(PATH_SRC), \
 			main.c )

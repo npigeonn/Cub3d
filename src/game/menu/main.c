@@ -6,11 +6,32 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 23:32:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 10:56:06 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:42:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/cub3d.h"
+
+void	update_main_menu_click(t_game *game, int mouse_x, int mouse_y, int keycode)
+{
+	if (keycode != 1)
+		return ;
+	if (game->menu->button_selected == 1)
+	{
+		game->menu->status = PLAYING;
+		mlx_mouse_hide(game->mlx, game->win);
+	}
+	else if (game->menu->button_selected == 2)
+	{
+		game->menu->status = SERVERS;
+		pthread_create(&game->discover_servers_thread, NULL, discover_servers_thread, game);
+	}
+	else if (game->menu->button_selected == 3)
+		game->menu->status = OPTIONS;
+	else if (game->menu->button_selected == 4)
+		handle_close(game);
+	game->menu->button_selected = 0;
+}
 
 void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y)
 {

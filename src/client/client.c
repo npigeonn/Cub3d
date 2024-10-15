@@ -95,9 +95,9 @@ void	*receive_updates(void *args)
 		ssize_t valread = recv(sock, &msg, sizeof(GameMessage), 0);
 		if (valread <= 0)
 		{
-			printf("Disconnected from server\n");
+			game->menu->status = SERVER_DISCONNECTED;
 			close(sock);
-			exit(0);
+			break;
 		}
  		if (msg.type == MSG_FULL)
 			printf("Server is full\n");
