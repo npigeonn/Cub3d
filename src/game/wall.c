@@ -6,25 +6,23 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:13:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/11 13:43:13 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 09:01:37 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../includes/cub3d.h"
 
-void	draw_vertical_line(t_game *game, int x, int start, int end, int color)
+void	draw_vertical_line_color(t_game *game, int x, int draw_start, int draw_end, int color)
 {
-	if (x > game->screen_width || x < 0)
+	if (x < 0 || x >= game->screen_width || draw_start >= game->screen_height || draw_end < 0)
 		return;
-	for (int y = start; y < end; y++)
-	{
-		if (y >= 0 && y < game->screen_height && *((int *)(game->images->base->data + y * game->images->base->size_line + x * (int)(game->images->base->bpp * 0.125))) == 0)
-			pixel_put(game, x, y, color);
-	}
+	if (draw_start < 0) draw_start = 0;
+	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
+	for (int y = draw_start; y <= draw_end; y++)
+		secure_pixel_put(game, x, y, color);
 }
 
-void draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height)
+void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height)
 {
 	if (x < 0 || x >= game->screen_width || draw_start >= game->screen_height || draw_end < 0)
 		return;
@@ -47,7 +45,22 @@ void draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int dr
 	}
 }
 
-void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side)
+bool	is_colored_wall(t_game *game, int side, int x, int draw_start, int draw_end)
+{
+	if (side == SIDE_EAST && game->textures->color_ea > 0)
+		draw_vertical_line_color(game, x, draw_start, draw_end, game->textures->color_ea);
+	else if (side == SIDE_WEST && game->textures->color_we > 0)
+		draw_vertical_line_color(game, x, draw_start, draw_end, game->textures->color_we);
+	else if (side == SIDE_NORTH && game->textures->color_no > 0)
+		draw_vertical_line_color(game, x, draw_start, draw_end, game->textures->color_no);
+	else if (side == SIDE_SOUTH && game->textures->color_so > 0)
+		draw_vertical_line_color(game, x, draw_start, draw_end, game->textures->color_so);
+	else 
+		return (false);
+	return (true);
+}
+
+void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side)
 {
 	t_image *texture;
 		
@@ -59,6 +72,9 @@ void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 	int draw_start = (game->screen_height >> 1) - (line_height >> 1) - (int)(game->player->height * line_height);
 	int draw_end = draw_start + line_height - 1;
 
+	game->wall_distances[x] = perp_wall_dist;
+	if (is_colored_wall(game, side, x, draw_start, draw_end))
+		return ;
 	if (draw_start < 0) draw_start = 0;
 	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
 	float wall_x = (side == SIDE_EAST || side == SIDE_WEST)
@@ -72,7 +88,6 @@ void draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 		case SIDE_NORTH: texture = game->textures->north; break;
 		case SIDE_SOUTH: texture = game->textures->sud; break;
 	}
-	game->wall_distances[x] = perp_wall_dist;
 	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, wall_x, line_height);
 }
 

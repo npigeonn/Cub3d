@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 11:56:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 08:49:00 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,6 @@ void	use_door_in_view(t_game *game)
 	}
 }
 
-
-
 void	add_door(t_game *game, int x, int y, int floor, bool lock)
 {
 	t_door *new_door;
@@ -94,9 +92,8 @@ void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 		? (game->player->y + perp_wall_dist * ray_dir_y)
 		: (game->player->x + perp_wall_dist * ray_dir_x);
 	wall_x -= floor(wall_x);
-	int tex_x = (int)(wall_x * texture->width) % texture->width;
 	game->wall_distances[x] = perp_wall_dist;
-	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, tex_x, line_height);
+	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, wall_x, line_height);
 }
 
 void	update_door_animation(t_game *game)

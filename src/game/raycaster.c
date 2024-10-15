@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 18:12:11 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/15 08:52:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,51 +70,86 @@ void cast_rays(t_game *game)
 
 void cast_floor(t_game *game)
 {
-	t_image *texture = game->textures->floor;
+	t_image	*floor_texture = game->textures->floor;
+	t_image	*ceiling_texture = game->textures->ceil;
+
+	bool use_floor_texture = (game->textures->color_f  < 0);
+	bool use_ceiling_texture = (game->textures->color_c < 0);
+
+	int floor_color_default = game->textures->color_f;
+	int ceiling_color_default = game->textures->color_c;
 
 	float ray_dir_x0 = game->player->dirX - game->player->planeX;
 	float ray_dir_x1 = game->player->dirX + game->player->planeX;
 	float ray_dir_y0 = game->player->dirY - game->player->planeY;
 	float ray_dir_y1 = game->player->dirY + game->player->planeY;
-	float pos_z = game->screen_height >> 1;
+	float pos_z = game->screen_height * 0.5f;
 
 	float diff_ray_dir_x = ray_dir_x1 - ray_dir_x0;
 	float diff_ray_dir_y = ray_dir_y1 - ray_dir_y0;
 
-	int texture_width = texture->width;
-	int texture_height = texture->height;
-	char *texture_data = texture->data;
-	int	bpp = texture->bpp / 8;
+	int floor_texture_width = use_floor_texture ? floor_texture->width : 0;
+	int floor_texture_height = use_floor_texture ? floor_texture->height : 0;
+	char *floor_texture_data = use_floor_texture ? floor_texture->data : NULL;
+	int floor_bpp = use_floor_texture ? floor_texture->bpp / 8 : 0;
 
-	int y = game->screen_height >> 1;
+	int ceiling_texture_width = use_ceiling_texture ? ceiling_texture->width : 0;
+	int ceiling_texture_height = use_ceiling_texture ? ceiling_texture->height : 0;
+	char *ceiling_texture_data = use_ceiling_texture ? ceiling_texture->data : NULL;
+	int ceiling_bpp = use_ceiling_texture ? ceiling_texture->bpp / 8 : 0;
+
+	int screen_mid = game->screen_height >> 1;
 	float screen_width_inv = 1.0f / game->screen_width;
 
-	while (y < game->screen_height)
+	float diff_screen_x = diff_ray_dir_x * screen_width_inv;
+	float diff_screen_y = diff_ray_dir_y * screen_width_inv;
+
+	for (int y = 0; y < game->screen_height; y++)
 	{
-		int p = y - (game->screen_height >> 1);
-		if (p <= 0)
-			p = 1;
-		float row_distance = pos_z / p;
+		int p = y - screen_mid;
+		if (p == 0) p = 1;
+		float row_distance = pos_z / fabsf(p);
 
-		float floor_step_x = row_distance * diff_ray_dir_x * screen_width_inv;
-		float floor_step_y = row_distance * diff_ray_dir_y * screen_width_inv;
+		float floor_step_x = row_distance * diff_screen_x;
+		float floor_step_y = row_distance * diff_screen_y;
 
-		float floor_x = game->player->x + row_distance * ray_dir_x0; 
+		float floor_x = game->player->x + row_distance * ray_dir_x0;
 		float floor_y = game->player->y + row_distance * ray_dir_y0;
+
+		float ceiling_x = game->player->x + row_distance * ray_dir_x0;
+		float ceiling_y = game->player->y + row_distance * ray_dir_y0;
 
 		for (int x = 0; x < game->screen_width; x++)
 		{
-			float current_floor_x = floor_x + x * floor_step_x;
-			float current_floor_y = floor_y + x * floor_step_y;
-			int tex_x = (int)(current_floor_x * texture_width) % texture_width;
-			int tex_y = (int)(current_floor_y * texture_height) % texture_height;
-			int floor_color = *((int *)(texture_data + tex_y * texture->size_line + tex_x * bpp));
-			if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
+			int floor_color, ceiling_color;
+			if (use_floor_texture)
+			{
+				float current_floor_x = floor_x + x * floor_step_x;
+				float current_floor_y = floor_y + x * floor_step_y;
+				int floor_tex_x = (int)(current_floor_x * floor_texture_width) % floor_texture_width;
+				int floor_tex_y = (int)(current_floor_y * floor_texture_height) % floor_texture_height;
+				floor_color = *((int *)(floor_texture_data + floor_tex_y * floor_texture->size_line + floor_tex_x * floor_bpp));
+			}
+			else
+				floor_color = floor_color_default;
+			if (use_ceiling_texture)
+			{
+				float current_ceiling_x = ceiling_x + x * floor_step_x;
+				float current_ceiling_y = ceiling_y + x * floor_step_y;
+				int ceiling_tex_x = (int)(current_ceiling_x * ceiling_texture_width) % ceiling_texture_width;
+				int ceiling_tex_y = (int)(current_ceiling_y * ceiling_texture_height) % ceiling_texture_height;
+				ceiling_color = *((int *)(ceiling_texture_data + ceiling_tex_y * ceiling_texture->size_line + ceiling_tex_x * ceiling_bpp));
+			}
+			else
+				ceiling_color = ceiling_color_default;
+			if (y < screen_mid)
+				secure_pixel_put(game, x, y, ceiling_color);
+			else
 				secure_pixel_put(game, x, y, floor_color);
 		}
-		y++;
 	}
 }
+
 
 int	handle_close(t_game *game)
 {
