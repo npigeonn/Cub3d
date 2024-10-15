@@ -4,23 +4,27 @@
 # include <math.h>
 # include "mlx.h"
 # include "libft.h"
-#include <sys/time.h>
+# include <sys/time.h>
+# include <netdb.h>
 
 enum Weapon {
 	Pistol = 0,
 	Shotgun = 1,
 };
 
-enum GameStatus {
+enum GameStatus
+{
 	PLAYING = 0,
 	PAUSED = 1,
 	MAIN_MENU = 2,
 	GAME_OVER = 3,
 	OPTIONS = 4,
-	SERVEURS = 5,
-	SERVEUR_CREATE = 6,
-	JOIN_SERVER = 7,
-	MULTI_PLAYER = 8,
+	SERVERS = 5,
+	SERVER_CREATE = 6,
+	VALID_SERVER_CREATE = 7,
+	JOIN_SERVER = 8,
+	VALID_JOIN_SERVER = 9,
+	MULTI_PLAYER = 10,
 };
 
 enum Direction {
@@ -137,6 +141,9 @@ typedef struct s_menu
 	float	volume;
 	float	mouse_sensitivity;
 	int		server_selected;
+	int		text_field_selected;
+	bool	error_name;
+	bool	error_pseudo;
 }	t_menu;
 
 typedef struct s_enemies
@@ -179,8 +186,9 @@ typedef struct	s_player_info
 typedef struct s_server
 {
 	int				player_id;
-	char			*pseudo;
+	char			pseudo[20];
 	int				sock;
+	int				sock_bc;
 	char			*ip;
 	char			name[20];
 	t_player_info	*players;

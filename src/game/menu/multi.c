@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 14:51:25 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 10:44:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 	t_server_info	*current;
 	int				i = 1;
 
+	game->menu->button_selected = 0;
 	current = game->servers;
 	while (current)
 	{
@@ -34,18 +35,15 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 			mouse_y >= server_y_offset && mouse_y <= server_y_offset + 80)
 		{
 			game->menu->server_selected = i;
-			game->menu->button_selected = 0;
 			return;
 		}
 		server_y_offset += 60;
 		current = current->next;
 		i++;
 	}
-
 	const int	remaining_space = game->screen_width - (list_x + list_width);
 	const int	btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
 	const int	btn_y_start = game->screen_height * 0.25;
-
 	if (mouse_x >= btn_x && mouse_x <= btn_x + btn_width)
 	{
 		if (mouse_y >= btn_y_start && mouse_y <= btn_y_start + btn_height)
@@ -118,17 +116,16 @@ void	*discover_servers_thread(void *arg)
 		perror("socket failed");
 		return NULL;
 	}
-	memset(&recv_addr, 0, sizeof(recv_addr));
+	ft_memset(&recv_addr, 0, sizeof(recv_addr));
 	recv_addr.sin_family = AF_INET;
 	recv_addr.sin_port = htons(BROADCAST_PORT);
 	recv_addr.sin_addr.s_addr = INADDR_ANY;
 	if (bind(sockfd, (struct sockaddr *)&recv_addr, sizeof(recv_addr)) < 0)
 	{
-		perror("bind failed");
 		close(sockfd);
 		return NULL;
 	}
-	while (game->menu->status == SERVEURS)
+	while (game->menu->status == SERVERS)
 	{
 		struct timeval tv;
 		tv.tv_sec = 1;

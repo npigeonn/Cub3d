@@ -133,7 +133,7 @@ int	join_server(t_game *game)
 	struct sockaddr_in serv_addr;
 	char pseudo[MAX_PSEUDO_LENGTH];
 
-	strncpy(pseudo, game->server->pseudo, MAX_PSEUDO_LENGTH);
+	ft_strcpy(pseudo, game->server->pseudo);
 	if ((game->server->sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		printf("\nSocket creation error\n");
@@ -151,7 +151,7 @@ int	join_server(t_game *game)
 		printf("\nConnection Failed\n");
 		return (-1);
 	}
-	send(game->server->sock, pseudo, strlen(pseudo) + 1, 0);
+	send(game->server->sock, pseudo, ft_strlen(pseudo) + 1, 0);
 	GameMessage connect_msg;
 	ssize_t recv_size = recv(game->server->sock, &connect_msg, sizeof(GameMessage), 0);
 	if (recv_size <= 0)

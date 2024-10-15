@@ -104,6 +104,7 @@ void	init_player(t_game	*game)
 	game->menu->message = NOTHING;
 	game->servers = NULL;
 	game->server->name[0] = '\0';
+	game->server->pseudo[0] = '\0';
 }
 
 void	load_game_texture(t_game *game)
@@ -142,6 +143,8 @@ int	main(int ac, char **av)
 	init_player(&game);
 	game.menu->status = MAIN_MENU;
 	game.menu->button_selected = 0;
+	game.menu->error_name = false;
+	game.menu->error_pseudo = false;
 	game.wall_distances = malloc(sizeof(float) * game.screen_width);
 	ft_bzero(game.wall_distances, game.screen_width);
 	game.door = NULL;

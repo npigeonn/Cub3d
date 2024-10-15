@@ -360,7 +360,6 @@ void	loop_server(int server_fd, struct sockaddr_in address, int addrlen)
 	char				*pseudo;
 	int					i;
 
-	init_broadcast();
 	epoll_fd = epoll_create1(0);
 	if (epoll_fd == -1)
 	{
@@ -523,4 +522,5 @@ void create_server(t_game *game)
 	while (!server_ready)
 		pthread_cond_wait(&server_ready_cond, &game_lock);
 	pthread_mutex_unlock(&game_lock);
+	init_broadcast(game);
 }

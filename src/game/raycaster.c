@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 08:52:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/15 11:54:12 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,13 +177,15 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		update_option_menu_slider(game, x, y, keycode);
 		return (0);
 	}
-	if (game->menu->status == SERVEURS)
+	if (game->menu->status == SERVERS)
 	{
 		if (game->menu->button_selected == 3)
 			game->menu->status = MAIN_MENU;
-		if (game->menu->button_selected == 2)
-			game->menu->status = SERVEUR_CREATE;
-		if (game->menu->server_selected != 0)
+		else if (game->menu->button_selected == 2)
+			game->menu->status = SERVER_CREATE;
+		else if (game->menu->button_selected == 1)
+			game->menu->status = JOIN_SERVER;
+		else if (game->menu->server_selected != 0)
 		{
 			int	i = 1;
 			t_server_info *current;
@@ -194,7 +196,6 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 				if (i == game->menu->server_selected)
 				{
 					game->server->ip = current->ip;
-					game->server->pseudo = "yoyoazs";
 					game->menu->server_selected = 0;
 					game->menu->status = JOIN_SERVER;
 					break;
@@ -207,11 +208,13 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		game->menu->server_selected = 0;
 		return (0);
 	}
-	if (game->menu->status == SERVEUR_CREATE)
+	else if (game->menu->status == SERVER_CREATE)
+		update_create_server_menu_text(game, x, y, keycode);
+	else if (game->menu->status == JOIN_SERVER)
+		update_join_server_menu_text(game, x, y, keycode);
+	else if (game->menu->status == MULTI_PLAYER || game->menu->status == PLAYING)
 		return (0);
-	if (game->menu->status == MULTI_PLAYER || game->menu->status == PLAYING)
-		return (0);
-	if (keycode == 1)
+	else if (keycode == 1)
 	{
 		if (game->menu->button_selected == 1)
 		{
@@ -220,7 +223,7 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		}
 		else if (game->menu->button_selected == 2)
 		{
-			game->menu->status = SERVEURS;
+			game->menu->status = SERVERS;
 			pthread_create(&game->discover_servers_thread, NULL, discover_servers_thread, game);
 		}
 		else if (game->menu->button_selected == 3)
@@ -238,10 +241,12 @@ int	handle_mouse_move(int x, int y, t_game *game)
 		update_main_menu_button(game, x, y);
 	else if (game->menu->status == OPTIONS)
 		update_option_menu_button(game, x, y);
-	else if (game->menu->status == SERVEURS)
+	else if (game->menu->status == SERVERS)
 		update_multiplayer_menu(game, x, y);
-	else if (game->menu->status == SERVEUR_CREATE)
+	else if (game->menu->status == SERVER_CREATE)
 		update_create_server_menu_button(game, x, y);
+	else if (game->menu->status == JOIN_SERVER)
+		update_join_server_menu_button(game, x, y);
 	if ((game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER) || x == game->screen_width * 0.5)
 		return (0);
 	int centerX = game->screen_width * 0.5;
@@ -284,11 +289,8 @@ int	handle_keypress(int keycode, t_game *game)
 	
 	if (keycode == 65307)
 		handle_close(game);
-	else if (game->menu->status == SERVEUR_CREATE)
-	{
-		handle_text_input(game->server->name, keycode);
-		return (0);
-	}
+	else if (game->menu->status == SERVER_CREATE || game->menu->status == JOIN_SERVER)
+		handle_text_input(game, keycode);
 	if (game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER)
 		return (0);
 	if (keycode == 65362 || keycode == 119) // W pour avancer
@@ -398,17 +400,19 @@ int	game_loop(t_game *game)
 		draw_main_menu(game);
 	else if (game->menu->status == OPTIONS)
 		draw_options_menu(game);
-	else if (game->menu->status == SERVEURS)
+	else if (game->menu->status == SERVERS)
 		draw_multiplayer_menu(game);
-	else if (game->menu->status == SERVEUR_CREATE)
-	{
+	else if (game->menu->status == SERVER_CREATE)
 		draw_create_server_menu(game);
-		// create_server(game);
-		// game->server->ip = "127.0.0.1";
-		// game->server->pseudo = "max";
-		// game->menu->status = JOIN_SERVER;
+	else if (game->menu->status == VALID_SERVER_CREATE)
+	{
+		create_server(game);
+		game->server->ip = "127.0.0.1";
+		game->menu->status = VALID_JOIN_SERVER;
 	}
 	else if (game->menu->status == JOIN_SERVER)
+		draw_join_server_menu(game);
+	else if (game->menu->status == VALID_JOIN_SERVER)
 	{
 		join_server(game);
 		game->menu->status = MULTI_PLAYER;
