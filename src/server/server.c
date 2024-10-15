@@ -164,7 +164,6 @@ void	notify_players_of_disconnection(int id)
 	if (player) {
 		disconnect_msg.player_id = player->player_id;
 		strncpy(disconnect_msg.pseudo, player->pseudo, MAX_PSEUDO_LENGTH);
-		printf("Player %d (%s) disconnected\n", player->player_id, player->pseudo);
 		player->player_id = -1;
 		i = -1;
 		while (++i < MAX_PLAYERS)
@@ -265,7 +264,6 @@ void	new_player(int new_socket, char *pseudo)
 	t_player_info *existing_player = find_player_by_pseudo(pseudo);
 	if (existing_player && existing_player->player_id >= 0)
 	{
-		printf("Player %s is already connected. Connection refused.\n", pseudo);
 		close(new_socket);
 		pthread_mutex_unlock(&game_lock);
 		return ;
@@ -278,7 +276,6 @@ void	new_player(int new_socket, char *pseudo)
 			add_player_node(i, pseudo);
 			GameMessage connect_msg = {.type = MSG_CONNECT, .player_id = i, .x = -1, .y = -1};
 			strcpy(connect_msg.pseudo, pseudo);
-			printf("New player connected: %s (Player ID: %d)\n", pseudo, i);
 			add_game_message_to_queue(connect_msg);
 			break;
 		}
@@ -311,7 +308,6 @@ char *existing_player(int *nb_player, int server_fd, struct sockaddr_in address,
 	if (player)
 	{
 		if (player->player_id >= 0 && client_sockets[player->player_id] >= 0) {
-			printf("Player %s is already connected (ID: %d)\n", pseudo, player->player_id);
 			close(*new_socket);
 			pthread_mutex_unlock(&game_lock);
 			return strdup("");
@@ -330,7 +326,6 @@ char *existing_player(int *nb_player, int server_fd, struct sockaddr_in address,
 				}
 			}
 			client_sockets[player->player_id] = *new_socket;
-			printf("Reconnecting player: %s (Player ID: %d)\n", pseudo, player->player_id);
 			(*nb_player)++;
 			event.events = EPOLLIN;
 			event.data.fd = *new_socket;
@@ -437,7 +432,6 @@ void	init_server(int *server_fd, struct sockaddr_in *address, int *opt)
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
-	printf("Server listening on port %d\n", PORT);
 	pthread_mutex_lock(&game_lock);
 	server_ready = 1;
 	pthread_cond_broadcast(&server_ready_cond);
@@ -484,19 +478,19 @@ void	*logic_game(void *arg)
 				send(client_sockets[msg.player_id], &msg, sizeof(GameMessage), 0);
 				send_all_players(msg.player_id);
 				notify_players_of_connection(msg.player_id, msg.pseudo);
-			} else if (msg.type == MSG_RECONNECT)
+			}
+			else if (msg.type == MSG_RECONNECT)
 			{
 				send(client_sockets[msg.player_id], &msg, sizeof(GameMessage), 0);
 				send_all_players(msg.player_id);
 				notify_players_of_reconnection(msg.player_id, msg.pseudo);
-			} else if (msg.type == MSG_DISCONNECT)
+			}
+			else if (msg.type == MSG_DISCONNECT)
 				notify_players_of_disconnection(msg.player_id);
 			else if (msg.type == MSG_MOVE)
 				notify_players_of_move(msg);
 			else if (msg.type == MSG_DOOR)
 				notify_players_of_door(msg);
-			else
-				printf("Unknown message type received: %d\n", msg.type);
 			free(current); 
 		}
 		pthread_mutex_unlock(&game_lock);
