@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 15:13:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/16 14:40:05 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -373,7 +373,7 @@ int	game_loop(t_game *game)
 		cast_rays(game);
 		cast_floor(game);
 		draw_players(game);
-		// update_enemies(game);
+		update_enemies(game);
 		draw_sprites(game);
 		mini_map(game);
 		crosshair(game);

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/14 12:18:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/16 22:43:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	add_enemies(t_game *game, int x, int y, int floor)
 {
-	t_enemies	*new;
+	t_enemy	*new;
 
-	new = malloc(sizeof(t_enemies));
+	new = malloc(sizeof(t_enemy));
 	new->x = x + 0.5;
 	new->y = y + 0.5;
 	new->floor = floor;
@@ -24,6 +24,10 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 	new->dirX = 0;
 	new->dirY = -1;
 	new->next = game->enemies;
+	new->state = PATROL;
+	new->direction = 0;
+	new->frame_count = 0;
+	new->fov = 60;
 	game->enemies = new;
 }
 
@@ -114,13 +118,13 @@ void	init_enemies(t_game *game)
 
 void	draw_enemies(t_game *game)
 {
-	t_enemies	*current;
+	t_enemy	*current;
 
 	current = game->enemies;
 	while (current)
 	{
 		if (current->floor == game->player->floor)
-			draw_sprite(game, game->textures->enemies, current->x, current->y);
+			draw_sprite(game, game->textures->enemies, current->x, current->y, atan2(current->dirY, current->dirX));
 		current = current->next;
 	}
 }
@@ -133,27 +137,105 @@ void	draw_players(t_game *game)
 	while (current)
 	{
 		if (current->floor == game->player->floor)
-			draw_sprite(game, game->textures->enemies, current->x, current->y);
+			draw_sprite(game, game->textures->enemies, current->x, current->y, 150);
 		current = current->next;
 	}
+}
+bool	is_position_passable(t_game *game, float x, float y, int floor)
+{
+	int tile_x = (int)(x);
+	int tile_y = (int)(y);
+
+	if (tile_x < 0 || tile_y >= (int)ft_strlen(game->map[floor]) || tile_y < 0 || tile_x >= (int)ft_strlen(game->map[floor][tile_y]))
+		return (false);
+	if (game->map[floor][tile_y][tile_x] == 'D' || game->map[floor][tile_y][tile_x] == '1')
+		return (false);
+	return (true);
+}
+
+bool	has_line_of_sight(t_game *game, t_point enemy_pos, t_point player_pos, float enemy_facing_angle, float fov_angle)
+{
+	float dx = player_pos.x - enemy_pos.x;
+	float dy = player_pos.y - enemy_pos.y;
+	float distance = sqrt(dx * dx + dy * dy);
+
+	float angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
+	float angle_diff = fabsf(angle_to_player - enemy_facing_angle);
+
+	if (angle_diff <= fov_angle * 0.5)
+	{
+		float step_x = dx / distance;
+		float step_y = dy / distance;
+		for (float t = 0; t < distance; t += 0.1f)
+		{
+			enemy_pos.x += step_x * 0.1f;
+			enemy_pos.y += step_y * 0.1f;
+			if (!is_position_passable(game, enemy_pos.x, enemy_pos.y, enemy_pos.floor))
+				return (false);
+		}
+		return (true);
+	}
+	return (false);
 }
 
 void	update_enemies(t_game *game)
 {
-	t_enemies	*current = game->enemies;
+	t_enemy *current = game->enemies;
+	t_point player_pos = {game->player->x, game->player->y, game->player->floor};
 
 	while (current)
 	{
-		int direction = rand() % 4;
-		float move_speed = 0.1f;
-		if (direction == 0 && is_position_valid(game, current->x, current->y - move_speed, current->floor))
-			current->y -= move_speed;
-		else if (direction == 1 && is_position_valid(game, current->x, current->y + move_speed, current->floor))
-			current->y += move_speed;
-		else if (direction == 2 && is_position_valid(game, current->x - move_speed, current->y, current->floor))
-			current->x -= move_speed;
-		else if (direction == 3 && is_position_valid(game, current->x + move_speed, current->y, current->floor))
-			current->x += move_speed;
-	current = current->next;
+		t_point enemy_pos = {current->x, current->y, current->floor};
+		
+		float dx = player_pos.x - current->x;
+		float dy = player_pos.y - current->y;
+		float distance_to_player = sqrt(dx * dx + dy * dy);
+
+		if (current->state == PATROL)
+		{
+			if (current->frame_count % 180 == 0)
+				current->direction = rand() % 360;
+			float angle_in_radians = current->direction * (M_PI / 180.0f);
+			current->dirX = cos(angle_in_radians);
+			current->dirY = sin(angle_in_radians);
+			
+			float new_x = current->x + current->dirX * MOVEMENT_SPEED;
+			float new_y = current->y + current->dirY * MOVEMENT_SPEED;
+			if (is_position_passable(game, new_x, new_y, current->floor))
+			{
+				current->x = new_x;
+				current->y = new_y;
+			}
+			else
+			{
+				current->direction = rand() % 360;
+				current->frame_count = 0;
+			}
+			if (distance_to_player < 5.0f && has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
+				current->state = CHASE;
+		}
+		else if (current->state == CHASE)
+		{
+			float angle_to_player = atan2(dy, dx);
+			current->dirX = cos(angle_to_player);
+			current->dirY = sin(angle_to_player);
+			
+			float new_x = current->x + current->dirX * MOVEMENT_SPEED;
+			float new_y = current->y + current->dirY * MOVEMENT_SPEED;
+			if (is_position_passable(game, new_x, new_y, current->floor))
+			{
+				current->x = new_x;
+				current->y = new_y;
+			}
+			else
+			{
+				current->direction = rand() % 360;
+				current->frame_count = 0;
+			}
+			if (distance_to_player > 8.0f || !has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
+				current->state = PATROL;
+		}
+		current->frame_count++;
+		current = current->next;
 	}
 }

@@ -121,7 +121,13 @@ void	load_game_texture(t_game *game)
 	game->textures->enemies = malloc(sizeof(t_image));
 	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
 	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");
-	load_texture(game, game->textures->enemies, "./assets/sprites/enemies.xpm");
+	load_texture(game, game->textures->enemies, "./assets/sprites/enemy_spritesheet.xpm");
+	game->textures->enemies->nb_sprite = 8;
+	game->textures->enemies->sprite_width = 64;
+	game->textures->enemies->sprite_height = 64;
+	game->textures->tp->nb_sprite = 1;
+	game->textures->tp->sprite_width = game->textures->tp->width;
+	game->textures->tp->sprite_height = game->textures->tp->height;
 }
 
 int	main(int ac, char **av)

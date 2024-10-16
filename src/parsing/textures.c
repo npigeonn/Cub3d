@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   textures.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:35:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/15 09:30:49 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/16 14:54:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,7 @@ void	init_data(t_game *game)
 	game->textures->color_f = -1;
 	game->textures->color_ea = -1;
 	game->textures->color_we = -1;
-	game->nb_keys = 0;
-	game->nb_looked_door = 0;
 	game->map_begin = 0;
-	game->keys_collected = 0;
 }
 
 void	load_txtre_globale(t_game *game, char *line, char *path)

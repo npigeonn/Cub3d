@@ -78,6 +78,9 @@ typedef struct s_image
 	int		endian;
 	int		width;
 	int		height;
+	int		nb_sprite;
+	int		sprite_width;
+	int		sprite_height;
 }	t_image;
 
 typedef struct s_images
@@ -148,7 +151,20 @@ typedef struct s_menu
 	bool	error_pseudo;
 }	t_menu;
 
-typedef struct s_enemies
+enum EnemyState
+{
+	PATROL = 0,
+	CHASE = 1,
+};
+
+typedef struct	s_point
+{
+	float	x;
+	float	y;
+	int		floor;
+} t_point;
+
+typedef struct	s_enemy
 {
 	float		x;
 	float		y;
@@ -156,8 +172,12 @@ typedef struct s_enemies
 	float		dirY;
 	int			floor;
 	float		health;
-	struct s_enemies	*next;
-}	t_enemies;
+	int			state;
+	int			direction;
+	int			frame_count;
+	float		fov;
+	struct s_enemy	*next;
+}	t_enemy;
 
 typedef struct s_server_info
 {
@@ -211,9 +231,6 @@ typedef struct s_game
 	int				x_minimap;
 	int				y_minimap;
 	int				nb_floor;
-	int				nb_looked_door;
-	int				nb_keys;
-	int				keys_collected;
 	int				clr;
 	t_door			*door;
 	t_images		*images;
@@ -221,7 +238,7 @@ typedef struct s_game
 	t_textures		*textures;
 	float			*wall_distances;
 	t_teleporter	*tp;
-	t_enemies		*enemies;
+	t_enemy			*enemies;
 	float			delta_time;
 	struct timeval	last_time;
 
@@ -255,7 +272,7 @@ void	draw_text(t_game *data, char *str, int x, int y, int height, int color);
 void	draw_text_left(t_game *game, char *str, int x, int y, int height, int color);
 void	draw_text_right(t_game *game, char *str, int x, int y, int height, int color);
 void	draw_char(t_game *data, int x, int y, int height, char c, int color);
-void	draw_sprite(t_game *game, t_image *texture, float x, float y);
+void	draw_sprite(t_game *game, t_image *texture, float x, float y, float sprite_dir);
 void	draw_sprites(t_game *game);
 void	draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, int radius, int color);
 void	crosshair(t_game *game);

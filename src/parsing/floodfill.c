@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floodfill.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/14 15:08:45 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/16 14:54:13 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,7 @@ int	check_path(t_game *game, int x, int y, int floor) // si exit dans un autre e
 		return (0); // 
 	if (game->map_cy[floor][y][x] == 'e') 
 		return (1); //   // Exit found
-	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1'
-		|| (game->map_cy[floor][y][x] == 'L' && !game->keys_collected))
+	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1')
 		return (0); // Already visited or wall
 	if (is_a_teleporter(game->map_cy[floor][y][x])
 		&& teleportation(game, x, y, floor, 'p'))
