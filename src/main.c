@@ -151,6 +151,7 @@ int	main(int ac, char **av)
 	game.menu->button_selected = 0;
 	game.menu->error_name = false;
 	game.menu->error_pseudo = false;
+	game.menu->text_field_selected = 0;
 	game.wall_distances = malloc(sizeof(float) * game.screen_width);
 	ft_bzero(game.wall_distances, game.screen_width);
 	game.door = NULL;

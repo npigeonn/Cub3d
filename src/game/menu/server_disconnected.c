@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:21:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 14:28:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/17 15:59:01 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	draw_server_error_menu(t_game *game)
 	const int	y = game->screen_height * 0.25;
 	const char	*message;
 
+	mlx_mouse_show(game->mlx, game->win);
 	if (game->menu->status == SERVER_FULL)
 		message = "Server is full.";
 	else

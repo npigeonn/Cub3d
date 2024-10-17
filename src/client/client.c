@@ -24,6 +24,8 @@ void	update_player_position(t_server *server, GameMessage msg)
 
 void	add_connection_msg(t_game *game, char *pseudo)
 {
+	if (pseudo[0] == '\0')
+		return ;
 	t_message	*new_msg = malloc(sizeof(t_message));
 	ft_strlcpy(new_msg->message, pseudo, MAX_PSEUDO_LENGTH);
 	ft_strlcat(new_msg->message + ft_strlen(pseudo), " join the game.", MAX_MESSAGE_LENGTH);
@@ -107,6 +109,8 @@ void	update_door(t_game *game, GameMessage msg)
 
 void	add_msg_chat(t_game *game, GameMessage msg)
 {
+	if (msg.pseudo[0] == '\0')
+		return ;
 	t_message	*new_msg = malloc(sizeof(t_message));
 	ft_strlcpy(new_msg->message, msg.message, MAX_MESSAGE_LENGTH);
 	ft_strlcpy(new_msg->pseudo, msg.pseudo, 20);

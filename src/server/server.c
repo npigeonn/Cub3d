@@ -293,17 +293,15 @@ void	new_player(int new_socket, char *pseudo)
 
 char	*existing_player(int *nb_player, int server_fd, struct sockaddr_in address, int addrlen, int *new_socket, int epoll_fd)
 {
-	char pseudo[MAX_PSEUDO_LENGTH];
-	t_player_info *player;
-	struct epoll_event event;
-	int i;
+	char				pseudo[MAX_PSEUDO_LENGTH];
+	t_player_info		*player;
+	struct epoll_event	event;
+	int					i;
 
+	pseudo[0] = '\0';
 	*new_socket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
 	if (*new_socket < 0)
-	{
-		perror("accept");
-		return strdup("");
-	}
+		return (pseudo);
 	recv(*new_socket, pseudo, sizeof(pseudo), 0);
 	pthread_mutex_lock(&game_lock);
 	player = find_player_by_pseudo(pseudo);
@@ -312,7 +310,7 @@ char	*existing_player(int *nb_player, int server_fd, struct sockaddr_in address,
 		if (player->player_id >= 0 && client_sockets[player->player_id] >= 0) {
 			close(*new_socket);
 			pthread_mutex_unlock(&game_lock);
-			return strdup("");
+			return (pseudo);
 		}
 		else
 		{

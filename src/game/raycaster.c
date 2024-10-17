@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 14:38:16 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/17 15:23:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,6 +402,7 @@ int	game_loop(t_game *game)
 		crosshair(game);
 		gun_draw(game);
 		chat_draw(game);
+		show_message(game);
 		 // game delta time = nbre de s depuis la dernier image
 	
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
