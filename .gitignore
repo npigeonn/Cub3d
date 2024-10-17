@@ -1,0 +1,5 @@
+*.o
+cub3D
+./objs/*
+./libs/minilibx-linux/*
+*.a
