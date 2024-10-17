@@ -10,7 +10,7 @@
 # include "game.h"
 # include "server.h"
 
-# define MOVEMENT_SPEED 0.1f
+# define MOVEMENT_SPEED 0.05f
 # define ROTATION_SPEED 0.001f
 
 # define MENU_BUTTON_COLOR 0x002B36 

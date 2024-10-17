@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/16 22:43:51 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/17 10:02:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 	new->floor = floor;
 	new->health = 20;
 	new->dirX = 0;
-	new->dirY = -1;
+	new->dirY = 1;
 	new->next = game->enemies;
 	new->state = PATROL;
-	new->direction = 0;
+	new->direction = 200;
 	new->frame_count = 0;
 	new->fov = 60;
 	game->enemies = new;
@@ -146,7 +146,7 @@ bool	is_position_passable(t_game *game, float x, float y, int floor)
 	int tile_x = (int)(x);
 	int tile_y = (int)(y);
 
-	if (tile_x < 0 || tile_y >= (int)ft_strlen(game->map[floor]) || tile_y < 0 || tile_x >= (int)ft_strlen(game->map[floor][tile_y]))
+	if (tile_x < 0 || tile_y < 0 || tile_x >= (int)ft_strlen(game->map[floor][tile_y]))
 		return (false);
 	if (game->map[floor][tile_y][tile_x] == 'D' || game->map[floor][tile_y][tile_x] == '1')
 		return (false);
@@ -189,11 +189,11 @@ void	update_enemies(t_game *game)
 		
 		float dx = player_pos.x - current->x;
 		float dy = player_pos.y - current->y;
-		float distance_to_player = sqrt(dx * dx + dy * dy);
-
+		float distance_squared = dx * dx + dy * dy;
+		
 		if (current->state == PATROL)
 		{
-			if (current->frame_count % 180 == 0)
+			if (current->frame_count % 220 == 0)
 				current->direction = rand() % 360;
 			float angle_in_radians = current->direction * (M_PI / 180.0f);
 			current->dirX = cos(angle_in_radians);
@@ -211,7 +211,7 @@ void	update_enemies(t_game *game)
 				current->direction = rand() % 360;
 				current->frame_count = 0;
 			}
-			if (distance_to_player < 5.0f && has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
+			if (distance_squared < 25.0f && has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
 				current->state = CHASE;
 		}
 		else if (current->state == CHASE)
@@ -232,7 +232,7 @@ void	update_enemies(t_game *game)
 				current->direction = rand() % 360;
 				current->frame_count = 0;
 			}
-			if (distance_to_player > 8.0f || !has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
+			if (distance_squared > 64.0f || !has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
 				current->state = PATROL;
 		}
 		current->frame_count++;

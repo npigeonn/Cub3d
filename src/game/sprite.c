@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 12:09:23 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/16 22:51:22 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/17 10:01:43 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ void draw_vertical_sprite_line(t_game *game, int x, int draw_start, int draw_end
 
 void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_to_sprite)
 {
+	int sprite_order[8] = {0, 1, 2, 3, 5, 6, 7, 4};
+	
 	float	sprite_x = x - game->player->x;
 	float	sprite_y = y - game->player->y;
 	float	inv_det = 1.0f / (game->player->planeX * game->player->dirY - game->player->dirX * game->player->planeY);
@@ -48,7 +50,6 @@ void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_t
 
 	if (transform_y <= 0)
 		return;
-
 	float player_angle = atan2(game->player->dirY, game->player->dirX);
 	float relative_angle = angle_to_sprite - player_angle;
 
@@ -57,6 +58,8 @@ void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_t
 	if (relative_angle < -M_PI)
 		relative_angle += 2 * M_PI;
 	int sprite_index = (int)((relative_angle + M_PI) / (2 * M_PI) * texture->nb_sprite) % texture->nb_sprite;
+	sprite_index = sprite_order[sprite_index];
+
 	int	sprite_screen_x = (int)((game->screen_width * 0.5) * (1 + transform_x / transform_y));
 	int	sprite_height = abs((int)(game->screen_height / transform_y));
 	int	draw_start_y = (-sprite_height * 0.5) + (game->screen_height * 0.5) - (int)(game->player->height * sprite_height);
@@ -107,6 +110,6 @@ void draw_teleporter(t_game *game)
 
 void	draw_sprites(t_game *game)
 {
-	draw_teleporter(game);
+	// draw_teleporter(game);
 	draw_enemies(game);
 }
