@@ -138,8 +138,6 @@ int	main(int ac, char **av)
 	(void)ac;
 	
 	int x, y;
-	get_pos_char('0', &x, &y);
-	printf("%d, %d\n", x, y);
 	game.mem = gc_init();
 	game.mlx = mlx_init();
 	game.server = malloc(sizeof(t_server));
@@ -163,9 +161,15 @@ int	main(int ac, char **av)
 	init_enemies(&game);
 	game.player->x += 0.5;
 	game.player->y += 0.5;
+	game.chatbox = malloc(sizeof(t_chatbox));
+	game.chatbox->visible = false;
+	game.chatbox->message[0] = '\0';
+	game.chatbox->is_writting = false;
+	game.chatbox->messages = NULL;
 	set_direction(&game, 0);
 	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Raycasting 3D");
 	init_img(&game);
+	set_width_all_letter(&game);
 	mlx_mouse_move(game.mlx, game.win, game.screen_width >> 1 , game.screen_height >> 1 );
 	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
 	mlx_hook(game.win, 6, 1L << 6, handle_mouse_move, &game);

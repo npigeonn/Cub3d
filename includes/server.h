@@ -31,6 +31,8 @@ typedef enum s_message_type
 	MSG_FULL = 4,
 	MSG_BROADCAST = 5,
 	MSG_DOOR = 6,
+	MSG_CHAT = 7,
+	MSG_GET_PLAYER = 8,
 }	t_message_type;
 
 typedef struct s_game_message
@@ -46,6 +48,7 @@ typedef struct s_game_message
 	float		health;
 	int			floor;
 	int			open;
+	char		message[MAX_MESSAGE_LENGTH];
 }	GameMessage;
 
 typedef struct s_move_message

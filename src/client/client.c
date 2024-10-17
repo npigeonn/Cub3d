@@ -22,7 +22,19 @@ void	update_player_position(t_server *server, GameMessage msg)
 	}
 }
 
-void	add_player(t_server *server, GameMessage msg)
+void	add_connection_msg(t_game *game, char *pseudo)
+{
+	t_message	*new_msg = malloc(sizeof(t_message));
+	ft_strlcpy(new_msg->message, pseudo, MAX_PSEUDO_LENGTH);
+	ft_strlcat(new_msg->message + ft_strlen(pseudo), " join the game.", MAX_MESSAGE_LENGTH);
+	new_msg->pseudo[0] = '\0';
+	new_msg->next = game->chatbox->messages;
+	new_msg->color = 0x32CD32;
+	gettimeofday(&new_msg->time, NULL);
+	game->chatbox->messages = new_msg;
+}
+
+void	add_player(t_game *game, GameMessage msg)
 {
 	t_player_info	*new_player = malloc(sizeof(t_player_info));
 	new_player->player_id = msg.player_id;
@@ -34,31 +46,41 @@ void	add_player(t_server *server, GameMessage msg)
 	new_player->height = msg.height;
 	new_player->floor = msg.floor;
 	new_player->next = NULL;
-	strcpy(new_player->pseudo, msg.pseudo);
-	if (!server->players)
-		server->players = new_player;
+	ft_strlcpy(new_player->pseudo, msg.pseudo, MAX_PSEUDO_LENGTH);
+	if (msg.type != MSG_GET_PLAYER)
+		add_connection_msg(game, msg.pseudo);
+	if (!game->server->players)
+		game->server->players = new_player;
 	else
 	{
-		t_player_info	*current = server->players;
+		t_player_info	*current = game->server->players;
 		while (current->next)
 			current = current->next;
 		current->next = new_player;
 	}
 }
 
-void	remove_player(t_server *server, int player_id)
+void	remove_player(t_game *game, int player_id)
 {
-	t_player_info	*current = server->players;
+	t_player_info	*current = game->server->players;
 	t_player_info	*prev = NULL;
 
 	while (current)
 	{
 		if (current->player_id == player_id)
 		{
+			t_message	*new_msg = malloc(sizeof(t_message));
+			ft_strlcpy(new_msg->message, current->pseudo, MAX_PSEUDO_LENGTH);
+			ft_strlcat(new_msg->message + ft_strlen(current->pseudo), " left the game.", MAX_MESSAGE_LENGTH);
+			new_msg->pseudo[0] = '\0';
+			new_msg->next = game->chatbox->messages;
+			new_msg->color = 0xFF4500;
+			gettimeofday(&new_msg->time, NULL);
+			game->chatbox->messages = new_msg;
 			if (prev)
 				prev->next = current->next;
 			else
-				server->players = current->next;
+				game->server->players = current->next;
 			free(current);
 			break ;
 		}
@@ -83,6 +105,17 @@ void	update_door(t_game *game, GameMessage msg)
 	}
 }
 
+void	add_msg_chat(t_game *game, GameMessage msg)
+{
+	t_message	*new_msg = malloc(sizeof(t_message));
+	ft_strlcpy(new_msg->message, msg.message, MAX_MESSAGE_LENGTH);
+	ft_strlcpy(new_msg->pseudo, msg.pseudo, 20);
+	new_msg->next = game->chatbox->messages;
+	new_msg->color = 0x000000;
+	gettimeofday(&new_msg->time, NULL);
+	game->chatbox->messages = new_msg;
+}
+
 void	*receive_updates(void *args)
 {
 	t_game		*game = (t_game *)args;
@@ -101,33 +134,20 @@ void	*receive_updates(void *args)
 		}
  		if (msg.type == MSG_FULL)
 		{
-			printf("IS FULL");
 			game->menu->status = SERVER_DISCONNECTED;
 			close(sock);
 			break;
 		}
 		else if (msg.type == MSG_MOVE)
-		{
-			printf("Player %d (%s) moved to x = %.2f, y = %.2f, floor = %d\n", msg.player_id, msg.pseudo, msg.x, msg.y, msg.floor);
 			update_player_position(server, msg);
-		}
-		else if (msg.type == MSG_CONNECT)
-		{
-			printf("Player %d (%s) connected at x = %.2f, y = %.2f\n", msg.player_id, msg.pseudo, msg.x, msg.y);
-			add_player(server, msg);
-		}
-		else if (msg.type == MSG_RECONNECT)
-		{
-			printf("Player %d (%s) reconnected at x = %.2f, y = %.2f\n", msg.player_id, msg.pseudo, msg.x, msg.y);
-			add_player(server, msg);
-		}
+		else if (msg.type == MSG_RECONNECT || msg.type == MSG_CONNECT || msg.type == MSG_GET_PLAYER)
+			add_player(game, msg);
 		else if (msg.type == MSG_DISCONNECT)
-		{
-			printf("Player %d disconnected\n", msg.player_id);
-			remove_player(server, msg.player_id);
-		}
+			remove_player(game, msg.player_id);
 		else if (msg.type == MSG_DOOR)
 			update_door(game, msg);
+		else if (msg.type == MSG_CHAT)
+			add_msg_chat(game, msg);
 		else
 			printf("Unknown message type received: %d\n", msg.type);
 	}
@@ -135,8 +155,8 @@ void	*receive_updates(void *args)
 
 int	join_server(t_game *game)
 {
-	struct sockaddr_in serv_addr;
-	char pseudo[MAX_PSEUDO_LENGTH];
+	struct sockaddr_in	serv_addr;
+	char				pseudo[MAX_PSEUDO_LENGTH];
 
 	ft_strcpy(pseudo, game->server->pseudo);
 	if ((game->server->sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -190,7 +210,6 @@ int	join_server(t_game *game)
 		game->player->height = connect_msg.height;
 		game->player->floor = connect_msg.floor;	
 	}
-	printf("Connected as player %d (%s) at x = %f, y = %f, floor = %d\n", connect_msg.player_id, connect_msg.pseudo, connect_msg.x, connect_msg.y, connect_msg.floor);
 	pthread_t thread_id;
 	pthread_create(&thread_id, NULL, receive_updates, game);
 	return (1);

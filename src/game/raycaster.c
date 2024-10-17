@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 09:26:50 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/17 14:36:22 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 
 /*
@@ -151,7 +149,6 @@ void cast_floor(t_game *game)
 	}
 }
 
-
 int	handle_close(t_game *game)
 {
 	mlx_destroy_image(game->mlx, game->images->base->img);
@@ -179,6 +176,8 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		update_main_menu_click(game, x, y, keycode);
 	else if (game->menu->status == SERVER_DISCONNECTED || game->menu->status == SERVER_FULL)
 		update_server_error_click(game, x, y, keycode);
+	else if (game->menu->status == CHATING)
+		handle_mouse_chat(game, x, y, keycode);
 	else if ((game->menu->status == PLAYING
 		|| game->menu->status == MULTI_PLAYER)
 		&& keycode == 1)
@@ -244,6 +243,22 @@ int	handle_keypress(int keycode, t_game *game)
 		handle_close(game);
 	else if (game->menu->status == SERVER_CREATE || game->menu->status == JOIN_SERVER)
 		handle_text_input(game, keycode);
+	if (game->menu->status == CHATING)
+		chat_input(game, keycode);
+	if (keycode == 116 && (game->menu->status == MULTI_PLAYER || game->menu->status == CHATING) && !game->chatbox->is_writting)
+	{
+		if (game->menu->status == MULTI_PLAYER)
+		{
+			game->menu->status = CHATING;
+			mlx_mouse_show(game->mlx, game->win);
+		}
+		else
+		{
+			game->menu->status = MULTI_PLAYER;
+			mlx_mouse_hide(game->mlx, game->win);
+		}
+		game->chatbox->visible = !game->chatbox->visible;
+	}
 	if (game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER)
 		return (0);
 	if (keycode == 65362 || keycode == 119) // W pour avancer
@@ -372,7 +387,7 @@ int	game_loop(t_game *game)
 	}
 	else if (game->menu->status == SERVER_DISCONNECTED || game->menu->status == SERVER_FULL)
 		draw_server_error_menu(game);
-	else if (game->menu->status == PLAYING || game->menu->status == MULTI_PLAYER)
+	else if (game->menu->status == PLAYING || game->menu->status == MULTI_PLAYER || game->menu->status == CHATING)
 	{
 		game->menu->message = NOTHING;
 		calculate_delta_time(game);
@@ -382,7 +397,14 @@ int	game_loop(t_game *game)
 		draw_players(game);
 		update_enemies(game);
 		draw_sprites(game);
+<<<<<<< HEAD
 		head_up_display(game);
+=======
+		mini_map(game);
+		crosshair(game);
+		gun_draw(game);
+		chat_draw(game);
+>>>>>>> d44b37d (update on chat)
 		 // game delta time = nbre de s depuis la dernier image
 	
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))

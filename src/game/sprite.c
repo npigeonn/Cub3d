@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 12:09:23 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 10:01:43 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/17 13:07:41 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,5 +111,5 @@ void draw_teleporter(t_game *game)
 void	draw_sprites(t_game *game)
 {
 	// draw_teleporter(game);
-	draw_enemies(game);
+	// draw_enemies(game);
 }

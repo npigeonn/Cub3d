@@ -126,7 +126,7 @@ void	notify_players_of_connection(int player_id, char *pseudo)
 	connect_msg.dir_x = player->dir_x;
 	connect_msg.dir_y = player->dir_y;
 	connect_msg.health = player->health;
-	strcpy(connect_msg.pseudo, pseudo);
+	ft_strlcpy(connect_msg.pseudo, pseudo, MAX_PSEUDO_LENGTH);
 	i = -1;
 	while (++i < MAX_PLAYERS)
 		if (client_sockets[i] > 0 && i != player_id)
@@ -147,7 +147,7 @@ void	notify_players_of_reconnection(int player_id, char *pseudo)
 	connect_msg.dir_x = player->dir_x;
 	connect_msg.dir_y = player->dir_y;
 	connect_msg.health = player->health;
-	strcpy(connect_msg.pseudo, pseudo);
+	ft_strlcpy(connect_msg.pseudo, pseudo, MAX_PSEUDO_LENGTH);
 	i = -1;
 	while (++i < MAX_PLAYERS)
 		if (client_sockets[i] > 0 && i != player_id)
@@ -163,7 +163,7 @@ void	notify_players_of_disconnection(int id)
 	player = find_player_by_id(players, id);
 	if (player) {
 		disconnect_msg.player_id = player->player_id;
-		strncpy(disconnect_msg.pseudo, player->pseudo, MAX_PSEUDO_LENGTH);
+		ft_strlcpy(disconnect_msg.pseudo, player->pseudo, MAX_PSEUDO_LENGTH);
 		player->player_id = -1;
 		i = -1;
 		while (++i < MAX_PLAYERS)
@@ -174,24 +174,14 @@ void	notify_players_of_disconnection(int id)
 
 void	notify_players_of_move(GameMessage msg)
 {
-	GameMessage		move_msg;
 	int				i;
 
-	move_msg.type = MSG_MOVE;
-	move_msg.player_id = msg.player_id;
-	move_msg.x = msg.x;
-	move_msg.y = msg.y;
-	move_msg.floor = msg.floor;
-	move_msg.height = msg.height;
-	move_msg.dir_x = msg.dir_x;
-	move_msg.dir_y = msg.dir_y;
-	move_msg.health = msg.health;
+	msg.type = MSG_MOVE;
 	update_player_node(msg.pseudo, msg);
-	strcpy(move_msg.pseudo, msg.pseudo);
 	i = -1;
 	while (++i < MAX_PLAYERS)
 		if (client_sockets[i] > 0 && i != msg.player_id)
-			send(client_sockets[i], &move_msg, sizeof(GameMessage), 0);
+			send(client_sockets[i], &msg, sizeof(GameMessage), 0);
 }
 
 void	notify_players_of_door(GameMessage msg)
@@ -202,6 +192,16 @@ void	notify_players_of_door(GameMessage msg)
 	while (++i < MAX_PLAYERS)
 		if (client_sockets[i] > 0 && i != msg.player_id)
 			send(client_sockets[i], &msg, sizeof(GameMessage), 0);	
+}
+
+void	notify_players_of_chat(GameMessage msg)
+{
+	int	i;
+
+	i = -1;
+	while (++i < MAX_PLAYERS)
+		if (client_sockets[i] > 0 && i != msg.player_id)
+			send(client_sockets[i], &msg, sizeof(GameMessage), 0);
 }
 
 void	handle_client_msg(GameMessage msg)
@@ -225,6 +225,8 @@ void	handle_client_msg(GameMessage msg)
 		}
 	}
 	if (msg.type == MSG_DOOR)
+		add_game_message_to_queue(msg);
+	if (msg.type == MSG_CHAT)
 		add_game_message_to_queue(msg);
 	pthread_mutex_unlock(&game_lock);
 }
@@ -289,7 +291,7 @@ void	new_player(int new_socket, char *pseudo)
 	pthread_mutex_unlock(&game_lock);
 }
 
-char *existing_player(int *nb_player, int server_fd, struct sockaddr_in address, int addrlen, int *new_socket, int epoll_fd)
+char	*existing_player(int *nb_player, int server_fd, struct sockaddr_in address, int addrlen, int *new_socket, int epoll_fd)
 {
 	char pseudo[MAX_PSEUDO_LENGTH];
 	t_player_info *player;
@@ -444,7 +446,7 @@ void	send_all_players(int id)
 	GameMessage		connect_msg;
 
 	current = players;
-	connect_msg.type = MSG_CONNECT;
+	connect_msg.type = MSG_GET_PLAYER;
 	while(current)
 	{
 		if (current->player_id >= 0 && current->player_id != id)
@@ -491,6 +493,8 @@ void	*logic_game(void *arg)
 				notify_players_of_move(msg);
 			else if (msg.type == MSG_DOOR)
 				notify_players_of_door(msg);
+			else if (msg.type == MSG_CHAT)
+				notify_players_of_chat(msg);
 			free(current); 
 		}
 		pthread_mutex_unlock(&game_lock);

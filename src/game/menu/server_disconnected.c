@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:21:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 13:41:45 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:28:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,6 @@ void	draw_server_error_menu(t_game *game)
 		draw_rectangle(game, x - 2, y + 2 * (btn_height + spacing) - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
 	draw_rectangle(game, x, y + 2 * (btn_height + spacing), btn_width, btn_height, MENU_BUTTON_COLOR);
 	draw_text(game, "Return to Menu", x + btn_width / 2, y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+	game->chatbox->visible = false;
+	game->chatbox->is_writting = false;
 }

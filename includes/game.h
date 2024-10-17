@@ -24,9 +24,10 @@ enum GameStatus
 	VALID_SERVER_CREATE = 7,
 	JOIN_SERVER = 8,
 	VALID_JOIN_SERVER = 9,
-	MULTI_PLAYER = 10,
-	SERVER_DISCONNECTED = 11,
-	SERVER_FULL = 12,
+	CHATING = 10,
+	MULTI_PLAYER = 11,
+	SERVER_DISCONNECTED = 12,
+	SERVER_FULL = 13,
 };
 
 enum Direction {
@@ -150,6 +151,7 @@ typedef struct s_menu
 	int		text_field_selected;
 	bool	error_name;
 	bool	error_pseudo;
+	int		width_letter[95];
 }	t_menu;
 
 enum EnemyState
@@ -218,6 +220,25 @@ typedef struct s_server
 	t_player_info	*players;
 }	t_server;
 
+#define	MAX_MESSAGE_LENGTH 256
+
+typedef struct	S_message
+{
+	char				pseudo[20];
+	int					color;
+    char				message[MAX_MESSAGE_LENGTH];
+    struct timeval		time;
+    struct s_message	*next;
+} t_message;
+
+typedef struct	s_chatbox
+{
+	bool		visible;
+	bool		is_writting;
+	char		message[MAX_MESSAGE_LENGTH];
+	t_message	*messages;
+}	t_chatbox;
+
 typedef struct s_game
 {
 	t_menu			*menu;
@@ -241,9 +262,11 @@ typedef struct s_game
 	t_textures		*textures;
 	float			*wall_distances;
 	t_teleporter	*tp;
+	t_chatbox		*chatbox;
 	t_enemy			*enemies;
 	float			delta_time;
 	struct timeval	last_time;
+
 
 	t_server		*server;
 	t_server_info	*servers;

@@ -6,47 +6,11 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 15:34:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/16 15:35:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/17 12:55:36 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
-
-void	pixel_put(t_game *game, int x, int y, int color)
-{
-	if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
-	{
-		int	bpp = game->images->base->bpp * 0.125;
-		int	offset = y * game->images->base->size_line + x * bpp;
-		
-		*((int *)(game->images->base->data + offset)) = color;
-	}
-}
-
-void	secure_pixel_put(t_game *game, int x, int y, int color)
-{
-	if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
-	{
-		int offset = y * game->images->base->size_line + x * (game->images->base->bpp >> 3);
-		int *pixel = (int *)(game->images->base->data + offset);
-
-		if (*pixel == 0)
-			*pixel = color;
-	}
-}
-
-int	is_pixel_transparent(t_image *img, int x, int y)
-{
-	int	pixel;
-
-	if (!img || !img->data)
-		return (1);
-	if (x < 0 || x >= img->width || y < 0 || y >= img->height)
-		return (1);
-	pixel = *(int *)(img->data + y * img->size_line + x * (img->bpp / 8));
-	return (pixel <= 0);
-}
-
 
 int	get_index_char(char c)
 {
@@ -90,6 +54,62 @@ int	get_char_width(t_image *img, char c)
 	return (right_bound - left_bound + 1);
 }
 
+int	get_char_width_opti(t_game *game, char x)
+{
+	return (game->menu->width_letter[get_index_char(x)]);
+}
+
+void	set_width_all_letter(t_game *game)
+{
+	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
+	int			i;
+
+	i = -1;
+	while (list[++i] && i <= 95)
+	{
+		int width = get_char_width(game->images->alphanum_sprite, list[i]);
+		int index = get_index_char(list[i]);
+		
+		if (index >= 0 && index < 96)
+			game->menu->width_letter[index] = width;
+	}
+}
+
+void	pixel_put(t_game *game, int x, int y, int color)
+{
+	if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
+	{
+		int	bpp = game->images->base->bpp * 0.125;
+		int	offset = y * game->images->base->size_line + x * bpp;
+		
+		*((int *)(game->images->base->data + offset)) = color;
+	}
+}
+
+void	secure_pixel_put(t_game *game, int x, int y, int color)
+{
+	if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
+	{
+		int offset = y * game->images->base->size_line + x * (game->images->base->bpp >> 3);
+		int *pixel = (int *)(game->images->base->data + offset);
+
+		if (*pixel == 0)
+			*pixel = color;
+	}
+}
+
+int	is_pixel_transparent(t_image *img, int x, int y)
+{
+	int	pixel;
+
+	if (!img || !img->data)
+		return (1);
+	if (x < 0 || x >= img->width || y < 0 || y >= img->height)
+		return (1);
+	pixel = *(int *)(img->data + y * img->size_line + x * (img->bpp / 8));
+	return (pixel <= 0);
+}
+
 void	get_pos_char(char c, int *x, int *y)
 {
 	int			index;
@@ -121,7 +141,7 @@ void	draw_char(t_game *game, int x, int y, int height, char c, int color)
 	}
 }
 
-int	get_text_width(char *str, t_image *img, int height)
+int	get_text_width(t_game *game, char *str, int height)
 {
 	int	total_width = 0;
 	int	i;
@@ -132,8 +152,8 @@ int	get_text_width(char *str, t_image *img, int height)
 			total_width += height * 0.33;
 		else if (str[i] != '\n')
 		{
-			int char_width = get_char_width(img, str[i]);
-			total_width += (char_width * height / 480);
+			int char_width = game->menu->width_letter[get_index_char(str[i])];
+			total_width += (char_width * height / 480) + 3;
 		}
 	}
 	return (total_width);
@@ -147,7 +167,7 @@ void	draw_text(t_game *game, char *str, int x, int y, int height, int color)
 	int			char_width;
 
 	img = game->images->alphanum_sprite;
-	text_width = get_text_width(str, img, height);
+	text_width = get_text_width(game, str, height);
 	if (str == NULL)
 		return ;
 	x = x - (text_width >> 1);
@@ -160,7 +180,7 @@ void	draw_text(t_game *game, char *str, int x, int y, int height, int color)
 		else
 		{
 			draw_char(game, x, y, height, str[i], color);
-			char_width = get_char_width(game->images->alphanum_sprite, str[i]);
+			char_width = get_char_width_opti(game, str[i]);
 			x += char_width * height / 480 + 3;
 		}
 	}
@@ -184,7 +204,7 @@ void	draw_text_left(t_game *game, char *str, int x, int y, int height, int color
 		else
 		{
 			draw_char(game, x, y, height, str[i], color);
-			char_width = get_char_width(game->images->alphanum_sprite, str[i]);
+			char_width = get_char_width_opti(game, str[i]);
 			x += char_width * height / 480 + 3;
 		}
 	}
@@ -197,7 +217,7 @@ void	draw_text_right(t_game *game, char *str, int x, int y, int height, int colo
 	int			char_width;
 
 	img = game->images->alphanum_sprite;
-	text_width = get_text_width(str, img, height);
+	text_width = get_text_width(game, str, height);
 	if (str == NULL)
 		return ;
 	x = x - text_width;
@@ -210,7 +230,7 @@ void	draw_text_right(t_game *game, char *str, int x, int y, int height, int colo
 		else
 		{
 			draw_char(game, x, y, height, str[i], color);
-			char_width = get_char_width(game->images->alphanum_sprite, str[i]);
+			char_width = get_char_width_opti(game, str[i]);
 			x += char_width * height / 480 + 3;
 		}
 	}
