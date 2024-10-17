@@ -231,6 +231,8 @@ typedef struct s_game
 	char 			***map_cy;
 	int				x_minimap;
 	int				y_minimap;
+	int				x_hp;
+	int				y_hp;
 	int				nb_floor;
 	int				clr;
 	t_door			*door;
@@ -282,8 +284,7 @@ int 	get_pixel_color_from_image(t_game *game, int x, int y);
 void	draw_image(t_game *game, int x, int y, int height, t_image *img);
 void	gun_draw(t_game *game);
 void	get_pos_char(char c, int *x, int *y);
-void	fire_draw(t_game *game);
-void	hp(t_game *game);
+void	health_point_draw(t_game *game);
 
 // mini map
 void	mini_map(t_game *game);

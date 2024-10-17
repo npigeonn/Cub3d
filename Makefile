@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
+#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/15 13:35:14 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/17 09:30:31 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,6 +31,8 @@ SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
 			sprite.c \
 			minimap.c \
 			crosshair.c \
+			head_up_display.c \
+			health_point.c \
 			enemies.c )
 
 SRC_MENU =	$(addprefix $(PATH_SRC)/game/menu/, \

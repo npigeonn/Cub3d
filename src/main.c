@@ -99,6 +99,7 @@ void	init_player(t_game	*game)
 	game->player->dirY = 0;
 	game->player->planeX = 0;
 	game->player->anim_shoot = 0;
+	game->player->health = 1;
 	game->menu = malloc(sizeof(t_menu));
 	game->menu->volume = 20;
 	game->menu->mouse_sensitivity = 2;

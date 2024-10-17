@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 09:07:48 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/17 09:26:50 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -382,9 +382,7 @@ int	game_loop(t_game *game)
 		draw_players(game);
 		update_enemies(game);
 		draw_sprites(game);
-		mini_map(game);
-		crosshair(game);
-		gun_draw(game);
+		head_up_display(game);
 		 // game delta time = nbre de s depuis la dernier image
 	
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
