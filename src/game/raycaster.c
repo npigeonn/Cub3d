@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 15:23:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/17 17:02:32 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 /*
@@ -180,8 +181,8 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		handle_mouse_chat(game, x, y, keycode);
 	else if ((game->menu->status == PLAYING
 		|| game->menu->status == MULTI_PLAYER)
-		&& keycode == 1)
-		game->player->anim_shoot = 1;
+		&& keycode == 1 && game->player->ammo > 0)
+		return (game->player->anim_shoot = 1, game->player->ammo--, 0);
 	return (0);
 }
 

@@ -65,6 +65,7 @@ typedef struct s_player
 	float	planeY;
 	float	height;
 	float	health;
+	int		ammo;
 	int		floor;
 	float	anim_shoot;
 	t_stuff	*stuff;
@@ -307,6 +308,7 @@ int 	get_pixel_color_from_image(t_game *game, int x, int y);
 void	draw_image(t_game *game, int x, int y, int height, t_image *img);
 void	gun_draw(t_game *game);
 void	get_pos_char(char c, int *x, int *y);
+void	ammo_written(t_game *game);
 void	health_point_draw(t_game *game);
 
 // mini map

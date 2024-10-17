@@ -11,17 +11,25 @@
 // /* ************************************************************************** */
 
 // # include "include/game.h"
-
-// mettre des textures sur les toit/ sol
-// gestion des sauts
-// gestion de la vie et des armes
-// gestion de la minimap
-// gerer le parsing, map trop grande /mal cerclee ...
-// gerer l'image sortie / ennemi / animation de sortie / hud
-// munitions / cle
-
-
 /* 
+
+mettre des textures sur les toit/ sol
+gestion des sauts
+gestion de la vie et des armes
+gestion de la minimap
+gerer le parsing, map trop grande /mal cerclee ...
+gerer l'image sortie / ennemi / animation de sortie / hud
+munitions
+
+
+
+-des maps cools parce que cest le principal pour le correcteur
+-un mode solo sortie / mode multi ensemble sortie/ mode melee generale
+
+
+
+
+
 MODES DE JEU
 
 sortir solo multi
@@ -49,7 +57,22 @@ Y :	mettre les textures toit/ sol
 	gestion des attaques ennemies 
 
 	serveur multijoueur
+
+21-25
+N : gerer les degats vision des ennemies
+	gerer le parsing du multijoueur avec les spoons > nbre de player dans le serveur
+	UN SEUL spoon si mode solo
+
+
+Y : gerer les mouvements en meme temps ex: droite et haut
+	munitions visuels?
+	
+
+
+
 */
+
+
 
 
 #include <mlx.h>
@@ -100,6 +123,7 @@ void	init_player(t_game	*game)
 	game->player->planeX = 0;
 	game->player->anim_shoot = 0;
 	game->player->health = 1;
+	game->player->ammo = 30;
 	game->menu = malloc(sizeof(t_menu));
 	game->menu->volume = 20;
 	game->menu->mouse_sensitivity = 2;

@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:12:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/15 10:35:14 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/17 16:26:01 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,11 +132,15 @@ void	print_wall_door_player(t_game *game)
 
 	h = (game->screen_width - game->x_minimap) / 10;
 	size_pix = (game->screen_width - game->x_minimap - 2 * h) / x_size_floor(game);
+	// printf("sizepix = %d\n", size_pix);
 	if (size_pix > (game->screen_height - game->y_minimap - 2 * h) / y_size_floor(game))
 		size_pix = (game->screen_height - game->y_minimap - 2 * h) / y_size_floor(game);
 	y = -1;
-	game->y_minimap += h;
-	game->x_minimap += h;
+	
+	game->x_minimap += h + (game->screen_width - game->x_minimap) / x_size_floor(game);
+	game->y_minimap += .5 * h + (game->screen_height - game->y_minimap) / y_size_floor(game);
+
+
 	while (game->map[game->player->floor][++y])
 	{
 		x = -1;
@@ -153,7 +157,7 @@ void	mini_map(t_game *game)
 	int	y;
 	int	background_color;
 	int	grey_with_alpha;
-	float	alpha = 0.8; // Ajuster cette valeur entre 0 et 1 pour changer l'opacité
+	float	alpha = 0.4; // Ajuster cette valeur entre 0 et 1 pour changer l'opacité
 
 	int grey = 0x000000; // Gris
 	game->y_minimap = game->screen_height - game->screen_height / 4;

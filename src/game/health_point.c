@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/17 11:56:27 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/17 14:48:46 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	life(t_game *game)
 	while (++y < game->screen_height * 0.88)
 	{
 		x = game->x_hp;
-		while (++x < game->screen_width * (.583 + .269 * game->player->health))
+		while (++x < game->screen_width * (.583 + .279 * game->player->health))
 			pixel_put(game, x, y, 16711680);
 	}
 
