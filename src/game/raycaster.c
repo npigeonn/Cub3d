@@ -6,9 +6,10 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 09:07:15 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/17 09:07:48 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 
@@ -178,6 +179,10 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		update_main_menu_click(game, x, y, keycode);
 	else if (game->menu->status == SERVER_DISCONNECTED || game->menu->status == SERVER_FULL)
 		update_server_error_click(game, x, y, keycode);
+	else if ((game->menu->status == PLAYING
+		|| game->menu->status == MULTI_PLAYER)
+		&& keycode == 1)
+		game->player->anim_shoot = 1;
 	return (0);
 }
 
@@ -379,6 +384,9 @@ int	game_loop(t_game *game)
 		draw_sprites(game);
 		mini_map(game);
 		crosshair(game);
+		gun_draw(game);
+		 // game delta time = nbre de s depuis la dernier image
+	
 		if (is_a_teleporter(game->map[game->player->floor][(int)game->player->y][(int)game->player->x]))
 			game->menu->message = TELEPORT;
 		if (game->menu->message != NOTHING)

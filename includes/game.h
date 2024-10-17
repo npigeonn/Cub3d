@@ -65,6 +65,7 @@ typedef struct s_player
 	float	height;
 	float	health;
 	int		floor;
+	float	anim_shoot;
 	t_stuff	*stuff;
 }	t_player;
 
@@ -278,7 +279,10 @@ void	draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, i
 void	crosshair(t_game *game);
 int 	blend_colors(int bg_color, int fg_color, float alpha);
 int 	get_pixel_color_from_image(t_game *game, int x, int y);
+void	draw_image(t_game *game, int x, int y, int height, t_image *img);
 void	gun_draw(t_game *game);
+void	get_pos_char(char c, int *x, int *y);
+void	fire_draw(t_game *game);
 void	hp(t_game *game);
 
 // mini map
