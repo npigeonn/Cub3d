@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 13:24:33 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 14:35:50 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/17 14:41:25 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,9 +125,11 @@ void	show_message(t_game *game)
 		if (current->pseudo[0] != '\0')
 		{
 			draw_text_left(game, current->pseudo, 70, height, 22, current->color);
-			draw_text_left(game, ": ", 70 + get_text_width(game, current->pseudo, 22), height, 22, current->color);
+			draw_text_left(game, ": ", 70 + get_text_width(game, current->pseudo, 22) , height, 22, current->color);
+			draw_text_left(game, current->message, 70 + get_text_width(game, current->pseudo, 22) + 10, height, 22, current->color);
 		}
-		draw_text_left(game, current->message, 70, height, 22, current->color);
+		else
+			draw_text_left(game, current->message, 70, height, 22, current->color);
 		current = current->next;
 		height -= 25;
 	}
