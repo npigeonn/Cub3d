@@ -9,6 +9,9 @@
 		"math.h": "c",
 		"mlx.h": "c",
 		"stdio.h": "c",
-		"server.h": "c"
+		"server.h": "c",
+		"pthread.h": "c",
+		"typeinfo": "c",
+		"random": "c"
 	}
 }
