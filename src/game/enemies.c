@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 10:02:11 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/18 14:46:42 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ void	draw_players(t_game *game)
 {
 	t_player_info	*current;
 
-	current = game->server->players;
+	current = game->client->players;
 	while (current)
 	{
 		if (current->floor == game->player->floor)

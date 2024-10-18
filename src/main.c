@@ -139,8 +139,7 @@ void	init_player(t_game	*game)
 	game->menu->mouse_sensitivity = 2;
 	game->menu->message = NOTHING;
 	game->servers = NULL;
-	game->server->name[0] = '\0';
-	game->server->pseudo[0] = '\0';
+	game->client->pseudo[0] = '\0';
 }
 
 void	load_game_texture(t_game *game)
@@ -174,8 +173,8 @@ int	main(int ac, char **av)
 	int x, y;
 	game.mem = gc_init();
 	game.mlx = mlx_init();
-	game.server = malloc(sizeof(t_server));
-	game.server->players = NULL;
+	game.client = malloc(sizeof(t_client));
+	game.client->players = NULL;
 	gettimeofday(&game.last_time, NULL);
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
 	game.screen_height = 1080;

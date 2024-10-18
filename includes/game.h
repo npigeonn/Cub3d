@@ -209,17 +209,15 @@ typedef struct	s_player_info
 	struct s_player_info	*next;
 }	t_player_info;
 
-typedef struct s_server
+typedef struct	s_client
 {
-	int				player_id;
-	char			pseudo[20];
 	int				sock;
-	int				sock_bc;
-	char			*ip;
+	char			pseudo[20];
 	char			name[20];
-	int				nb_player;
+	char			ip[16];
+	int				player_id;
 	t_player_info	*players;
-}	t_server;
+} t_client;
 
 #define	MAX_MESSAGE_LENGTH 256
 
@@ -268,8 +266,7 @@ typedef struct s_game
 	float			delta_time;
 	struct timeval	last_time;
 
-
-	t_server		*server;
+	t_client		*client;
 	t_server_info	*servers;
 	pthread_t		discover_servers_thread;
 }	t_game;
@@ -369,14 +366,7 @@ int	free_map(t_game *game);
 int free_map_copy(t_game *game);
 int	free_split(char **str);
 
-
 //server
 void	create_server(t_game *game);
-
-//client
-int		join_server(t_game *game);
-void	draw_players(t_game *game);
-
-
 
 #endif

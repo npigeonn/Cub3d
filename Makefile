@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
+#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/17 15:18:53 by npigeon          ###   ########.fr        #
+#    Updated: 2024/10/18 21:28:26 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,32 +23,31 @@ LIBS_DIR = ./libs/
 RM = rm -rf
 
 SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
-			raycaster.c \
-			draw.c \
-			door.c \
-			wall.c \
-			teleporter.c \
-			sprite.c \
-			minimap.c \
-			crosshair.c \
-			head_up_display.c \
-			health_point.c \
-			ammo.c \
-			enemies.c \
-			chat.c )
+				raycaster.c \
+				draw.c \
+				door.c \
+				wall.c \
+				teleporter.c \
+				sprite.c \
+				minimap.c \
+				crosshair.c \
+				head_up_display.c \
+				health_point.c \
+				ammo.c \
+				enemies.c)
 
-SRC_MENU =	$(addprefix $(PATH_SRC)/game/menu/, \
-			main.c \
-			option.c \
-			multi.c \
-			create_server.c \
-			join_server.c \
-			server_disconnected.c )
+SRC_MENU =	$(addprefix $(PATH_SRC)menu/, \
+				option.c \
+				multi.c \
+				main.c \
+				create_server.c \
+				join_server.c \
+				server_disconnected.c )
 
 SRC_ALONE =	$(addprefix $(PATH_SRC), \
-			main.c )
+				main.c )
 			
-SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
+SRC_PARSING = $(addprefix $(PATH_SRC)parsing/, \
 				free.c \
 				parsing.c \
 				teleportation.c \
@@ -56,14 +55,31 @@ SRC_PARSING =	$(addprefix $(PATH_SRC)parsing/, \
 				textures.c \
 				map_crafting.c )
 
-SRC_SERVER =	$(addprefix $(PATH_SRC)server/, \
+SRC_SERVER = $(addprefix $(PATH_SRC)server/, \
 				server.c \
-				broadcast.c )
+				broadcast.c \
+				new_player.c \
+				find_player.c \
+				handle.c \
+				logic.c \
+				notification.c \
+				player_node.c \
+				queue.c \
+				send.c )
 
-SRC_CLIENT =	$(addprefix $(PATH_SRC)client/, \
-				client.c )
+SRC_CLIENT = $(addprefix $(PATH_SRC)client/, \
+				client.c \
+				elements.c \
+				message.c \
+				player.c)
 
-SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT)
+SRC_CHAT =	$(addprefix $(PATH_SRC)game/chat/, \
+				chat.c \
+				draw.c \
+				handle.c \
+				show_message.c )
+
+SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT)
 
 ############### MINILIBX ###############
 
@@ -85,7 +101,7 @@ all: $(NAME)
 $(OBJS): ./includes/* Makefile
 
 $(PATH_OBJ):
-	mkdir -p $@ $@game $@game/menu $@parsing $@server $@client
+	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/chat
 
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
 	cc -c $(CFLAGS) $(INCLUDES) $< -o $@

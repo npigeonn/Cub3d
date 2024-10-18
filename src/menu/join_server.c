@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:55:57 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 15:59:14 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/18 16:01:48 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 void	handle_join_server(t_game *game)
 {
-	if (game->server->ip[0] == '\0')
+	if (game->client->ip[0] == '\0')
 		game->menu->error_name = true;
-	if (game->server->pseudo[0] == '\0')
+	if (game->client->pseudo[0] == '\0')
 		game->menu->error_pseudo = true;
-	if (game->server->pseudo[0] == '\0' || game->server->ip[0] == '\0')
+	if (game->client->pseudo[0] == '\0' || game->client->ip[0] == '\0')
 		return ;
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	struct sockaddr_in server_addr;
@@ -28,7 +28,7 @@ void	handle_join_server(t_game *game)
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(PORT);
 
-	if (inet_pton(AF_INET, game->server->ip, &server_addr.sin_addr) <= 0)
+	if (inet_pton(AF_INET, game->client->ip, &server_addr.sin_addr) <= 0)
 	{
 		game->menu->error_name = true;
 		close(sockfd);
@@ -92,8 +92,8 @@ void	update_join_server_menu_text(t_game *game, int mouse_x, int mouse_y, int mo
 		game->menu->text_field_selected = 0;
 	if (game->menu->button_selected == 1 && mouse_button == 1)
 	{
-		game->server->ip[0] = '\0';
-		game->server->pseudo[0] = '\0';
+		game->client->ip[0] = '\0';
+		game->client->pseudo[0] = '\0';
 		game->menu->status = SERVERS;
 		game->menu->server_selected = 0;
 	}
@@ -116,14 +116,14 @@ void	draw_join_server_menu(t_game *game)
 	if (game->menu->error_name)
 		draw_rounded_rectangle(game, x - 4, y + 30 - 4, btn_width + 8, btn_height + 8, 10, 0xFF0000);
 	draw_text(game, "Server IP", game->screen_width >> 1, y - 10, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-	draw_text_field(game, x, y + 30, btn_width, btn_height, game->server->ip);
+	draw_text_field(game, x, y + 30, btn_width, btn_height, game->client->ip);
 
 	if (game->menu->text_field_selected == 2)
 		draw_rounded_rectangle(game, x - 4, y + btn_height + spacing + 30 - 4, btn_width + 8, btn_height + 8, 10, MENU_BUTTON_SELECTED_COLOR);
 	if (game->menu->error_pseudo)
 		draw_rounded_rectangle(game, x - 4, y + btn_height + spacing + 30 - 4, btn_width + 8, btn_height + 8, 10, 0xFF0000);
 	draw_text(game, "Pseudo", game->screen_width >> 1, y + btn_height + spacing - 10, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-	draw_text_field(game, x, y + btn_height + spacing + 30, btn_width, btn_height, game->server->pseudo);
+	draw_text_field(game, x, y + btn_height + spacing + 30, btn_width, btn_height, game->client->pseudo);
 
 	const int btn_half_width = btn_width * 0.45;
 	const int total_btn_width = 2 * btn_half_width + game->screen_width * 0.02;

@@ -1,532 +1,127 @@
-#include <pthread.h>
-#include <sys/epoll.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/10/18 18:36:10 by ybeaucou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../includes/cub3d.h"
 
-pthread_mutex_t game_lock;
-int	client_sockets[MAX_PLAYERS];
-
-typedef struct s_game_message_queue
+void	loop_server_event(t_server *server, struct epoll_event *events,
+struct epoll_event *event, int i)
 {
-	GameMessage		message;
-	struct s_game_message_queue	*next;
-} GameMessageQueue;
+	char	*pseudo;
+	int		new_socket;
 
-GameMessageQueue	*gameQueue;
-
-t_player_info	*players;
-
-pthread_cond_t server_ready_cond;
-int server_ready = 0;
-
-GameMessageQueue	*create_game_message_queue(GameMessage msg)
-{
-	GameMessageQueue	*new_node = malloc(sizeof(GameMessageQueue));
-
-	new_node->message = msg;
-	new_node->next = NULL;
-	return (new_node);
-}
-
-void	add_game_message_to_queue(GameMessage msg)
-{
-	GameMessageQueue	*current;
-
-	if (!gameQueue)
-		gameQueue = create_game_message_queue(msg);
+	if (events[i].data.fd == server->server_fd)
+	{
+		new_socket = accept(server->server_fd,
+				(struct sockaddr *)&(server->address),
+				(socklen_t *)&(server->addrlen));
+		pseudo = existing_player(server, new_socket);
+		if (pseudo && pseudo[0] != '\0')
+		{
+			event->events = EPOLLIN;
+			event->data.fd = new_socket;
+			epoll_ctl(server->epoll_fd, EPOLL_CTL_ADD, new_socket, event);
+			new_player(server, new_socket, pseudo);
+		}
+	}
 	else
-	{
-		current = gameQueue;
-		while (current->next)
-			current = current->next;
-		current->next = create_game_message_queue(msg);
-	}
+		handle_client_receive_msg(server, events[i].data.fd);
 }
 
-t_player_info	*find_player_by_pseudo(char *pseudo)
+void	loop_server(t_server *server)
 {
-	t_player_info	*current = players;
-
-	while (current)
-	{
-		if (strcmp(current->pseudo, pseudo) == 0)
-			return (current);
-		current = current->next;
-	}
-	return (NULL);
-}
-
-t_player_info	*find_player_by_id(t_player_info *this_players, int id)
-{
-	t_player_info	*current = this_players;
-
-	while (current)
-	{
-		if (current->player_id == id)
-			return (current);
-		current = current->next;
-	}
-	return (NULL);
-}
-
-void	add_player_node(int id, char *pseudo)
-{
-	t_player_info	*new_node = malloc(sizeof(t_player_info));
-	t_player_info	*current;
-
-	new_node->player_id = id;
-	strncpy(new_node->pseudo, pseudo, MAX_PSEUDO_LENGTH);
-	new_node->x = -1;
-	new_node->y = -1;
-	new_node->dir_x = 0;
-	new_node->dir_y = 1;
-	new_node->floor = 0;
-	new_node->health = 100;
-	new_node->height = 0;
-	new_node->next = NULL;
-	if (!players)
-		players = new_node;
-	else
-	{
-		current = players;
-		while (current->next)
-			current = current->next;
-		current->next = new_node;
-	}
-}
-
-void	update_player_node(char *pseudo, GameMessage msg)
-{
-	t_player_info	*player;
-
-	player = find_player_by_pseudo(pseudo);
-	if (!player)
-		return ;
-	player->x = msg.x;
-	player->y = msg.y;
-	player->dir_x = msg.dir_x;
-	player->dir_y = msg.dir_y;
-	player->floor = msg.floor;
-	player->health = msg.health;
-	player->height = msg.height;	
-}
-
-void	notify_players_of_connection(int player_id, char *pseudo)
-{
-	GameMessage connect_msg = { .type = MSG_CONNECT, .player_id = player_id};
-	int				i;
-	t_player_info	*player;
-	
-	player = find_player_by_pseudo(pseudo);
-	if (!player)
-		return ;
-	connect_msg.x = player->x;
-	connect_msg.y = player->y;
-	connect_msg.floor = player->floor;
-	connect_msg.height = player->height;
-	connect_msg.dir_x = player->dir_x;
-	connect_msg.dir_y = player->dir_y;
-	connect_msg.health = player->health;
-	ft_strlcpy(connect_msg.pseudo, pseudo, MAX_PSEUDO_LENGTH);
-	i = -1;
-	while (++i < MAX_PLAYERS)
-		if (client_sockets[i] > 0 && i != player_id)
-			send(client_sockets[i], &connect_msg, sizeof(GameMessage), 0);
-}
-
-void	notify_players_of_reconnection(int player_id, char *pseudo)
-{
-	GameMessage connect_msg = { .type = MSG_RECONNECT, .player_id = player_id};
-	int				i;
-	t_player_info	*player;
-	
-	player = find_player_by_pseudo(pseudo);
-	connect_msg.x = player->x;
-	connect_msg.y = player->y;
-	connect_msg.floor = player->floor;
-	connect_msg.height = player->height;
-	connect_msg.dir_x = player->dir_x;
-	connect_msg.dir_y = player->dir_y;
-	connect_msg.health = player->health;
-	ft_strlcpy(connect_msg.pseudo, pseudo, MAX_PSEUDO_LENGTH);
-	i = -1;
-	while (++i < MAX_PLAYERS)
-		if (client_sockets[i] > 0 && i != player_id)
-			send(client_sockets[i], &connect_msg, sizeof(GameMessage), 0);
-}
-
-void	notify_players_of_disconnection(int id)
-{
-	t_player_info	*player;
-	GameMessage		disconnect_msg = { .type = MSG_DISCONNECT };
-	int				i;
-
-	player = find_player_by_id(players, id);
-	if (player) {
-		disconnect_msg.player_id = player->player_id;
-		ft_strlcpy(disconnect_msg.pseudo, player->pseudo, MAX_PSEUDO_LENGTH);
-		player->player_id = -1;
-		i = -1;
-		while (++i < MAX_PLAYERS)
-			if (client_sockets[i] > 0 && i != player->player_id)
-				send(client_sockets[i], &disconnect_msg, sizeof(GameMessage), 0);
-	}
-}
-
-void	notify_players_of_move(GameMessage msg)
-{
-	int				i;
-
-	msg.type = MSG_MOVE;
-	update_player_node(msg.pseudo, msg);
-	i = -1;
-	while (++i < MAX_PLAYERS)
-		if (client_sockets[i] > 0 && i != msg.player_id)
-			send(client_sockets[i], &msg, sizeof(GameMessage), 0);
-}
-
-void	notify_players_of_door(GameMessage msg)
-{
-	int	i;
-
-	i = -1;
-	while (++i < MAX_PLAYERS)
-		if (client_sockets[i] > 0 && i != msg.player_id)
-			send(client_sockets[i], &msg, sizeof(GameMessage), 0);	
-}
-
-void	notify_players_of_chat(GameMessage msg)
-{
-	int	i;
-
-	i = -1;
-	while (++i < MAX_PLAYERS)
-		if (client_sockets[i] > 0 && i != msg.player_id)
-			send(client_sockets[i], &msg, sizeof(GameMessage), 0);
-}
-
-void	handle_client_msg(GameMessage msg)
-{
-	int				i;
-	t_player_info	*player;
-
-	pthread_mutex_lock(&game_lock);
-	if (msg.type == MSG_MOVE)
-	{
-		player = find_player_by_pseudo(msg.pseudo);
-		if (player)
-		{
-			player->x = msg.x;
-			player->y = msg.y;
-			player->dir_x = msg.dir_x;
-			player->dir_y = msg.dir_y;
-			player->floor = msg.floor;
-			player->height = msg.height;
-			add_game_message_to_queue(msg);
-		}
-	}
-	if (msg.type == MSG_DOOR)
-		add_game_message_to_queue(msg);
-	if (msg.type == MSG_CHAT)
-		add_game_message_to_queue(msg);
-	pthread_mutex_unlock(&game_lock);
-}
-
-void	handle_client_message(int client_socket)
-{
-	GameMessage	msg;
-	ssize_t		valread;
-	int			i;
-
-	valread = recv(client_socket, &msg, sizeof(GameMessage), 0);
-	if (valread <= 0)
-	{
-		i = -1;
-		while (++i < MAX_PLAYERS)
-		{
-			if (client_sockets[i] == client_socket)
-			{
-				msg.type = MSG_DISCONNECT;
-				msg.player_id = i;
-				add_game_message_to_queue(msg);
-				close(client_socket);
-				client_sockets[i] = -1;
-				break ;
-			}
-		}
-		return ;
-	}
-	handle_client_msg(msg);
-}
-
-void	new_player(int new_socket, char *pseudo)
-{
-	int	i;
-
-	pthread_mutex_lock(&game_lock);
-	t_player_info *existing_player = find_player_by_pseudo(pseudo);
-	if (existing_player && existing_player->player_id >= 0)
-	{
-		close(new_socket);
-		pthread_mutex_unlock(&game_lock);
-		return ;
-	}
-	for (i = 0; i < MAX_PLAYERS; i++)
-	{
-		if (client_sockets[i] == -1)
-		{
-			client_sockets[i] = new_socket;
-			add_player_node(i, pseudo);
-			GameMessage connect_msg = {.type = MSG_CONNECT, .player_id = i, .x = -1, .y = -1};
-			strcpy(connect_msg.pseudo, pseudo);
-			add_game_message_to_queue(connect_msg);
-			break;
-		}
-	}
-	if (i >= MAX_PLAYERS)
-    {
-		GameMessage full_msg = {.type = MSG_FULL};
-		send(new_socket, &full_msg, sizeof(GameMessage), 0);
-        close(new_socket);
-    }
-	pthread_mutex_unlock(&game_lock);
-}
-
-char	*existing_player(int *nb_player, int server_fd, struct sockaddr_in address, int addrlen, int *new_socket, int epoll_fd)
-{
-	char				pseudo[MAX_PSEUDO_LENGTH];
-	t_player_info		*player;
 	struct epoll_event	event;
+	struct epoll_event	*events;
 	int					i;
+	int					num_events;
 
-	pseudo[0] = '\0';
-	*new_socket = accept(server_fd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-	if (*new_socket < 0)
-		return (pseudo);
-	recv(*new_socket, pseudo, sizeof(pseudo), 0);
-	pthread_mutex_lock(&game_lock);
-	player = find_player_by_pseudo(pseudo);
-	if (player)
-	{
-		if (player->player_id >= 0 && client_sockets[player->player_id] >= 0) {
-			close(*new_socket);
-			pthread_mutex_unlock(&game_lock);
-			return (pseudo);
-		}
-		else
-		{
-			if (player->player_id < 0)
-			{
-				for (i = 0; i < MAX_PLAYERS; i++) 
-				{
-					if (client_sockets[i] == -1)
-					{
-						player->player_id = i;
-						break;
-					}
-				}
-			}
-			client_sockets[player->player_id] = *new_socket;
-			(*nb_player)++;
-			event.events = EPOLLIN;
-			event.data.fd = *new_socket;
-			if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, *new_socket, &event) < 0)
-			{
-				perror("epoll_ctl: add");
-				close(*new_socket);
-				pthread_mutex_unlock(&game_lock);
-				return (NULL);
-			}
-			GameMessage connect_msg;
-			connect_msg.type = MSG_RECONNECT;
-			connect_msg.player_id = player->player_id;
-			connect_msg.x = player->x;
-			connect_msg.y = player->y;
-			connect_msg.dir_x = player->dir_x;
-			connect_msg.dir_y = player->dir_y;
-			connect_msg.floor = player->floor;
-			connect_msg.health = player->health;
-			connect_msg.height = player->height;
-			strcpy(connect_msg.pseudo, pseudo);
-			add_game_message_to_queue(connect_msg);
-			pthread_mutex_unlock(&game_lock);
-			return (NULL);
-		}
-	}
-	pthread_mutex_unlock(&game_lock);
-	return strdup(pseudo);
-}
-
-void	loop_server(int *nb_player, int server_fd, struct sockaddr_in address, int addrlen)
-{
-	int					epoll_fd, new_socket;
-	struct epoll_event	event, events[MAX_PLAYERS];
-	char				*pseudo;
-	int					i;
-
-	epoll_fd = epoll_create1(0);
-	if (epoll_fd == -1)
-	{
-		perror("epoll_create1");
+	server->epoll_fd = 0;
+	server->epoll_fd = epoll_create1(0);
+	events = malloc(sizeof(struct epoll_event) * MAX_PLAYERS);
+	if (server->epoll_fd == -1)
 		exit(EXIT_FAILURE);
-	}
 	event.events = EPOLLIN;
-	event.data.fd = server_fd;
-	if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server_fd, &event) == -1)
-	{
-		perror("epoll_ctl");
+	event.data.fd = server->server_fd;
+	if (epoll_ctl(server->epoll_fd, EPOLL_CTL_ADD,
+			server->server_fd, &event) == -1)
 		exit(EXIT_FAILURE);
-	}
 	while (1)
 	{
-		int num_events = epoll_wait(epoll_fd, events, MAX_PLAYERS, -1);
+		num_events = epoll_wait(server->epoll_fd, events, MAX_PLAYERS, -1);
 		if (num_events == -1)
-		{
-			perror("epoll_wait");
 			exit(EXIT_FAILURE);
-		}
-		for (i = 0; i < num_events; i++)
-		{
-			if (events[i].data.fd == server_fd)
-			{
-				pseudo = existing_player(nb_player, server_fd, address, addrlen, &new_socket, epoll_fd);
-				if (pseudo && pseudo[0] == '\0')
-					continue;
-				if (pseudo)
-				{
-					(nb_player)++;
-					event.events = EPOLLIN;
-					event.data.fd = new_socket;
-					epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_socket, &event);
-					new_player(new_socket, pseudo);
-				}
-			}
-			else
-				handle_client_message(events[i].data.fd);
-		}
+		i = -1;
+		while (++i < num_events)
+			loop_server_event(server, events, &event, i);
 	}
 }
 
-void	init_server(int *server_fd, struct sockaddr_in *address, int *opt)
+void	init_server(t_server *server, int *opt)
 {
-	memset(client_sockets, -1, sizeof(client_sockets));
-	if ((*server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
-	{
-		perror("socket failed");
+	ft_memset(server->client_sockets, -1, sizeof(server->client_sockets));
+	server->server_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (server->server_fd == 0)
 		exit(EXIT_FAILURE);
-	}
-	if (setsockopt(*server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, opt, sizeof(*opt)))
-	{
-		perror("setsockopt");
+	if (setsockopt(server->server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
+			opt, sizeof(*opt)))
 		exit(EXIT_FAILURE);
-	}
-	address->sin_family = AF_INET;
-	address->sin_addr.s_addr = INADDR_ANY;
-	address->sin_port = htons(PORT);
-	if (bind(*server_fd, (struct sockaddr*)address, sizeof(*address)) < 0)
-	{
-		perror("bind failed");
+	server->address.sin_family = AF_INET;
+	server->address.sin_addr.s_addr = INADDR_ANY;
+	server->address.sin_port = htons(PORT);
+	if (bind(server->server_fd, (struct sockaddr *)&(server->address),
+			sizeof(server->address)) < 0)
 		exit(EXIT_FAILURE);
-	}
-	if (listen(*server_fd, 10) < 0)
-	{
-		perror("listen");
+	if (listen(server->server_fd, 10) < 0)
 		exit(EXIT_FAILURE);
-	}
-	pthread_mutex_lock(&game_lock);
-	server_ready = 1;
-	pthread_cond_broadcast(&server_ready_cond);
-	pthread_mutex_unlock(&game_lock);
+	pthread_mutex_lock(server->game_lock);
+	server->server_ready = 1;
+	pthread_mutex_unlock(server->game_lock);
 }
 
-void	send_all_players(int id)
+void	main_server(void	*arg)
 {
-	t_player_info	*current;
-	GameMessage		connect_msg;
+	int			opt;
+	pthread_t	logic_game_thread;
+	t_server	*server;
 
-	current = players;
-	connect_msg.type = MSG_GET_PLAYER;
-	while(current)
-	{
-		if (current->player_id >= 0 && current->player_id != id)
-		{
-			connect_msg.player_id = current->player_id;
-			connect_msg.x = current->x;
-			connect_msg.y = current->y;
-			connect_msg.dir_x = current->dir_x;
-			connect_msg.dir_y = current->dir_y;
-			connect_msg.floor = current->floor;
-			connect_msg.height = current->height;
-			strncpy(connect_msg.pseudo, current->pseudo, MAX_PSEUDO_LENGTH);
-			send(client_sockets[id], &connect_msg, sizeof(GameMessage), 0);
-		}
-		current = current->next;
-	}
-}
-
-void	*logic_game(void *arg)
-{
-	while (1)
-	{
-		pthread_mutex_lock(&game_lock);
-		if (gameQueue)
-		{
-			GameMessageQueue *current = gameQueue;
-			gameQueue = gameQueue->next;
-			GameMessage msg = current->message;
-			if (msg.type == MSG_CONNECT)
-			{
-				send(client_sockets[msg.player_id], &msg, sizeof(GameMessage), 0);
-				send_all_players(msg.player_id);
-				notify_players_of_connection(msg.player_id, msg.pseudo);
-			}
-			else if (msg.type == MSG_RECONNECT)
-			{
-				send(client_sockets[msg.player_id], &msg, sizeof(GameMessage), 0);
-				send_all_players(msg.player_id);
-				notify_players_of_reconnection(msg.player_id, msg.pseudo);
-			}
-			else if (msg.type == MSG_DISCONNECT)
-				notify_players_of_disconnection(msg.player_id);
-			else if (msg.type == MSG_MOVE)
-				notify_players_of_move(msg);
-			else if (msg.type == MSG_DOOR)
-				notify_players_of_door(msg);
-			else if (msg.type == MSG_CHAT)
-				notify_players_of_chat(msg);
-			free(current); 
-		}
-		pthread_mutex_unlock(&game_lock);
-		usleep(1000);
-	}
-}
-
-void	server(void)
-{
-	int					nb_player;
-	int					server_fd;
-	int					opt;
-	struct sockaddr_in	address;
-	int					addrlen;
-	pthread_t			logic_game_thread;
-
+	server = (t_server *)arg;
 	opt = 1;
-	nb_player = 0;
-	addrlen = sizeof(address);
-	pthread_mutex_init(&game_lock, NULL);
-	init_server(&server_fd, &address, &opt);
-	pthread_create(&logic_game_thread, NULL, logic_game, NULL);
-	loop_server(&nb_player, server_fd, address, addrlen);
+	server->addrlen = sizeof(server->address);
+	init_server(server, &opt);
+	pthread_create(&logic_game_thread, NULL, logic_game, arg);
+	loop_server(server);
 }
 
-void create_server(t_game *game)
+void	create_server(t_game *game)
 {
-	pthread_t server_thread;
+	pthread_t	server_thread;
+	int			is_good;
+	t_server	*server;
 
-	game->server->nb_player = 0;
-	pthread_create(&server_thread, NULL, (void *)server, NULL);
-	pthread_mutex_lock(&game_lock);
-	while (!server_ready)
-		pthread_cond_wait(&server_ready_cond, &game_lock);
-	pthread_mutex_unlock(&game_lock);
-	init_broadcast(game);
+	is_good = 0;
+	server = malloc(sizeof(t_server));
+	server->nb_player = 0;
+	server->players = NULL;
+	server->game_queue = NULL;
+	server->server_ready = false;
+	server->game_lock = malloc(sizeof(pthread_mutex_t));
+	ft_strcpy(server->name, game->client->name);
+	pthread_mutex_init(server->game_lock, NULL);
+	pthread_create(&server_thread, NULL, (void *)main_server, (void *)server);
+	while (!is_good)
+	{
+		pthread_mutex_lock(server->game_lock);
+		is_good = server->server_ready;
+		pthread_mutex_unlock(server->game_lock);
+		usleep(200);
+	}
+	init_broadcast(server);
 }

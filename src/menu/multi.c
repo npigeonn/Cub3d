@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 15:48:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/18 16:01:06 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode
 		{
 			if (i == game->menu->server_selected)
 			{
-				game->server->ip = current->ip;
+				ft_strcpy(game->client->ip, current->ip);
 				game->menu->status = JOIN_SERVER;
 				break;
 			}

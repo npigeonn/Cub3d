@@ -6,51 +6,56 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 23:56:18 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 10:53:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/18 15:56:14 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	broadcast_server_info(t_game *game, struct sockaddr_in *broadcast_addr)
+static void	broadcast_server_info(t_server *server,
+struct sockaddr_in *broadcast_addr)
 {
-	char message[256];
+	char	message[256];
 
 	ft_strcpy(message, "ServerInfo:");
-	strcat(message, game->server->name);
-	strcat(message, ";Players:1/4;Ping:30ms");
-	int sent_bytes = sendto(game->server->sock_bc, message, ft_strlen(message), 0, (struct sockaddr *)broadcast_addr, sizeof(*broadcast_addr));
+	ft_strlcat(message, server->name, 256);
+	ft_strlcat(message, ";Players:1/4;Ping:30ms", 256);
+	sendto(server->sock_bc, message, ft_strlen(message), 0,
+		(struct sockaddr *)broadcast_addr, sizeof(*broadcast_addr));
 }
 
-void	thread_broadcast_server_info(t_game *game)
+static void	thread_broadcast_server_info(t_server *server)
 {
 	int					broadcast_fd;
 	struct sockaddr_in	broadcast_addr;
 
-	memset(&broadcast_addr, 0, sizeof(broadcast_addr));
+	ft_memset(&broadcast_addr, 0, sizeof(broadcast_addr));
 	broadcast_addr.sin_family = AF_INET;
 	broadcast_addr.sin_port = htons(BROADCAST_PORT);
 	broadcast_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST);
 	while (1)
 	{
-		broadcast_server_info(game, &broadcast_addr);
+		broadcast_server_info(server, &broadcast_addr);
 		sleep(5);
 	}
 }
 
-int	init_broadcast(t_game *game)
+int	init_broadcast(t_server *server)
 {
-	pthread_t	broadcast_thread;	
-	int			broadcast = 1;
+	pthread_t	broadcast_thread;
+	int			broadcast;
 
-	game->server->sock_bc = socket(AF_INET, SOCK_DGRAM, 0);
-	if (game->server->sock_bc < 0)
+	broadcast = 1;
+	server->sock_bc = socket(AF_INET, SOCK_DGRAM, 0);
+	if (server->sock_bc < 0)
 		return (-1);
-	if (setsockopt(game->server->sock_bc, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)) < 0)
+	if (setsockopt(server->sock_bc, SOL_SOCKET, SO_BROADCAST, &broadcast,
+			sizeof(broadcast)) < 0)
 	{
-		close(game->server->sock_bc);
+		close(server->sock_bc);
 		return (-1);
 	}
-	pthread_create(&broadcast_thread, NULL, (void *)thread_broadcast_server_info, game);
+	pthread_create(&broadcast_thread, NULL,
+		(void *)thread_broadcast_server_info, server);
 	return (0);
 }

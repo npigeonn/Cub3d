@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 13:49:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 11:39:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/18 17:50:49 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ char	*get_field(t_game *game)
 	if (game->menu->text_field_selected == 1)
 	{
 		if (game->menu->status == SERVER_CREATE)
-			return (game->server->name);
+			return (game->client->name);
 		else
-			return (game->server->ip);
+			return (game->client->ip);
 	}
 	if (game->menu->text_field_selected == 2)
-		return (game->server->pseudo);
+		return (game->client->pseudo);
 	return (NULL);
 }
 
@@ -58,7 +58,7 @@ void	handle_ip_input(t_game *game, int keycode)
 	char *field;
 	int len;
 
-	field = game->server->ip;
+	field = game->client->ip;
 	len = strlen(field);
 	if ((keycode >= 65429 && keycode <= 65439) ||
 		(keycode >= 48 && keycode <= 57) || keycode == 46)
@@ -130,11 +130,11 @@ void get_local_ip(char *ip_buffer, size_t buffer_size)
 
 void	handle_create_server(t_game *game)
 {
-	if (game->server->name[0] == '\0')
+	if (game->client->name[0] == '\0')
 		game->menu->error_name = true;
-	if (game->server->pseudo[0] == '\0')
+	if (game->client->pseudo[0] == '\0')
 		game->menu->error_pseudo = true;
-	if (game->server->pseudo[0] != '\0' && game->server->name[0] != '\0')
+	if (game->client->pseudo[0] != '\0' && game->client->name[0] != '\0')
 		game->menu->status = VALID_SERVER_CREATE;
 }
 
@@ -166,8 +166,8 @@ void	update_create_server_menu_text(t_game *game, int mouse_x, int mouse_y, int 
 		game->menu->text_field_selected = 0;
 	if (game->menu->button_selected == 1 && mouse_button == 1)
 	{
-		game->server->name[0] = '\0';
-		game->server->pseudo[0] = '\0';
+		game->client->name[0] = '\0';
+		game->client->pseudo[0] = '\0';
 		game->menu->status = SERVERS;
 	}
 	if (game->menu->button_selected == 2 && mouse_button == 1)
@@ -216,13 +216,13 @@ void	draw_create_server_menu(t_game *game)
 	if (game->menu->error_name)
 		draw_rounded_rectangle(game, x - 4, y + 30 - 4, btn_width + 8, btn_height + 8, 10, 0xFF0000);
 	draw_text(game, "Server Name", game->screen_width >> 1, y - 10, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-	draw_text_field(game, x, y + 30, btn_width, btn_height, game->server->name);
+	draw_text_field(game, x, y + 30, btn_width, btn_height, game->client->name);
 	if (game->menu->text_field_selected == 2)
 		draw_rounded_rectangle(game, x - 4, y + btn_height + spacing + 30 - 4, btn_width + 8, btn_height + 8, 10, MENU_BUTTON_SELECTED_COLOR);
 	if (game->menu->error_pseudo)
 		draw_rounded_rectangle(game, x - 4, y + btn_height + spacing + 30 - 4, btn_width + 8, btn_height + 8, 10, 0xFF0000);
 	draw_text(game, "Pseudo", game->screen_width >> 1, y + btn_height + spacing - 10, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-	draw_text_field(game, x, y + btn_height + spacing + 30, btn_width, btn_height, game->server->pseudo);
+	draw_text_field(game, x, y + btn_height + spacing + 30, btn_width, btn_height, game->client->pseudo);
 	draw_text(game, "Server IP", game->screen_width >> 1, y + 2 * (btn_height + spacing) - 10, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
     char ip[INET_ADDRSTRLEN];
     get_local_ip(ip, sizeof(ip));

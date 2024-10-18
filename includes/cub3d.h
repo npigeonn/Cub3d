@@ -9,6 +9,8 @@
 # include <stdlib.h>
 # include "game.h"
 # include "server.h"
+# include "chat.h"
+# include "client.h"
 
 # define MOVEMENT_SPEED 0.05f
 # define ROTATION_SPEED 0.001f

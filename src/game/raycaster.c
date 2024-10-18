@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 09:43:06 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/19 00:02:58 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,9 +298,9 @@ int	handle_keypress(int keycode, t_game *game)
 		use_item(game);
 	if (game->menu->status == MULTI_PLAYER)
 	{
-		GameMessage message = {.type = MSG_MOVE, .player_id = game->server->player_id, .x = p->x, .y = p->y, .floor = p->floor, .height = p->height};
-		strncpy(message.pseudo, game->server->pseudo, MAX_PSEUDO_LENGTH);
-		send(game->server->sock, &message, sizeof(GameMessage), 0);
+		t_game_message message = {.type = MSG_MOVE, .player_id = game->client->player_id, .x = p->x, .y = p->y, .floor = p->floor, .height = p->height};
+		strncpy(message.pseudo, game->client->pseudo, MAX_PSEUDO_LENGTH);
+		send(game->client->sock, &message, sizeof(t_game_message), 0);
 	}
 	return (0);
 }
@@ -376,7 +376,7 @@ int	game_loop(t_game *game)
 	else if (game->menu->status == VALID_SERVER_CREATE)
 	{
 		create_server(game);
-		game->server->ip = "127.0.0.1";
+		ft_strcpy(game->client->ip, "127.0.0.1");
 		game->menu->status = VALID_JOIN_SERVER;
 	}
 	else if (game->menu->status == JOIN_SERVER)
