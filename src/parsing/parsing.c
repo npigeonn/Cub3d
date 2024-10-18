@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/14 16:07:10 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/18 10:45:50 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,33 @@ static int	op_in(char **av)
 	return (0);
 }
 
+void	check_char_n_walls(t_game *game)
+{
+	int i[3];
+
+	i[0] = -1;
+	map_copy(game);
+	while (game->map_cy[++i[0]])
+	{
+		i[1] = -1;
+		while (game->map_cy[i[0]][++i[1]])
+		{
+			i[2] = -1;
+			while (game->map_cy[i[0]][i[1]][++i[2]])
+			{
+				if (game->map_cy[i[0]][i[1]][i[2]] == '1'
+					|| game->map_cy[i[0]][i[1]][i[2]] == 'X'
+					|| game->map_cy[i[0]][i[1]][i[2]] == ' '
+					|| game->map_cy[i[0]][i[1]][i[2]] == '\n')
+					continue ;
+				if (!check_walls(game, i[2], i[1], i[0]))
+					return (free_map_copy(game),
+						exit(err("Need walls all around the playable map\n")));
+			}
+		}
+	}
+	free_map_copy(game);
+}
 
 void	parsing(char **av, t_game *game)
 {
@@ -78,7 +105,7 @@ void	parsing(char **av, t_game *game)
 	textures(av[1], game);
 	map_set_up(av, game);
 	teleportation_check(game);
-	// compare_key_n_looked_door(game);
+	check_char_n_walls(game);
 	floodfill(game);
 	door_mngmt(game);
 	// access to /regarder les permissions

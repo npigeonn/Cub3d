@@ -68,6 +68,7 @@ typedef struct s_player
 	int		ammo;
 	int		floor;
 	float	anim_shoot;
+	int		begin_dir;
 	t_stuff	*stuff;
 }	t_player;
 
@@ -127,7 +128,6 @@ typedef	struct s_door
 	float			animation;
 	struct s_door	*next;
 }	t_door;
-
 
 typedef	struct s_teleporter
 {

@@ -20,7 +20,10 @@ gestion de la minimap
 gerer le parsing, map trop grande /mal cerclee ...
 gerer l'image sortie / ennemi / animation de sortie / hud
 munitions
-
+affichage des poings a 0 munitions
+munitions au sol 
+differentes armes?
+ennemi qui se dirige vers toi un peu moins vite quand cest dans le champs de vision et degats
 
 
 -des maps cools parce que cest le principal pour le correcteur
@@ -65,9 +68,16 @@ N : gerer les degats vision des ennemies
 
 
 Y : gerer les mouvements en meme temps ex: droite et haut
-	munitions visuels?
+	munitions visuelles? (cest la lettre M)
+	sortie visuelle (arceus)
+
 	
 
+
+	gerer les random textures?
+
+28 - 29
+	derniere modifs / leaks / normes
 
 
 */
@@ -191,7 +201,7 @@ int	main(int ac, char **av)
 	game.chatbox->message[0] = '\0';
 	game.chatbox->is_writting = false;
 	game.chatbox->messages = NULL;
-	set_direction(&game, 0);
+	set_direction(&game, game.player->begin_dir);
 	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Raycasting 3D");
 	init_img(&game);
 	set_width_all_letter(&game);
@@ -201,7 +211,6 @@ int	main(int ac, char **av)
 	mlx_hook(game.win, 4, 1L << 2, handle_mouse_key, &game);
 	mlx_hook(game.win, 33, 0, handle_close, &game);
 	mlx_loop_hook(game.mlx, game_loop, &game);
-	printf("player pos %f and %f\n", game.player->x, game.player->y);
 	mlx_loop(game.mlx);
 	free_map(&game);
 	return 0;
