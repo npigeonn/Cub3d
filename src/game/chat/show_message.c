@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:44:10 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 23:52:21 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:34:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,11 @@ int *height, int width)
 static void	show_message_without_pseudo(t_game *game, t_message *current,
 int height)
 {
-	draw_text_left(game, current->message, 70, height, 22, current->color);
+	t_draw_info	info;
+
+	info = init_draw_info(22, current->message, 70, height);
+	info.color = current->color;
+	draw_text_left(game, info);
 }
 
 void	show_message(t_game *game)

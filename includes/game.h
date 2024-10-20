@@ -1,13 +1,27 @@
 #ifndef GAME_H
-#define GAME_H
+# define GAME_H
 
 # include <math.h>
-# include "mlx.h"
 # include "libft.h"
 # include <sys/time.h>
 # include <netdb.h>
 
-enum Weapon {
+typedef struct	s_draw_info
+{
+	int		width;
+	int		height;
+	char	*str;
+	char	c;
+	int		color;
+	int		x;
+	int		y;
+	int		radius;
+	int		max_width;
+	float	alpha;
+}	t_draw_info;
+
+enum Weapon
+{
 	Pistol = 0,
 	Shotgun = 1,
 };
@@ -30,7 +44,8 @@ enum GameStatus
 	SERVER_FULL = 13,
 };
 
-enum Direction {
+enum Direction
+{
 	SIDE_EAST,
 	SIDE_WEST,
 	SIDE_NORTH,
@@ -39,7 +54,8 @@ enum Direction {
 	SIDE_CEILING,
 };
 
-enum Message {
+enum Message
+{
 	NOTHING,
 	OPEN_DOOR,
 	CLOSE_DOOR,
@@ -57,19 +73,20 @@ typedef struct s_stuff
 
 typedef struct s_player
 {
-	float	x;
-	float	y;
-	float	dirX;
-	float	dirY;
-	float	planeX;
-	float	planeY;
-	float	height;
-	float	health;
-	int		ammo;
-	int		floor;
-	float	anim_shoot;
-	int		begin_dir;
-	t_stuff	*stuff;
+	float		x;
+	float		y;
+	float		dirX;
+	float		dirY;
+	float		planeX;
+	float		planeY;
+	float		height;
+	float		health;
+	int			ammo;
+	int			floor;
+	float		anim_shoot;
+	int			begin_dir;
+	t_stuff		*stuff;
+	t_raycast	*raycast;
 }	t_player;
 
 
@@ -104,6 +121,9 @@ typedef	struct s_textures
 	t_image	*floor;
 	t_image	*ceil;
 	t_image	*enemies;
+	t_image	*bullet;
+	t_image	*weapon;
+	t_image	*fire;
 	int		so;
 	int		no;
 	int		c;
@@ -124,7 +144,6 @@ typedef	struct s_door
 	int				y;
 	int				floor;
 	bool			open;
-	bool			lock;
 	float			animation;
 	struct s_door	*next;
 }	t_door;
@@ -291,18 +310,18 @@ void	draw_multiplayer_menu(t_game *game);
 //draw
 void	pixel_put(t_game *game, int x, int y, int color);
 void	secure_pixel_put(t_game *game, int x, int y, int color);
-void	draw_rectangle(t_game *game, int x, int y, int width, int height, int color);
-void	draw_text(t_game *data, char *str, int x, int y, int height, int color);
-void	draw_text_left(t_game *game, char *str, int x, int y, int height, int color);
-void	draw_text_right(t_game *game, char *str, int x, int y, int height, int color);
-void	draw_char(t_game *data, int x, int y, int height, char c, int color);
+void	draw_rectangle(t_game *game, t_draw_info info);
+void	draw_text(t_game *data, t_draw_info info);
+void	draw_text_left(t_game *game, t_draw_info info);
+void	draw_text_right(t_game *game, t_draw_info info);
+void	draw_char(t_game *data, t_draw_info info);
 void	draw_sprite(t_game *game, t_image *texture, float x, float y, float sprite_dir);
 void	draw_sprites(t_game *game);
-void	draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, int radius, int color);
+void	draw_rounded_rectangle(t_game *game, t_draw_info info);
 void	crosshair(t_game *game);
 int 	blend_colors(int bg_color, int fg_color, float alpha);
 int 	get_pixel_color_from_image(t_game *game, int x, int y);
-void	draw_image(t_game *game, int x, int y, int height, t_image *img);
+void	draw_image(t_game *game, t_image *img, t_draw_info info);
 void	gun_draw(t_game *game);
 void	get_pos_char(char c, int *x, int *y);
 void	ammo_written(t_game *game);
@@ -313,14 +332,14 @@ void	mini_map(t_game *game);
 void	print_wall_door_player(t_game *game);
 
 //door
-int		handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, float distance);
-void	add_door(t_game *game, int x, int y, int floor, bool lock);
+int		handle_door(t_game *game);
+void	add_door(t_game *game, int x, int y, int floor);
 t_door	*get_door(t_game *game, int x, int y, int floor);
 void	use_door_in_view(t_game *game);
 void	update_door_animation(t_game *game);
 	
 //wall
-void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side);
+void	draw_wall(t_game *game);
 void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height);
 
 //enemies
@@ -339,9 +358,6 @@ void	door_mngmt(t_game *game);
 
 // walls
 int		check_walls(t_game *game, int x, int y, int floor);
-
-// key looked doors
-void	compare_key_n_looked_door(t_game *game);
 
 //teleporter
 int		is_a_teleporter(char c);

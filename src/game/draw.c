@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 15:34:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 12:55:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/20 21:31:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,24 +119,24 @@ void	get_pos_char(char c, int *x, int *y)
 	*y = index / 10;
 }
 
-void	draw_char(t_game *game, int x, int y, int height, char c, int color)
+void	draw_char(t_game *game, t_draw_info info)
 {
 	int			x1, y1;
 	int			pos_x, pos_y;
 	int			original_pixel_index;
 	t_image		*img = game->images->alphanum_sprite;
 
-	get_pos_char(c, &pos_x, &pos_y);
-	for (y1 = 0; y1 < height; y1++)
+	get_pos_char(info.c, &pos_x, &pos_y);
+	for (y1 = 0; y1 < info.height; y1++)
 	{
-		for (x1 = 0; x1 < height; x1++)
+		for (x1 = 0; x1 < info.height; x1++)
 		{
-			int source_x = (x1 * 480 / height) + (pos_x * 480);
-			int source_y = (y1 * 480 / height) + (pos_y * 480);
+			int source_x = (x1 * 480 / info.height) + (pos_x * 480);
+			int source_y = (y1 * 480 / info.height) + (pos_y * 480);
 			original_pixel_index = source_y * img->size_line
 				+ source_x * img->bpp * 0.125;
 			if (game->images->alphanum_sprite->data[original_pixel_index] != 0)
-				pixel_put(game, x + x1, y + y1, color);
+				pixel_put(game, info.x + x1, info.y + y1, info.color);
 		}
 	}
 }
@@ -159,7 +159,7 @@ int	get_text_width(t_game *game, char *str, int height)
 	return (total_width);
 }
 
-void	draw_text(t_game *game, char *str, int x, int y, int height, int color)
+void	draw_text(t_game *game, t_draw_info info)
 {
 	int			i;
 	t_image		*img;
@@ -167,49 +167,51 @@ void	draw_text(t_game *game, char *str, int x, int y, int height, int color)
 	int			char_width;
 
 	img = game->images->alphanum_sprite;
-	text_width = get_text_width(game, str, height);
-	if (str == NULL)
+	text_width = get_text_width(game, info.str, info.height);
+	if (info.str == NULL)
 		return ;
-	x = x - (text_width >> 1);
-	y -= 7;
+	info.x = info.x - (text_width >> 1);
+	info.y -= 7;
 	i = -1;
-	while (str[++i])
+	while (info.str[++i])
 	{
-		if (str[i] == ' ')
-			x += height * 0.33;
+		if (info.str[i] == ' ')
+			info.x += info.height * 0.33;
 		else
 		{
-			draw_char(game, x, y, height, str[i], color);
-			char_width = get_char_width_opti(game, str[i]);
-			x += char_width * height / 480 + 3;
+			info.c = info.str[i];
+			draw_char(game, info);
+			char_width = get_char_width_opti(game, info.str[i]);
+			info.x += char_width * info.height / 480 + 3;
 		}
 	}
 }
 
-void	draw_text_left(t_game *game, char *str, int x, int y, int height, int color)
+void	draw_text_left(t_game *game, t_draw_info info)
 {
 	int			i;
 	int			char_width;
 	t_image		*img;
 
 	img = game->images->alphanum_sprite;
-	if (str == NULL)
+	if (info.str == NULL)
 		return ;
 	i = -1;
-	y -= 7;
-	while (str[++i])
+	info.y -= 7;
+	while (info.str[++i])
 	{
-		if (str[i] == ' ')
-			x += height * 0.33;
+		if (info.str[i] == ' ')
+			info.x += info.height * 0.33;
 		else
 		{
-			draw_char(game, x, y, height, str[i], color);
-			char_width = get_char_width_opti(game, str[i]);
-			x += char_width * height / 480 + 3;
+			info.c = info.str[i];
+			draw_char(game, info);
+			char_width = get_char_width_opti(game, info.str[i]);
+			info.x += char_width * info.height / 480 + 3;
 		}
 	}
 }
-void	draw_text_right(t_game *game, char *str, int x, int y, int height, int color)
+void	draw_text_right(t_game *game, t_draw_info info)
 {
 	int			i;
 	t_image		*img;
@@ -217,43 +219,44 @@ void	draw_text_right(t_game *game, char *str, int x, int y, int height, int colo
 	int			char_width;
 
 	img = game->images->alphanum_sprite;
-	text_width = get_text_width(game, str, height);
-	if (str == NULL)
+	text_width = get_text_width(game, info.str, info.height);
+	if (info.str == NULL)
 		return ;
-	x = x - text_width;
+	info.x = info.x - text_width;
 	i = -1;
-	y -= 7;
-	while (str[++i])
+	info.y -= 7;
+	while (info.str[++i])
 	{
-		if (str[i] == ' ')
-			x += height * 0.33;
+		if (info.str[i] == ' ')
+			info.x += info.height * 0.33;
 		else
 		{
-			draw_char(game, x, y, height, str[i], color);
-			char_width = get_char_width_opti(game, str[i]);
-			x += char_width * height / 480 + 3;
+			info.c = info.str[i];
+			draw_char(game, info);
+			char_width = get_char_width_opti(game, info.c);
+			info.x += char_width *info. height / 480 + 3;
 		}
 	}
 }
 
-void draw_rectangle(t_game *game, int x, int y, int width, int height, int color)
+void draw_rectangle(t_game *game, t_draw_info info)
 {
-	if (x < 0 || x >= game->screen_width || y < 0 || y >= game->screen_height)
+	if (info.x < 0 || info.x >= game->screen_width || info.y < 0 || info.y >= game->screen_height)
 		return;
-	if (x + width > game->screen_width)
-		width = game->screen_width - x;
-	if (y + height > game->screen_height)
-		height = game->screen_height - y;
+	if (info.x + info.width > game->screen_width)
+		info.width = game->screen_width - info.x;
+	if (info.y + info.height > game->screen_height)
+		info.height = game->screen_height - info.y;
 		
 	int size_line = game->images->base->size_line;
 	char *data = game->images->base->data;
-	int offset_base = y * size_line + x * game->images->base->bpp * 0.125;
-	int *line_buffer = malloc(width * sizeof(int));
+	int offset_base = info.y * size_line + info.x * game->images->base->bpp * 0.125;
+	int *line_buffer = malloc(info.width * sizeof(int));
 	
 	if (!line_buffer) return;
-	for (int j = 0; j < width; j++)
-		line_buffer[j] = color;
-	for (int i = 0; i < height; i++)
-		ft_memcpy(data + offset_base + i * size_line, line_buffer, width * sizeof(int));
+	for (int j = 0; j < info.width; j++)
+		line_buffer[j] = info.color;
+	for (int i = 0; i < info.height; i++)
+		ft_memcpy(data + offset_base + i * size_line, line_buffer, info.width * sizeof(int));
 	free(line_buffer); 
 }

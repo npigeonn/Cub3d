@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:21:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/17 15:59:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:00:31 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,32 @@ void	draw_server_error_menu(t_game *game)
 	const int	spacing = game->screen_height * 0.05;
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.25;
-	const char	*message;
+	char		*message;
+	t_draw_info	info2;
+	t_draw_info	info;
 
 	mlx_mouse_show(game->mlx, game->win);
 	if (game->menu->status == SERVER_FULL)
 		message = "Server is full.";
 	else
 		message = "You have been disconnected from the server.";
-	draw_text(game, message, game->screen_width >> 1, game->screen_height * 0.4, 70, MENU_BUTTON_TEXT_COLOR);
+	info = init_draw_info(70, message, game->screen_width >> 1, game->screen_height * 0.4);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	draw_text(game, info);
+	info2 = init_draw_info(0, "", x - 2, y + 2 * (btn_height + spacing) - 2);
+	info2.width = btn_width + 4;
+	info2.height = btn_height + 4;
+	info2.color = MENU_BUTTON_SELECTED_COLOR;
 	if (game->menu->button_selected == 1)
-		draw_rectangle(game, x - 2, y + 2 * (btn_height + spacing) - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, x, y + 2 * (btn_height + spacing), btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Return to Menu", x + btn_width / 2, y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+		draw_rectangle(game, info2);
+	info2 = init_draw_info(x, y + 2 * (btn_height + spacing), btn_width, btn_height);
+	info2.color = MENU_BUTTON_COLOR;
+	draw_rectangle(game, info2);
+	info.str = "Return to Menu";
+	info.y = y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;
+	info.height = btn_height * 0.5;
+	info.x = x + btn_width / 2;
+	draw_text(game, info);
 	game->chatbox->visible = false;
 	game->chatbox->is_writting = false;
 }

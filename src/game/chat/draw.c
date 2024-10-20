@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:51:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 23:59:04 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:43:00 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ void	draw_text_max_right(t_game *game, t_draw_info info)
 			info.x += info.height * 0.33;
 		else
 		{
-			draw_char(game, info.x, info.y, info.height, info.str[i],
-				info.color);
+			info.c = info.str[i];
+			draw_char(game, info);
 			info.x += get_char_width_opti(game, info.str[i])
 				* info.height / 480 + 3;
 		}
@@ -61,8 +61,7 @@ int i)
 {
 	if (!info.str[i])
 		return ;
-	ft_strlcpy(temp, &info.str[i], strlen(info.str) - i + 1);
-	draw_text_left(game, temp, info.x, info.y, info.height, info.color);
+	draw_text_left(game, info);
 }
 
 static int	draw_wrapped_text_left2(t_game *game, t_draw_info info, int i,
@@ -102,8 +101,11 @@ void	draw_wrapped_text_left(t_game *game, t_draw_info info)
 		}
 		ft_strlcpy(temp, &info.str[i - line_length], line_length + 1);
 		temp[line_length] = '\0';
+		t_draw_info info2 = init_draw_info(info.height, temp, info.x, info.y);
+		info2.color = info.color;
+		info2.max_width = info.max_width;
 		current_width = 0;
-		draw_text_left(game, temp, info.x, info.y, info.height, info.color);
+		draw_text_left(game, info2);
 		info.y += info.height * 0.8;
 	}
 	draw_wrapped_text_left3(game, info, temp, i);

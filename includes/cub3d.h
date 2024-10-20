@@ -7,10 +7,13 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <stdlib.h>
+
+# include "raycaster.h"
 # include "game.h"
 # include "server.h"
 # include "chat.h"
 # include "client.h"
+# include "input.h"
 
 # define MOVEMENT_SPEED 0.05f
 # define ROTATION_SPEED 0.001f

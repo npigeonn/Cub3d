@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 15:57:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:45:13 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	use_door_in_view(t_game *game)
 	}
 }
 
-void	add_door(t_game *game, int x, int y, int floor, bool lock)
+void	add_door(t_game *game, int x, int y, int floor)
 {
 	t_door *new_door;
 
@@ -67,7 +67,6 @@ void	add_door(t_game *game, int x, int y, int floor, bool lock)
 	new_door->y = y;
 	new_door->floor = floor;
 	new_door->open = false;
-	new_door->lock = lock;
 	new_door->animation = 0;
     new_door->next = game->door;
     game->door = new_door;
@@ -135,17 +134,23 @@ bool	visible_door(t_door *door)
 	return (false);
 }
 
-int	handle_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, float distance)
+int	handle_door(t_game *game)
 {
-	t_door	*door;
+	t_door		*door;
+	t_raycast	*raycast = game->player->raycast;
+	float		distance = raycast->perp_wall_dist;
 
-	if (game->map[game->player->floor][map_y][map_x] == 'D')
+	if (raycast->side == SIDE_EAST || raycast->side == SIDE_WEST)
+		distance = (raycast->map_x - game->player->x + (1 - raycast->step_x) * 0.5) / raycast->ray_dir_x;
+	else
+		distance = (raycast->map_y - game->player->y + (1 - raycast->step_y) * 0.5) / raycast->ray_dir_y;
+	if (game->map[game->player->floor][raycast->map_y][raycast->map_x] == 'D')
 	{
-		door = get_door(game, map_x, map_y, game->player->floor);
+		door = get_door(game, raycast->map_x, raycast->map_y, game->player->floor);
 		if (!door)
 			return (0);
 		if (visible_door(door))
-			draw_door(game, x, map_x, map_y, step_x, step_y, ray_dir_x, ray_dir_y, side, door);
+			draw_door(game, raycast->x, raycast->map_x, raycast->map_y, raycast->step_x, raycast->step_y, raycast->ray_dir_x, raycast->ray_dir_y, raycast->side, door);
 		if (distance < 0.4)
 		{
 			if (door->open)
@@ -174,10 +179,8 @@ void	door_mngmt(t_game *game)
 			k = -1;
 			while (game->map[i][j][++k])
 			{
-				if (game->map[i][j][k] == 'L')
-					add_door(game, k, j, i, true);
-				else if (game->map[i][j][k] == 'D')
-					add_door(game, k, j, i, false);
+				if (game->map[i][j][k] == 'D')
+					add_door(game, k, j, i);
 			}
 		}
 	}

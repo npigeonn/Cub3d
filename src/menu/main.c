@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 23:32:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 21:23:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/20 18:53:35 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,32 @@ void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y)
 	}
 }
 
+static void	draw_selected_button(t_game *game)
+{
+	t_draw_info	info;
+	const int	btn_width = game->screen_width * 0.25 + 4;
+	const int	btn_height = game->screen_height * 0.1 + 4;
+	const int	spacing = game->screen_height * 0.05;
+	const int	x = (game->screen_width - btn_width) * 0.5;
+	const int	y = game->screen_height * 0.25 - 2;
+
+	info = init_draw_info(0, "", x, y);
+	info.width = btn_width;
+	info.height = btn_height;
+	info.color = MENU_BUTTON_SELECTED_COLOR;
+	if (game->menu->button_selected == 1)
+		draw_rectangle(game, info);
+	info.y += btn_height + spacing - 4;
+	if (game->menu->button_selected == 2)
+		draw_rectangle(game, info);
+	info.y += btn_height + spacing - 4;
+	if (game->menu->button_selected == 3)
+		draw_rectangle(game, info);
+	info.y += btn_height + spacing - 4;
+	if (game->menu->button_selected == 4)
+		draw_rectangle(game, info);
+}
+
 void	draw_main_menu(t_game *game)
 {
 	const int	btn_width = game->screen_width * 0.25;
@@ -61,21 +87,31 @@ void	draw_main_menu(t_game *game)
 	const int	spacing = game->screen_height * 0.05;
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.25;
+	t_draw_info	info2;
+	t_draw_info	info;
 
-	if (game->menu->button_selected == 1)
-		draw_rectangle(game, x - 2, y - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, x, y, btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Solo", x + btn_width * 0.5, y + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-	if (game->menu->button_selected == 2)
-		draw_rectangle(game, x - 2, y + btn_height + spacing - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, x, y + btn_height + spacing, btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Multi", x + btn_width * 0.5, y + btn_height + spacing + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-	if (game->menu->button_selected == 3)
-		draw_rectangle(game, x - 2, y + 2 * (btn_height + spacing) - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, x, y + 2 * (btn_height + spacing), btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Options", x + btn_width * 0.5, y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-	if (game->menu->button_selected == 4)
-		draw_rectangle(game, x - 2, y + 3 * (btn_height + spacing) - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, x, y + 3 * (btn_height + spacing), btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Exit", x + btn_width * 0.5, y + 3 * (btn_height + spacing) + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+	info = init_draw_info(btn_height * 0.5, "Solo", x + btn_width * 0.5, y + btn_height * 0.33 - 5);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	info2 = init_draw_info(0, "y", x, y);
+	info2.color = MENU_BUTTON_COLOR;
+	info2.height = btn_height;
+	info2.width = btn_width;
+	draw_selected_button(game);
+	draw_rectangle(game, info2);
+	draw_text(game, info);
+	info2.y += btn_height + spacing;
+	draw_rectangle(game, info2);
+	info.str = "Multi";
+	info.y += btn_height + spacing;
+	draw_text(game, info);
+	info2.y += btn_height + spacing;
+	draw_rectangle(game, info2);
+	info.str = "Options";
+	info.y += btn_height + spacing;
+	draw_text(game, info);
+	info2.y += btn_height + spacing;
+	draw_rectangle(game, info2);
+	info.str = "Exit";
+	info.y += btn_height + spacing;
+	draw_text(game, info);
 }

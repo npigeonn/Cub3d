@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 13:24:33 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 23:48:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/20 21:33:43 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,10 @@ void	chat_draw(t_game *game)
 	if (game->chatbox->message[0] != '\0')
 		draw_text_max_right(game, info);
 	else
-		draw_text_right(game, "Enter a message", width + 40, y + height + 14,
-			22, 0x000000);
+	{
+		info.str = "Enter a message";
+		info.x = width + 40;
+		info.y = y + height + 14;
+		draw_text_right(game, info);
+	}
 }

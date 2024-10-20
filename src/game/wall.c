@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:13:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 09:01:37 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/19 00:42:22 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,35 +60,36 @@ bool	is_colored_wall(t_game *game, int side, int x, int draw_start, int draw_end
 	return (true);
 }
 
-void	draw_wall(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side)
+void	draw_wall(t_game *game)
 {
-	t_image *texture;
+	t_image		*texture;
+	t_raycast	*raycast = game->player->raycast;
 		
-	float perp_wall_dist = (side == SIDE_EAST || side == SIDE_WEST)
-		? (map_x - game->player->x + ((1 - step_x) >> 1)) / ray_dir_x
-		: (map_y - game->player->y + ((1 - step_y) >> 1)) / ray_dir_y;
+	raycast->perp_wall_dist = (raycast->side == SIDE_EAST || raycast->side == SIDE_WEST)
+		? (raycast->map_x - game->player->x + ((1 - raycast->step_x) >> 1)) / raycast->ray_dir_x
+		: (raycast->map_y - game->player->y + ((1 -raycast-> step_y) >> 1)) / raycast->ray_dir_y;
 
-	int line_height = (int)(game->screen_height / perp_wall_dist);
-	int draw_start = (game->screen_height >> 1) - (line_height >> 1) - (int)(game->player->height * line_height);
-	int draw_end = draw_start + line_height - 1;
+	raycast->line_height = (int)(game->screen_height / raycast->perp_wall_dist);
+	raycast->draw_start = (game->screen_height >> 1) - (raycast->line_height >> 1) - (int)(game->player->height * raycast->line_height);
+	raycast->draw_end = raycast->draw_start + raycast->line_height - 1;
 
-	game->wall_distances[x] = perp_wall_dist;
-	if (is_colored_wall(game, side, x, draw_start, draw_end))
+	game->wall_distances[raycast->x] = raycast->perp_wall_dist;
+	if (is_colored_wall(game, raycast->side, raycast->x, raycast->draw_start, raycast->draw_end))
 		return ;
-	if (draw_start < 0) draw_start = 0;
-	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
-	float wall_x = (side == SIDE_EAST || side == SIDE_WEST)
-		? (game->player->y + perp_wall_dist * ray_dir_y)
-		: (game->player->x + perp_wall_dist * ray_dir_x);
+	if (raycast->draw_start < 0) raycast->draw_start = 0;
+	if (raycast->draw_end >= game->screen_height) raycast->draw_end = game->screen_height - 1;
+	float wall_x = (raycast->side == SIDE_EAST || raycast->side == SIDE_WEST)
+		? (game->player->y + raycast->perp_wall_dist * raycast->ray_dir_y)
+		: (game->player->x + raycast->perp_wall_dist * raycast->ray_dir_x);
 	wall_x -= (int)wall_x;
-	switch (side)
+	switch (raycast->side)
 	{
 		case SIDE_EAST: texture = game->textures->east; break;
 		case SIDE_WEST: texture = game->textures->west; break;
 		case SIDE_NORTH: texture = game->textures->north; break;
 		case SIDE_SOUTH: texture = game->textures->sud; break;
 	}
-	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, wall_x, line_height);
+	draw_vertical_line_with_texture(game, raycast->x, raycast->draw_start, raycast->draw_end, texture, wall_x, raycast->line_height);
 }
 
 

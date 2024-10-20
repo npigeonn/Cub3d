@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/18 21:28:26 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/19 14:53:33 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,18 +23,15 @@ LIBS_DIR = ./libs/
 RM = rm -rf
 
 SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
-				raycaster.c \
 				draw.c \
 				door.c \
 				wall.c \
-				teleporter.c \
-				sprite.c \
 				minimap.c \
 				crosshair.c \
 				head_up_display.c \
 				health_point.c \
 				ammo.c \
-				enemies.c)
+				game_loop.c )
 
 SRC_MENU =	$(addprefix $(PATH_SRC)menu/, \
 				option.c \
@@ -79,7 +76,22 @@ SRC_CHAT =	$(addprefix $(PATH_SRC)game/chat/, \
 				handle.c \
 				show_message.c )
 
-SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT)
+SRC_RAYCASTER = $(addprefix $(PATH_SRC)game/raycaster/, \
+				raycaster.c \
+				ray.c \
+				floor.c )
+
+SRC_SPRITES = $(addprefix $(PATH_SRC)game/sprite/, \
+				teleporter.c \
+				sprite.c \
+				enemies.c )
+	
+SRC_INPUT = $(addprefix $(PATH_SRC)input/, \
+				mouse.c \
+				keyboard.c \
+				keyboard_utils.c )
+
+SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT) $(SRC_RAYCASTER) $(SRC_INPUT) $(SRC_SPRITES)
 
 ############### MINILIBX ###############
 
@@ -101,7 +113,7 @@ all: $(NAME)
 $(OBJS): ./includes/* Makefile
 
 $(PATH_OBJ):
-	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/chat
+	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/chat $@game/raycaster $@game/sprite $@input
 
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
 	cc -c $(CFLAGS) $(INCLUDES) $< -o $@

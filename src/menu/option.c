@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 14:42:20 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/15 12:47:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/20 18:58:18 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,18 @@ static void	draw_slider(t_game *game, int x, int y, int width, int height, float
 	const int	slider_height = height * 0.33;
 	const int	cursor_width = 10;
 	const int	cursor_x = x + (int)(value * (slider_width - cursor_width));
+	t_draw_info	info;
 
-	draw_rectangle(game, x, y + slider_height * 0.5, slider_width, slider_height, 0xCCCCCC);
-	draw_rectangle(game, cursor_x, y, cursor_width, slider_height + cursor_width * 2 + slider_height * 0.5, MENU_BUTTON_SELECTED_COLOR);
+	info = init_draw_info(0, "", x, (int)(y + slider_height * 0.5));
+	info.width = slider_width;
+	info.height = slider_height;
+	info.color = 0xCCCCCC;
+	draw_rectangle(game, info);
+	info = init_draw_info(0, "", cursor_x, y);
+	info.height = slider_height + cursor_width * 2 + slider_height * 0.5;
+	info.width = cursor_width;
+	info.color = MENU_BUTTON_SELECTED_COLOR;
+	draw_rectangle(game, info);
 }
 
 void	draw_options_menu(t_game *game)
@@ -86,15 +95,31 @@ void	draw_options_menu(t_game *game)
 	const int	spacing = game->screen_height * 0.05;
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.25;
+	t_draw_info	info2;
+	t_draw_info	info;
 
-	draw_text(game, "Volume", game->screen_width >> 1, y - 20, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+	info = init_draw_info(btn_height * 0.5, "Volume", game->screen_width >> 1, y - 20);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	draw_text(game, info);
 	draw_slider(game, x, y + 30, btn_width, btn_height, game->menu->volume / 100.0f); // menu->Volume entre 0 et 100
 
-	draw_text(game, "Sensitivity", game->screen_width >> 1, y + btn_height + spacing - 20, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+	info.str = "Sensitive";
+	info.y = y + btn_height + spacing - 20;
+	draw_text(game, info);
 	draw_slider(game, x, y + btn_height + spacing + 30, btn_width, btn_height, game->menu->mouse_sensitivity / 10.0f); // Sensibilité entre 0.1 et 10
 
+	info2 = init_draw_info(0, "", x - 2, y + 2 * (btn_height + spacing) - 2);
+	info2.height = btn_height + 4;
+	info2.width =  btn_width + 4;
+	info2.color = MENU_BUTTON_SELECTED_COLOR;
 	if (game->menu->button_selected == 3)
-		draw_rectangle(game, x - 2, y + 2 * (btn_height + spacing) - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, x, y + 2 * (btn_height + spacing), btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Back", game->screen_width >> 1, y + 2 * (btn_height + spacing) + btn_height / 3 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+		draw_rectangle(game, info2);
+	info2 = init_draw_info(0, "", x, y + 2 * (btn_height + spacing));
+	info2.height = btn_height;
+	info2.width = btn_width;
+	info2.color = MENU_BUTTON_COLOR;
+	draw_rectangle(game, info2);
+	info.str = "Back";
+	info.y = y + 2 * (btn_height + spacing) + btn_height / 3 - 5;
+	draw_text(game, info);
 }

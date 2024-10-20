@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 16:01:06 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/20 23:52:09 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,29 +97,38 @@ void	draw_arc(t_game *game, int cx, int cy, int radius, float start_angle, float
 	}
 }
 
-void	draw_rounded_rectangle(t_game *game, int x, int y, int width, int height, int radius, int color)
+void	draw_rounded_rectangle(t_game *game, t_draw_info info)
 {
-	if (radius > width * 0.5) radius = width * 0.5;
-	if (radius > height * 0.5) radius = height * 0.5;
+	t_draw_info	info2;
 
-	draw_rectangle(game, x + radius, y, width - 2 * radius, height, color);
-	draw_rectangle(game, x, y + radius, width, height - 2 * radius, color);
-	draw_arc(game, x + radius, y + radius, radius, M_PI, M_PI * 1.5, MENU_BUTTON_SELECTED_COLOR);
-	draw_arc(game, x + width - radius, y + radius, radius, M_PI * 1.5, 0, MENU_BUTTON_SELECTED_COLOR);
-	draw_arc(game, x + width - radius, y + height - radius, radius, 0, M_PI * 0.5, MENU_BUTTON_SELECTED_COLOR);
-	draw_arc(game, x + radius, y + height - radius, radius, M_PI * 0.5, M_PI, MENU_BUTTON_SELECTED_COLOR);
-	for (int i = 0; i < radius; i++)
+	if (info.radius > info.width * 0.5) info.radius = info.width * 0.5;
+	if (info.radius > info.height * 0.5) info.radius = info.height * 0.5;
+	info2 = init_draw_info(0, "", info.x + info.radius, info.y);
+	info2.color = info.color;
+	info2.width = info.width - 2 * info.radius;
+	info2.height = info.height;
+	draw_rectangle(game, info2);
+	info2 = init_draw_info(0, "", info.x, info.y + info.radius);
+	info2.height = info.height - 2 * info.radius;
+	info2.width = info.width;
+	info2.color = info.color;
+	draw_rectangle(game, info2);
+	draw_arc(game, info.x + info.radius, info.y + info.radius, info.radius, M_PI, M_PI * 1.5, MENU_BUTTON_SELECTED_COLOR);
+	draw_arc(game, info.x + info.width - info.radius, info.y + info.radius, info.radius, M_PI * 1.5, 0, MENU_BUTTON_SELECTED_COLOR);
+	draw_arc(game, info.x + info.width - info.radius, info.y + info.height - info.radius, info.radius, 0, M_PI * 0.5, MENU_BUTTON_SELECTED_COLOR);
+	draw_arc(game, info.x + info.radius, info.y + info.height - info.radius, info.radius, M_PI * 0.5, M_PI, MENU_BUTTON_SELECTED_COLOR);
+	for (int i = 0; i < info.radius; i++)
 	{
-		for (int j = 0; j < radius; j++)
+		for (int j = 0; j < info.radius; j++)
 		{
-			if (sqrt(i * i + j * j) <= radius)
-				pixel_put(game, x + radius - i, y + radius - j, color);
-			if (sqrt(i * i + j * j) <= radius)
-				pixel_put(game, x + width - radius + i, y + radius - j, color);
-			if (sqrt(i * i + j * j) <= radius)
-				pixel_put(game, x + width - radius + i, y + height - radius + j, color);
-			if (sqrt(i * i + j * j) <= radius)
-				pixel_put(game, x + radius - i, y + height - radius + j, color);
+			if (sqrt(i * i + j * j) <= info.radius)
+				pixel_put(game, info.x + info.radius - i, info.y + info.radius - j, info.color);
+			if (sqrt(i * i + j * j) <= info.radius)
+				pixel_put(game, info.x + info.width - info.radius + i, info.y + info.radius - j, info.color);
+			if (sqrt(i * i + j * j) <= info.radius)
+				pixel_put(game, info.x + info.width - info.radius + i, info.y + info.height - info.radius + j, info.color);
+			if (sqrt(i * i + j * j) <= info.radius)
+				pixel_put(game, info.x + info.radius - i, info.y + info.height - info.radius + j, info.color);
 		}
 	}
 }
@@ -236,6 +245,31 @@ void	*discover_servers_thread(void *arg)
 	return (NULL);
 }
 
+static void	draw_selected_button(t_game *game)
+{
+	t_draw_info	info;
+	const int	list_width = game->screen_width * 0.65;
+	const int	list_x = (game->screen_width - list_width) * 0.1;
+	const int	remaining_space = game->screen_width - (list_x + list_width);
+	const int	btn_width = game->screen_width * 0.25;
+	const int	btn_height = game->screen_height * 0.1;
+	const int	btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
+	const int	btn_y_start = game->screen_height * 0.25;
+	info = init_draw_info(0, "", btn_x - 2, btn_y_start - 2);
+
+	info.width = btn_width + 4;
+	info.height = btn_height + 4;
+	info.color = MENU_BUTTON_SELECTED_COLOR;
+	if (game->menu->button_selected == 1)
+		draw_rectangle(game, info);
+	info.y += btn_height + game->screen_height * 0.05;
+	if (game->menu->button_selected == 2)
+		draw_rectangle(game, info);
+	info.y += btn_height + game->screen_height * 0.05;
+	if (game->menu->button_selected == 3)
+		draw_rectangle(game, info);
+}
+
 void	draw_multiplayer_menu(t_game *game)
 {
 	const int btn_width = game->screen_width * 0.25;
@@ -245,49 +279,82 @@ void	draw_multiplayer_menu(t_game *game)
 	const int list_height = game->screen_height * 0.8;
 	const int list_x = (game->screen_width - list_width) * 0.1;
 	const int list_y = (game->screen_height - list_height) * 0.35;
+	t_draw_info info2;
+	t_draw_info info = init_draw_info(btn_height * 0.5, "Available Servers", list_x + list_width * 0.5, list_y + 20);
 
-	draw_rectangle(game, list_x, list_y, list_width, list_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Available Servers", list_x + list_width * 0.5, list_y + 20, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	info2 = init_draw_info(0, "", list_x, list_y);
+	info2.height = list_height;
+	info2.width = list_width;
+	info2.color = MENU_BUTTON_COLOR;
+	draw_rectangle(game, info2);
+	draw_text(game, info);
 	int server_y_offset = list_y + 80;
 	if (game->servers == NULL)
-		draw_text(game, "Searching for servers...", list_x + list_width * 0.5, game->screen_height >> 1, 20, MENU_BUTTON_TEXT_COLOR);
+	{
+		info.str = "Searching for servers...";
+		info.x = list_x + list_width * 0.5;
+		info.y = game->screen_height >> 1;
+		draw_text(game, info);
+	}
 	else
 	{
 		int i = 1;
 		t_server_info *current = game->servers;
 		while (current)
 		{
+			t_draw_info info3 = init_draw_info(84, "", list_x + 8, server_y_offset - 2);
+			info3.color = 0xda1254;
+			info3.width = list_width - 16;
+			info3.radius = 15;
 			if (game->menu->server_selected == i)
-				draw_rounded_rectangle(game, list_x + 8, server_y_offset - 2, list_width - 16, 84, 15, 0xda1254);
-			draw_rounded_rectangle(game, list_x + 10, server_y_offset, list_width - 20, 80, 15, MENU_BUTTON_SELECTED_COLOR);
-			draw_text_left(game, current->name, list_x + 40, server_y_offset + 10, btn_height * 0.4, MENU_BUTTON_TEXT_COLOR);
-			draw_text_right(game, "1/4", list_x + list_width - 80, server_y_offset + 22, btn_height * 0.4, MENU_BUTTON_TEXT_COLOR);
-			draw_text_left(game, "Ping: 30ms", list_x + 40, server_y_offset + 50, btn_height * 0.3, MENU_BUTTON_TEXT_COLOR);
+				draw_rounded_rectangle(game, info3);
+			info3 = init_draw_info(80, "", list_x + 10, server_y_offset);
+			info3.color = MENU_BUTTON_SELECTED_COLOR;
+			info3.width = list_width - 20;
+			info3.radius = 15;
+			draw_rounded_rectangle(game, info3);
+			info3 = init_draw_info(btn_height * 0.4, current->name, list_x + 40, server_y_offset + 10);
+			info3.color = MENU_BUTTON_TEXT_COLOR;
+			draw_text_left(game, info3);
+			info3.str = "1/4";
+			info3.y = server_y_offset + 22;
+			info3.x = list_x + list_width - 80;
+			info3.height = btn_height * 0.4;
+			draw_text_right(game, info3);
+			info3.x = list_x + list_width - 40;
+			info3.str = "Ping: 30ms";
+			info3.y = server_y_offset + 50;
+			info3.height = btn_height * 0.3;
+			draw_text_left(game, info3);
 			server_y_offset += 90;
 			current = current->next;
 			i++;
 		}
 	}
 
+	draw_selected_button(game);
 	const int remaining_space = game->screen_width - (list_x + list_width);
 	const int btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
 	const int btn_y_start = game->screen_height * 0.25;
-
-	if (game->menu->button_selected == 1)
-		draw_rectangle(game, btn_x - 2, btn_y_start - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, btn_x, btn_y_start, btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Join Server", btn_x + btn_width * 0.5, btn_y_start + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-
-	const int create_btn_y = btn_y_start + btn_height + spacing;
-	if (game->menu->button_selected == 2)
-		draw_rectangle(game, btn_x - 2, create_btn_y - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, btn_x, create_btn_y, btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Create Server", btn_x + btn_width * 0.5, create_btn_y + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
-
-	const int back_btn_y = create_btn_y + btn_height + spacing;
-	if (game->menu->button_selected == 3)
-		draw_rectangle(game, btn_x - 2, back_btn_y - 2, btn_width + 4, btn_height + 4, MENU_BUTTON_SELECTED_COLOR);
-	draw_rectangle(game, btn_x, back_btn_y, btn_width, btn_height, MENU_BUTTON_COLOR);
-	draw_text(game, "Back", btn_x + btn_width * 0.5, back_btn_y + btn_height * 0.33 - 5, btn_height * 0.5, MENU_BUTTON_TEXT_COLOR);
+	info2 = init_draw_info(0, "", btn_x, btn_y_start);
+	info2.height = btn_height;
+	info2.width = btn_width;
+	info2.color = MENU_BUTTON_COLOR;
+	draw_rectangle(game, info2);
+	info.str = "Join Server";
+	info.x = btn_x + btn_width * 0.5;
+	info.y = btn_y_start + btn_height * 0.33 - 5;
+	draw_text(game, info);
+	info2.y += btn_height + spacing;
+	draw_rectangle(game, info2);
+	info.str = "Create Server";
+	info.y = btn_y_start + btn_height + spacing + btn_height * 0.33 - 5;
+	draw_text(game, info);
+	info2.y += btn_height + spacing;
+	draw_rectangle(game, info2);
+	info.str = "Back";
+	info.y = btn_y_start + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;
+	draw_text(game, info);
 }
 
