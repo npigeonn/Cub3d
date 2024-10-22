@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 12:01:08 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 13:31:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,23 @@
 
 void	add_enemies(t_game *game, int x, int y, int floor)
 {
-	t_enemy	*new;
+	t_sprite	*new;
 
-	new = malloc(sizeof(t_enemy));
+	new = malloc(sizeof(t_sprite));
 	new->x = x + 0.5;
 	new->y = y + 0.5;
 	new->floor = floor;
 	new->health = 1;
 	new->dirX = 0;
 	new->dirY = 1;
-	new->next = game->enemies;
+	new->next = game->sprites;
 	new->state = PATROL;
 	new->direction = 200;
 	new->frame_count = 0;
 	new->fov = 60;
 	new->shoot_delay = 0;
-	game->enemies = new;
+	new->type = SPRITE_ENEMY;
+	game->sprites = new;
 }
 
 bool	is_position_valid(t_game *game, float x, float y, int floor)
@@ -103,7 +104,7 @@ void	init_enemies(t_game *game)
 	{
 		rand();
 		int	**pos;
-		int	nb_enemies = 1;
+		int	nb_enemies = ft_rand(2, 6);
 		int	j;
 		int	nb_pos = get_number_pos(game, i);
 
@@ -114,19 +115,6 @@ void	init_enemies(t_game *game)
 			int *pos_e = pos[ft_rand(0, nb_pos - 1)];
 			add_enemies(game, pos_e[0], pos_e[1], i);
 		}
-	}
-}
-
-void	draw_enemies(t_game *game)
-{
-	t_enemy	*current;
-
-	current = game->enemies;
-	while (current)
-	{
-		if (current->floor == game->player->floor && current->health > 0)
-			draw_sprite(game, game->textures->enemies, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0);
-		current = current->next;
 	}
 }
 
@@ -179,14 +167,130 @@ bool	has_line_of_sight(t_game *game, t_point enemy_pos, t_point player_pos, floa
 	return (false);
 }
 
+bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
+{
+	t_sprite *current = game->sprites;
+
+	while (current)
+	{
+		if (current->type != SPRITE_ENEMY || current->health <= 0)
+		{
+			current = current->next;
+			continue;
+		}
+		if (current->floor != projectile->floor || current == projectile->enemy)
+		{
+			current = current->next;
+			continue;
+		}
+		float dx = current->x - projectile->x;
+		float dy = current->y - projectile->y;
+		float distance = sqrt(dx * dx + dy * dy);
+
+		if (distance < 0.5f)
+		{
+			current->health -= projectile->damage;
+			return (true);
+		}
+		current = current->next;
+	}
+	if (game->player->floor == projectile->floor && projectile->owner != game->player)
+	{
+		float dx = game->player->x - projectile->x;
+		float dy = game->player->y - projectile->y;
+		float distance = sqrt(dx * dx + dy * dy);
+
+		if (distance < 0.5f)
+		{
+			game->player->health -= projectile->damage;
+			return (true);
+		}
+	}
+	return (false);
+}
+
+void	update_projectiles(t_game *game)
+{
+	t_projectile *current = game->projectiles;
+	t_projectile *prev = NULL;
+
+	while (current)
+	{
+		current->x += cos(current->direction * (M_PI / 180.0f)) * current->speed;
+		current->y += sin(current->direction * (M_PI / 180.0f)) * current->speed;
+
+		if (!is_position_passable(game, current->x, current->y, current->floor))
+		{
+			if (prev)
+				prev->next = current->next;
+			else
+				game->projectiles = current->next;
+			t_projectile *temp = current;
+			current = current->next;
+			free(temp);
+		}
+		else
+		{
+			if (check_collision_with_entity(game, current))
+			{
+				if (prev)
+					prev->next = current->next;
+				else
+					game->projectiles = current->next;
+				t_projectile *temp = current;
+				current = current->next;
+				free(temp);
+			}
+			else
+			{
+				prev = current;
+				current = current->next;
+			}
+		}
+	}
+}
+
+void	shoot_at_player(t_sprite *enemy, t_point player_pos, t_game *game)
+{
+	float dx = player_pos.x - enemy->x;
+	float dy = player_pos.y - enemy->y;
+	float angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
+	float angle_diff = fmodf(fabsf(angle_to_player - enemy->direction), 360.0f);
+		
+	if (angle_diff > 180.0f)
+		angle_diff = 360.0f - angle_diff;
+	if (angle_diff < 5.0f && enemy->shoot_delay <= 0)
+	{
+		t_projectile *new_projectile = malloc(sizeof(t_projectile));
+		
+		if (new_projectile)
+		{
+			new_projectile->x = enemy->x;
+			new_projectile->y = enemy->y;
+			new_projectile->direction = angle_to_player;
+			new_projectile->speed = 0.4f;
+			new_projectile->next = NULL;
+			new_projectile->owner = NULL;
+			new_projectile->enemy = enemy;
+			new_projectile->next = game->projectiles; 
+			new_projectile->floor = enemy->floor;
+			new_projectile->damage = 0.05f;
+			game->projectiles = new_projectile;
+		}
+		enemy->shoot_delay = 1;
+	}
+	else if (enemy->shoot_delay > 0)
+		enemy->shoot_delay -= 0.6 * game->delta_time;
+}
+
 void	update_enemies(t_game *game)
 {
-	t_enemy *current = game->enemies;
+	t_sprite *current = game->sprites;
 	t_point player_pos = {game->player->x, game->player->y, game->player->floor};
 
 	while (current)
 	{
-		if (current->health <= 0)
+		if (current->type != SPRITE_ENEMY || current->health <= 0)
 		{
 			current = current->next;
 			continue ;
@@ -226,6 +330,8 @@ void	update_enemies(t_game *game)
 		{
 			if (distance < 7.0f && current->floor == game->player->floor)
 			{
+				current->dirX = 0;
+				current->dirY = 0;
 				current->direction = atan2(dy, dx) * (180.0f / M_PI);
 				shoot_at_player(current, player_pos, game);
 			}

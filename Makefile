@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/22 11:24:13 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/22 12:22:35 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,8 +31,7 @@ SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
 				head_up_display.c \
 				health_point.c \
 				ammo.c \
-				game_loop.c \
-				shoot.c )
+				game_loop.c )
 
 SRC_MENU =	$(addprefix $(PATH_SRC)menu/, \
 				option.c \

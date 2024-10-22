@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 13:49:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 09:10:14 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 14:02:56 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,6 @@ void	draw_text_field(t_game *game, int x, int y, int width, int height, char *te
 		info = init_draw_info(height * 0.5, text, x + 10, y + height / 2 - 10);
 		info.color = MENU_BUTTON_TEXT_COLOR;
 		ft_strlcpy(info.str, text, MAX_MESSAGE_LENGTH);
-		printf("text: %s\n", info.str);
 		draw_text_left(game, info);
 	}
 }

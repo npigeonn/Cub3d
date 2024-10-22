@@ -8,6 +8,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 
+# include "sprite.h"
 # include "raycaster.h"
 # include "game.h"
 # include "server.h"

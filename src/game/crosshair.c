@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:16:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/22 11:05:25 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 12:23:48 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	create_projectile(t_game *game)
 	new_projectile->floor = p->floor;
 	new_projectile->dir_x = p->dirX;
 	new_projectile->dir_y = p->dirY;
-	new_projectile->damage = 0.05f;
+	new_projectile->damage = 0.10f;
 	new_projectile->owner = p;
 	new_projectile->enemy = NULL;
 	game->projectiles = new_projectile;

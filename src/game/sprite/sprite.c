@@ -1,12 +1,17 @@
 /* ************************************************************************** */
-/*                                                                            */
+/*	                                                                        */
 /*                                                        :::      ::::::::   */
 /*   sprite.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
+<<<<<<< HEAD
 /*   Created: 2024/10/10 12:09:23 by ybeaucou          #+#    #+#             */
 /*   Updated: 2024/10/22 12:03:20 by npigeon          ###   ########.fr       */
+=======
+/*   Created: 2024/10/22 13:45:22 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/10/22 13:50:46 by ybeaucou         ###   ########.fr       */
+>>>>>>> b734831 (optimize sprite)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,33 +84,96 @@ void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_t
 			int tex_x_base = (int)((stripe - stripe_start) * texture->sprite_width / sprite_width);
 			int tex_x = tex_x_base + sprite_index * texture->sprite_width;
 			if (tex_x_base >= 0 && tex_x < texture->width)
-			{
 				draw_vertical_sprite_band(game, stripe, draw_start_y, draw_end_y, texture, tex_x, sprite_height);
-				game->wall_distances[stripe] = transform_y; // Mettre à jour la distance du mur
+		}
+	}
+}
+
+float	calculate_distance(t_sprite *sprite, float camX, float camY, int player_floor)
+{
+	float sprite_x, sprite_y;
+
+	if (sprite->type == SPRITE_TELEPORTER)
+	{
+		if (sprite->floor == player_floor)
+		{
+			sprite_x = sprite->x;
+			sprite_y = sprite->y;
+		} else
+		{
+			sprite_x = sprite->x1;
+			sprite_y = sprite->y1;
+		}
+	} else
+	{
+		sprite_x = sprite->x;
+		sprite_y = sprite->y;
+	}
+
+	return (sqrtf((sprite_x - camX) * (sprite_x - camX) + (sprite_y - camY) * (sprite_y - camY)));
+}
+
+void	sort_sprites(t_sprite **head, float camX, float camY, int player_floor)
+{
+	if (*head == NULL || (*head)->next == NULL)
+		return;
+
+	bool swapped = true;
+	t_sprite *current;
+	t_sprite *prev = NULL;
+	t_sprite *next_sprite;
+
+	while (swapped)
+	{
+		swapped = false;
+		prev = NULL;
+		current = *head;
+
+		while (current->next != NULL)
+		{
+			next_sprite = current->next;
+			float distance_current = calculate_distance(current, camX, camY, player_floor);
+			float distance_next = calculate_distance(next_sprite, camX, camY, player_floor);
+			if (distance_current < distance_next)
+			{
+				if (prev == NULL)
+					*head = next_sprite;
+				else
+					prev->next = next_sprite;
+				current->next = next_sprite->next;
+				next_sprite->next = current;
+				swapped = true;
+				prev = next_sprite;
+			}
+			else
+			{
+				prev = current;
+				current = current->next;
 			}
 		}
 	}
 }
 
-
-void draw_teleporter(t_game *game)
-{
-	t_teleporter *current = game->tp;
-	
-	while (current)
-	{
-		if (current->floor1 == game->player->floor)
-			draw_sprite(game, game->textures->tp, current->x1, current->y1, 150, 0.4, 1);
-		if (current->floor2 == game->player->floor)
-			draw_sprite(game, game->textures->tp, current->x2, current->y2, 150, 0.4, 1);
-		current = current->next;
-	}
-}
-
 void	draw_sprites(t_game *game)
 {
-	draw_teleporter(game);
-	draw_enemies(game);
-	draw_ammo(game);
+	t_sprite	*current;
+
+	sort_sprites(&game->sprites, game->player->x, game->player->y, game->player->floor);
+	current = game->sprites;
+	while (current)
+	{
+		if (current->type == SPRITE_TELEPORTER)
+		{
+			if (current->floor == game->player->floor)
+				draw_sprite(game, game->textures->tp, current->x, current->y, 150, 0.4, 1);
+			if (current->floor1 == game->player->floor)
+				draw_sprite(game, game->textures->tp, current->x1, current->y1, 150, 0.4, 1);
+		}
+		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor && current->health > 0)
+			draw_sprite(game, game->textures->enemies, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0);
+		else if (current->type == SPRITE_AMMO && current->still_exist)
+			draw_sprite(game, game->textures->ammo, current->x, current->y, 150, 0.4, 1);
+		current = current->next;
+	}
 	draw_collectible_life(game);
 }

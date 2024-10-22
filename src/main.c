@@ -122,6 +122,11 @@ void	init_img(t_game *game)
 	load_texture(game, game->textures->weapon, "./assets/sprites/weapons/PISGE0.xpm");
 	game->textures->fire = malloc(sizeof(t_image));
 	load_texture(game, game->textures->fire, "assets/sprites/weapons/PISFA0.xpm");
+	game->textures->ammo = malloc(sizeof(t_image));
+	load_texture(game, game->textures->ammo, "./assets/sprites/ammos.xpm");
+	game->textures->ammo->nb_sprite = 1;
+	game->textures->ammo->sprite_height = game->textures->ammo->height;
+	game->textures->ammo->sprite_width = game->textures->ammo->width;
 }
 
 void	init_floorcast(t_game *game)
@@ -158,8 +163,11 @@ void	init_player(t_game	*game)
 	game->player->anim_shoot = 0;
 	game->player->health = 1;
 	game->player->ammo = 30;
+<<<<<<< HEAD
 	game->ammo = NULL;
 	game->health = NULL;
+=======
+>>>>>>> b734831 (optimize sprite)
 	game->menu = malloc(sizeof(t_menu));
 	game->menu->volume = 20;
 	game->menu->mouse_sensitivity = 2;
@@ -202,6 +210,7 @@ int	main(int ac, char **av)
 	game.mlx = mlx_init();
 	game.client = malloc(sizeof(t_client));
 	game.client->players = NULL;
+	game.sprites = NULL;
 	gettimeofday(&game.last_time, NULL);
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
 	game.screen_height = 1080;
@@ -215,8 +224,6 @@ int	main(int ac, char **av)
 	game.wall_distances = malloc(sizeof(float) * game.screen_width);
 	ft_bzero(game.wall_distances, game.screen_width);
 	game.door = NULL;
-	game.tp = NULL;
-	game.enemies = NULL;
 	game.client->name[0] = '\0';
 	game.client->pseudo[0] = '\0';
 	game.client->ip[0] = '\0';

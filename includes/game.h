@@ -104,7 +104,6 @@ typedef struct s_player
 	t_raycast	*raycast;
 }	t_player;
 
-
 typedef struct s_image
 {
 	void	*img;
@@ -139,6 +138,7 @@ typedef	struct s_textures
 	t_image	*bullet;
 	t_image	*weapon;
 	t_image	*fire;
+	t_image	*ammo;
 	int		so;
 	int		no;
 	int		c;
@@ -162,36 +162,6 @@ typedef	struct s_door
 	float			animation;
 	struct s_door	*next;
 }	t_door;
-
-typedef	struct s_ammo
-{
-	int				x;
-	int				y;
-	int				floor;
-	bool			still_exist;
-	struct s_ammo	*next;
-}	t_ammo;
-
-typedef	struct s_health
-{
-	int				x;
-	int				y;
-	int				floor;
-	bool			still_exist;
-	float			animation;
-	struct s_health	*next;
-}	t_health;
-
-typedef	struct s_teleporter
-{
-	float				x1;
-	float				y1;
-	int					floor1;
-	float				x2;
-	float				y2;
-	int					floor2;
-	struct s_teleporter	*next;
-}	t_teleporter;
 
 typedef struct s_menu
 {
@@ -220,22 +190,6 @@ typedef struct	s_point
 	float	y;
 	int		floor;
 } t_point;
-
-typedef struct	s_enemy
-{
-	float		x;
-	float		y;
-	float		dirX;
-	float		dirY;
-	int			floor;
-	float		health;
-	int			state;
-	int			direction;
-	int			frame_count;
-	float		fov;
-	float		shoot_delay;
-	struct s_enemy	*next;
-}	t_enemy;
 
 typedef struct s_server_info
 {
@@ -296,6 +250,8 @@ typedef struct s_game
 {
 	t_menu			*menu;
 	t_memory_table	*mem;
+	t_sprite		*sprites;
+
 	void			*mlx;
 	void			*win;
 	int				screen_width;
@@ -310,15 +266,11 @@ typedef struct s_game
 	int				nb_floor;
 	int				clr;
 	t_door			*door;
-	t_ammo			*ammo;
-	t_health		*health;
 	t_images		*images;
 	t_player		*player;
 	t_textures		*textures;
 	float			*wall_distances;
-	t_teleporter	*tp;
 	t_chatbox		*chatbox;
-	t_enemy			*enemies;
 	float			delta_time;
 	struct timeval	last_time;
 

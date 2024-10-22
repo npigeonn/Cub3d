@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/10 13:53:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 13:21:00 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,38 +14,42 @@
 
 void	add_teleporter(t_game *game, int x, int y, int floor)
 {
-	t_teleporter	*tp;
+	t_sprite	*tp;
 	
-	tp = malloc(sizeof(t_teleporter));
-	tp->x1 = x + 0.5;
-	tp->y1 = y + 0.5;
-	tp->floor1 = floor;
-	tp->x2 = 0;
-	tp->y2 = 0;
-	tp->floor2 = 0;
-	tp->next = game->tp;
-	game->tp = tp;
+	tp = malloc(sizeof(t_sprite));
+	tp->x = x + 0.5;
+	tp->y = y + 0.5;
+	tp->floor = floor;
+	tp->x1 = 0;
+	tp->y1 = 0;
+	tp->floor1 = 0;
+	tp->next = game->sprites;
+	tp->type = SPRITE_TELEPORTER;
+	game->sprites = tp;
 }
 
 void	set_output_teleporter(t_game *game, int x, int y, int floor)
 {
-	game->tp->x2 = x + 0.5;
-	game->tp->y2 = y + 0.5;
-	game->tp->floor2 = floor;
+	game->sprites->x1 = x + 0.5;
+	game->sprites->y1 = y + 0.5;
+	game->sprites->floor1 = floor;
 }
 
-static t_teleporter	*get_teleporter(t_game *game, int x, int y)
+static t_sprite	*get_teleporter(t_game *game, int x, int y)
 {
-	t_teleporter	*current;
+	t_sprite	*current;
 
-	current = game->tp;
-	if (!game->tp)
-		return (NULL);
+	current = game->sprites;
 	while (current)
 	{
-		if ((int)current->x1 == x && (int)current->y1 == y)
+		if (current->type != SPRITE_TELEPORTER)
+		{
+			current = current->next;
+			continue;
+		}
+		if ((int)current->x == x && (int)current->y == y)
 			return (current);
-		else if ((int)current->x2 == x && (int)current->y2 == y)
+		else if ((int)current->x1 == x && (int)current->y1 == y)
 			return (current);
 		current = current->next;
 	}
@@ -54,8 +58,8 @@ static t_teleporter	*get_teleporter(t_game *game, int x, int y)
 
 void	use_teleporter(t_game *game)
 {
-	t_teleporter	*tp;
-	t_player		*p = game->player;
+	t_sprite	*tp;
+	t_player	*p = game->player;
 
 	p = game->player;
 	if (game->menu->message != TELEPORT)
@@ -65,9 +69,9 @@ void	use_teleporter(t_game *game)
 	{
 		if ((int)p->x == (int)tp->x1 && (int)p->y == (int)tp->y1 && p->floor == tp->floor1)
 		{
-			p->x = tp->x2;
-			p->y = tp->y2;
-			p->floor = tp->floor2;
+			p->x = tp->x;
+			p->y = tp->y;
+			p->floor = tp->floor;
 		}
 		else
 		{
