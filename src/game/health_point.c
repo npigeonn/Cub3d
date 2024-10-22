@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/17 14:48:46 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/22 11:57:39 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,51 @@ void	health_point_draw(t_game *game)
 		}
 	}
 	life(game);
+}
+
+void	draw_collectible_life(t_game *game)
+{
+	t_image 	*im_health;
+	t_health	*current;
+
+	current = game->health;
+	im_health = malloc(sizeof(t_image));
+
+	load_texture(game, im_health, "./assets/sprites/health.xpm");
+	im_health->nb_sprite = 1;
+	im_health->sprite_height = im_health->height;
+	im_health->sprite_width = im_health->width;
+	while (current)
+	{
+		if (current->still_exist)
+			draw_sprite(game, im_health, current->x, current->y, 150, 0.4, 1);
+		current = current->next;
+	}
+}
+
+void	on_life(t_game *game)
+{
+	t_health *current;
+
+	current = game->health;
+	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'H')
+	{
+		while (current)
+		{
+			if ((int)game->player->x == current->x && (int)game->player->y == current->y
+				&& game->player->floor == current->floor)
+			{
+				if (current->still_exist == 1)
+				{
+					current->still_exist = 0;
+					if (game->player->health < 0.75)
+						game->player->health += 0.25;
+					else
+						game->player->health = 1;
+				}
+				return ;
+			}
+			current = current->next;
+		}
+	}
 }

@@ -389,8 +389,8 @@ void	update_enemies(t_game *game);
 void	draw_ammo(t_game *game);
 
 // health
-
-
+void	on_life(t_game *game);
+void	draw_collectible_life(t_game *game);
 
 // PARSING
 int		err(char *str);

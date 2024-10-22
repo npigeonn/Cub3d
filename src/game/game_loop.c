@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   game_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 12:00:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 12:03:10 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../includes/cub3d.h"
 
@@ -35,6 +36,7 @@ static void	game_engine(t_game *game)
 	update_enemies(game);
 	on_ammo(game);
 	update_projectiles(game);
+	on_life(game);
 	draw_sprites(game);
 	chat_draw(game);
 	show_message(game);

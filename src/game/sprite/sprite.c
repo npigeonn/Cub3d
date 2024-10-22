@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   sprite.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 12:09:23 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 11:59:42 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 12:03:20 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../includes/cub3d.h"
 
@@ -106,4 +107,5 @@ void	draw_sprites(t_game *game)
 	draw_teleporter(game);
 	draw_enemies(game);
 	draw_ammo(game);
+	draw_collectible_life(game);
 }
