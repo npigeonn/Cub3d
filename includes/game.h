@@ -6,6 +6,21 @@
 # include <sys/time.h>
 # include <netdb.h>
 
+typedef struct s_projectile
+{
+	float	x;
+	float	y;
+	float	dir_x;
+	float	dir_y;
+	float	speed;
+	float	damage;
+	float	direction;
+	int		floor;
+	struct s_player	*owner;
+	struct s_enemy	*enemy;
+	struct s_projectile	*next;
+}	t_projectile;
+
 typedef struct	s_draw_info
 {
 	int		width;
@@ -218,6 +233,7 @@ typedef struct	s_enemy
 	int			direction;
 	int			frame_count;
 	float		fov;
+	float		shoot_delay;
 	struct s_enemy	*next;
 }	t_enemy;
 
@@ -263,9 +279,9 @@ typedef struct	S_message
 {
 	char				pseudo[20];
 	int					color;
-    char				message[MAX_MESSAGE_LENGTH];
-    struct timeval		time;
-    struct s_message	*next;
+	char				message[MAX_MESSAGE_LENGTH];
+	struct timeval		time;
+	struct s_message	*next;
 } t_message;
 
 typedef struct	s_chatbox
@@ -306,6 +322,7 @@ typedef struct s_game
 	float			delta_time;
 	struct timeval	last_time;
 
+	t_projectile	*projectiles;
 	t_client		*client;
 	t_server_info	*servers;
 	pthread_t		discover_servers_thread;

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:21:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/20 19:00:31 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 09:16:46 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,9 @@ void	draw_server_error_menu(t_game *game)
 	if (game->menu->button_selected == 1)
 		draw_rectangle(game, info2);
 	info2 = init_draw_info(x, y + 2 * (btn_height + spacing), btn_width, btn_height);
+	info2 = init_draw_info(btn_height, "", x, y + 2 * (btn_height + spacing));
 	info2.color = MENU_BUTTON_COLOR;
+	info2.width = btn_width;
 	draw_rectangle(game, info2);
 	info.str = "Return to Menu";
 	info.y = y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;

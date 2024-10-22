@@ -6,7 +6,11 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/10/22 11:04:52 by npigeon          ###   ########.fr       */
+=======
+/*   Updated: 2024/10/22 11:23:55 by ybeaucou         ###   ########.fr       */
+>>>>>>> 87f1402 (d)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +37,11 @@ static void	game_engine(t_game *game)
 	cast_floor(game);
 	draw_players(game);
 	update_enemies(game);
+<<<<<<< HEAD
 	on_ammo(game);
+=======
+	update_projectiles(game);
+>>>>>>> 87f1402 (d)
 	draw_sprites(game);
 	chat_draw(game);
 	show_message(game);

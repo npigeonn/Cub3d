@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 08:36:22 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 11:36:59 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 	new->x = x + 0.5;
 	new->y = y + 0.5;
 	new->floor = floor;
-	new->health = 20;
+	new->health = 1;
 	new->dirX = 0;
 	new->dirY = 1;
 	new->next = game->enemies;
@@ -28,6 +28,7 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 	new->direction = 200;
 	new->frame_count = 0;
 	new->fov = 60;
+	new->shoot_delay = 0;
 	game->enemies = new;
 }
 
@@ -102,7 +103,7 @@ void	init_enemies(t_game *game)
 	{
 		rand();
 		int	**pos;
-		int	nb_enemies = ft_rand(2, 6);
+		int	nb_enemies = 1;
 		int	j;
 		int	nb_pos = get_number_pos(game, i);
 
@@ -123,7 +124,7 @@ void	draw_enemies(t_game *game)
 	current = game->enemies;
 	while (current)
 	{
-		if (current->floor == game->player->floor)
+		if (current->floor == game->player->floor && current->health > 0)
 			draw_sprite(game, game->textures->enemies, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0);
 		current = current->next;
 	}
@@ -185,54 +186,50 @@ void	update_enemies(t_game *game)
 
 	while (current)
 	{
+		if (current->health <= 0)
+		{
+			current = current->next;
+			continue ;
+		}
 		t_point enemy_pos = {current->x, current->y, current->floor};
 		
 		float dx = player_pos.x - current->x;
 		float dy = player_pos.y - current->y;
 		float distance_squared = dx * dx + dy * dy;
-		
+		float distance = sqrt(distance_squared);
+
 		if (current->state == PATROL)
 		{
-			if (current->frame_count % 220 == 0)
-				current->direction = rand() % 360;
-			float angle_in_radians = current->direction * (M_PI / 180.0f);
-			current->dirX = cos(angle_in_radians);
-			current->dirY = sin(angle_in_radians);
+			// if (current->frame_count % 220 == 0)
+			// 	current->direction = rand() % 360;
 			
-			float new_x = current->x + current->dirX * MOVEMENT_SPEED;
-			float new_y = current->y + current->dirY * MOVEMENT_SPEED;
-			if (is_position_passable(game, new_x, new_y, current->floor))
-			{
-				current->x = new_x;
-				current->y = new_y;
-			}
-			else
-			{
-				current->direction = rand() % 360;
-				current->frame_count = 0;
-			}
-			if (distance_squared < 25.0f && has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
-				current->state = CHASE;
+			// float angle_in_radians = current->direction * (M_PI / 180.0f);
+			// current->dirX = cos(angle_in_radians);
+			// current->dirY = sin(angle_in_radians);
+			
+			// float new_x = current->x + current->dirX * 0.02;
+			// float new_y = current->y + current->dirY * 0.02;
+			// if (is_position_passable(game, new_x, new_y, current->floor))
+			// {
+			// 	current->x = new_x;
+			// 	current->y = new_y;
+			// }
+			// else
+			// {
+			// 	current->direction = rand() % 360;
+			// 	current->frame_count = 0;
+			// }
+			// if (current->floor == game->player->floor && distance_squared < 25.0f && has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
+			// 	current->state = CHASE;
 		}
 		else if (current->state == CHASE)
 		{
-			float angle_to_player = atan2(dy, dx);
-			current->dirX = cos(angle_to_player);
-			current->dirY = sin(angle_to_player);
-			
-			float new_x = current->x + current->dirX * MOVEMENT_SPEED;
-			float new_y = current->y + current->dirY * MOVEMENT_SPEED;
-			if (is_position_passable(game, new_x, new_y, current->floor))
+			if (distance < 7.0f && current->floor == game->player->floor)
 			{
-				current->x = new_x;
-				current->y = new_y;
+				// current->direction = atan2(dy, dx) * (180.0f / M_PI);
+				shoot_at_player(current, player_pos, game);
 			}
-			else
-			{
-				current->direction = rand() % 360;
-				current->frame_count = 0;
-			}
-			if (distance_squared > 64.0f || !has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
+			else 
 				current->state = PATROL;
 		}
 		current->frame_count++;

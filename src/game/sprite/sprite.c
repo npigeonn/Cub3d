@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sprite.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 12:09:23 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 11:05:57 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/22 11:59:42 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ void draw_vertical_sprite_band(t_game *game, int x, int draw_start, int draw_end
 	}
 }
 
-void draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_to_sprite, float scale, float z_offset)
+void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_to_sprite, float scale, float z_offset)
 {
-	int sprite_order[8] = {0, 1, 2, 3, 5, 6, 7, 4};
+	int sprite_order[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 
 	float sprite_x = x - game->player->x;
 	float sprite_y = y - game->player->y;
@@ -48,24 +48,20 @@ void draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_t
 
 	if (transform_y <= 0)
 		return;
-
 	float player_angle = atan2(game->player->dirY, game->player->dirX);
 	float relative_angle = angle_to_sprite - player_angle;
 
-	if (relative_angle > M_PI)
-		relative_angle -= 2 * M_PI;
-	if (relative_angle < -M_PI)
-		relative_angle += 2 * M_PI;
+
+	if (relative_angle > M_PI) relative_angle -= 2 * M_PI;
+	if (relative_angle < -M_PI) relative_angle += 2 * M_PI;
 
 	int sprite_index = (int)((relative_angle + M_PI) / (2 * M_PI) * texture->nb_sprite) % texture->nb_sprite;
 	sprite_index = sprite_order[sprite_index];
 
-	// Calcule de la taille avec le facteur de mise à l'échelle
 	int sprite_screen_x = (int)((game->screen_width * 0.5f) * (1 + transform_x / transform_y));
-	int sprite_height = abs((int)(game->screen_height / transform_y)) * scale;  // Applique l'échelle ici
-	int sprite_width = abs((int)(game->screen_height / transform_y)) * scale;  // Applique l'échelle ici
+	int sprite_height = abs((int)(game->screen_height / transform_y)) * scale;
+	int sprite_width = abs((int)(game->screen_height / transform_y)) * scale;
 
-	// Ajout de l'offset de hauteur (z_offset) pour ajuster la position verticale
 	int draw_start_y = (-sprite_height / 2) + (game->screen_height / 2) - (int)(game->player->height * sprite_height) + (int)(z_offset * sprite_height);
 	int draw_end_y = (sprite_height / 2) + (game->screen_height / 2) - (int)(game->player->height * sprite_height) + (int)(z_offset * sprite_height);
 
@@ -81,16 +77,14 @@ void draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_t
 		{
 			int tex_x_base = (int)((stripe - stripe_start) * texture->sprite_width / sprite_width);
 			int tex_x = tex_x_base + sprite_index * texture->sprite_width;
-
 			if (tex_x_base >= 0 && tex_x < texture->width)
 			{
 				draw_vertical_sprite_band(game, stripe, draw_start_y, draw_end_y, texture, tex_x, sprite_height);
-				game->wall_distances[stripe] = transform_y;
+				game->wall_distances[stripe] = transform_y; // Mettre à jour la distance du mur
 			}
 		}
 	}
 }
-
 
 
 void draw_teleporter(t_game *game)
@@ -109,11 +103,7 @@ void draw_teleporter(t_game *game)
 
 void	draw_sprites(t_game *game)
 {
-	t_image *im_health;
 	draw_teleporter(game);
 	draw_enemies(game);
 	draw_ammo(game);
-	
-
-
 }

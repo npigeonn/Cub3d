@@ -216,6 +216,9 @@ int	main(int ac, char **av)
 	game.door = NULL;
 	game.tp = NULL;
 	game.enemies = NULL;
+	game.client->name[0] = '\0';
+	game.client->pseudo[0] = '\0';
+	game.client->ip[0] = '\0';
 	load_game_texture(&game);
 	parsing(av, &game);
 	init_enemies(&game);
@@ -226,6 +229,7 @@ int	main(int ac, char **av)
 	game.chatbox->message[0] = '\0';
 	game.chatbox->is_writting = false;
 	game.chatbox->messages = NULL;
+	game.projectiles = NULL;
 	set_direction(&game, game.player->begin_dir);
 	init_floorcast(&game);
 	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Raycasting 3D");

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:16:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/21 00:01:28 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 11:05:25 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,31 @@ void	draw_image(t_game *game, t_image *img, t_draw_info info)
 	}
 }
 
+void	create_projectile(t_game *game)
+{
+	t_projectile	*new_projectile;
+	t_player		*p;
+
+	float angle = game->player->dirX;
+	
+	new_projectile = malloc(sizeof(t_projectile));
+	p = game->player;
+	new_projectile->x = p->x;
+	new_projectile->y = p->y;
+	new_projectile->direction = atan2(p->dirY, p->dirX) * (180.0f / M_PI);
+	new_projectile->speed = 0.4f;
+	new_projectile->next = NULL;
+	new_projectile->next = game->projectiles; 
+	new_projectile->floor = p->floor;
+	new_projectile->dir_x = p->dirX;
+	new_projectile->dir_y = p->dirY;
+	new_projectile->damage = 0.05f;
+	new_projectile->owner = p;
+	new_projectile->enemy = NULL;
+	game->projectiles = new_projectile;
+	game->projectiles = new_projectile;
+}
+
 void	gun_draw(t_game *game)
 {
 	t_image		*im;
@@ -74,8 +99,8 @@ void	gun_draw(t_game *game)
 		game->player->anim_shoot -= 15 * game->delta_time;
 		info = init_draw_info(game->screen_height * 0.10, " ", game->screen_width * 0.473, game->screen_height * 0.552);
 		draw_image(game, game->textures->fire, info);
+		create_projectile(game);
 	}
 	info = init_draw_info(game->screen_height * 0.33, " ", game->screen_width * 0.38, game->screen_height * 0.61);
 	draw_image(game, game->textures->weapon, info);
-	// mlx_put_image_to_window(game->mlx, game->win, im->img, 0, 0);
 }
