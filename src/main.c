@@ -163,11 +163,7 @@ void	init_player(t_game	*game)
 	game->player->anim_shoot = 0;
 	game->player->health = 1;
 	game->player->ammo = 30;
-<<<<<<< HEAD
-	game->ammo = NULL;
-	game->health = NULL;
-=======
->>>>>>> b734831 (optimize sprite)
+	// game->health = NULL;
 	game->menu = malloc(sizeof(t_menu));
 	game->menu->volume = 20;
 	game->menu->mouse_sensitivity = 2;
