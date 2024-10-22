@@ -7,11 +7,15 @@
 /*                                                +#+#+#+#+#+   +#+           */
 <<<<<<< HEAD
 /*   Created: 2024/10/10 12:09:23 by ybeaucou          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/10/22 12:03:20 by npigeon          ###   ########.fr       */
 =======
 /*   Created: 2024/10/22 13:45:22 by ybeaucou          #+#    #+#             */
 /*   Updated: 2024/10/22 13:50:46 by ybeaucou         ###   ########.fr       */
 >>>>>>> b734831 (optimize sprite)
+=======
+/*   Updated: 2024/10/22 18:12:10 by npigeon          ###   ########.fr       */
+>>>>>>> 4cfa65e (munitioneasier)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +53,7 @@ void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_t
 	float sprite_y = y - game->player->y;
 		
 	float inv_det = 1.0f / (game->player->planeX * game->player->dirY - game->player->dirX * game->player->planeY);
+	
 	float transform_x = inv_det * (game->player->dirY * sprite_x - game->player->dirX * sprite_y);
 	float transform_y = inv_det * (-game->player->planeY * sprite_x + game->player->planeX * sprite_y);
 
@@ -156,6 +161,7 @@ void	sort_sprites(t_sprite **head, float camX, float camY, int player_floor)
 
 void	draw_sprites(t_game *game)
 {
+<<<<<<< HEAD
 	t_sprite	*current;
 
 	sort_sprites(&game->sprites, game->player->x, game->player->y, game->player->floor);
@@ -177,3 +183,10 @@ void	draw_sprites(t_game *game)
 	}
 	draw_collectible_life(game);
 }
+=======
+	draw_teleporter(game);
+	draw_enemies(game);
+	draw_ammo(game);
+	// draw_collectible_life(game);
+}
+>>>>>>> 4cfa65e (munitioneasier)

@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   ammo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 15:09:22 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/22 13:31:57 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 18:34:40 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../includes/cub3d.h"
 
@@ -33,12 +34,18 @@ void	on_ammo(t_game *game)
 	t_sprite *current;
 
 	current = game->sprites;
-	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'M')
+	// current = game->ammo;
+	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'M'
+		|| game->map[game->player->floor][(int)game->player->y - 1][(int)game->player->x] == 'M'
+		|| game->map[game->player->floor][(int)game->player->y + 1][(int)game->player->x] == 'M'
+		|| game->map[game->player->floor][(int)game->player->y][(int)game->player->x + 1] == 'M'
+		|| game->map[game->player->floor][(int)game->player->y][(int)game->player->x - 1] == 'M')
 	{
 		while (current)
 		{
-			if (current->type == SPRITE_AMMO && (int)game->player->x == current->x && (int)game->player->y == current->y
-				&& game->player->floor == current->floor)
+			if ((int)game->player->x <= current->x + 1 && (int)game->player->x >= current->x - 1
+				&& (int)game->player->y <= current->y + 1 && (int)game->player->y >= current->y - 1
+				current->type == SPRITE_AMMO)
 			{
 				if (current->still_exist == 1)
 				{

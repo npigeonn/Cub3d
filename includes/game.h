@@ -273,7 +273,7 @@ typedef struct s_game
 	t_chatbox		*chatbox;
 	float			delta_time;
 	struct timeval	last_time;
-
+	float			timehealth;
 	t_projectile	*projectiles;
 	t_client		*client;
 	t_server_info	*servers;
@@ -343,6 +343,7 @@ void	draw_ammo(t_game *game);
 // health
 void	on_life(t_game *game);
 void	draw_collectible_life(t_game *game);
+void	draw_anim_health(t_game *game, int x, int y, t_image *im_health);
 
 // PARSING
 int		err(char *str);

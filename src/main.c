@@ -163,7 +163,9 @@ void	init_player(t_game	*game)
 	game->player->anim_shoot = 0;
 	game->player->health = 1;
 	game->player->ammo = 30;
-	// game->health = NULL;
+	game->ammo = NULL;
+	game->health = NULL;
+	game->timehealth = 0;
 	game->menu = malloc(sizeof(t_menu));
 	game->menu->volume = 20;
 	game->menu->mouse_sensitivity = 2;
