@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:13:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/19 00:42:22 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 08:55:26 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	draw_wall(t_game *game)
 		case SIDE_EAST: texture = game->textures->east; break;
 		case SIDE_WEST: texture = game->textures->west; break;
 		case SIDE_NORTH: texture = game->textures->north; break;
-		case SIDE_SOUTH: texture = game->textures->sud; break;
+		case SIDE_SOUTH: texture = game->textures->south; break;
 	}
 	draw_vertical_line_with_texture(game, raycast->x, raycast->draw_start, raycast->draw_end, texture, wall_x, raycast->line_height);
 }

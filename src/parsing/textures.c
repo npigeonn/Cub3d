@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:35:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/16 14:54:21 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 08:55:29 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void	load_txtre_globale(t_game *game, char *line, char *path)
 	else if (!ft_strncmp(line, "NO ", 3))
 		load_texture(game, game->textures->north, path);
 	else if (!ft_strncmp(line, "SO ", 3))
-		load_texture(game, game->textures->sud, path);
+		load_texture(game, game->textures->south, path);
 	else if (!ft_strncmp(line, "EA ", 3))
 		load_texture(game, game->textures->east, path);
 	else if (!ft_strncmp(line, "F ", 2))

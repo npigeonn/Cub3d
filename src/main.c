@@ -165,7 +165,6 @@ void	init_player(t_game	*game)
 	game->servers = NULL;
 	game->client->pseudo[0] = '\0';
 	game->player->raycast = malloc(sizeof(t_raycast));
-	game->player->raycast->floorcast;
 }
 
 void	load_game_texture(t_game *game)
@@ -173,7 +172,7 @@ void	load_game_texture(t_game *game)
 	game->textures = malloc(sizeof(t_textures));
 	game->textures->east = malloc(sizeof(t_image));
 	game->textures->north = malloc(sizeof(t_image));
-	game->textures->sud = malloc(sizeof(t_image));
+	game->textures->south = malloc(sizeof(t_image));
 	game->textures->west = malloc(sizeof(t_image));
 	game->textures->door = malloc(sizeof(t_image));
 	game->textures->tp = malloc(sizeof(t_image));

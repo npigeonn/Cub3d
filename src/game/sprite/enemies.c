@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 14:46:42 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 08:36:22 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void	draw_enemies(t_game *game)
 	while (current)
 	{
 		if (current->floor == game->player->floor)
-			draw_sprite(game, game->textures->enemies, current->x, current->y, atan2(current->dirY, current->dirX));
+			draw_sprite(game, game->textures->enemies, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0);
 		current = current->next;
 	}
 }
@@ -137,7 +137,7 @@ void	draw_players(t_game *game)
 	while (current)
 	{
 		if (current->floor == game->player->floor)
-			draw_sprite(game, game->textures->enemies, current->x, current->y, 150);
+			draw_sprite(game, game->textures->enemies, current->x, current->y, 150, 1, 0);
 		current = current->next;
 	}
 }

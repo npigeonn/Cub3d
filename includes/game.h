@@ -114,7 +114,7 @@ typedef	struct s_textures
 {
 	t_image	*east;
 	t_image	*west;
-	t_image	*sud;
+	t_image	*south;
 	t_image	*north;
 	t_image	*door;
 	t_image	*tp;
@@ -315,7 +315,7 @@ void	draw_text(t_game *data, t_draw_info info);
 void	draw_text_left(t_game *game, t_draw_info info);
 void	draw_text_right(t_game *game, t_draw_info info);
 void	draw_char(t_game *data, t_draw_info info);
-void	draw_sprite(t_game *game, t_image *texture, float x, float y, float sprite_dir);
+void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_to_sprite, float scale, float z_offset);
 void	draw_sprites(t_game *game);
 void	draw_rounded_rectangle(t_game *game, t_draw_info info);
 void	crosshair(t_game *game);
