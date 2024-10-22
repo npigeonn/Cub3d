@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:12:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/17 16:26:01 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/22 09:33:54 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,16 +90,19 @@ void	put_pixel_minimap(t_game *game, int x, int y, int size)
 		color = 16777215;
 	else if (game->map[game->player->floor][y][x] == 'D')
 		color = 6579300;
-	else if ('a' <= game->map[game->player->floor][y][x] && game->map[game->player->floor][y][x] <= 'z'
+	else if ('a' <= game->map[game->player->floor][y][x]
+		&& game->map[game->player->floor][y][x] <= 'z'
 		&& game->map[game->player->floor][y][x] != 'e')
-		color = ((90 + (33 * ('z' - game->map[game->player->floor][y][x])) % 165) << 16) | (0 << 8) | 0;
+		color = ((90 + (33 * ('z' - game->map[game->player->floor][y][x]))
+			% 165) << 16) | (0 << 8) | 0;
 	else
 		return ;
 	while (++i <= size)
 	{
 		j = -1;
 		while (++j <= size)
-			pixel_put(game, game->x_minimap + x * size + j, game->y_minimap + y * size + i, color);
+			pixel_put(game, game->x_minimap + x * size + j,
+				game->y_minimap + y * size + i, color);
 	}
 }
 
@@ -129,18 +132,18 @@ void	print_wall_door_player(t_game *game)
 	int	h;
 	int	size_pix;
 
-
 	h = (game->screen_width - game->x_minimap) / 10;
-	size_pix = (game->screen_width - game->x_minimap - 2 * h) / x_size_floor(game);
-	// printf("sizepix = %d\n", size_pix);
-	if (size_pix > (game->screen_height - game->y_minimap - 2 * h) / y_size_floor(game))
-		size_pix = (game->screen_height - game->y_minimap - 2 * h) / y_size_floor(game);
+	size_pix = (game->screen_width - game->x_minimap - 2 * h)
+		/ x_size_floor(game);
+	if (size_pix > (game->screen_height - game->y_minimap - 2 * h)
+		/ y_size_floor(game))
+		size_pix = (game->screen_height - game->y_minimap - 2 * h)
+			/ y_size_floor(game);
 	y = -1;
-	
-	game->x_minimap += h + (game->screen_width - game->x_minimap) / x_size_floor(game);
-	game->y_minimap += .5 * h + (game->screen_height - game->y_minimap) / y_size_floor(game);
-
-
+	game->x_minimap += h + (game->screen_width - game->x_minimap)
+		/ x_size_floor(game);
+	game->y_minimap += .5 * h + (game->screen_height - game->y_minimap)
+		/ y_size_floor(game);
 	while (game->map[game->player->floor][++y])
 	{
 		x = -1;

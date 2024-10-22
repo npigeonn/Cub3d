@@ -63,8 +63,8 @@ Y :	mettre les textures toit/ sol
 
 21-25
 N : gerer les degats vision des ennemies
-	gerer le parsing du multijoueur avec les spoons > nbre de player dans le serveur
-	UN SEUL spoon si mode solo
+	gerer le parsing du multijoueur avec les spawns > nbre de player dans le serveur
+	UN SEUL spawn si mode solo
 
 
 Y : gerer les mouvements en meme temps ex: droite et haut
@@ -97,12 +97,12 @@ Y : gerer les mouvements en meme temps ex: droite et haut
 void	load_texture(t_game *game, t_image *img, char *path)
 {
 	img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width, &img->height);
-	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line, &img->endian);
 	if (!img->img)
 	{
 		printf("Erreur lors du chargement de la texture : %s\n", path);
 		exit(1);
 	}
+	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line, &img->endian);
 }
 
 void	init_img(t_game *game)
@@ -158,6 +158,7 @@ void	init_player(t_game	*game)
 	game->player->anim_shoot = 0;
 	game->player->health = 1;
 	game->player->ammo = 30;
+	game->ammo = NULL;
 	game->menu = malloc(sizeof(t_menu));
 	game->menu->volume = 20;
 	game->menu->mouse_sensitivity = 2;

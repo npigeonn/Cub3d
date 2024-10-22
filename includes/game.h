@@ -148,6 +148,25 @@ typedef	struct s_door
 	struct s_door	*next;
 }	t_door;
 
+typedef	struct s_ammo
+{
+	int				x;
+	int				y;
+	int				floor;
+	bool			still_exist;
+	struct s_ammo	*next;
+}	t_ammo;
+
+typedef	struct s_health
+{
+	int				x;
+	int				y;
+	int				floor;
+	bool			still_exist;
+	float			animation;
+	struct s_health	*next;
+}	t_health;
+
 typedef	struct s_teleporter
 {
 	float				x1;
@@ -275,6 +294,8 @@ typedef struct s_game
 	int				nb_floor;
 	int				clr;
 	t_door			*door;
+	t_ammo			*ammo;
+	t_health		*health;
 	t_images		*images;
 	t_player		*player;
 	t_textures		*textures;
@@ -342,10 +363,17 @@ void	update_door_animation(t_game *game);
 void	draw_wall(t_game *game);
 void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height);
 
-//enemies
+//ennemies
 void	draw_enemies(t_game *game);
 void	init_enemies(t_game *game);
 void	update_enemies(t_game *game);
+
+// ammo 
+void	draw_ammo(t_game *game);
+
+// health
+
+
 
 // PARSING
 int		err(char *str);
@@ -354,7 +382,7 @@ void	parsing(char **av, t_game *game);
 char	*get_next_line(int fd);
 void	floodfill(t_game *game);
 int		check_path(t_game *game, int x, int y, int floor);
-void	door_mngmt(t_game *game);
+void	door_ennemi_ammo_health_mngmt(t_game *game);
 
 // walls
 int		check_walls(t_game *game, int x, int y, int floor);

@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/18 10:53:13 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/22 09:34:31 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	check_allowed_char(t_game *game, int floor, int x, int y)
 {
 	const int	c = game->map_cy[floor][y][x];
-	if (!c || !(ft_strchr("01NSWEDMHX", c) || ('a' <= c && c <= 'z')))
+	if (!c || !(ft_strchr("01NSWEDMBHX", c) || ('a' <= c && c <= 'z')))
 	{
 		printf("%c\n", c);
 		free_map_copy(game);

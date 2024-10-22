@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/19 14:59:24 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/22 11:04:52 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static void	game_engine(t_game *game)
 	cast_floor(game);
 	draw_players(game);
 	update_enemies(game);
+	on_ammo(game);
 	draw_sprites(game);
 	chat_draw(game);
 	show_message(game);
