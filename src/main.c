@@ -70,7 +70,7 @@ N : gerer les degats vision des ennemies
 Y : gerer les mouvements en meme temps ex: droite et haut
 	munitions visuelles? (cest la lettre M)
 	sortie visuelle (arceus)
-
+	
 	
 
 
