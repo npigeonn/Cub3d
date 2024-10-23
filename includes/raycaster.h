@@ -1,6 +1,6 @@
 
 #ifndef RAYCASTER_H
-# define RAYCASTER_h
+# define RAYCASTER_H
 
 typedef struct	s_floorcast
 {

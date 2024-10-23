@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   health_point.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/22 18:03:31 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/23 08:12:41 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,9 +118,9 @@ void	draw_anim_health(t_game *game, int x, int y, t_image *im_health)
 void	draw_collectible_life(t_game *game)
 {
 	t_image 	*im_health;
-	t_health	*current;
+	t_sprite	*current;
 
-	current = game->health;
+	current = game->sprites;
 	im_health = malloc(sizeof(t_image));
 
 	load_texture(game, im_health, "./assets/sprites/health.xpm");
@@ -129,7 +129,7 @@ void	draw_collectible_life(t_game *game)
 	im_health->sprite_width = im_health->width;
 	while (current)
 	{
-		if (current->still_exist)
+		if (current->still_exist && current->type == SPRITE_HEALTH)
 			draw_anim_health(game, current->x, current->y, im_health);
 		current = current->next;
 	}
@@ -137,15 +137,15 @@ void	draw_collectible_life(t_game *game)
 
 void	on_life(t_game *game)
 {
-	t_health *current;
+	t_sprite *current;
 
-	current = game->health;
+	current = game->sprites;
 	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'H')
 	{
 		while (current)
 		{
 			if ((int)game->player->x == current->x && (int)game->player->y == current->y
-				&& game->player->floor == current->floor)
+				&& game->player->floor == current->floor && current->type == SPRITE_HEALTH)
 			{
 				if (current->still_exist == 1)
 				{

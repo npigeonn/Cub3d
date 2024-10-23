@@ -163,8 +163,8 @@ void	init_player(t_game	*game)
 	game->player->anim_shoot = 0;
 	game->player->health = 1;
 	game->player->ammo = 30;
-	game->ammo = NULL;
-	game->health = NULL;
+	// game->ammo = NULL;
+	// game->health = NULL;
 	game->timehealth = 0;
 	game->menu = malloc(sizeof(t_menu));
 	game->menu->volume = 20;
@@ -193,6 +193,7 @@ void	load_game_texture(t_game *game)
 	game->textures->enemies->nb_sprite = 8;
 	game->textures->enemies->sprite_width = 64;
 	game->textures->enemies->sprite_height = 64;
+	game->textures->enemies->nb_anim = 4;
 	game->textures->tp->nb_sprite = 1;
 	game->textures->tp->sprite_width = game->textures->tp->width;
 	game->textures->tp->sprite_height = game->textures->tp->height;

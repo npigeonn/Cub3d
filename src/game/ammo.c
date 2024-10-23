@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ammo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 15:09:22 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/22 18:34:40 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/23 08:09:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	on_ammo(t_game *game)
 		{
 			if ((int)game->player->x <= current->x + 1 && (int)game->player->x >= current->x - 1
 				&& (int)game->player->y <= current->y + 1 && (int)game->player->y >= current->y - 1
-				current->type == SPRITE_AMMO)
+				&& current->type == SPRITE_AMMO)
 			{
 				if (current->still_exist == 1)
 				{

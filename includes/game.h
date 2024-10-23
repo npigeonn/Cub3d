@@ -116,6 +116,8 @@ typedef struct s_image
 	int		nb_sprite;
 	int		sprite_width;
 	int		sprite_height;
+	int		nb_anim;
+	int		selected_anim;
 }	t_image;
 
 typedef struct s_images
@@ -333,12 +335,8 @@ void	draw_wall(t_game *game);
 void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height);
 
 //ennemies
-void	draw_enemies(t_game *game);
 void	init_enemies(t_game *game);
 void	update_enemies(t_game *game);
-
-// ammo 
-void	draw_ammo(t_game *game);
 
 // health
 void	on_life(t_game *game);

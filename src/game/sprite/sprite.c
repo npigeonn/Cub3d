@@ -5,17 +5,7 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-<<<<<<< HEAD
-/*   Created: 2024/10/10 12:09:23 by ybeaucou          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/10/22 12:03:20 by npigeon          ###   ########.fr       */
-=======
 /*   Created: 2024/10/22 13:45:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 13:50:46 by ybeaucou         ###   ########.fr       */
->>>>>>> b734831 (optimize sprite)
-=======
-/*   Updated: 2024/10/22 18:12:10 by npigeon          ###   ########.fr       */
->>>>>>> 4cfa65e (munitioneasier)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,37 +29,39 @@ void draw_vertical_sprite_band(t_game *game, int x, int draw_start, int draw_end
 	{
 		int tex_y = (int)tex_pos % texture->sprite_height;
 		tex_pos += step;
-		int color = *((int *)(texture_data + tex_y * texture->size_line + tex_x * bpp_div_8));
+		int color = *((int *)(texture_data + (tex_y + texture->sprite_height * texture->selected_anim) * texture->size_line + tex_x * bpp_div_8));
 		if (color > 0)
 			pixel_put(game, x, y, color);
 	}
 }
 
-void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_to_sprite, float scale, float z_offset)
+void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y, float sprite_dir, float scale, float z_offset)
 {
-	int sprite_order[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+	int sprite_order[8] = {5, 6, 7, 3, 2, 1, 0, 4};
 
-	float sprite_x = x - game->player->x;
-	float sprite_y = y - game->player->y;
-		
+	float relative_sprite_x = sprite_x - game->player->x;
+	float relative_sprite_y = sprite_y - game->player->y;
+
 	float inv_det = 1.0f / (game->player->planeX * game->player->dirY - game->player->dirX * game->player->planeY);
-	
-	float transform_x = inv_det * (game->player->dirY * sprite_x - game->player->dirX * sprite_y);
-	float transform_y = inv_det * (-game->player->planeY * sprite_x + game->player->planeX * sprite_y);
+
+	float transform_x = inv_det * (game->player->dirY * relative_sprite_x - game->player->dirX * relative_sprite_y);
+	float transform_y = inv_det * (-game->player->planeY * relative_sprite_x + game->player->planeX * relative_sprite_y);
 
 	if (transform_y <= 0)
 		return;
 	float player_angle = atan2(game->player->dirY, game->player->dirX);
-	float relative_angle = angle_to_sprite - player_angle;
-
+	float relative_angle = sprite_dir - player_angle;
 
 	if (relative_angle > M_PI) relative_angle -= 2 * M_PI;
 	if (relative_angle < -M_PI) relative_angle += 2 * M_PI;
 
 	int sprite_index = (int)((relative_angle + M_PI) / (2 * M_PI) * texture->nb_sprite) % texture->nb_sprite;
 	sprite_index = sprite_order[sprite_index];
+	if(sprite_index >= texture->nb_sprite)
+		sprite_index = 0;
 
 	int sprite_screen_x = (int)((game->screen_width * 0.5f) * (1 + transform_x / transform_y));
+
 	int sprite_height = abs((int)(game->screen_height / transform_y)) * scale;
 	int sprite_width = abs((int)(game->screen_height / transform_y)) * scale;
 
@@ -161,7 +153,6 @@ void	sort_sprites(t_sprite **head, float camX, float camY, int player_floor)
 
 void	draw_sprites(t_game *game)
 {
-<<<<<<< HEAD
 	t_sprite	*current;
 
 	sort_sprites(&game->sprites, game->player->x, game->player->y, game->player->floor);
@@ -177,16 +168,9 @@ void	draw_sprites(t_game *game)
 		}
 		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor && current->health > 0)
 			draw_sprite(game, game->textures->enemies, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0);
-		else if (current->type == SPRITE_AMMO && current->still_exist)
+		else if (current->type == SPRITE_AMMO && current->still_exist && current->floor == game->player->floor)
 			draw_sprite(game, game->textures->ammo, current->x, current->y, 150, 0.4, 1);
 		current = current->next;
 	}
 	draw_collectible_life(game);
 }
-=======
-	draw_teleporter(game);
-	draw_enemies(game);
-	draw_ammo(game);
-	// draw_collectible_life(game);
-}
->>>>>>> 4cfa65e (munitioneasier)

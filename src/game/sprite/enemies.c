@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 13:31:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/23 10:02:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 	new->fov = 60;
 	new->shoot_delay = 0;
 	new->type = SPRITE_ENEMY;
+	new->animation = 0;
 	game->sprites = new;
 }
 
@@ -306,8 +307,17 @@ void	update_enemies(t_game *game)
 		{
 			if (current->frame_count % 220 == 0)
 				current->direction = rand() % 360;
+			current->animation += game->delta_time;
+			if (current->animation >= 2)
+				current->animation = 0.5;
+			if (current->animation >= 0.5 && current->animation < 1)
+				game->textures->enemies->selected_anim = 1;
+			else if (current->animation >= 1 && current->animation < 1.5)
+				game->textures->enemies->selected_anim = 2;
+			else if (current->animation >= 1.5 && current->animation < 2)
+				game->textures->enemies->selected_anim = 3;
 			
-			float angle_in_radians = current->direction * (M_PI / 180.0f);
+			float angle_in_radians = current->direction * (M_PI / 180);
 			current->dirX = cos(angle_in_radians);
 			current->dirY = sin(angle_in_radians);
 			
@@ -323,18 +333,23 @@ void	update_enemies(t_game *game)
 				current->direction = rand() % 360;
 				current->frame_count = 0;
 			}
-			if (current->floor == game->player->floor && distance_squared < 25.0f && has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
+			if (current->floor == game->player->floor && distance < 5 && has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
+			{
 				current->state = CHASE;
+				game->textures->enemies->selected_anim = 0;
+			}
 		}
 		else if (current->state == CHASE)
 		{
-			if (distance < 7.0f && current->floor == game->player->floor)
-			{
-				current->dirX = 0;
-				current->dirY = 0;
-				current->direction = atan2(dy, dx) * (180.0f / M_PI);
+			float dx = game->player->x - current->x;
+			float dy = game->player->y - current->y;
+			current->direction = atan2(dy, dx) * (180 / M_PI);
+			float angle_in_radians = current->direction * (M_PI / 180);
+			current->dirX = cos(angle_in_radians);
+			current->dirY = sin(angle_in_radians);
+			
+			if (distance < 7 && current->floor == game->player->floor)
 				shoot_at_player(current, player_pos, game);
-			}
 			else 
 				current->state = PATROL;
 		}
