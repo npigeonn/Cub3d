@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/23 10:02:51 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/23 11:49:19 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,36 @@ bool	has_line_of_sight(t_game *game, t_point enemy_pos, t_point player_pos, floa
 	return (false);
 }
 
+void	damages_red_draw(t_game *game)
+{
+	int		x;
+	int		y;
+	float	alpha;
+	int		center_x;
+	int		center_y;
+	
+	
+
+	center_x = game->screen_width * 0.5;
+	center_y = game->screen_height * 0.5;
+	
+	alpha = 0.2 * (1 - game->player->health); // Ajuster cette valeur entre 0 et 1 pour changer l'opacité
+	// while (cadre < center_y)
+	// {
+		y = -1;
+		while (++y <= game->screen_height)
+		{
+			x = -1;
+			while (++x <= game->screen_width)
+					pixel_put(game, x, y,
+					blend_colors(get_pixel_color_from_image(game, x, y),
+					9830400, alpha * (1 + abs(x - center_x) / (center_x * 0.5) + abs(y - center_y) / (center_y * 0.5))));
+		}
+	// 	cadre += game->screen_width / 50;
+	// }
+}
+
+
 bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
 {
 	t_sprite *current = game->sprites;
@@ -204,6 +234,7 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
 		if (distance < 0.5f)
 		{
 			game->player->health -= projectile->damage;
+			damages_red_draw(game);
 			return (true);
 		}
 	}

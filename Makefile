@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
+#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/22 12:22:35 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/23 11:18:04 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
 LIBS = -L$(MINILIBX_DIR) -lmlx -lX11 -lXext -lm -L$(LIBFT_DIR) -lft
 INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(GC_HEADERS) -I./includes/
-CFLAGS = -g3 -march=native -O3 -flto -pipe #-Wall -Wextra -Werror
+CFLAGS = -g3 -O3 -Ofast -ffast-math -funroll-loops -fvectorize -march=native -mtune=native -fomit-frame-pointer -fstrict-aliasing -flto #-Wall -Wextra -Werror
 LIBS_DIR = ./libs/
 RM = rm -rf
 
