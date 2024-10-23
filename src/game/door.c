@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 13:29:19 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/23 13:08:39 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,7 @@ void	add_health(t_game *game, int x, int y, int floor)
 	new_health->floor = floor;
 	new_health->still_exist = 1;
 	new_health->next = game->sprites;
+	new_health->type = SPRITE_HEALTH;
 	game->sprites = new_health;
 }
 

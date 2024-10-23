@@ -116,7 +116,6 @@ typedef struct s_image
 	int		nb_sprite;
 	int		sprite_width;
 	int		sprite_height;
-	int		nb_anim;
 	int		selected_anim;
 }	t_image;
 
@@ -136,7 +135,9 @@ typedef	struct s_textures
 	t_image	*tp;
 	t_image	*floor;
 	t_image	*ceil;
-	t_image	*enemies;
+	t_image	*enemy;
+	t_image	*enemy_fire;
+	t_image	*enemy_death;
 	t_image	*bullet;
 	t_image	*weapon;
 	t_image	*fire;
@@ -307,7 +308,7 @@ void	draw_text(t_game *data, t_draw_info info);
 void	draw_text_left(t_game *game, t_draw_info info);
 void	draw_text_right(t_game *game, t_draw_info info);
 void	draw_char(t_game *data, t_draw_info info);
-void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_to_sprite, float scale, float z_offset);
+void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_to_sprite, float scale, float z_offset, int anim);
 void	draw_sprites(t_game *game);
 void	draw_rounded_rectangle(t_game *game, t_draw_info info);
 void	crosshair(t_game *game);

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/23 08:12:41 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/23 10:48:42 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	draw_anim_health(t_game *game, int x, int y, t_image *im_health)
 	}
 
 	// Dessiner la portion extraite (to_send) à la position donnée
-	draw_sprite(game, to_send, x, y, 150, 0.4, 1);
+	draw_sprite(game, to_send, x, y, 150, 0.4, 1, 0);
 
 	// Libérer la mémoire allouée pour to_send
 	mlx_destroy_image(game->mlx, to_send->img);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/23 11:49:19 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/23 13:13:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void	draw_players(t_game *game)
 	while (current)
 	{
 		if (current->floor == game->player->floor)
-			draw_sprite(game, game->textures->enemies, current->x, current->y, 150, 1, 0);
+			draw_sprite(game, game->textures->enemy, current->x, current->y, 150, 1, 0, 0);
 		current = current->next;
 	}
 }
@@ -221,6 +221,8 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
 		if (distance < 0.5f)
 		{
 			current->health -= projectile->damage;
+			if (current->health <= 0)
+				current->animation = 2;
 			return (true);
 		}
 		current = current->next;
@@ -291,9 +293,15 @@ void	shoot_at_player(t_sprite *enemy, t_point player_pos, t_game *game)
 		
 	if (angle_diff > 180.0f)
 		angle_diff = 360.0f - angle_diff;
+	if (enemy->animation > 0)
+		enemy->animation -= 15 * game->delta_time;
+	if (enemy->animation < 0)
+		enemy->selected_anim = 0;
 	if (angle_diff < 5.0f && enemy->shoot_delay <= 0)
 	{
 		t_projectile *new_projectile = malloc(sizeof(t_projectile));
+		enemy->selected_anim = 1;
+		enemy->animation = 5;
 		
 		if (new_projectile)
 		{
@@ -324,6 +332,20 @@ void	update_enemies(t_game *game)
 	{
 		if (current->type != SPRITE_ENEMY || current->health <= 0)
 		{
+			if (current->type == SPRITE_ENEMY && current->animation > 0)
+			{
+				current->animation -=  game->delta_time * 2.5;
+				if (current->animation <= 0)
+					current->selected_anim = 4;
+				else if (current->animation <= 0.5)
+					current->selected_anim = 3;
+				else if (current->animation <= 1)
+					current->selected_anim = 2;
+				else if (current->animation <= 1.5)
+					current->selected_anim = 1;
+				else if (current->animation <= 2)
+					current->selected_anim = 0;
+			}
 			current = current->next;
 			continue ;
 		}
@@ -342,11 +364,11 @@ void	update_enemies(t_game *game)
 			if (current->animation >= 2)
 				current->animation = 0.5;
 			if (current->animation >= 0.5 && current->animation < 1)
-				game->textures->enemies->selected_anim = 1;
+				current->selected_anim = 1;
 			else if (current->animation >= 1 && current->animation < 1.5)
-				game->textures->enemies->selected_anim = 2;
+				current->selected_anim = 2;
 			else if (current->animation >= 1.5 && current->animation < 2)
-				game->textures->enemies->selected_anim = 3;
+				current->selected_anim = 3;
 			
 			float angle_in_radians = current->direction * (M_PI / 180);
 			current->dirX = cos(angle_in_radians);
@@ -367,7 +389,7 @@ void	update_enemies(t_game *game)
 			if (current->floor == game->player->floor && distance < 5 && has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
 			{
 				current->state = CHASE;
-				game->textures->enemies->selected_anim = 0;
+				current->selected_anim = 0;
 			}
 		}
 		else if (current->state == CHASE)

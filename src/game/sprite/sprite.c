@@ -12,7 +12,7 @@
 
 #include "../../includes/cub3d.h"
 
-void draw_vertical_sprite_band(t_game *game, int x, int draw_start, int draw_end, t_image *texture, int tex_x, int sprite_height)
+void draw_vertical_sprite_band(t_game *game, int x, int draw_start, int draw_end, t_image *texture, int tex_x, int sprite_height, int anim)
 {
 	if (x < 0 || x >= game->screen_width || draw_start >= game->screen_height || draw_end < 0)
 		return;
@@ -29,13 +29,13 @@ void draw_vertical_sprite_band(t_game *game, int x, int draw_start, int draw_end
 	{
 		int tex_y = (int)tex_pos % texture->sprite_height;
 		tex_pos += step;
-		int color = *((int *)(texture_data + (tex_y + texture->sprite_height * texture->selected_anim) * texture->size_line + tex_x * bpp_div_8));
-		if (color > 0)
+		int color = *((int *)(texture_data + (tex_y + texture->sprite_height * anim) * texture->size_line + tex_x * bpp_div_8));
+		if (color >= 0)
 			pixel_put(game, x, y, color);
 	}
 }
 
-void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y, float sprite_dir, float scale, float z_offset)
+void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y, float sprite_dir, float scale, float z_offset, int anim)
 {
 	int sprite_order[8] = {5, 6, 7, 3, 2, 1, 0, 4};
 
@@ -81,7 +81,7 @@ void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y,
 			int tex_x_base = (int)((stripe - stripe_start) * texture->sprite_width / sprite_width);
 			int tex_x = tex_x_base + sprite_index * texture->sprite_width;
 			if (tex_x_base >= 0 && tex_x < texture->width)
-				draw_vertical_sprite_band(game, stripe, draw_start_y, draw_end_y, texture, tex_x, sprite_height);
+				draw_vertical_sprite_band(game, stripe, draw_start_y, draw_end_y, texture, tex_x, sprite_height, anim);
 		}
 	}
 }
@@ -151,6 +151,15 @@ void	sort_sprites(t_sprite **head, float camX, float camY, int player_floor)
 	}
 }
 
+int is_player_in_front(t_sprite *enemy, t_player *player)
+{
+	const float	angle_to_player = atan2(player->y - enemy->y, player->x - enemy->x);
+	const float	enemy_angle = atan2(enemy->dirY, enemy->dirX);
+	const float	angle_difference = fmod(angle_to_player - enemy_angle + M_PI, 2 * M_PI) - M_PI;
+
+	return (fabs(angle_difference) < M_PI / 4);
+}
+
 void	draw_sprites(t_game *game)
 {
 	t_sprite	*current;
@@ -162,15 +171,22 @@ void	draw_sprites(t_game *game)
 		if (current->type == SPRITE_TELEPORTER)
 		{
 			if (current->floor == game->player->floor)
-				draw_sprite(game, game->textures->tp, current->x, current->y, 150, 0.4, 1);
+				draw_sprite(game, game->textures->tp, current->x, current->y, 150, 0.4, 1, 0);
 			if (current->floor1 == game->player->floor)
-				draw_sprite(game, game->textures->tp, current->x1, current->y1, 150, 0.4, 1);
+				draw_sprite(game, game->textures->tp, current->x1, current->y1, 150, 0.4, 1, 0);
 		}
-		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor && current->health > 0)
-			draw_sprite(game, game->textures->enemies, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0);
+		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor)
+		{
+			if (current->health <= 0)
+				draw_sprite(game, game->textures->enemy_death, current->x, current->y, 0, 1, 0, current->selected_anim);
+			else if (current->state == CHASE && is_player_in_front(current, game->player))
+				draw_sprite(game, game->textures->enemy_fire, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0, current->selected_anim);
+			else
+				draw_sprite(game, game->textures->enemy, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0, current->selected_anim);
+		}
 		else if (current->type == SPRITE_AMMO && current->still_exist && current->floor == game->player->floor)
-			draw_sprite(game, game->textures->ammo, current->x, current->y, 150, 0.4, 1);
+			draw_sprite(game, game->textures->ammo, current->x, current->y, 150, 0.2, 2.1, 0);
 		current = current->next;
 	}
-	draw_collectible_life(game);
+	// draw_collectible_life(game);
 }

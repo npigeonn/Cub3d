@@ -33,6 +33,7 @@ typedef struct s_sprite
 	int				type;
 	bool			still_exist;
 	float			animation;
+	int				selected_anim;
 	struct s_sprite	*next;
 }	t_sprite;
 
