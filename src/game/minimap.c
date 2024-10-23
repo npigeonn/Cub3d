@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:12:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/22 09:33:54 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/23 13:21:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,23 +32,17 @@ void	put_pixel_to_image(char *img_data, int x, int y, int color, int line_length
 	*(unsigned int *)dst = color;
 }
 
-// Fonction pour mélanger deux couleurs avec un certain niveau d'alpha
 int blend_colors(int bg_color, int fg_color, float alpha)
 {
-	int r_bg = (bg_color >> 16) & 0xFF;
-	int g_bg = (bg_color >> 8) & 0xFF;
-	int b_bg = bg_color & 0xFF;
+	const int	alpha_int = (int)(alpha * 255);
+	const int	inv_alpha_int = 255 - alpha_int;
+	const int	r_result = (((fg_color >> 16) & 0xFF) * alpha_int + ((bg_color >> 16) & 0xFF) * inv_alpha_int) >> 8;
+	const int	g_result = (((fg_color >> 8) & 0xFF) * alpha_int + ((bg_color >> 8) & 0xFF) * inv_alpha_int) >> 8;
+	const int	b_result = (((fg_color) & 0xFF) * alpha_int + ((bg_color) & 0xFF) * inv_alpha_int) >> 8;
 
-	int r_fg = (fg_color >> 16) & 0xFF;
-	int g_fg = (fg_color >> 8) & 0xFF;
-	int b_fg = fg_color & 0xFF;
-
-	int r_result = (int)(r_fg * alpha + r_bg * (1 - alpha));
-	int g_result = (int)(g_fg * alpha + g_bg * (1 - alpha));
-	int b_result = (int)(b_fg * alpha + b_bg * (1 - alpha));
-
-	return (r_result << 16 | g_result << 8 | b_result);
+    return (r_result << 16) | (g_result << 8) | b_result;
 }
+
 
 int	y_size_floor(t_game *game)
 {

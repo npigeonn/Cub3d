@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:43:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/19 14:32:59 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/23 15:51:50 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,36 +15,38 @@
 static void	check_mouvement(t_game *game, t_player *p, double new_x,
 	double new_y)
 {
-	if (!can_move(game, new_x, new_y))
+	if (!can_move(game, new_x, new_y, game->player->floor))
 		return ;
 	p->x = new_x;
 	p->y = new_y;
 }
 
-static void	mouvement(t_game *game, t_player *p, int keycode)
+static void	mouvement(t_game *game, t_player *p)
 {
 	double	new_x;
 	double	new_y;
 
-	if (keycode == KEY_UP || keycode == KEY_W)
+	new_x = p->x;
+	new_y = p->y;
+	if (is_key_pressed(game, KEY_UP) || is_key_pressed(game, KEY_W))
 	{
-		new_x = p->x + p->dirX * 0.1;
-		new_y = p->y + p->dirY * 0.1;
+		new_x += p->dirX * 0.1;
+		new_y += p->dirY * 0.1;
 	}
-	else if (keycode == KEY_DOWN || keycode == KEY_S)
+	if (is_key_pressed(game, KEY_DOWN) || is_key_pressed(game, KEY_S))
 	{
-		new_x = p->x - p->dirX * 0.1;
-		new_y = p->y - p->dirY * 0.1;
+		new_x -= p->dirX * 0.1;
+		new_y -= p->dirY * 0.1;
 	}
-	else if (keycode == KEY_RIGHT || keycode == KEY_D)
+	if (is_key_pressed(game, KEY_RIGHT) || is_key_pressed(game, KEY_D))
 	{
-		new_x = p->x + p->planeX * 0.1;
-		new_y = p->y + p->planeY * 0.1;
+		new_x += p->planeX * 0.1;
+		new_y += p->planeY * 0.1;
 	}
-	else if (keycode == KEY_LEFT || keycode == KEY_A)
+	if (is_key_pressed(game, KEY_LEFT) || is_key_pressed(game, KEY_A))
 	{
-		new_x = p->x - p->planeX * 0.1;
-		new_y = p->y - p->planeY * 0.1;
+		new_x -= p->planeX * 0.1;
+		new_y -= p->planeY * 0.1;
 	}
 	check_mouvement(game, p, new_x, new_y);
 }
@@ -63,11 +65,20 @@ void	send_update_position(t_game *game)
 	send(game->client->sock, &msg, sizeof(t_game_message), 0);
 }
 
+void	handle_key(t_game *game)
+{
+	const int	status = game->menu->status;
+
+	mouvement(game, game->player);
+	if (status == MULTI_PLAYER)
+		send_update_position(game);
+}
+
 int	handle_keypress(int keycode, t_game *game)
 {
 	t_player	*p;
 	const int	status = game->menu->status;
-
+	
 	p = game->player;
 	if (keycode == 65307)
 		handle_close(game);
@@ -80,14 +91,22 @@ int	handle_keypress(int keycode, t_game *game)
 		chatting_mode(game);
 	if (status != PLAYING && status != MULTI_PLAYER)
 		return (0);
-	mouvement(game, p, keycode);
 	if (keycode == 32)
 		p->height -= 0.1;
 	if (keycode == 98)
 		p->height += 0.1;
 	if (keycode == 102)
 		use_item(game);
-	if (status == MULTI_PLAYER)
-		send_update_position(game);
+	if (is_keyflag(keycode))
+		set_key_flag(game, keycode, 1);
+	return (0);
+}
+
+int	handle_keyrelease(int keycode, t_game *game)
+{
+	if (game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER)
+		return (0);
+	if (is_keyflag(keycode))
+		set_key_flag(game, keycode, 0);
 	return (0);
 }

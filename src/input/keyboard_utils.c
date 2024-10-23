@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/19 03:06:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/23 16:01:07 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	use_item(t_game *game)
 	use_teleporter(game);
 }
 
-int	can_move(t_game *game, float x, float y)
+int	can_move(t_game *game, float x, float y, int floor)
 {
 	t_door	*door;
 
@@ -34,6 +34,38 @@ int	can_move(t_game *game, float x, float y)
 	}
 	return (true);
 }
+
+// int	can_move(t_game *game, float x, float y, int floor) //TODO:A modifier car segfault
+// {
+// 	t_door		*door;
+// 	int			check_x;
+// 	int			check_y;
+// 	const float	buffer = 0.2;
+
+// 	check_y = (int)(y - buffer) - 1;
+// 	while (++check_y <= (int)(y + buffer))
+// 	{
+// 		check_x = (int)(x - buffer) - 1;
+// 		while (++check_x <= (int)(x + buffer))
+// 		{
+// 			if (!game->map[floor])
+// 				return (false);
+// 			if (!game->map[floor][check_y])
+// 				return (false);
+// 			if (!game->map[floor][check_y][check_x])
+// 				return (false);
+// 			if (game->map[floor][check_y][check_x] == '1')
+// 				return (false);
+// 			if (game->map[floor][check_y][check_x] == 'D')
+// 			{
+// 				door = get_door(game, check_x, check_y, floor);
+// 				if (!door->open)
+// 					return (false);
+// 			}
+// 		}
+// 	}
+// 	return (true);  
+// }
 
 void	chatting_mode(t_game *game)
 {

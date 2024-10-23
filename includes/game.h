@@ -277,6 +277,7 @@ typedef struct s_game
 	float			delta_time;
 	struct timeval	last_time;
 	float			timehealth;
+	int				key_flags;
 	t_projectile	*projectiles;
 	t_client		*client;
 	t_server_info	*servers;

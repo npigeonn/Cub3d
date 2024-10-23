@@ -250,10 +250,13 @@ int	main(int ac, char **av)
 	init_img(&game);
 	set_width_all_letter(&game);
 	mlx_mouse_move(game.mlx, game.win, game.screen_width >> 1 , game.screen_height >> 1 );
-	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
 	mlx_hook(game.win, 6, 1L << 6, handle_mouse_move, &game);
 	mlx_hook(game.win, 4, 1L << 2, handle_mouse_key, &game);
 	mlx_hook(game.win, 33, 0, handle_close, &game);
+
+	mlx_hook(game.win, 2, 1L << 0, handle_keypress, &game);
+	mlx_hook(game.win, 3, 1L << 1, handle_keyrelease, &game);
+
 	mlx_loop_hook(game.mlx, game_loop, &game);
 	mlx_loop(game.mlx);
 	free_map(&game);

@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/23 13:13:26 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/23 14:28:35 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
 LIBS = -L$(MINILIBX_DIR) -lmlx -lX11 -lXext -lm -L$(LIBFT_DIR) -lft
 INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(GC_HEADERS) -I./includes/
-CFLAGS = -g3 -O3 -Ofast -ffast-math -funroll-loops -fvectorize -march=native -mtune=native -fomit-frame-pointer -fstrict-aliasing -flto #-Wall -Wextra -Werror
+CFLAGS = -g3 -O3 -march=native -mtune=native -funroll-loops -finline-functions -flto -fomit-frame-pointer -ftree-vectorize -mavx #-Wall -Wextra -Werror
 LIBS_DIR = ./libs/
 RM = rm -rf
 
@@ -89,7 +89,8 @@ SRC_SPRITES = $(addprefix $(PATH_SRC)game/sprite/, \
 SRC_INPUT = $(addprefix $(PATH_SRC)input/, \
 				mouse.c \
 				keyboard.c \
-				keyboard_utils.c )
+				keyboard_utils.c \
+				key.c )
 
 SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT) $(SRC_RAYCASTER) $(SRC_INPUT) $(SRC_SPRITES)
 
