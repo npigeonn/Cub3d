@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/24 10:11:19 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/24 11:03:28 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,67 +63,11 @@ void	health_point_draw(t_game *game)
 void	draw_anim_health(t_game *game, int x, int y, t_image *im_health)
 {
 	static float	time_sprites = 0;
-	int				num_sprite;
-	
-	time_sprites += game->delta_time;
-	draw_sprite(game, im_health, x, y, 0, 0.4, 1, (int)time_sprites % 10);
-}
 
-// void	draw_anim_health(t_game *game, int x, int y, t_image *im_health)
-// {
-// 	t_image *to_send;
-// 	int		x1, y1;
-// 	int		x_size = 776 / 5;  // Largeur de la sous-image (1/5e de l'image)
-// 	int		y_size = 308 / 2;  // Hauteur de la sous-image (1/2 de l'image)
-// 	int		original_pixel_index;
-// 	int		new_pixel_index;
-
-// 	// Création de l'image temporaire to_send de la même taille que la portion à extraire
-// 	to_send = malloc(sizeof(t_image));
-// 	to_send->img = mlx_new_image(game->mlx, x_size, y_size);
-// 	to_send->data = mlx_get_data_addr(to_send->img, &to_send->bpp, &to_send->size_line, &to_send->endian);
-
-// 	// Copier les pixels de la portion supérieure gauche de im_health (1/10e de l'image totale)
-// 	for (y1 = 0; y1 < y_size; y1++)
-// 	{
-// 		for (x1 = 0; x1 < x_size; x1++)
-// 		{
-// 			// Calcul des index des pixels dans im_health et to_send
-// 			original_pixel_index = y1 * im_health->size_line + x1 * (im_health->bpp / 8); // Pixels de la partie supérieure gauche
-// 			new_pixel_index = y1 * to_send->size_line + x1 * (to_send->bpp / 8);           // Pixels dans to_send
-
-// 			// Copie des données de pixel
-// 			to_send->data[new_pixel_index] = im_health->data[original_pixel_index];
-// 		}
-// 	}
-
-// 	// Dessiner la portion extraite (to_send) à la position donnée
-// 	draw_sprite(game, to_send, x, y, 150, 0.4, 1, 0);
-
-// 	// Libérer la mémoire allouée pour to_send
-// 	mlx_destroy_image(game->mlx, to_send->img);
-// 	free(to_send);
-// }
-
-
-void	draw_collectible_life(t_game *game)
-{
-	t_image 	*im_health;
-	t_sprite	*current;
-
-	current = game->sprites;
-	im_health = malloc(sizeof(t_image));
-
-	load_texture(game, im_health, "./assets/sprites/heart.xpm");
-	im_health->nb_sprite = 1;
-	im_health->sprite_height = 160;
-	im_health->sprite_width = im_health->width;
-	while (current)
-	{
-		if (current->still_exist && current->type == SPRITE_HEALTH)
-			draw_anim_health(game, current->x, current->y, im_health);
-		current = current->next;
-	}
+	time_sprites += game->delta_time * 10;
+	if ((int)time_sprites > 18000000)
+		time_sprites = 0;
+	draw_sprite(game, im_health, x, y, 0, 0.2, 2, (int)time_sprites % 18);
 }
 
 void	on_life(t_game *game)
@@ -131,21 +75,23 @@ void	on_life(t_game *game)
 	t_sprite *current;
 
 	current = game->sprites;
-	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'H')
+	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'H'
+		|| game->map[game->player->floor][(int)game->player->y - 1][(int)game->player->x] == 'H'
+		|| game->map[game->player->floor][(int)game->player->y + 1][(int)game->player->x] == 'H'
+		|| game->map[game->player->floor][(int)game->player->y][(int)game->player->x + 1] == 'H'
+		|| game->map[game->player->floor][(int)game->player->y][(int)game->player->x - 1] == 'H')
 	{
 		while (current)
 		{
-			if ((int)game->player->x == current->x && (int)game->player->y == current->y
-				&& game->player->floor == current->floor && current->type == SPRITE_HEALTH)
+			if ((int)game->player->x <= current->x + 1 && (int)game->player->x >= current->x - 1
+				&& (int)game->player->y <= current->y + 1 && (int)game->player->y >= current->y - 1
+				&& current->type == SPRITE_HEALTH)
 			{
-				if (current->still_exist == 1)
-				{
-					current->still_exist = 0;
-					if (game->player->health < 0.75)
-						game->player->health += 0.25;
-					else
-						game->player->health = 1;
-				}
+				if (current->still_exist == 1 && game->player->health < 0.75)
+					game->player->health += 0.25;
+				else if (current->still_exist == 1)
+					game->player->health = 1;
+				current->still_exist = 0;
 				return ;
 			}
 			current = current->next;

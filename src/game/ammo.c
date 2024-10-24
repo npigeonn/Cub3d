@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ammo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 15:09:22 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/23 08:09:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 10:41:31 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ void	on_ammo(t_game *game)
 	t_sprite *current;
 
 	current = game->sprites;
-	// current = game->ammo;
 	if (game->map[game->player->floor][(int)game->player->y][(int)game->player->x] == 'M'
 		|| game->map[game->player->floor][(int)game->player->y - 1][(int)game->player->x] == 'M'
 		|| game->map[game->player->floor][(int)game->player->y + 1][(int)game->player->x] == 'M'

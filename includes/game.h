@@ -142,6 +142,7 @@ typedef	struct s_textures
 	t_image	*weapon;
 	t_image	*fire;
 	t_image	*ammo;
+	t_image	*health;
 	int		so;
 	int		no;
 	int		c;
