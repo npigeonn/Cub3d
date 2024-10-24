@@ -342,6 +342,7 @@ void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int dr
 void	init_enemies(t_game *game);
 void	update_enemies(t_game *game);
 void	damages_red_draw(t_game *game);
+void	add_enemies(t_game *game, int x, int y, int floor);
 
 // health
 void	on_life(t_game *game);

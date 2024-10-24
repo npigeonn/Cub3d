@@ -188,8 +188,6 @@ void	draw_sprites(t_game *game)
 			draw_sprite(game, game->textures->ammo, current->x, current->y, 150, 0.2, 2.1, 0);
 		else if (current->type == SPRITE_HEALTH && current->still_exist && current->floor == game->player->floor)
 			draw_anim_health(game, current->x, current->y, game->textures->health);
-		
-		// draw_sprite(game, game->textures->health, current->x, current->y, 150, 0.2, 2.1, 0);
 		current = current->next;
 	}
 }
