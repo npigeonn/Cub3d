@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/24 11:35:16 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/24 16:42:10 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void	check_char_n_walls(t_game *game)
 				if (game->map_cy[i[0]][i[1]][i[2]] == '1'
 					|| game->map_cy[i[0]][i[1]][i[2]] == 'X'
 					|| game->map_cy[i[0]][i[1]][i[2]] == ' '
+					|| game->map_cy[i[0]][i[1]][i[2]] == '	'
 					|| game->map_cy[i[0]][i[1]][i[2]] == '\n')
 					continue ;
 				if (!check_walls(game, i[2], i[1], i[0]))

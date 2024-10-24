@@ -65,11 +65,11 @@ Y :	mettre les textures toit/ sol
 N : gerer les degats vision des ennemies
 	gerer le parsing du multijoueur avec les spawns > nbre de player dans le serveur
 	UN SEUL spawn si mode solo
+	sortie visuelle (arceus)
+	munitions visuelles? (cest la lettre M)
 
 
 Y : gerer les mouvements en meme temps ex: droite et haut
-	munitions visuelles? (cest la lettre M)
-	sortie visuelle (arceus)
 	
 	
 

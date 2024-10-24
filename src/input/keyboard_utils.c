@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keyboard_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 08:24:04 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 15:51:35 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,15 @@
 void	use_item(t_game *game)
 {
 	use_door_in_view(game);
-	use_teleporter(game);
+	if (game->menu->message == TELEPORT)
+	{
+		game->player->x_tel = (int)game->player->x;
+		game->player->y_tel = (int)game->player->y;
+		game->player->f_tel = (int)game->player->floor;		
+		game->player->being_tpted = 1;
+		// animation_teleportation(game);
+		// use_teleporter(game);
+	}
 }
 
 int	tablen(char **tab)

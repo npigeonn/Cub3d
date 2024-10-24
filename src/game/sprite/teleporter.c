@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   teleporter.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 13:21:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 16:02:25 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,18 +56,43 @@ static t_sprite	*get_teleporter(t_game *game, int x, int y)
 	return (NULL);
 }
 
+void	animation_teleportation(t_game *game)
+{
+	int	x;
+	int	y;
+	int	color;
+	int	new_color;
+	const float alpha = game->fade_progress;
+
+	y = 0;
+	while (y < game->screen_height)
+	{
+		x = 0;
+		while (x < game->screen_width)
+		{
+			color = get_pixel_color_from_image(game, x, y);
+			new_color = blend_colors(color, 13107400, alpha);
+			pixel_put(game, x, y, new_color);
+			x++;
+		}
+		y++;
+	}
+	game->fade_progress += 0.01;
+	if (game->fade_progress > 1.2)
+		use_teleporter(game);
+}
+
 void	use_teleporter(t_game *game)
 {
 	t_sprite	*tp;
 	t_player	*p = game->player;
 
 	p = game->player;
-	if (game->menu->message != TELEPORT)
-		return ;
-	tp = get_teleporter(game, (int)p->x, (int)p->y);
+
+	tp = get_teleporter(game, game->player->x_tel, game->player->y_tel);
 	if (tp)
 	{
-		if ((int)p->x == (int)tp->x1 && (int)p->y == (int)tp->y1 && p->floor == tp->floor1)
+		if (game->player->x_tel == (int)tp->x1 && game->player->y_tel == (int)tp->y1 && game->player->f_tel == tp->floor1)// if ((int)p->x == (int)tp->x1 && (int)p->y == (int)tp->y1 && p->floor == tp->floor1)
 		{
 			p->x = tp->x;
 			p->y = tp->y;
@@ -79,5 +104,7 @@ void	use_teleporter(t_game *game)
 			p->y = tp->y1;
 			p->floor = tp->floor1;
 		}
-	}	
+	}
+	game->player->being_tpted = 0;
+	game->fade_progress = 0;
 }

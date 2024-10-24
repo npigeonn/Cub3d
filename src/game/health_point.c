@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/24 12:24:09 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/24 16:26:39 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	life(t_game *game)
 	if ((int)game->time_regen > 18000000)
 		game->time_regen = 100;
 	if (game->time_regen > 100 && game->player->health < 0.996)
-		game->player->health += 0.00010;
+		game->player->health += 0.00015;
 	if (game->player->health > 1)
 		game->player->health = 1;
 	while (++y < game->screen_height * 0.88)

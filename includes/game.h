@@ -114,6 +114,10 @@ typedef struct s_player
 	int			floor;
 	float		anim_shoot;
 	int			begin_dir;
+	bool		being_tpted;
+	float		x_tel;
+	float		y_tel;
+	float		f_tel;
 	t_stuff		*stuff;
 	t_raycast	*raycast;
 	t_stats		*stats;
@@ -384,6 +388,7 @@ void	use_teleporter(t_game *game);
 void	set_output_teleporter(t_game *game, int x, int y, int floor);
 void	add_teleporter(t_game *game, int x, int y, int floor);
 int		teleportation(t_game *game, int x, int y, int floor, char c);
+void	animation_teleportation(t_game *game);
 
 // map
 int		map_copy(t_game *game);

@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   game_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:32:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 17:08:13 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #include "../../includes/cub3d.h"
@@ -19,6 +20,8 @@ static void	draw_hud(t_game *game)
 	mini_map(game);
 	crosshair(game);
 	gun_draw(game);
+	if (game->player->being_tpted)
+		animation_teleportation(game);
 	calculate_fps(game);
 }
 
