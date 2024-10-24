@@ -143,6 +143,7 @@ typedef	struct s_textures
 	t_image	*fire;
 	t_image	*ammo;
 	t_image	*health;
+	t_image	*exit;
 	int		so;
 	int		no;
 	int		c;
@@ -255,7 +256,7 @@ typedef struct s_game
 	t_menu			*menu;
 	t_memory_table	*mem;
 	t_sprite		*sprites;
-
+	float			time_regen;
 	void			*mlx;
 	void			*win;
 	int				screen_width;
@@ -277,7 +278,6 @@ typedef struct s_game
 	t_chatbox		*chatbox;
 	float			delta_time;
 	struct timeval	last_time;
-	float			timehealth;
 	int				key_flags;
 	t_projectile	*projectiles;
 	t_client		*client;

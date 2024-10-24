@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 10:53:09 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 12:16:10 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	init_player(t_game	*game, int malloc)
 	game->player->anim_shoot = 0;
 	game->player->health = 1;
 	game->player->ammo = 30;
-	game->timehealth = 0;
+	game->time_regen = 0;
 	game->servers = NULL;
 	if (malloc)
 		game->player->raycast = gc_malloc(game->mem, sizeof(t_raycast));

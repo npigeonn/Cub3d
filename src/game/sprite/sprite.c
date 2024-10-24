@@ -175,6 +175,8 @@ void	draw_sprites(t_game *game)
 			if (current->floor1 == game->player->floor)
 				draw_sprite(game, game->textures->tp, current->x1, current->y1, 150, 0.4, 1, 0);
 		}
+		if (current->type == SPRITE_EXIT && current->floor == game->player->floor)
+			draw_sprite(game, game->textures->exit, current->x + 0.5, current->y + 0.5, 150, 1.5, 0.005, 0);
 		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor)
 		{
 			if (current->health <= 0)

@@ -162,12 +162,14 @@ void	load_game_texture(t_game *game)
 	game->textures->enemy_fire = malloc(sizeof(t_image));
 	game->textures->enemy_death = malloc(sizeof(t_image));
 	game->textures->health = malloc(sizeof(t_image));
+	game->textures->exit = malloc(sizeof(t_image));
 	load_texture(game, game->textures->health, "./assets/sprites/heart.xpm");
 	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
 	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");
 	load_texture(game, game->textures->enemy, "./assets/sprites/enemy_spritesheet.xpm");
 	load_texture(game, game->textures->enemy_fire, "./assets/sprites/enemy_fire.xpm");
 	load_texture(game, game->textures->enemy_death, "./assets/sprites/enemy_death.xpm");
+	load_texture(game, game->textures->exit, "./assets/sprites/arceus.xpm");
 	game->textures->enemy->nb_sprite = 8;
 	game->textures->enemy->sprite_width = 64;
 	game->textures->enemy->sprite_height = 64;
@@ -180,6 +182,9 @@ void	load_game_texture(t_game *game)
 	game->textures->tp->nb_sprite = 1;
 	game->textures->tp->sprite_width = game->textures->tp->width;
 	game->textures->tp->sprite_height = game->textures->tp->height;
+	game->textures->exit->nb_sprite = 1;
+	game->textures->exit->sprite_width = game->textures->exit->width;
+	game->textures->exit->sprite_height = game->textures->exit->height;
 	game->textures->health->nb_sprite = 1;
 	game->textures->health->sprite_height = 160;
 	game->textures->health->sprite_width = game->textures->health->width;

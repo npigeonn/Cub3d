@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   door.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 09:47:58 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 11:38:31 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,61 +162,4 @@ int	handle_door(t_game *game)
 			return (1);
 	}
 	return (0);
-}
-
-
-void	add_ammo(t_game *game, int x, int y, int floor)
-{
-	t_sprite *new_ammo;
-
-	new_ammo = malloc(sizeof(t_sprite));
-	new_ammo->x = x;
-	new_ammo->y = y;
-	new_ammo->floor = floor;
-	new_ammo->still_exist = 1;
-	new_ammo->next = game->sprites;
-	new_ammo->type = SPRITE_AMMO;
-	game->sprites = new_ammo;
-}
-
-void	add_health(t_game *game, int x, int y, int floor)
-{
-	t_sprite *new_health;
-
-	new_health = malloc(sizeof(t_sprite));
-	new_health->x = x;
-	new_health->y = y;
-	new_health->floor = floor;
-	new_health->still_exist = 1;
-	new_health->next = game->sprites;
-	new_health->type = SPRITE_HEALTH;
-	game->sprites = new_health;
-}
-
-void	door_ennemi_ammo_health_mngmt(t_game *game)
-{
-	int	i;
-	int	j;
-	int	k;
-	
-	i = -1;
-	while (game->map[++i])
-	{
-		j = -1;
-		while (game->map[i][++j])
-		{
-			k = -1;
-			while (game->map[i][j][++k])
-			{
-				if (game->map[i][j][k] == 'D')
-					add_door(game, k, j, i);
-				if (game->map[i][j][k] == 'M')
-					add_ammo(game, k + 0.5, j + 0.5, i);
-				if (game->map[i][j][k] == 'B')
-					add_enemies(game, k, j, i);
-				if (game->map[i][j][k] == 'H')
-					add_health(game, k, j + 0.5, i + 0.5);
-			}
-		}
-	}
 }
