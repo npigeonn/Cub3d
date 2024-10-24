@@ -58,6 +58,7 @@ enum GameStatus
 	SERVER_DISCONNECTED = 12,
 	SERVER_FULL = 13,
 	GET_PSEUDO = 14,
+	STATS = 15,
 };
 
 enum Direction

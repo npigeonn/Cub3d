@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 11:31:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 15:32:36 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ int	game_loop(t_game *game)
 		draw_join_server_menu(game);
 	else if (status == SERVER_DISCONNECTED || status == SERVER_FULL)
 		draw_server_error_menu(game);
+	else if (status == STATS)
+		draw_stats_menu(game);
 	else if (status == PLAYING || status == MULTI_PLAYER || status == CHATING || (status == GAME_OVER && game->fade_progress < 1))
 		game_engine(game);
 	if (status == GAME_OVER)
