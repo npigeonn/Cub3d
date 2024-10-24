@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 08:35:41 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 09:15:07 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 11:05:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	update_game_over_click(t_game *game, int mouse_x, int mouse_y, int keycode)
 	if (game->menu->button_selected == 1)
 		game->menu->status = MAIN_MENU;
 	game->menu->button_selected = 0;
-	// reset_game(game);
+	reset_game(game);
 }
 
 void	update_game_over_button(t_game *game, int mouse_x, int mouse_y)

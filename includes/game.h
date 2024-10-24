@@ -284,6 +284,7 @@ typedef struct s_game
 	t_server_info	*servers;
 	pthread_t		discover_servers_thread;
 	float			fade_progress;
+	char			**av;
 }	t_game;
 
 //game
