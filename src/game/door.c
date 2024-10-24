@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/23 13:08:39 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 09:47:58 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,13 @@ void	add_door(t_game *game, int x, int y, int floor)
     game->door = new_door;
 }
 
-void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y, float ray_dir_x, float ray_dir_y, int side, t_door *door)
+void draw_door(t_game *game, t_raycast *r, t_door *door)
 {
 	t_image *texture = game->textures->door;
 
-	float perp_wall_dist = (side == SIDE_EAST || side == SIDE_WEST)
-		? (map_x - game->player->x + (1 - step_x) * 0.5) / ray_dir_x
-		: (map_y - game->player->y + (1 - step_y) * 0.5) / ray_dir_y;
+	float perp_wall_dist = (r->side == SIDE_EAST || r->side == SIDE_WEST)
+		? (r->map_x - game->player->x + (1 - r->step_x) * 0.5) / r->ray_dir_x
+		: (r->map_y - game->player->y + (1 - r->step_y) * 0.5) / r->ray_dir_y;
 
 	int line_height = (int)(game->screen_height / perp_wall_dist);
 	int draw_start = game->screen_height * 0.5 - line_height * 0.5 - (int)(game->player->height * line_height);
@@ -87,12 +87,12 @@ void draw_door(t_game *game, int x, int map_x, int map_y, int step_x, int step_y
 	if (draw_start < 0) draw_start = 0;
 	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
 
-	float wall_x = (side == SIDE_EAST || side == SIDE_WEST)
-		? (game->player->y + perp_wall_dist * ray_dir_y)
-		: (game->player->x + perp_wall_dist * ray_dir_x);
+	float wall_x = (r->side == SIDE_EAST || r->side == SIDE_WEST)
+		? (game->player->y + perp_wall_dist * r->ray_dir_y)
+		: (game->player->x + perp_wall_dist * r->ray_dir_x);
 	wall_x -= floor(wall_x);
-	game->wall_distances[x] = perp_wall_dist;
-	draw_vertical_line_with_texture(game, x, draw_start, draw_end, texture, wall_x, line_height);
+	game->wall_distances[r->x] = perp_wall_dist;
+	draw_vertical_line_with_texture(game, r->x, draw_start, draw_end, texture, wall_x, line_height);
 }
 
 void	update_door_animation(t_game *game)
@@ -150,7 +150,7 @@ int	handle_door(t_game *game)
 		if (!door)
 			return (0);
 		if (visible_door(door))
-			draw_door(game, raycast->x, raycast->map_x, raycast->map_y, raycast->step_x, raycast->step_y, raycast->ray_dir_x, raycast->ray_dir_y, raycast->side, door);
+			draw_door(game, raycast, door);
 		if (distance < 0.4)
 		{
 			if (door->open)

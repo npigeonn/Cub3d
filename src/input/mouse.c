@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 08:52:49 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 09:08:48 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 	else if (game->menu->status == SERVER_DISCONNECTED
 		|| game->menu->status == SERVER_FULL)
 		update_server_error_click(game, x, y, keycode);
+	else if (game->menu->status == GAME_OVER)
+		update_game_over_click(game, x, y, keycode);
 	else if (game->menu->status == CHATING)
 		handle_mouse_chat(game, x, y, keycode);
 	else if ((game->menu->status == PLAYING
@@ -67,6 +69,8 @@ int	handle_mouse_move(int x, int y, t_game *game)
 	else if (game->menu->status == SERVER_DISCONNECTED
 		|| game->menu->status == SERVER_FULL)
 		update_server_error_button(game, x, y);
+	else if (game->menu->status == GAME_OVER)
+		update_game_over_button(game, x, y);
 	if (game->menu->status == PLAYING || game->menu->status == MULTI_PLAYER)
 		handle_mouse_game(game, x, y);
 	return (0);

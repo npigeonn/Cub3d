@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/23 14:28:35 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/24 09:26:54 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,10 +39,12 @@ SRC_MENU =	$(addprefix $(PATH_SRC)menu/, \
 				main.c \
 				create_server.c \
 				join_server.c \
-				server_disconnected.c )
+				server_disconnected.c \
+				game_over.c )
 
 SRC_ALONE =	$(addprefix $(PATH_SRC), \
-				main.c )
+				main.c \
+				init.c )
 			
 SRC_PARSING = $(addprefix $(PATH_SRC)parsing/, \
 				free.c \

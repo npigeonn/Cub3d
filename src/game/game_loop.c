@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/23 15:39:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 08:59:46 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,17 @@ static void	game_engine(t_game *game)
 	game->menu->message = NOTHING;
 	handle_key(game);
 	calculate_delta_time(game);
-	update_door_animation(game);
 	cast_rays(game);
 	cast_floor(game);
 	draw_players(game);
-	update_enemies(game);
-	on_ammo(game);
-	update_projectiles(game);
-	on_life(game);
+	if (game->menu->status != GAME_OVER)
+	{
+		update_door_animation(game);
+		update_enemies(game);
+		on_ammo(game);
+		update_projectiles(game);
+		on_life(game);
+	}
 	draw_sprites(game);
 	chat_draw(game);
 	show_message(game);
@@ -68,6 +71,8 @@ static void	victory_screen(t_game *game)
 	t_player	*p;
 
 	p = game->player;
+	if (p->health <= 0)
+		game->menu->status = GAME_OVER;
 	if (game->map[p->floor][(int)p->y][(int)p->x] == 'e')
 	{
 		ft_printf("VICTORY\n");
@@ -94,8 +99,15 @@ int	game_loop(t_game *game)
 		draw_join_server_menu(game);
 	else if (status == SERVER_DISCONNECTED || status == SERVER_FULL)
 		draw_server_error_menu(game);
-	else if (status == PLAYING || status == MULTI_PLAYER || status == CHATING)
+	else if (status == PLAYING || status == MULTI_PLAYER || status == CHATING || (status == GAME_OVER && game->fade_progress < 1))
 		game_engine(game);
+	if (status == GAME_OVER)
+	{
+		if (game->fade_progress < 1)
+			apply_fade_to_red(game);
+		else
+			draw_game_over(game);
+	}
 	else if (status == VALID_SERVER_CREATE || status == VALID_JOIN_SERVER)
 		create_join_server(game);
 	mlx_put_image_to_window(game->mlx, game->win, game->images->base->img,

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floodfill.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/22 09:34:31 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/24 09:37:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,8 @@ void	begin_player_position(t_game *game, int i, int j, int k)
 		game->player->begin_dir = 2;
 	else if (game->map[i][j][k] == 'W')
 		game->player->begin_dir = 3;
-	game->player->x = k;
-	game->player->y = j;
+	game->player->x = k + 0.5;
+	game->player->y = j + 0.5;
 	game->player->floor = i;
 }
 

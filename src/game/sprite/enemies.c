@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/23 16:01:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 08:46:02 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,17 +131,6 @@ void	draw_players(t_game *game)
 		current = current->next;
 	}
 }
-bool	is_position_passable(t_game *game, float x, float y, int floor)
-{
-	int tile_x = (int)(x);
-	int tile_y = (int)(y);
-
-	if (tile_x < 0 || tile_y < 0 || tile_x >= (int)ft_strlen(game->map[floor][tile_y]))
-		return (false);
-	if (game->map[floor][tile_y][tile_x] == 'D' || game->map[floor][tile_y][tile_x] == '1')
-		return (false);
-	return (true);
-}
 
 bool	has_line_of_sight(t_game *game, t_point enemy_pos, t_point player_pos, float enemy_facing_angle, float fov_angle)
 {
@@ -160,7 +149,7 @@ bool	has_line_of_sight(t_game *game, t_point enemy_pos, t_point player_pos, floa
 		{
 			enemy_pos.x += step_x * 0.1f;
 			enemy_pos.y += step_y * 0.1f;
-			if (!is_position_passable(game, enemy_pos.x, enemy_pos.y, enemy_pos.floor))
+			if (!can_move(game, enemy_pos.x, enemy_pos.y, enemy_pos.floor))
 				return (false);
 		}
 		return (true);
@@ -234,6 +223,8 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
 		if (distance < 0.5f)
 		{
 			game->player->health -= projectile->damage;
+			if (game->player->health <= 0)
+				game->player->health = 0;
 			damages_red_draw(game);
 			return (true);
 		}
@@ -251,7 +242,7 @@ void	update_projectiles(t_game *game)
 		current->x += cos(current->direction * (M_PI / 180.0f)) * current->speed;
 		current->y += sin(current->direction * (M_PI / 180.0f)) * current->speed;
 
-		if (!is_position_passable(game, current->x, current->y, current->floor))
+		if (!can_move(game, current->x, current->y, current->floor))
 		{
 			if (prev)
 				prev->next = current->next;
@@ -312,7 +303,7 @@ void	shoot_at_player(t_sprite *enemy, t_point player_pos, t_game *game)
 			new_projectile->enemy = enemy;
 			new_projectile->next = game->projectiles; 
 			new_projectile->floor = enemy->floor;
-			new_projectile->damage = 0.05f;
+			new_projectile->damage = 0.09f;
 			game->projectiles = new_projectile;
 		}
 		enemy->shoot_delay = 1;
@@ -374,7 +365,7 @@ void	update_enemies(t_game *game)
 			
 			float new_x = current->x + current->dirX * 0.02;
 			float new_y = current->y + current->dirY * 0.02;
-			if (is_position_passable(game, new_x, new_y, current->floor))
+			if (can_move(game, new_x, new_y, current->floor))
 			{
 				current->x = new_x;
 				current->y = new_y;

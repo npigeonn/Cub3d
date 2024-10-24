@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/20 23:52:09 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 09:03:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,7 +322,7 @@ void	draw_multiplayer_menu(t_game *game)
 			info3.x = list_x + list_width - 80;
 			info3.height = btn_height * 0.4;
 			draw_text_right(game, info3);
-			info3.x = list_x + list_width - 40;
+			info3.x = list_x + 40;
 			info3.str = "Ping: 30ms";
 			info3.y = server_y_offset + 50;
 			info3.height = btn_height * 0.3;

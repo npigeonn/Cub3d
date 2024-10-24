@@ -231,6 +231,7 @@ int	main(int ac, char **av)
 	ft_bzero(game.wall_distances, game.screen_width);
 	game.door = NULL;
 	game.client->name[0] = '\0';
+	game.key_flags = 0;
 	game.client->pseudo[0] = '\0';
 	game.client->ip[0] = '\0';
 	load_game_texture(&game);
