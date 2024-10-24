@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 13:24:33 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/20 21:33:43 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:13:10 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	chat_draw(t_game *game)
 	info.height = 40;
 	info.alpha = 0.9;
 	draw_transparent_rectangle(game, info);
-	info.str = game->chatbox->message;
+	ft_strcpy(info.str, game->chatbox->message);
 	info.x = width + 20;
 	info.y = y + height + 14;
 	info.color = 0x000000;
@@ -71,7 +71,7 @@ void	chat_draw(t_game *game)
 		draw_text_max_right(game, info);
 	else
 	{
-		info.str = "Enter a message";
+		ft_strcpy(info.str, "Enter a message");
 		info.x = width + 40;
 		info.y = y + height + 14;
 		draw_text_right(game, info);

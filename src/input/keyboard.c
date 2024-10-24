@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:43:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/23 15:51:50 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 14:26:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ static void	check_mouvement(t_game *game, t_player *p, double new_x,
 {
 	if (!can_move(game, new_x, new_y, game->player->floor))
 		return ;
+	p->stats->distanc_travel += sqrt(pow(new_x - p->x, 2) + pow(new_y - p->y, 2));
 	p->x = new_x;
 	p->y = new_y;
 }
@@ -61,7 +62,7 @@ void	send_update_position(t_game *game)
 	msg.y = game->player->y;
 	msg.floor = game->player->floor;
 	msg.height = game->player->height;
-	strncpy(msg.pseudo, game->client->pseudo, MAX_PSEUDO_LENGTH);
+	ft_strcpy(msg.pseudo, game->client->pseudo);
 	send(game->client->sock, &msg, sizeof(t_game_message), 0);
 }
 
@@ -69,7 +70,8 @@ void	handle_key(t_game *game)
 {
 	const int	status = game->menu->status;
 
-	mouvement(game, game->player);
+	if (status == PLAYING || status == MULTI_PLAYER)
+		mouvement(game, game->player);
 	if (status == MULTI_PLAYER)
 		send_update_position(game);
 }
@@ -89,6 +91,10 @@ int	handle_keypress(int keycode, t_game *game)
 	if (keycode == 116 && (status == MULTI_PLAYER || status == CHATING)
 		&& !game->chatbox->is_writting)
 		chatting_mode(game);
+	if (is_keyflag(keycode))
+		set_key_flag(game, keycode, 1);
+	if (status == GET_PSEUDO)
+		handle_pseudo_input(game, keycode);
 	if (status != PLAYING && status != MULTI_PLAYER)
 		return (0);
 	if (keycode == 32)
@@ -97,15 +103,11 @@ int	handle_keypress(int keycode, t_game *game)
 		p->height += 0.1;
 	if (keycode == 102)
 		use_item(game);
-	if (is_keyflag(keycode))
-		set_key_flag(game, keycode, 1);
 	return (0);
 }
 
 int	handle_keyrelease(int keycode, t_game *game)
 {
-	if (game->menu->status != PLAYING && game->menu->status != MULTI_PLAYER)
-		return (0);
 	if (is_keyflag(keycode))
 		set_key_flag(game, keycode, 0);
 	return (0);

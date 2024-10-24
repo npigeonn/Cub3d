@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 09:03:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:10:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode
 			if (i == game->menu->server_selected)
 			{
 				ft_strcpy(game->client->ip, current->ip);
-				game->menu->status = JOIN_SERVER;
+				game->menu->status = VALID_JOIN_SERVER;
 				break;
 			}
 			current = current->next;
@@ -292,7 +292,7 @@ void	draw_multiplayer_menu(t_game *game)
 	int server_y_offset = list_y + 80;
 	if (game->servers == NULL)
 	{
-		info.str = "Searching for servers...";
+		ft_strcpy(info.str, "Searching for servers...");
 		info.x = list_x + list_width * 0.5;
 		info.y = game->screen_height >> 1;
 		draw_text(game, info);
@@ -317,13 +317,13 @@ void	draw_multiplayer_menu(t_game *game)
 			info3 = init_draw_info(btn_height * 0.4, current->name, list_x + 40, server_y_offset + 10);
 			info3.color = MENU_BUTTON_TEXT_COLOR;
 			draw_text_left(game, info3);
-			info3.str = "1/4";
+			ft_strcpy(info.str, "1/4");
 			info3.y = server_y_offset + 22;
 			info3.x = list_x + list_width - 80;
 			info3.height = btn_height * 0.4;
 			draw_text_right(game, info3);
 			info3.x = list_x + 40;
-			info3.str = "Ping: 30ms";
+			ft_strcpy(info.str, "Ping: 30ms");
 			info3.y = server_y_offset + 50;
 			info3.height = btn_height * 0.3;
 			draw_text_left(game, info3);
@@ -342,18 +342,18 @@ void	draw_multiplayer_menu(t_game *game)
 	info2.width = btn_width;
 	info2.color = MENU_BUTTON_COLOR;
 	draw_rectangle(game, info2);
-	info.str = "Join Server";
+	ft_strcpy(info.str, "Join Server");
 	info.x = btn_x + btn_width * 0.5;
 	info.y = btn_y_start + btn_height * 0.33 - 5;
 	draw_text(game, info);
 	info2.y += btn_height + spacing;
 	draw_rectangle(game, info2);
-	info.str = "Create Server";
+	ft_strcpy(info.str, "Create Server");
 	info.y = btn_y_start + btn_height + spacing + btn_height * 0.33 - 5;
 	draw_text(game, info);
 	info2.y += btn_height + spacing;
 	draw_rectangle(game, info2);
-	info.str = "Back";
+	ft_strcpy(info.str, "Back");
 	info.y = btn_y_start + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;
 	draw_text(game, info);
 }

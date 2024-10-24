@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 23:32:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 09:13:31 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 14:58:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,18 +67,86 @@ static void	draw_selected_button(t_game *game)
 	info.width = btn_width;
 	info.height = btn_height;
 	info.color = MENU_BUTTON_SELECTED_COLOR;
+	info.radius = 10;
 	if (game->menu->button_selected == 1)
-		draw_rectangle(game, info);
+		draw_rounded_rectangle(game, info);
 	info.y += btn_height + spacing - 4;
 	if (game->menu->button_selected == 2)
-		draw_rectangle(game, info);
+		draw_rounded_rectangle(game, info);
 	info.y += btn_height + spacing - 4;
 	if (game->menu->button_selected == 3)
-		draw_rectangle(game, info);
+		draw_rounded_rectangle(game, info);
 	info.y += btn_height + spacing - 4;
 	if (game->menu->button_selected == 4)
-		draw_rectangle(game, info);
+		draw_rounded_rectangle(game, info);
 }
+
+void	draw_line(t_game *game, int x1, int y1, int x2, int y2, int color)
+{
+	int dx = abs(x2 - x1);
+	int dy = abs(y2 - y1);
+	int sx = x1 < x2 ? 1 : -1;
+	int sy = y1 < y2 ? 1 : -1;
+	int err = (dx > dy ? dx : -dy) / 2;
+	int e2;
+
+	while (1)
+	{
+		pixel_put(game, x1, y1, color);
+		if (x1 == x2 && y1 == y2)
+			break;
+		e2 = err;
+		if (e2 > -dx)
+		{
+			err -= dy;
+			x1 += sx;
+		}
+		if (e2 < dy)
+		{
+			err += dx;
+			y1 += sy;
+		}
+	}
+}
+
+#include <math.h>
+
+void	draw_gear_icon(t_game *game, int x, int y, int size)
+{
+	const int center_x = x + size / 2;
+	const int center_y = y + size / 2;
+	const int outer_radius = size / 2;
+	const int inner_radius = size / 3;
+	const int num_teeth = 8;
+	const double angle_step = M_PI * 2 / num_teeth;
+	const int tooth_width = size / 10;
+	const int tooth_length = size / 8;
+
+	draw_arc(game, center_x, center_y, inner_radius, 0, M_PI * 2, 0xFFFFFF);
+
+	for (int i = 0; i < num_teeth; i++)
+	{
+		double angle = i * angle_step;
+		double next_angle = (i + 1) * angle_step;
+
+		int outer_x1 = center_x + cos(angle) * (outer_radius + tooth_length);
+		int outer_y1 = center_y + sin(angle) * (outer_radius + tooth_length);
+		int outer_x2 = center_x + cos(next_angle) * (outer_radius + tooth_length);
+		int outer_y2 = center_y + sin(next_angle) * (outer_radius + tooth_length);
+
+		int inner_x1 = center_x + cos(angle) * outer_radius;
+		int inner_y1 = center_y + sin(angle) * outer_radius;
+		int inner_x2 = center_x + cos(next_angle) * outer_radius;
+		int inner_y2 = center_y + sin(next_angle) * outer_radius;
+		draw_line(game, inner_x1, inner_y1, outer_x1, outer_y1, 0xFFFFFF);
+		draw_line(game, outer_x1, outer_y1, outer_x2, outer_y2, 0xFFFFFF);
+		draw_line(game, outer_x2, outer_y2, inner_x2, inner_y2, 0xFFFFFF);
+		draw_line(game, inner_x2, inner_y2, inner_x1, inner_y1, 0xFFFFFF);
+	}
+	draw_arc(game, center_x, center_y, inner_radius / 2, 0, M_PI * 2, 0xFFFFFF);
+}
+
+
 
 void	draw_main_menu(t_game *game)
 {
@@ -90,28 +158,33 @@ void	draw_main_menu(t_game *game)
 	t_draw_info	info2;
 	t_draw_info	info;
 
+	draw_selected_button(game);
 	info = init_draw_info(btn_height * 0.5, "Solo", x + btn_width * 0.5, y + btn_height * 0.33 - 5);
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	info2 = init_draw_info(0, "y", x, y);
 	info2.color = MENU_BUTTON_COLOR;
 	info2.height = btn_height;
 	info2.width = btn_width;
-	draw_selected_button(game);
 	draw_rectangle(game, info2);
 	draw_text(game, info);
 	info2.y += btn_height + spacing;
 	draw_rectangle(game, info2);
-	info.str = "Multi";
+	ft_strcpy(info.str, "Multi");
 	info.y += btn_height + spacing;
 	draw_text(game, info);
 	info2.y += btn_height + spacing;
 	draw_rectangle(game, info2);
-	info.str = "Options";
+	ft_strcpy(info.str, "Stats");
 	info.y += btn_height + spacing;
 	draw_text(game, info);
 	info2.y += btn_height + spacing;
 	draw_rectangle(game, info2);
-	info.str = "Exit";
+	ft_strcpy(info.str, "Exit");
 	info.y += btn_height + spacing;
 	draw_text(game, info);
+	const int gear_size = game->screen_width * 0.05;
+	const int gear_x = game->screen_width - gear_size - 10;
+	const int gear_y = 10;
+	draw_gear_icon(game, gear_x, gear_y, gear_size);
 }
+

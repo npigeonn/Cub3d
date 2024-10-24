@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 08:59:46 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 11:31:03 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,9 @@ int	game_loop(t_game *game)
 	status = game->menu->status;
 	ft_memset(game->images->base->data, 0, game->screen_width
 		* game->screen_height * 4);
-	if (status == MAIN_MENU)
+	if (status == GET_PSEUDO)
+		draw_get_pseudo_menu(game);
+	else if (status == MAIN_MENU)
 		draw_main_menu(game);
 	else if (status == OPTIONS)
 		draw_options_menu(game);

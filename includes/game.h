@@ -25,7 +25,7 @@ typedef struct	s_draw_info
 {
 	int		width;
 	int		height;
-	char	*str;
+	char	str[256];
 	char	c;
 	int		color;
 	int		x;
@@ -57,6 +57,7 @@ enum GameStatus
 	MULTI_PLAYER = 11,
 	SERVER_DISCONNECTED = 12,
 	SERVER_FULL = 13,
+	GET_PSEUDO = 14,
 };
 
 enum Direction
@@ -86,6 +87,18 @@ typedef struct s_stuff
 	int kit_hp;
 }	t_stuff;
 
+typedef struct	s_stats
+{
+	int		nb_kills;
+	int		nb_degats;
+	float	temps;
+	int		nb_games;
+	int		nb_win;
+	int		nb_shoot;
+	int		nb_hit;
+	float	distanc_travel;
+}	t_stats;
+
 typedef struct s_player
 {
 	float		x;
@@ -102,6 +115,7 @@ typedef struct s_player
 	int			begin_dir;
 	t_stuff		*stuff;
 	t_raycast	*raycast;
+	t_stats		*stats;
 }	t_player;
 
 typedef struct s_image

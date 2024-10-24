@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:51:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/20 19:43:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 14:04:09 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_draw_info	init_draw_info(int height, char *str, int x, int y)
 
 	draw_info.width = 0;
 	draw_info.height = height;
-	draw_info.str = str;
+	ft_strcpy(draw_info.str, str);
 	draw_info.color = 0x00000;
 	draw_info.x = x;
 	draw_info.y = y;
@@ -41,7 +41,7 @@ void	draw_text_max_right(t_game *game, t_draw_info info)
 			* info.height / 480 + 3;
 	info.x = info.x - text_width;
 	info.y -= 7;
-	i = index - 1;
+	i = index;
 	while (info.str[++i])
 	{
 		if (info.str[i] == ' ')

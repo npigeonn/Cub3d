@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 14:42:20 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/20 18:58:18 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:08:45 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	draw_options_menu(t_game *game)
 	draw_text(game, info);
 	draw_slider(game, x, y + 30, btn_width, btn_height, game->menu->volume / 100.0f); // menu->Volume entre 0 et 100
 
-	info.str = "Sensitive";
+	ft_strcpy(info.str, "Sensitive");
 	info.y = y + btn_height + spacing - 20;
 	draw_text(game, info);
 	draw_slider(game, x, y + btn_height + spacing + 30, btn_width, btn_height, game->menu->mouse_sensitivity / 10.0f); // Sensibilité entre 0.1 et 10
@@ -119,7 +119,7 @@ void	draw_options_menu(t_game *game)
 	info2.width = btn_width;
 	info2.color = MENU_BUTTON_COLOR;
 	draw_rectangle(game, info2);
-	info.str = "Back";
+	ft_strcpy(info.str, "Back");
 	info.y = y + 2 * (btn_height + spacing) + btn_height / 3 - 5;
 	draw_text(game, info);
 }

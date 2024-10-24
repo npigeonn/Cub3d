@@ -1,0 +1,18 @@
+{
+	"yoyoazs" : {
+		"nb_kills" : 0,
+		"nb_deaths" : 0,
+		"nb_wins" : 0,
+		"nb_loses" : 0,
+		"nb_hits" : 0,
+		"nb_shots" : 0
+	},
+	"joueur" : {
+		"nb_kills" : 0,
+		"nb_deaths" : 0,
+		"nb_wins" : 0,
+		"nb_loses" : 0,
+		"nb_hits" : 0,
+		"nb_shots" : 0
+	}
+}

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 16:04:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:21:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	send_all_players(t_server *server, int id)
 			connect_msg.dir_y = current->dir_y;
 			connect_msg.floor = current->floor;
 			connect_msg.height = current->height;
-			strncpy(connect_msg.pseudo, current->pseudo, MAX_PSEUDO_LENGTH);
+			ft_strcpy(connect_msg.pseudo, current->pseudo);
 			send(server->client_sockets[id], &connect_msg,
 				sizeof(t_game_message), 0);
 		}

@@ -149,20 +149,20 @@ void	init_floorcast(t_game *game)
 
 void	load_game_texture(t_game *game)
 {
-	game->textures = malloc(sizeof(t_textures));
-	game->textures->east = malloc(sizeof(t_image));
-	game->textures->north = malloc(sizeof(t_image));
-	game->textures->south = malloc(sizeof(t_image));
-	game->textures->west = malloc(sizeof(t_image));
-	game->textures->door = malloc(sizeof(t_image));
-	game->textures->tp = malloc(sizeof(t_image));
-	game->textures->floor = malloc(sizeof(t_image));
-	game->textures->ceil = malloc(sizeof(t_image));
-	game->textures->enemy = malloc(sizeof(t_image));
-	game->textures->enemy_fire = malloc(sizeof(t_image));
-	game->textures->enemy_death = malloc(sizeof(t_image));
-	game->textures->health = malloc(sizeof(t_image));
-	game->textures->exit = malloc(sizeof(t_image));
+	game->textures = gc_malloc(game->mem, sizeof(t_textures));
+	game->textures->east = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->north = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->south = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->west = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->door = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->tp = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->floor = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->ceil = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->enemy = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->enemy_fire = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->enemy_death = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->health = gc_malloc(game->mem, sizeof(t_image));
+	game->textures->exit = gc_malloc(game->mem, sizeof(t_image));
 	load_texture(game, game->textures->health, "./assets/sprites/heart.xpm");
 	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
 	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");
@@ -209,6 +209,7 @@ void	reset_game(t_game *game)
 	free_map(game);
 	parsing(game->av, game);
 	set_direction(game, game->player->begin_dir);
+	game->menu->status = MAIN_MENU;
 }
 
 void	hooks(t_game *game)

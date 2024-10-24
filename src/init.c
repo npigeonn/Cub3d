@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 12:16:10 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/24 15:00:24 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	init_menu(t_game *game, int malloc)
 	game->menu->volume = 20;
 	game->menu->mouse_sensitivity = 2;
 	game->menu->message = NOTHING;
-	game->menu->status = MAIN_MENU;
+	game->menu->status = GET_PSEUDO;
 	game->menu->button_selected = 0;
 	game->menu->error_name = false;
 	game->menu->error_pseudo = false;
@@ -45,9 +45,7 @@ void	init_client(t_game *game, int malloc)
 	if (malloc)
 		game->client = gc_malloc(game->mem, sizeof(t_client));
 	game->client->players = NULL;
-	game->client->pseudo[0] = '\0';
 	game->client->name[0] = '\0';
-	game->client->pseudo[0] = '\0';
 	game->client->ip[0] = '\0';
 	if (malloc)
 		game->chatbox = gc_malloc(game->mem, sizeof(t_chatbox));
@@ -59,7 +57,11 @@ void	init_client(t_game *game, int malloc)
 void	init_player(t_game	*game, int malloc)
 {
 	if (malloc)
+	{
 		game->player = gc_malloc(game->mem, sizeof(t_player));
+		game->player->raycast = gc_malloc(game->mem, sizeof(t_raycast));
+		game->player->stats = gc_malloc(game->mem, sizeof(t_stats));
+	}
 	game->player->x = 0;
 	game->player->y = 0;
 	game->player->floor = 0;
@@ -72,6 +74,10 @@ void	init_player(t_game	*game, int malloc)
 	game->player->ammo = 30;
 	game->time_regen = 0;
 	game->servers = NULL;
-	if (malloc)
-		game->player->raycast = gc_malloc(game->mem, sizeof(t_raycast));
+	game->player->stats->nb_kills = 0;
+	game->player->stats->temps = gettimeofday(NULL, NULL);
+	game->player->stats->nb_degats = 0;
+	game->player->stats->nb_hit = 0;
+	game->player->stats->nb_shoot = 0;
+	game->player->stats->distanc_travel = 0;
 }

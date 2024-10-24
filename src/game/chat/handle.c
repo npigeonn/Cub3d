@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:48:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 18:50:32 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 12:58:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	handle_mouse_chat(t_game *game, int x, int y, int keycode)
 
 void	chat_input(t_game *game, int keycode)
 {
-	const int	len = ft_strlen(game->chatbox->message);
+	const size_t	len = ft_strlen(game->chatbox->message);
 
 	if (!game->chatbox->is_writting)
 		return ;

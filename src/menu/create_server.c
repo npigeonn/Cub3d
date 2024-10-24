@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 13:49:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 14:02:56 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:09:26 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ char	*get_field(t_game *game)
 		else
 			return (game->client->ip);
 	}
-	if (game->menu->text_field_selected == 2)
-		return (game->client->pseudo);
 	return (NULL);
 }
 
@@ -76,6 +74,13 @@ void	handle_ip_input(t_game *game, int keycode)
 	}
 	else if (keycode == 65288 && len > 0)
 		field[len - 1] = '\0';
+	else if (keycode == 65293)
+	{
+		if (game->client->ip[0] == '\0')
+			game->menu->error_name = true;
+		else
+			game->menu->status = VALID_JOIN_SERVER;
+	}
 }
 
 void	handle_text_input(t_game *game, int keycode)
@@ -97,6 +102,8 @@ void	handle_text_input(t_game *game, int keycode)
 				field[len] = get_keycode_pad(keycode);
 			else if (keycode == 32)
 				field[len] = '_';
+			else if (is_key_pressed(game, KEY_SHIFT))
+				field[len] = ft_toupper((char)keycode);
 			else
 				field[len] = (char)keycode;
 			field[len + 1] = '\0';
@@ -104,6 +111,16 @@ void	handle_text_input(t_game *game, int keycode)
 	}
 	else if (keycode == 65288 && len > 0)
 		field[len - 1] = '\0';
+	else if (keycode == 65293)
+	{
+		if (game->menu->text_field_selected == 1)
+		{
+			if (game->client->name[0] == '\0')
+				game->menu->error_name = true;
+			else
+				game->menu->status = VALID_SERVER_CREATE;
+		}
+	}
 }
 
 void get_local_ip(char *ip_buffer, size_t buffer_size)
@@ -132,9 +149,7 @@ void	handle_create_server(t_game *game)
 {
 	if (game->client->name[0] == '\0')
 		game->menu->error_name = true;
-	if (game->client->pseudo[0] == '\0')
-		game->menu->error_pseudo = true;
-	if (game->client->pseudo[0] != '\0' && game->client->name[0] != '\0')
+	if (game->client->name[0] != '\0')
 		game->menu->status = VALID_SERVER_CREATE;
 }
 
@@ -154,26 +169,17 @@ void	update_create_server_menu_text(t_game *game, int mouse_x, int mouse_y, int 
 			game->menu->error_name = false;
 		}
 	}
-	else if (mouse_x >= x && mouse_x <= x + btn_width && mouse_y >= y + btn_height + spacing + 30 && mouse_y <= y + btn_height + spacing + 30 + btn_height)
-	{
-		if (mouse_button == 1)
-		{
-			game->menu->text_field_selected = 2;
-			game->menu->error_pseudo = false;
-		}
-	}
 	else
 		game->menu->text_field_selected = 0;
 	if (game->menu->button_selected == 1 && mouse_button == 1)
 	{
 		game->client->name[0] = '\0';
-		game->client->pseudo[0] = '\0';
 		game->menu->status = SERVERS;
 	}
 	if (game->menu->button_selected == 2 && mouse_button == 1)
 		handle_create_server(game);
 }
-void update_create_server_menu_button(t_game *game, int mouse_x, int mouse_y)
+void	update_create_server_menu_button(t_game *game, int mouse_x, int mouse_y)
 {
 	const int btn_width = game->screen_width * 0.25;  
 	const int btn_height = game->screen_height * 0.08;
@@ -182,7 +188,7 @@ void update_create_server_menu_button(t_game *game, int mouse_x, int mouse_y)
 	const int btn_half_width = btn_width * 0.45;
 	const int total_btn_width = 2 * btn_half_width + game->screen_width * 0.02;
 	const int btn_x_start = (game->screen_width - total_btn_width) / 2;
-	const int btn_y_start = game->screen_height * 0.33 + 3 * (btn_height + spacing);
+	const int btn_y_start = game->screen_height * 0.33 + 2 * (btn_height + spacing);
 
 	if (mouse_x >= btn_x_start && mouse_x <= btn_x_start + btn_half_width && 
 		mouse_y >= btn_y_start && mouse_y <= btn_y_start + btn_height)
@@ -245,40 +251,20 @@ void	draw_create_server_menu(t_game *game)
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	info.height = btn_height * 0.5;
 	info.y = y - 10;
-	info.str = "Server Name";
+	ft_strcpy(info.str, "Server Name");
 	draw_text(game, info);
 	draw_text_field(game, x, y + 30, btn_width, btn_height, game->client->name);
-	if (game->menu->text_field_selected == 2)
-	{
-		info3 = init_draw_info(btn_height + 8, "", x - 4, y + btn_height + spacing + 30 - 4);
-		info3.color = MENU_BUTTON_SELECTED_COLOR;
-		info3.width = btn_width + 8;
-		info3.radius = 10;
-		draw_rounded_rectangle(game, info3);
-	}
-	if (game->menu->error_pseudo)
-	{
-		info3 = init_draw_info(btn_height + 8, "", x - 4, y + btn_height + spacing + 30 - 4);
-		info3.color = 0xFF0000;
-		info3.width = btn_width + 8;
-		info3.radius = 10;
-		draw_rounded_rectangle(game, info3);
-	}
-	info.y = y + btn_height + spacing - 10;
-	info.str = "Pseudo";
-	draw_text(game, info);
-	draw_text_field(game, x, y + btn_height + spacing + 30, btn_width, btn_height, game->client->pseudo);
-	info.y = y + 2 * (btn_height + spacing) - 10;
-	info.str = "Server IP";
+	info.y = y + (btn_height + spacing) - 10;
+	ft_strcpy(info.str, "Server IP");
 	draw_text(game, info);
     char ip[INET_ADDRSTRLEN];
     get_local_ip(ip, sizeof(ip));
-	draw_text_field(game, x, y + 2 * (btn_height + spacing) + 30, btn_width, btn_height, ip);
+	draw_text_field(game, x, y + (btn_height + spacing) + 30, btn_width, btn_height, ip);
 
 	const int btn_half_width = btn_width * 0.45;
 	const int total_btn_width = 2 * btn_half_width + game->screen_width * 0.02;
 	const int btn_x_start = (game->screen_width - total_btn_width) / 2;
-	const int btn_y_start = y + 3 * (btn_height + spacing);
+	const int btn_y_start = y + 2 * (btn_height + spacing);
 	t_draw_info info2 = init_draw_info(0, "", btn_x_start, btn_y_start);
 	info2.color = MENU_BUTTON_COLOR;
 	info2.width = btn_half_width;
@@ -294,7 +280,7 @@ void	draw_create_server_menu(t_game *game)
 	draw_rectangle(game, info2);
 	info = init_draw_info(btn_height * 0.5, "Back", btn_x_start + (btn_half_width / 2), btn_y_start + btn_height / 3 - 5);
 	info.color = MENU_BUTTON_TEXT_COLOR;
-	info.str = "Back";
+	ft_strcpy(info.str, "Back");
 	info.x = btn_x_start + (btn_half_width / 2);
 	info.y = btn_y_start + btn_height / 3 - 5;
 	draw_text(game, info);
@@ -308,7 +294,7 @@ void	draw_create_server_menu(t_game *game)
 	}
 	info2.x += btn_half_width + game->screen_width * 0.02;
 	draw_rectangle(game, info2);
-	info.str = "Create";
+	ft_strcpy(info.str, "Create");
 	info.x = btn_x_start + btn_half_width + game->screen_width * 0.02 + (btn_half_width / 2);
 	draw_text(game, info);
 }

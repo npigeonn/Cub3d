@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/20 19:38:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/24 13:09:18 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	show_menu_message(t_game *game)
 	if (game->menu->message == OPEN_DOOR)
 	{
 		draw_rectangle(game, info);
-		info.str = "Appuyer sur F pour ouvrir";
+		ft_strcpy(info.str, "Appuyer sur F pour ouvrir");
 		info.height = 30;
 		info.y = game->screen_height * 0.5 - 129;
 		info.x = game->screen_width * 0.5;
@@ -50,7 +50,7 @@ void	show_menu_message(t_game *game)
 	else if (game->menu->message == CLOSE_DOOR)
 	{
 		draw_rectangle(game, info);
-		info.str = "Appuyer sur F pour fermer";
+		ft_strcpy(info.str, "Appuyer sur F pour fermer");
 		info.height = 30;
 		info.y = game->screen_height * 0.5 - 129;
 		info.x = game->screen_width * 0.5;
@@ -62,7 +62,7 @@ void	show_menu_message(t_game *game)
 		info.x -= 80;
 		info.width += 160;
 		draw_rectangle(game, info);
-		info.str = "Appuyer sur F pour vous teleportez";
+		ft_strcpy(info.str, "Appuyer sur F pour vous teleportez");
 		info.height = 30;
 		info.y = game->screen_height * 0.5 - 129;
 		info.x = game->screen_width * 0.5;
@@ -103,7 +103,7 @@ void	calculate_fps(t_game *game)
 	t_draw_info	info = init_draw_info(30, "FPS: ", 5, 20);
 	info.color = 0xFFFFF;
 	draw_text_left(game, info);
-	info.str = ft_itoa(fps);
+	ft_strcpy(info.str, ft_itoa(fps));
 	info.x = 60;
 	draw_text_left(game, info);
 }

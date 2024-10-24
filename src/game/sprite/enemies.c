@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 12:14:39 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/24 15:00:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,12 +119,16 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
 		float dx = current->x - projectile->x;
 		float dy = current->y - projectile->y;
 		float distance = sqrt(dx * dx + dy * dy);
-
 		if (distance < 0.5f)
 		{
+			if (projectile->owner == game->player)
+				game->player->stats->nb_hit++;
 			current->health -= projectile->damage;
 			if (current->health <= 0)
+			{
+				game->player->stats->nb_kills++;
 				current->animation = 2;
+			}
 			return (true);
 		}
 		current = current->next;
@@ -137,6 +141,7 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
 
 		if (distance < 0.5f)
 		{
+			game->player->stats->nb_degats += projectile->damage;
 			game->player->health -= projectile->damage;
 			game->time_regen = 0;
 			if (game->player->health <= 0)
