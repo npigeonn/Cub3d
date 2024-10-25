@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 23:32:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:57:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/25 21:33:14 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ void	update_main_menu_click(t_game *game, int mouse_x, int mouse_y, int keycode)
 		handle_close(game);
 	else if (game->menu->button_selected == 5)
 		game->menu->status = OPTIONS;
+	else
+		return ;
 	game->menu->button_selected = 0;
 }
 

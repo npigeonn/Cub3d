@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 13:10:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/25 18:35:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,22 +113,21 @@ void	draw_rounded_rectangle(t_game *game, t_draw_info info)
 	info2.width = info.width;
 	info2.color = info.color;
 	draw_rectangle(game, info2);
-	draw_arc(game, info.x + info.radius, info.y + info.radius, info.radius, M_PI, M_PI * 1.5, MENU_BUTTON_SELECTED_COLOR);
-	draw_arc(game, info.x + info.width - info.radius, info.y + info.radius, info.radius, M_PI * 1.5, 0, MENU_BUTTON_SELECTED_COLOR);
-	draw_arc(game, info.x + info.width - info.radius, info.y + info.height - info.radius, info.radius, 0, M_PI * 0.5, MENU_BUTTON_SELECTED_COLOR);
-	draw_arc(game, info.x + info.radius, info.y + info.height - info.radius, info.radius, M_PI * 0.5, M_PI, MENU_BUTTON_SELECTED_COLOR);
+	draw_arc(game, info.x + info.radius, info.y + info.radius, info.radius, M_PI, M_PI * 1.5, info.color);
+	draw_arc(game, info.x + info.width - info.radius, info.y + info.radius, info.radius, M_PI * 1.5, 0, info.color);
+	draw_arc(game, info.x + info.width - info.radius, info.y + info.height - info.radius, info.radius, 0, M_PI * 0.5, info.color);
+	draw_arc(game, info.x + info.radius, info.y + info.height - info.radius, info.radius, M_PI * 0.5, M_PI, info.color);
+	int radius_squared = info.radius * info.radius;
 	for (int i = 0; i < info.radius; i++)
 	{
 		for (int j = 0; j < info.radius; j++)
 		{
-			if (sqrt(i * i + j * j) <= info.radius)
-				pixel_put(game, info.x + info.radius - i, info.y + info.radius - j, info.color);
-			if (sqrt(i * i + j * j) <= info.radius)
-				pixel_put(game, info.x + info.width - info.radius + i, info.y + info.radius - j, info.color);
-			if (sqrt(i * i + j * j) <= info.radius)
-				pixel_put(game, info.x + info.width - info.radius + i, info.y + info.height - info.radius + j, info.color);
-			if (sqrt(i * i + j * j) <= info.radius)
-				pixel_put(game, info.x + info.radius - i, info.y + info.height - info.radius + j, info.color);
+			if (!(i * i + j * j <= radius_squared))
+				continue ;
+			pixel_put(game, info.x + info.radius - i, info.y + info.radius - j, info.color);
+			pixel_put(game, info.x + info.width - info.radius + i, info.y + info.radius - j, info.color);
+			pixel_put(game, info.x + info.width - info.radius + i, info.y + info.height - info.radius + j, info.color);
+			pixel_put(game, info.x + info.radius - i, info.y + info.height - info.radius + j, info.color);
 		}
 	}
 }

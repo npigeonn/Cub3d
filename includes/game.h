@@ -117,6 +117,7 @@ typedef struct s_player
 	int			floor;
 	float		anim_shoot;
 	int			begin_dir;
+	int			scroll;
 	bool		being_tpted;
 	float		x_tel;
 	float		y_tel;

@@ -6,38 +6,49 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 14:29:12 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/25 21:28:59 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-int	handle_mouse_key(int keycode, int x, int y, t_game *game)
+int	handle_mouse_key2(int keycode, int x, int y, t_game *game)
 {
-	if (game->menu->status == OPTIONS)
-		update_option_menu_click(game, x, y, keycode);
-	else if (game->menu->status == SERVERS)
-		update_multiplayer_click(game, x, y, keycode);
-	else if (game->menu->status == SERVER_CREATE)
-		update_create_server_menu_text(game, x, y, keycode);
-	else if (game->menu->status == JOIN_SERVER)
-		update_join_server_menu_text(game, x, y, keycode);
-	else if (game->menu->status == MAIN_MENU)
-		update_main_menu_click(game, x, y, keycode);
-	else if (game->menu->status == SERVER_DISCONNECTED
-		|| game->menu->status == SERVER_FULL)
-		update_server_error_click(game, x, y, keycode);
-	else if (game->menu->status == GAME_OVER && game->fade_progress >= 1)
-		update_game_over_click(game, x, y, keycode);
-	else if (game->menu->status == CHATING)
-		handle_mouse_chat(game, x, y, keycode);
-	else if (game->menu->status == GET_PSEUDO)
-		update_get_pseudo_click(game, x, y, keycode);
-	else if ((game->menu->status == PLAYING
-			|| game->menu->status == MULTI_PLAYER)
+	const int	status = game->menu->status;
+
+	if ((status == PLAYING || status == MULTI_PLAYER)
 		&& keycode == 1 && game->player->ammo > 0)
 		return (game->player->anim_shoot = 1, game->player->ammo--,
 			game->player->stats->nb_shoot++, 0);
+	else if (status == STATS)
+		update_stats_menu_click(game, x, y, keycode);
+	return (0);
+}
+
+int	handle_mouse_key(int keycode, int x, int y, t_game *game)
+{
+	const int	status = game->menu->status;
+
+	if (status == OPTIONS)
+		update_option_menu_click(game, x, y, keycode);
+	else if (status == SERVERS)
+		update_multiplayer_click(game, x, y, keycode);
+	else if (status == SERVER_CREATE)
+		update_create_server_menu_text(game, x, y, keycode);
+	else if (status == JOIN_SERVER)
+		update_join_server_menu_text(game, x, y, keycode);
+	else if (status == MAIN_MENU)
+		update_main_menu_click(game, x, y, keycode);
+	else if (status == SERVER_DISCONNECTED || status == SERVER_FULL)
+		update_server_error_click(game, x, y, keycode);
+	else if (status == GAME_OVER && game->fade_progress >= 1)
+		update_game_over_click(game, x, y, keycode);
+	else if (status == CHATING)
+		handle_mouse_chat(game, x, y, keycode);
+	else if (status == GET_PSEUDO)
+		update_get_pseudo_click(game, x, y, keycode);
+	else
+		return (handle_mouse_key2(keycode, x, y, game));
 	return (0);
 }
 
@@ -78,5 +89,7 @@ int	handle_mouse_move(int x, int y, t_game *game)
 		update_get_pseudo_button(game, x, y);
 	if (game->menu->status == PLAYING || game->menu->status == MULTI_PLAYER)
 		handle_mouse_game(game, x, y);
+	if (game->menu->status == STATS)
+		update_stats_menu(game, x, y);
 	return (0);
 }
