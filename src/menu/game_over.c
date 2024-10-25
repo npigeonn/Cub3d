@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game_over.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 08:35:41 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 14:44:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/25 17:11:51 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void	update_game_over_button(t_game *game, int mouse_x, int mouse_y)
 	}
 }
 
-void apply_fade_to_red(t_game *game)
+void	apply_fade_to(t_game *game, int color)
 {
 	int	x;
 	int	y;
-	int	color;
+	int	clr;
 	int	new_color;
 	const float alpha = game->fade_progress;
 
@@ -51,16 +51,16 @@ void apply_fade_to_red(t_game *game)
 		x = 0;
 		while (x < game->screen_width)
 		{
-			color = get_pixel_color_from_image(game, x, y);
-			new_color = blend_colors(color, 0x850606, alpha);
+			clr = get_pixel_color_from_image(game, x, y);
+			new_color = blend_colors(clr, color, alpha); // color
 			pixel_put(game, x, y, new_color);
-			
 			x++;
 		}
 		y++;
 	}
 	game->fade_progress += 0.005;
 }
+
 
 void	draw_game_over(t_game *game)
 {

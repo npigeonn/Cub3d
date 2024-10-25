@@ -59,6 +59,9 @@ enum GameStatus
 	SERVER_FULL = 13,
 	GET_PSEUDO = 14,
 	STATS = 15,
+	GAME_SUCCESS = 16,
+	RED = 0x850606,
+	WHITE = 16777215,
 };
 
 enum Direction
@@ -342,6 +345,7 @@ void	gun_draw(t_game *game);
 void	get_pos_char(char c, int *x, int *y);
 void	ammo_written(t_game *game);
 void	health_point_draw(t_game *game);
+void	apply_fade_to(t_game *game, int color);
 
 // mini map
 void	mini_map(t_game *game);

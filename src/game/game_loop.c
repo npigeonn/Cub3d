@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 17:08:13 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/25 17:34:48 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,46 @@ static void	create_join_server(t_game *game)
 	}
 }
 
+void	draw_success(t_game *game)
+{
+	const int	btn_width = game->screen_width * 0.25;
+	const int	btn_height = game->screen_height * 0.1;
+	const int	spacing = game->screen_height * 0.05;
+	const int	x = (game->screen_width - btn_width) * 0.5;
+	const int	y = game->screen_height * 0.25;
+	t_draw_info	info2;
+	t_draw_info	info;
+
+	info = init_draw_info(game->screen_height, "", 0, 0);
+	info.width = game->screen_width;
+	info.color = 13107400;
+	draw_rectangle(game, info);
+	mlx_mouse_show(game->mlx, game->win);
+	info = init_draw_info(70, "MISSION SUCCEED", game->screen_width >> 1, game->screen_height * 0.4);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	draw_text(game, info);
+	// info2 = init_draw_info(0, "", x - 4, y + 2 * (btn_height + spacing) - 4);
+	// info2.width = btn_width + 8;
+	// info2.height = btn_height + 8;
+	// info2.color = MENU_BUTTON_SELECTED_COLOR;
+	// info2.radius = 10;
+	// if (game->menu->button_selected == 1)
+	// 	draw_rounded_rectangle(game, info2);
+	// info = init_draw_info(0, "", x, y + 2 * (btn_height + spacing));
+	// info2 = init_draw_info(btn_height, "", x, y + 2 * (btn_height + spacing));
+	// info2.color = MENU_BUTTON_COLOR;
+	// info2.width = btn_width;
+	// draw_rectangle(game, info2);
+	// info.color = MENU_BUTTON_TEXT_COLOR;
+	// ft_strcpy(info.str, "Main menu");
+	// info.y = y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;
+	// info.height = btn_height * 0.5;
+	// info.x = x + btn_width / 2;
+	// draw_text(game, info);
+	// game->chatbox->visible = false;
+	// game->chatbox->is_writting = false;
+}
+
 static void	victory_screen(t_game *game)
 {
 	t_player	*p;
@@ -78,8 +118,9 @@ static void	victory_screen(t_game *game)
 		game->menu->status = GAME_OVER;
 	if (game->map[p->floor][(int)p->y][(int)p->x] == 'e')
 	{
-		ft_printf("VICTORY\n");
-		exit(EXIT_SUCCESS);
+		// ft_printf("VICTORY\n");
+		game->menu->status = GAME_SUCCESS;
+		// exit(EXIT_SUCCESS);
 	}
 }
 
@@ -111,9 +152,16 @@ int	game_loop(t_game *game)
 	if (status == GAME_OVER)
 	{
 		if (game->fade_progress < 1)
-			apply_fade_to_red(game);
+			apply_fade_to(game, RED);
 		else
 			draw_game_over(game);
+	}
+	if (status == GAME_SUCCESS)
+	{
+		if (game->fade_progress < 1)
+			apply_fade_to(game, WHITE);
+		else
+			draw_success(game);
 	}
 	else if (status == VALID_SERVER_CREATE || status == VALID_JOIN_SERVER)
 		create_join_server(game);

@@ -86,7 +86,7 @@ Y : gerer les mouvements en meme temps ex: droite et haut
 	/ le menu n'est pas pris en compte dans le freeze j'ai l'impression
 	/
 	- gerer les spawns pour le mode solo et multi
-
+	- modif la couleur d'un partenaire ? dans le multijoueur
 
 
 	- gere les leaks , PLUS AUCUN LEAK avant de commencer a  normer
