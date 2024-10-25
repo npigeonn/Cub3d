@@ -12,7 +12,8 @@
 		"server.h": "c",
 		"pthread.h": "c",
 		"typeinfo": "c",
-		"random": "c"
+		"random": "c",
+		"mlx_int.h": "c"
 	},
 	"C_Cpp.errorSquiggles": "enabled",
 }

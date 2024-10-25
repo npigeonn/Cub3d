@@ -78,7 +78,21 @@ Y : gerer les mouvements en meme temps ex: droite et haut
 
 28 - 29
 	derniere modifs / leaks / normes
+	-augmenter vitesse des projectiles
+	- mieux gerer le champs de vision des bots
+	- la touche B et espace (ne plus prendre en compte)
+	- comprendre le freeze qui a lieu au bout d'1mn10 qd on joue
+	/ si on reste spectateur sans trop bouger ca peut durer jusqu a 2mn50 avec un freewe couteux pour l'ordinateur
+	/ le menu n'est pas pris en compte dans le freeze j'ai l'impression
+	/
+	- gerer les spawns pour le mode solo et multi
 
+
+
+	- gere les leaks , PLUS AUCUN LEAK avant de commencer a  normer
+	- couper les fonctions avec les bons parametres aussi
+	-mettre dans les fichiers 
+	-normer le contenu
 
 */
 
@@ -97,7 +111,7 @@ void	load_texture(t_game *game, t_image *img, char *path)
 	if (!img->img)
 	{
 		printf("Erreur lors du chargement de la texture : %s\n", path);
-		exit(1);
+		exit(1); // TODO free
 	}
 	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line, &img->endian);
 }
@@ -224,17 +238,33 @@ void	hooks(t_game *game)
 	mlx_loop(game->mlx);
 }
 
+# include <X11/X.h>
+# include <X11/keysym.h>
+
 int	main(int ac, char **av)
 {
 	t_game		game;
 	(void)ac;
+
+	// init structs pr cacher window
+	// t_xvar *moha;
+	// t_win_list *window;
 	
+
 	game.mem = gc_init();
 	game.mlx = mlx_init();
 	game.av = av;
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
 	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Cub3D");
 	init_var(&game, 1);
+	// //
+	// moha = game.mlx;
+	// window = game.win;
+	// // hide
+	// XFixesHideCursor(moha->display, window->window);
+	// // show
+	// XFixesShowCursor(moha->display, window->window);
+	// //
 	init_player(&game, 1);
 	init_menu(&game, 1);
 	init_client(&game, 1);

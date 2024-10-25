@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floodfill.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/24 09:37:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/25 15:09:58 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,28 +49,28 @@ int	check_walls(t_game *game, int x, int y, int floor)
 	return (1);
 }
 
-int	check_path(t_game *game, int x, int y, int floor) // si exit dans un autre etage ca ne marche pas 
+int	check_path(t_game *game, int x, int y, int floor)
 {
 	if (x < 0 || y < 0 || !game->map_cy[floor][y]
 		|| x >= (int)ft_strlen(game->map_cy[floor][y]))
-		return (0); // 
+		return (0);
 	if (game->map_cy[floor][y][x] == 'e') 
-		return (1); //   // Exit found
+		return (1);
 	if (game->map_cy[floor][y][x] == 'X' || game->map_cy[floor][y][x] == '1')
-		return (0); // Already visited or wall
+		return (0);
 	if (is_a_teleporter(game->map_cy[floor][y][x])
 		&& teleportation(game, x, y, floor, 'p'))
 		return (1);
-	game->map_cy[floor][y][x] = 'X'; // Mark visited
+	game->map_cy[floor][y][x] = 'X';
 	if (check_path(game, x + 1, y, floor))
-		return (1); // Right
+		return (1);
 	if (check_path(game, x - 1, y, floor))
-		return (1); // Left
+		return (1);
 	if (check_path(game, x, y + 1, floor))
-		return (1); // Down
+		return (1);
 	if (check_path(game, x, y - 1, floor))
-		return (1); // Up
-	return (0); // No path found
+		return (1);
+	return (0);
 }
 
 void	begin_player_position(t_game *game, int i, int j, int k)
@@ -88,7 +88,7 @@ void	begin_player_position(t_game *game, int i, int j, int k)
 	game->player->floor = i;
 }
 
-int	count_spoons(t_game *game)
+int	count_spoons(t_game *game) // TODO parsing apres le choix du multi ou simple
 {
 	int	i;
 	int	j;
@@ -132,7 +132,7 @@ void	search_departure_position(t_game *game)
 	exit(err("No player found\n"));
 }
 
-int map_copy(t_game *game)
+int	map_copy(t_game *game)
 {
 	int	i;
 	int	j;
@@ -154,18 +154,18 @@ int map_copy(t_game *game)
 		{
 			game->map_cy[i][j] = ft_strdup(game->map[i][j]);
 			if (!game->map_cy[i][j])
-				exit(err("error system\n")); // free line !free_tab(floor, game, j, i)
+				return (exit(err("error system\n")), 1); // free line !free_tab(floor, game, j, i)
 		}
 	}
-	game->map_cy[i] = NULL;
-	return (1);
+	return (game->map_cy[i] = NULL, 1);
 }
 
-
-void floodfill(t_game *game)
+void	floodfill(t_game *game)
 {
 	search_departure_position(game);
-	if (!map_copy(game) || !check_path(game, game->player->x, game->player->y, game->player->floor))
+	if (!map_copy(game)
+		|| !check_path(game, game->player->x, game->player->y,
+			game->player->floor))
 	{
 		free_map_copy(game);
 		exit(err("No exit...\n"));

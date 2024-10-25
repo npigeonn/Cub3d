@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:12:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/23 13:21:55 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/25 16:07:38 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,16 +127,16 @@ void	print_wall_door_player(t_game *game)
 	int	size_pix;
 
 	h = (game->screen_width - game->x_minimap) / 10;
-	size_pix = (game->screen_width - game->x_minimap - 2 * h)
-		/ x_size_floor(game);
-	if (size_pix > (game->screen_height - game->y_minimap - 2 * h)
-		/ y_size_floor(game))
+	if (x_size_floor(game) > y_size_floor(game))
+		size_pix = (game->screen_width - game->x_minimap - 2 * h)
+			/ x_size_floor(game);
+	else
 		size_pix = (game->screen_height - game->y_minimap - 2 * h)
-			/ y_size_floor(game);
+			/ y_size_floor(game) * 0.5;
 	y = -1;
 	game->x_minimap += h + (game->screen_width - game->x_minimap)
 		/ x_size_floor(game);
-	game->y_minimap += .5 * h + (game->screen_height - game->y_minimap)
+	game->y_minimap += h + (game->screen_height - game->y_minimap)
 		/ y_size_floor(game);
 	while (game->map[game->player->floor][++y])
 	{

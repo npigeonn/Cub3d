@@ -6,25 +6,9 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/24 16:42:10 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/25 15:01:51 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
-/*
-	Quand tu parse il faut que tu ajoutes les portes a la liste chaine de game->door,
-	pour sa tu peux utiliser la fonction
-	add_door(t_game *game, int x, int y, bool lock);
-	(lock veux dire qu'il faut une clef pour l'ouvrir)
-	tu peux tester le resultat directement en jeux les portes sont fonctionnelle sauf
-	les lock qui peuvent etre ouverte sans clef
-
-
-	PLUSIEURS SORTIES...	
-	des teleporteurs jumellees
-	nb_keys >= nb_door_locks
-	nb_n_s_e_w >= nb_players
-*/
 
 #include "../../includes/cub3d.h"
 
@@ -36,7 +20,6 @@ int	err(char *str)
 	return (1);
 }
 
-
 int	file_dot_cub(char *file_map)
 {
 	int	i;
@@ -46,13 +29,13 @@ int	file_dot_cub(char *file_map)
 		i++;
 	if (i < 5)
 		return (0);
-	
 	return (!ft_strcmp(".cub", file_map + i - 4));
 }
 
 static int	op_in(char **av)
 {
 	int	fd;
+
 	if (!av[1])
 		exit(err("No map mentionned\n"));
 	if (av[2])
@@ -72,7 +55,7 @@ static int	op_in(char **av)
 
 void	check_char_n_walls(t_game *game)
 {
-	int i[3];
+	int	i[3];
 
 	i[0] = -1;
 	map_copy(game);

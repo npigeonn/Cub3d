@@ -16,6 +16,9 @@
 # include "client.h"
 # include "input.h"
 
+# include "mlx_int.h"
+
+
 # define MOVEMENT_SPEED 0.05f
 # define ROTATION_SPEED 0.001f
 
