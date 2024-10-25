@@ -2,4 +2,6 @@
 cub3D
 ./objs/*
 ./libs/minilibx-linux/*
+./libs/minilibx-linux/
 *.a
+.vscode/
