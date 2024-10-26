@@ -6,13 +6,23 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/25 21:28:59 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 03:32:36 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-int	handle_mouse_key2(int keycode, int x, int y, t_game *game)
+int	handle_mouse_key_release(int keycode, int x, int y, t_game *game)
+{
+	if (keycode == 1)
+	{
+		set_key_flag(game, keycode, 0);
+		game->menu->dragging = false;
+	}
+	return (0);
+}
+
+int	handle_mouse_key_press2(int keycode, int x, int y, t_game *game)
 {
 	const int	status = game->menu->status;
 
@@ -25,7 +35,7 @@ int	handle_mouse_key2(int keycode, int x, int y, t_game *game)
 	return (0);
 }
 
-int	handle_mouse_key(int keycode, int x, int y, t_game *game)
+int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 {
 	const int	status = game->menu->status;
 
@@ -47,15 +57,13 @@ int	handle_mouse_key(int keycode, int x, int y, t_game *game)
 		handle_mouse_chat(game, x, y, keycode);
 	else if (status == GET_PSEUDO)
 		update_get_pseudo_click(game, x, y, keycode);
-	else
-		return (handle_mouse_key2(keycode, x, y, game));
-	return (0);
+	return (handle_mouse_key_press2(keycode, x, y, game));
 }
 
 static void	handle_mouse_game(t_game *game, int x, int y)
 {
 	const int	center_x = game->screen_width * 0.5;
-	const float	rotation = (x - center_x) * ROTATION_SPEED;
+	float		rotation = (x - center_x) * ((game->menu->mouse_sensitivity / 20.0f) * ROTATION_SPEED);
 	const float	old_dir_x = game->player->dirX;
 	const float	old_plane_x = game->player->planeX;
 	t_player	*p;

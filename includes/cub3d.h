@@ -8,6 +8,9 @@
 # include <stdio.h>
 # include <stdlib.h>
 
+#include "AL/al.h"
+#include "AL/alc.h"
+
 # include "sprite.h"
 # include "raycaster.h"
 # include "game.h"
@@ -15,9 +18,9 @@
 # include "chat.h"
 # include "client.h"
 # include "input.h"
+# include "stats.h"
 
 # include "mlx_int.h"
-
 
 # define MOVEMENT_SPEED 0.05f
 # define ROTATION_SPEED 0.001f

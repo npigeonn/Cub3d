@@ -14,7 +14,7 @@
 
 # define KEY_SPACE 32
 # define KEY_SHIFT 65505
-
+# define KEY_RIGHT_CLICK 1
 
 //utils
 void	chatting_mode(t_game *game);
@@ -24,12 +24,13 @@ void	use_item(t_game *game);
 //keyboard
 void	send_update_position(t_game *game);
 void	handle_key(t_game *game);
-int		handle_keypress(int keycode, t_game *game);
-int		handle_keyrelease(int keycode, t_game *game);
+int		handle_key_press(int keycode, t_game *game);
+int		handle_key_release(int keycode, t_game *game);
 
 //mouse
 int		handle_mouse_move(int x, int y, t_game *game);
-int		handle_mouse_key(int keycode, int x, int y, t_game *game);
+int		handle_mouse_key_press(int keycode, int x, int y, t_game *game);
+int		handle_mouse_key_release(int keycode, int x, int y, t_game *game);
 
 //key
 int		is_key_pressed(t_game *game, int keycode);

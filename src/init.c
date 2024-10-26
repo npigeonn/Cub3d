@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/25 21:35:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 03:31:56 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,14 @@ void	init_menu(t_game *game, int malloc)
 	if (malloc)
 		game->menu = gc_malloc(game->mem, sizeof(t_menu));
 	game->menu->volume = 20;
-	game->menu->mouse_sensitivity = 2;
+	game->menu->mouse_sensitivity = 20;
 	game->menu->message = NOTHING;
 	game->menu->status = GET_PSEUDO;
 	game->menu->button_selected = 0;
 	game->menu->error_name = false;
 	game->menu->error_pseudo = false;
 	game->menu->text_field_selected = 0;
+	game->menu->dragging = false;
 }
 
 void	init_client(t_game *game, int malloc)

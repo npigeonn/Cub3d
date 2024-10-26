@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:43:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 14:26:30 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/25 23:45:39 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	handle_key(t_game *game)
 		send_update_position(game);
 }
 
-int	handle_keypress(int keycode, t_game *game)
+int	handle_key_press(int keycode, t_game *game)
 {
 	t_player	*p;
 	const int	status = game->menu->status;
@@ -106,7 +106,7 @@ int	handle_keypress(int keycode, t_game *game)
 	return (0);
 }
 
-int	handle_keyrelease(int keycode, t_game *game)
+int	handle_key_release(int keycode, t_game *game)
 {
 	if (is_keyflag(keycode))
 		set_key_flag(game, keycode, 0);

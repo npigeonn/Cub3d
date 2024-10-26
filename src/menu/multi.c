@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/25 18:35:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 02:36:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@ void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode
 		game->menu->status = SERVER_CREATE;
 	else if (game->menu->button_selected == 1)
 		game->menu->status = JOIN_SERVER;
+	else if (game->menu->button_selected == 5)
+	{
+		game->menu->status = OPTIONS;
+		game->menu->last_status = SERVERS;
+	}
 	else if (game->menu->server_selected != 0)
 	{
 		int	i = 1;
@@ -85,6 +90,7 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 		else if (mouse_y >= btn_y_start + 2 * (btn_height + spacing) && mouse_y <= btn_y_start + 3 * btn_height + 2 * spacing)
 			game->menu->button_selected = 3;
 	}
+	check_mouse_on_gear(game, mouse_x, mouse_y);
 }
 
 void	draw_arc(t_game *game, int cx, int cy, int radius, float start_angle, float end_angle, int color)
@@ -254,19 +260,20 @@ static void	draw_selected_button(t_game *game)
 	const int	btn_height = game->screen_height * 0.1;
 	const int	btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
 	const int	btn_y_start = game->screen_height * 0.25;
-	info = init_draw_info(0, "", btn_x - 2, btn_y_start - 2);
+	info = init_draw_info(0, "", btn_x - 4, btn_y_start - 4);
 
-	info.width = btn_width + 4;
-	info.height = btn_height + 4;
+	info.width = btn_width + 8;
+	info.height = btn_height + 8;
 	info.color = MENU_BUTTON_SELECTED_COLOR;
+	info.radius = 10;
 	if (game->menu->button_selected == 1)
-		draw_rectangle(game, info);
+		draw_rounded_rectangle(game, info);
 	info.y += btn_height + game->screen_height * 0.05;
 	if (game->menu->button_selected == 2)
-		draw_rectangle(game, info);
+		draw_rounded_rectangle(game, info);
 	info.y += btn_height + game->screen_height * 0.05;
 	if (game->menu->button_selected == 3)
-		draw_rectangle(game, info);
+		draw_rounded_rectangle(game, info);
 }
 
 void	draw_multiplayer_menu(t_game *game)
@@ -286,7 +293,8 @@ void	draw_multiplayer_menu(t_game *game)
 	info2.height = list_height;
 	info2.width = list_width;
 	info2.color = MENU_BUTTON_COLOR;
-	draw_rectangle(game, info2);
+	info2.radius = 25;
+	draw_rounded_rectangle(game, info2);
 	draw_text(game, info);
 	int server_y_offset = list_y + 80;
 	if (game->servers == NULL)
@@ -355,5 +363,10 @@ void	draw_multiplayer_menu(t_game *game)
 	ft_strcpy(info.str, "Back");
 	info.y = btn_y_start + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;
 	draw_text(game, info);
+
+	const int	gear_size = game->screen_width * 0.035;
+	const int	gear_x = game->screen_width - gear_size - 17;
+	const int	gear_y = 15;
+	draw_gear_icon(game, gear_x, gear_y, gear_size);
 }
 

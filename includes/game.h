@@ -85,10 +85,8 @@ enum Message
 
 typedef struct s_stuff
 {
-	int munitions;
-	int nb_keys;
-	int weapon;
-	int kit_hp;
+	int	munitions;
+	int	weapon;
 }	t_stuff;
 
 typedef struct	s_stats
@@ -117,7 +115,11 @@ typedef struct s_player
 	int			floor;
 	float		anim_shoot;
 	int			begin_dir;
+
 	int			scroll;
+	int			nb_scroll;
+	int			scroll_height;
+
 	bool		being_tpted;
 	float		x_tel;
 	float		y_tel;
@@ -194,6 +196,7 @@ typedef	struct s_door
 typedef struct s_menu
 {
 	int		status;
+	int		last_status;
 	int		button_selected;
 	int		dragging;
 	int		message;
@@ -257,7 +260,7 @@ typedef struct	s_client
 
 #define	MAX_MESSAGE_LENGTH 256
 
-typedef struct	S_message
+typedef struct	s_message
 {
 	char				pseudo[20];
 	int					color;
@@ -287,12 +290,12 @@ typedef struct s_game
 	int				map_begin;
 	char			***map;
 	char 			***map_cy;
+
 	int				x_minimap;
 	int				y_minimap;
-	int				x_hp;
-	int				y_hp;
-	int				nb_floor;
 	int				clr;
+
+	int				nb_floor;
 	t_door			*door;
 	t_images		*images;
 	t_player		*player;
@@ -312,11 +315,8 @@ typedef struct s_game
 
 //game
 int		game_loop(t_game *game);
-int		handle_keypress(int keycode, t_game *game);
-int		handle_mouse_move(int x, int y, t_game *game);
 int		handle_close(t_game *game);
 void	set_direction(t_game *game, int dir);
-int		handle_mouse_key(int keycode, int x, int y, t_game *game);
 
 //menu
 void	draw_main_menu(t_game *game);

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 14:19:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/23 15:18:07 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 00:30:15 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	get_key_index(int keycode)
 {
-	const int keycode_map[10] =
+	const int keycode_map[11] =
 	{
 		KEY_W,
 		KEY_S,
@@ -25,7 +25,8 @@ static int	get_key_index(int keycode)
 		KEY_LEFT,
 		KEY_RIGHT,
 		KEY_SPACE,
-		KEY_SHIFT
+		KEY_SHIFT,
+		KEY_RIGHT_CLICK
 	};
 	int i;
 	

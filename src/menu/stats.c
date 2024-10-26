@@ -6,27 +6,28 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 18:50:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/25 22:12:35 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 02:44:29 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-typedef struct	s_player_stats
-{
-	char	name[50];
-	int		games_played;
-	int		victories;
-	int		defeats;
-	int		kills;
-	float	play_time_hours;
-}	t_player_stats;
-
 void	update_stats_menu_click(t_game *game, int x, int y, int keycode)
 {
-	if (keycode == 1 && game->menu->button_selected == 1)
+	int	scroll_bar_x = (game->screen_width - game->screen_width * 0.6) * 0.5 - 25 + game->screen_width * 0.6 + 5;
+	int	scroll_bar_width = 10;
+	int	scroll_bar_height = (game->player->scroll_height * 27) / game->player->nb_scroll;
+	int	scroll_bar_y = (game->screen_height - game->screen_height * 0.6) * 0.25 + 95;
+
+	if (keycode == 1)
 	{
-		game->menu->status = MAIN_MENU;
+		if (game->menu->button_selected == 1)
+			game->menu->status = MAIN_MENU;
+		if (game->menu->button_selected == 5)
+		{
+			game->menu->status = OPTIONS;
+			game->menu->last_status = STATS;
+		}
 		game->menu->button_selected = 0;
 		game->player->scroll = 0;
 	}
@@ -38,65 +39,56 @@ void	update_stats_menu_click(t_game *game, int x, int y, int keycode)
 		if (game->player->scroll < 0)
 			game->player->scroll = 0;
 	}
+	if (keycode == 1 && x >= scroll_bar_x && x <= scroll_bar_x + scroll_bar_width && y >= scroll_bar_y && y <= scroll_bar_y + game->screen_height * 0.6 - 110)
+	{
+		game->menu->dragging = true;
+		game->player->scroll = ((y - scroll_bar_y) * (game->player->nb_scroll - 27)) / (game->player->scroll_height - scroll_bar_height);
+		if (game->player->scroll < 0)
+			game->player->scroll = 0;
+		else if (game->player->scroll > game->player->nb_scroll - 27)
+			game->player->scroll = game->player->nb_scroll - 27;
+	}
 }
 
 void	update_stats_menu(t_game *game, int x, int y)
 {
 	const int	button_x = (game->screen_width - game->screen_width * 0.25) / 2;
-	const int	button_y = game->screen_height * 0.6;
+	const int	button_y = (game->screen_height - game->screen_height * 0.6) * 0.25 + game->screen_height * 0.6 + 35;
 	const int	button_width = game->screen_width * 0.25;
 	const int	button_height = game->screen_height * 0.1;
+	const int	scroll_bar_x = (game->screen_width - game->screen_width * 0.6) * 0.5 - 25 + game->screen_width * 0.6 + 5;
+	const int	scroll_bar_width = 20;
+	const int	scroll_bar_y = (game->screen_height - game->screen_height * 0.6) * 0.25 + 95;
+	const int	scroll_bar_height = (game->player->scroll_height * 27) / game->player->nb_scroll;
 
 	game->menu->button_selected = 0;
 	if (x >= button_x && x <= button_x + button_width
 		&& y >= button_y && y <= button_y + button_height)
 		game->menu->button_selected = 1;
-}
-
-t_player_stats*	load_player_stats(const char *filename, int *num_players)
-{
-	FILE			*file;
-	t_player_stats	*stats;
-	char			line[256];
-	
-	file = fopen(filename, "r");
-	if (!file)
+	if (!(x >= scroll_bar_x - 10 && x <= scroll_bar_x + scroll_bar_width && y >= scroll_bar_y && y <= scroll_bar_y + game->screen_height * 0.6 - 110))
+		game->menu->dragging = false;
+	if (game->menu->dragging)
 	{
-		printf("Error opening file: %s\n", filename);
-		return NULL;
+		game->player->scroll = ((y - scroll_bar_y) * (game->player->nb_scroll - 27)) / (game->player->scroll_height - scroll_bar_height);
+		if (game->player->scroll < 0)
+			game->player->scroll = 0;
+		else if (game->player->scroll > game->player->nb_scroll - 27)
+			game->player->scroll = game->player->nb_scroll - 27;
 	}
-	*num_players = 0;
-	while (fgets(line, sizeof(line), file))
-		(*num_players)++;
-	rewind(file);
-	stats = malloc(sizeof(t_player_stats) * (*num_players));
-	for (int i = 0; i < *num_players; i++)
-	{
-		fgets(line, sizeof(line), file);
-		sscanf(line, "%49[^,],%d,%d,%d,%d,%f",
-				stats[i].name,
-				&stats[i].games_played,
-				&stats[i].victories,
-				&stats[i].defeats,
-				&stats[i].kills,
-				&stats[i].play_time_hours);
-	}
-	fclose(file);
-	return (stats);
+	check_mouse_on_gear(game, x, y);
 }
 
 void draw_stats_scroll_bar(t_game *game, int x, int y, int stats_height, int num_players)
 {
 	int	bar_width = 10;
-	int	max_visible_players = 27;
 	int	bar_height;
 
-	if (num_players <= max_visible_players)
+	if (num_players <= 27)
 		bar_height = stats_height;
 	else
-		bar_height = (stats_height * max_visible_players) / num_players;
+		bar_height = (stats_height * 27) / num_players;
 
-	int	bar_y = y + ((stats_height - bar_height) * game->player->scroll) / (num_players - max_visible_players);
+	int	bar_y = y + ((stats_height - bar_height) * game->player->scroll) / (num_players - 27);
 	int	bar_color = 0xAAAAAA;
 
 	t_draw_info scroll_bar_background = init_draw_info(stats_height, "", x + game->screen_width * 0.6 + 5, y);
@@ -125,7 +117,8 @@ void	draw_stats_menu(t_game *game)
 	player_stats = load_player_stats("stats.txt", &num_players);
 	if (!player_stats)
 		return;
-		
+	game->player->nb_scroll = num_players;
+	game->player->scroll_height = stats_height - 110;
 	t_draw_info stats_background = init_draw_info(0, "", x, y);
 	stats_background.width = stats_width;
 	stats_background.height = stats_height;
@@ -155,6 +148,10 @@ void	draw_stats_menu(t_game *game)
 	draw_back_button(game, x, y, stats_height);
 	draw_stats_scroll_bar(game, x - 25, y + 95, stats_height - 110, num_players);
 	free(player_stats);
+	const int	gear_size = game->screen_width * 0.035;
+	const int	gear_x = game->screen_width - gear_size - 17;
+	const int	gear_y = 15;
+	draw_gear_icon(game, gear_x, gear_y, gear_size);
 }
 
 void	draw_player_stats_row(t_game *game, t_player_stats player, int x, int y, int padding, int row_height, int index, int stats_width)
@@ -188,14 +185,27 @@ void	draw_stat_info(t_game *game, char *stat, int x, int y)
 
 void	draw_back_button(t_game *game, int x, int y, int stats_height)
 {
-	int button_x = (game->screen_width - game->screen_width * 0.25) / 2;
-	int button_y = y + stats_height + 35;
+	const int	button_x = (game->screen_width - game->screen_width * 0.25) / 2;
+	const int	button_y = y + stats_height + 35;
+	t_draw_info	info;
 
-	t_draw_info button_info = init_draw_info(game->screen_height * 0.1, "", button_x, button_y);
-	button_info.width = game->screen_width * 0.25;
-	button_info.color = MENU_BUTTON_COLOR;
-	draw_rectangle(game, button_info);
-	t_draw_info back_text_info = init_draw_info(game->screen_height * 0.1 * 0.5, "Back", (game->screen_width >> 1) - game->screen_width * 0.25 / 2 + 4 + game->screen_width * 0.25 / 2, y + stats_height + 35 + game->screen_height * 0.1 / 3 - 5);
-	back_text_info.color = MENU_BUTTON_TEXT_COLOR;
-	draw_text(game, back_text_info);
+	if (game->menu->button_selected == 1)
+	{
+		info = init_draw_info(game->screen_height * 0.1 + 8, "",
+			button_x - 4, button_y - 4);
+		info.width = game->screen_width * 0.25 + 8;
+		info.color = MENU_BUTTON_SELECTED_COLOR;
+		info.radius = 10;
+		draw_rounded_rectangle(game, info);
+	}
+	info = init_draw_info(game->screen_height * 0.1, "", button_x, button_y);
+	info.width = game->screen_width * 0.25;
+	info.color = MENU_BUTTON_COLOR;
+	draw_rectangle(game, info);
+	info = init_draw_info(game->screen_height * 0.1 * 0.5, "Back",
+		(game->screen_width >> 1) - game->screen_width * 0.25 / 2 + 4 +
+		game->screen_width * 0.25 / 2, y + stats_height + 35 +
+		game->screen_height * 0.1 / 3 - 5);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	draw_text(game, info);
 }

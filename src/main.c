@@ -230,12 +230,82 @@ void	hooks(t_game *game)
 {
 	mlx_mouse_move(game->mlx, game->win, game->screen_width >> 1 , game->screen_height >> 1 );
 	mlx_hook(game->win, 6, 1L << 6, handle_mouse_move, game);
-	mlx_hook(game->win, 4, 1L << 2, handle_mouse_key, game);
+	mlx_hook(game->win, 4, 1L << 2, handle_mouse_key_press, game);
+	mlx_hook(game->win, 5, 1L << 3, handle_mouse_key_release, game);
 	mlx_hook(game->win, 33, 0, handle_close, game);
-	mlx_hook(game->win, 2, 1L << 0, handle_keypress, game);
-	mlx_hook(game->win, 3, 1L << 1, handle_keyrelease, game);
+	mlx_hook(game->win, 2, 1L << 0, handle_key_press, game);
+	mlx_hook(game->win, 3, 1L << 1, handle_key_release, game);
 	mlx_loop_hook(game->mlx, game_loop, game);
 	mlx_loop(game->mlx);
+}
+
+#define DR_WAV_IMPLEMENTATION
+#include "dr_wav.h"
+
+void play_wav(const char *filename)
+{
+    // Variables OpenAL
+    ALuint buffer, source;
+    ALCdevice *device;
+    ALCcontext *context;
+
+    // Initialiser OpenAL
+    device = alcOpenDevice(NULL);
+    if (!device) {
+        fprintf(stderr, "Impossible d'ouvrir le périphérique audio\n");
+        return;
+    }
+    context = alcCreateContext(device, NULL);
+    alcMakeContextCurrent(context);
+
+    // Charger les données WAV avec dr_wav
+    unsigned int channels, sampleRate;
+    drwav_int16 *data;
+    drwav_uint64 sampleCount;
+    data = drwav_open_file_and_read_pcm_frames_s16(filename, &channels, &sampleRate, &sampleCount, NULL);
+    if (!data) {
+        fprintf(stderr, "Erreur lors du chargement du fichier WAV\n");
+        alcDestroyContext(context);
+        alcCloseDevice(device);
+        return;
+    }
+
+    // Déterminer le format audio pour OpenAL
+    ALenum format;
+    if (channels == 1) format = AL_FORMAT_MONO16;
+    else if (channels == 2) format = AL_FORMAT_STEREO16;
+    else {
+        fprintf(stderr, "Format audio non supporté\n");
+        drwav_free(data, NULL);
+        alcDestroyContext(context);
+        alcCloseDevice(device);
+        return;
+    }
+
+    // Générer un tampon et charger les données
+    alGenBuffers(1, &buffer);
+    alBufferData(buffer, format, data, (ALsizei)(sampleCount * channels * sizeof(drwav_int16)), sampleRate);
+
+    // Libérer les données WAV
+    drwav_free(data, NULL);
+
+    // Générer une source et jouer le son
+    alGenSources(1, &source);
+    alSourcei(source, AL_BUFFER, buffer);
+    alSourcePlay(source);
+
+    // Attendre la fin de la lecture
+    ALint state;
+    do {
+        alGetSourcei(source, AL_SOURCE_STATE, &state);
+    } while (state == AL_PLAYING);
+
+    // Libérer les ressources OpenAL
+    alDeleteSources(1, &source);
+    alDeleteBuffers(1, &buffer);
+    alcMakeContextCurrent(NULL);
+    alcDestroyContext(context);
+    alcCloseDevice(device);
 }
 
 # include <X11/X.h>
@@ -251,11 +321,13 @@ int	main(int ac, char **av)
 	// t_win_list *window;
 	
 
+	play_wav("assets/sounds/sound.wav");
 	game.mem = gc_init();
 	game.mlx = mlx_init();
 	game.av = av;
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
-	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Cub3D");
+	game.screen_height = 1080;
+	game.screen_width = 1920;
 	init_var(&game, 1);
 	// //
 	// moha = game.mlx;
@@ -274,6 +346,7 @@ int	main(int ac, char **av)
 	init_floorcast(&game);
 	init_img(&game);
 	set_width_all_letter(&game);
+	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Cub3D");
 	hooks(&game);
 	return (0);
 }

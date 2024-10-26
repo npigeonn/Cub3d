@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 13:49:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 13:09:26 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 02:42:39 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ void	handle_create_server(t_game *game)
 		game->menu->status = VALID_SERVER_CREATE;
 }
 
-void	update_create_server_menu_text(t_game *game, int mouse_x, int mouse_y, int mouse_button)
+void	update_create_server_menu_text(t_game *game, int mouse_x, int mouse_y, int keycode)
 {
 	const int btn_width = game->screen_width * 0.25;
 	const int btn_height = game->screen_height * 0.08;
@@ -163,7 +163,7 @@ void	update_create_server_menu_text(t_game *game, int mouse_x, int mouse_y, int 
 
 	if (mouse_x >= x && mouse_x <= x + btn_width && mouse_y >= y + 30 && mouse_y <= y + 30 + btn_height)
 	{
-		if (mouse_button == 1)
+		if (keycode == 1)
 		{
 			game->menu->text_field_selected = 1;
 			game->menu->error_name = false;
@@ -171,13 +171,18 @@ void	update_create_server_menu_text(t_game *game, int mouse_x, int mouse_y, int 
 	}
 	else
 		game->menu->text_field_selected = 0;
-	if (game->menu->button_selected == 1 && mouse_button == 1)
+	if (game->menu->button_selected == 1 && keycode == 1)
 	{
 		game->client->name[0] = '\0';
 		game->menu->status = SERVERS;
 	}
-	if (game->menu->button_selected == 2 && mouse_button == 1)
+	if (game->menu->button_selected == 2 && keycode == 1)
 		handle_create_server(game);
+	if (game->menu->button_selected == 5 && keycode == 1)
+	{
+		game->menu->status = OPTIONS;
+		game->menu->last_status = SERVER_CREATE;
+	}
 }
 void	update_create_server_menu_button(t_game *game, int mouse_x, int mouse_y)
 {
@@ -199,6 +204,7 @@ void	update_create_server_menu_button(t_game *game, int mouse_x, int mouse_y)
 		game->menu->button_selected = 2;
 	else
 		game->menu->button_selected = 0;
+	check_mouse_on_gear(game, mouse_x, mouse_y);
 }
 
 void	draw_text_field(t_game *game, int x, int y, int width, int height, char *text)
@@ -297,4 +303,9 @@ void	draw_create_server_menu(t_game *game)
 	ft_strcpy(info.str, "Create");
 	info.x = btn_x_start + btn_half_width + game->screen_width * 0.02 + (btn_half_width / 2);
 	draw_text(game, info);
+
+	const int	gear_size = game->screen_width * 0.035;
+	const int	gear_x = game->screen_width - gear_size - 17;
+	const int	gear_y = 15;
+	draw_gear_icon(game, gear_x, gear_y, gear_size);
 }

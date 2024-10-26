@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 23:32:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/25 21:33:14 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 02:35:45 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,33 @@ void	update_main_menu_click(t_game *game, int mouse_x, int mouse_y, int keycode)
 	else if (game->menu->button_selected == 4)
 		handle_close(game);
 	else if (game->menu->button_selected == 5)
+	{
 		game->menu->status = OPTIONS;
+		game->menu->last_status = MAIN_MENU;
+	}
 	else
 		return ;
 	game->menu->button_selected = 0;
+}
+
+void	check_mouse_on_gear(t_game *game, int mouse_x, int mouse_y)
+{
+	const int	gear_size = game->screen_width * 0.035;
+	const int	gear_x = game->screen_width - gear_size - 17;
+	const int	gear_y = 15;
+	int gear_center_x = gear_x + gear_size / 2;
+	int gear_center_y = gear_y + gear_size / 2;
+	int inner_radius = gear_size / 2 - 5;
+	int outer_radius = gear_size / 2 + 5;
+
+	int dx = mouse_x - gear_center_x;
+	int dy = mouse_y - gear_center_y;
+	int distance_squared = dx * dx + dy * dy;
+	if (distance_squared >= inner_radius * inner_radius && distance_squared <= outer_radius * outer_radius)
+		game->menu->button_selected = 5;
+	int gear_radius = gear_size / 2;
+	if (distance_squared <= gear_radius * gear_radius)
+		game->menu->button_selected = 5;
 }
 
 void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y)
@@ -59,8 +82,7 @@ void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y)
 		else if (mouse_y >= y + 3 * (btn_height + spacing) && mouse_y <= y + 3 * (btn_height + spacing) + btn_height)
 			game->menu->button_selected = 4;
 	}
- 	if (mouse_x >= gear_x && mouse_x <= gear_x + gear_size && mouse_y >= gear_y && mouse_y <= gear_y + gear_size)
-		game->menu->button_selected = 5;
+	check_mouse_on_gear(game, mouse_x, mouse_y);
 }
 
 static void	draw_selected_button(t_game *game)
@@ -72,9 +94,9 @@ static void	draw_selected_button(t_game *game)
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.22 - 2;
 
-	info = init_draw_info(0, "", x, y);
-	info.width = btn_width;
-	info.height = btn_height;
+	info = init_draw_info(0, "", x - 2, y - 2);
+	info.width = btn_width + 4;
+	info.height = btn_height + 4;
 	info.color = MENU_BUTTON_SELECTED_COLOR;
 	info.radius = 10;
 	if (game->menu->button_selected == 1)
@@ -118,44 +140,48 @@ void	draw_line(t_game *game, int x1, int y1, int x2, int y2, int color)
 	}
 }
 
+void	draw_circle(t_game *game, int center_x, int center_y, int radius, int color)
+{
+	for (double angle = 0; angle < 2 * M_PI; angle += 0.01)
+	{
+		int x = center_x + (int)(radius * cos(angle) + 0.5);
+		int y = center_y + (int)(radius * sin(angle) + 0.5);
+		pixel_put(game, x, y, color);
+	}
+}
+
 void	draw_gear_icon(t_game *game, int x, int y, int size)
 {
-	const int	center_x = x + size / 2;
-	const int	center_y = y + size / 2;
-	const int	outer_radius = size / 2;
-	const int	inner_radius = size / 3;
-	const int	num_teeth = 8;
-	const double angle_step = M_PI * 2 / num_teeth;
-	const int	tooth_width = size / 10;
-	const int	tooth_length = size / 8;
-	int			gear_color; 
+	const int center_x = x + size / 2;
+	const int center_y = y + size / 2;
+	const int outer_radius = size / 2;
+	const double angle_step = M_PI * 2 / 8;
+	const int tooth_length = size / 8;
+	int gear_color;
 
 	if (game->menu->button_selected == 5)
 		gear_color = 0xFF0000;
 	else
 		gear_color = 0xFFFFFF;
-	draw_arc(game, center_x, center_y, inner_radius, 0, M_PI * 2, gear_color);
-
-	for (int i = 0; i < num_teeth; i++)
+	if (size < 10) return;
+	for (int i = 0; i < 8; i++)
 	{
 		double angle = i * angle_step;
 		double next_angle = (i + 1) * angle_step;
-
-		int outer_x1 = center_x + cos(angle) * (outer_radius + tooth_length);
-		int outer_y1 = center_y + sin(angle) * (outer_radius + tooth_length);
-		int outer_x2 = center_x + cos(next_angle) * (outer_radius + tooth_length);
-		int outer_y2 = center_y + sin(next_angle) * (outer_radius + tooth_length);
-
-		int inner_x1 = center_x + cos(angle) * outer_radius;
-		int inner_y1 = center_y + sin(angle) * outer_radius;
-		int inner_x2 = center_x + cos(next_angle) * outer_radius;
-		int inner_y2 = center_y + sin(next_angle) * outer_radius;
+		int outer_x1 = center_x + (int)(cos(angle) * (outer_radius + tooth_length) + 0.5);
+		int outer_y1 = center_y + (int)(sin(angle) * (outer_radius + tooth_length) + 0.5);
+		int outer_x2 = center_x + (int)(cos(next_angle) * (outer_radius + tooth_length) + 0.5);
+		int outer_y2 = center_y + (int)(sin(next_angle) * (outer_radius + tooth_length) + 0.5);
+		int inner_x1 = center_x + (int)(cos(angle) * outer_radius + 0.5);
+		int inner_y1 = center_y + (int)(sin(angle) * outer_radius + 0.5);
+		int inner_x2 = center_x + (int)(cos(next_angle) * outer_radius + 0.5);
+		int inner_y2 = center_y + (int)(sin(next_angle) * outer_radius + 0.5);
 		draw_line(game, inner_x1, inner_y1, outer_x1, outer_y1, gear_color);
 		draw_line(game, outer_x1, outer_y1, outer_x2, outer_y2, gear_color);
 		draw_line(game, outer_x2, outer_y2, inner_x2, inner_y2, gear_color);
 		draw_line(game, inner_x2, inner_y2, inner_x1, inner_y1, gear_color);
 	}
-	draw_arc(game, center_x, center_y, inner_radius / 2, 0, M_PI * 2, gear_color);
+	draw_circle(game, center_x, center_y, size / 3, gear_color);
 }
 
 
