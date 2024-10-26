@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/26 04:23:56 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/27 00:34:02 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,9 @@ NAME = cub3D
 PATH_SRC = ./src/
 PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
-LIBS = -L$(MINILIBX_DIR) -lmlx -L$(LIBFT_DIR) -lft -L$(OPENAL_DIR)build -lopenal -lX11 -lXext -lm #-lXfixes
-INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(OPENAL_HEADERS) -I./includes/ 
-CFLAGS = -g3 -O3 -march=native -mtune=native -funroll-loops -finline-functions -flto -fomit-frame-pointer -ftree-vectorize -mavx #-Wall -Wextra -Werror
+LIBS = -L$(MINILIBX_DIR) -lmlx -L$(LIBFT_DIR) -lft -L$(RAUDIO_SRC) -lraudio -lX11 -lXext -lm
+INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(RAUDIO_HEADERS) -I./includes/
+CFLAGS = -g -O0
 LIBS_DIR = ./libs/
 RM = rm -rf
 
@@ -119,19 +119,14 @@ LIBFT = $(LIBFT_DIR)libft.a
 
 ########################################
 
-################ OPENAL ################
+################ RAUDIO ################
 
-OPENAL_URL = https://github.com/kcat/openal-soft.git
-OPENAL_DIR = $(LIBS_DIR)openal-soft/
-OPENAL_HEADERS = $(OPENAL_DIR)include/
-OPENAL = $(OPENAL_DIR)libopenal.so
-
-########################################
-
-################ DR_WAV ################
-
-DR_WAV_URL = https://raw.githubusercontent.com/mackron/dr_libs/master/dr_wav.h
-DR_WAV = ./includes/dr_wav.h
+RAUDIO_URL = https://github.com/raysan5/raudio.git
+RAUDIO_DIR = $(LIBS_DIR)raudio/
+RAUDIO_SRC = $(RAUDIO_DIR)src/
+RAUDIO_HEADERS = $(RAUDIO_SRC)
+RAUDIO = $(RAUDIO_SRC)/libraudio.a
+RAUDIO_DEFINE = -D RAUDIO_STANDALONE -D SUPPORT_MODULE_RAUDIO -D SUPPORT_FILEFORMAT_MP3 -D SUPPORT_FILEFORMAT_WAV -D 'TRACELOG(level, ...)'
 
 ########################################
 
@@ -142,11 +137,11 @@ $(OBJS): ./includes/* Makefile
 $(PATH_OBJ):
 	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/chat $@game/raycaster $@game/sprite $@input $@stats
 
-$(PATH_OBJ)%.o: $(PATH_SRC)%.c $(DR_WAV) | $(PATH_OBJ)
-	cc -c $(CFLAGS) $(INCLUDES) $< -o $@
+$(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
+	clang -c $(CFLAGS) $(INCLUDES) $< -o $@
 
-$(NAME): $(MINILIBX) $(LIBFT) $(OPENAL) $(OBJS) ./includes/* Makefile
-	cc $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+$(NAME): $(MINILIBX) $(RAUDIO) $(LIBFT) $(OBJS) ./includes/* Makefile
+	clang $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 
 # Compile libft
 $(LIBFT):
@@ -160,20 +155,17 @@ $(MINILIBX):
 	fi
 	make -sC $(MINILIBX_DIR)
 
-# Download openal-soft and compile it
-$(OPENAL):
-	@echo "Downloading openal-soft..."
-	if [ ! -d $(OPENAL_DIR) ]; then \
-		git clone $(OPENAL_URL) $(OPENAL_DIR); \
+# Download raudio and compile it
+$(RAUDIO):
+	@echo "Downloading raudio..."
+	@if [ ! -d "$(RAUDIO_DIR)" ]; then \
+		git clone $(RAUDIO_URL) $(RAUDIO_DIR); \
+	else \
+		cd $(RAUDIO_DIR) && git pull; \
 	fi
-	cd $(OPENAL_DIR) && mkdir -p build && cd build && cmake .. && make
-
-# Download dr_wav.h
-$(DR_WAV):
-	@echo "Downloading dr_wav.h..."
-	if [ ! -f $(DR_WAV) ]; then \
-		curl -o $(DR_WAV) $(DR_WAV_URL); \
-	fi
+	gcc -c $(RAUDIO_SRC)raudio.c $(RAUDIO_DEFINE) -o $(RAUDIO_SRC)raudio.o
+	ar rcs $(RAUDIO) $(RAUDIO_SRC)raudio.o
+	rm -f $(RAUDIO_SRC)raudio.o
 
 clean:
 	make clean -sC $(LIBFT_DIR)
@@ -184,8 +176,7 @@ fclean:
 	$(RM) $(PATH_OBJ)
 	$(RM) $(NAME)
 	$(RM) $(MINILIBX_DIR)
-	$(RM) $(OPENAL_DIR)
-	$(RM) $(DR_WAV)
+	$(RM) $(RAUDIO_DIR)
 
 re: fclean all
 	

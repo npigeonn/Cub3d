@@ -93,7 +93,7 @@ typedef struct	s_stats
 {
 	int		nb_kills;
 	int		nb_degats;
-	float	temps;
+	int		temps;
 	int		nb_games;
 	int		nb_win;
 	int		nb_shoot;

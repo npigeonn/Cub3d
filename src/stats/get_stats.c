@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 02:56:17 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 03:14:50 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 23:39:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ bool is_a_player(char *line)
 	while(++j < 5)
 	{
 		has_decimal = 0;
-		while (isdigit(line[++i]) || (line[i] == '.' && !has_decimal))
+		while (ft_isdigit(line[++i]) || (line[i] == '.' && !has_decimal))
 			if (line[i] == '.')
 				has_decimal = 1;
 		if (j < 4)

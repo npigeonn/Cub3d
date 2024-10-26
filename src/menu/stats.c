@@ -6,11 +6,18 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 18:50:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 02:44:29 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 23:33:13 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
+
+void	draw_stat_info(t_game *game, char *stat, int x, int y)
+{
+	t_draw_info stat_info = init_draw_info(20, stat, x, y);
+	stat_info.color = 0xFFFFFF;
+	draw_text_right(game, stat_info);
+}
 
 void	update_stats_menu_click(t_game *game, int x, int y, int keycode)
 {
@@ -102,6 +109,55 @@ void draw_stats_scroll_bar(t_game *game, int x, int y, int stats_height, int num
 	draw_rectangle(game, scroll_bar);
 }
 
+void	draw_player_stats_row(t_game *game, t_player_stats player, int x, int y, int padding, int row_height, int index, int stats_width)
+{
+	int	row_y = y + (4 + index) * padding + 20;
+	int	row_color = (index % 2 == 0) ? MENU_BUTTON_SELECTED_COLOR : MENU_BUTTON_SELECTED_COLOR - 0x101010;
+	int	text_y = row_y + 8;
+
+	t_draw_info player_row_background = init_draw_info(0, "", x + padding, row_y);
+	player_row_background.width = (0.6 * game->screen_width) - 2 * padding - 10;
+	player_row_background.height = row_height;
+	player_row_background.color = row_color;
+	draw_rectangle(game, player_row_background);
+
+	t_draw_info name_info = init_draw_info(20, player.name, x + padding + 5, text_y);
+	name_info.color = 0xFFFFFF;
+	draw_text_left(game, name_info);
+	draw_stat_info(game, ft_itoa(player.games_played), x + stats_width - padding - 423, text_y);
+	draw_stat_info(game, ft_itoa(player.victories), x + stats_width - padding - 312, text_y);
+	draw_stat_info(game, ft_itoa(player.defeats), x + stats_width - padding - 207, text_y);
+	draw_stat_info(game, ft_itoa(player.kills), x + stats_width - padding - 138, text_y);
+	draw_stat_info(game, ft_itoa(player.play_time_hours), x + stats_width - padding - 20, text_y);
+}
+
+void	draw_back_button(t_game *game, int x, int y, int stats_height)
+{
+	const int	button_x = (game->screen_width - game->screen_width * 0.25) / 2;
+	const int	button_y = y + stats_height + 35;
+	t_draw_info	info;
+
+	if (game->menu->button_selected == 1)
+	{
+		info = init_draw_info(game->screen_height * 0.1 + 8, "",
+			button_x - 4, button_y - 4);
+		info.width = game->screen_width * 0.25 + 8;
+		info.color = MENU_BUTTON_SELECTED_COLOR;
+		info.radius = 10;
+		draw_rounded_rectangle(game, info);
+	}
+	info = init_draw_info(game->screen_height * 0.1, "", button_x, button_y);
+	info.width = game->screen_width * 0.25;
+	info.color = MENU_BUTTON_COLOR;
+	draw_rectangle(game, info);
+	info = init_draw_info(game->screen_height * 0.1 * 0.5, "Back",
+		(game->screen_width >> 1) - game->screen_width * 0.25 / 2 + 4 +
+		game->screen_width * 0.25 / 2, y + stats_height + 35 +
+		game->screen_height * 0.1 / 3 - 5);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	draw_text(game, info);
+}
+
 void	draw_stats_menu(t_game *game)
 {
 	t_player_stats	*player_stats;
@@ -152,60 +208,4 @@ void	draw_stats_menu(t_game *game)
 	const int	gear_x = game->screen_width - gear_size - 17;
 	const int	gear_y = 15;
 	draw_gear_icon(game, gear_x, gear_y, gear_size);
-}
-
-void	draw_player_stats_row(t_game *game, t_player_stats player, int x, int y, int padding, int row_height, int index, int stats_width)
-{
-	int	row_y = y + (4 + index) * padding + 20;
-	int	row_color = (index % 2 == 0) ? MENU_BUTTON_SELECTED_COLOR : MENU_BUTTON_SELECTED_COLOR - 0x101010;
-	int	text_y = row_y + 8;
-
-	t_draw_info player_row_background = init_draw_info(0, "", x + padding, row_y);
-	player_row_background.width = (0.6 * game->screen_width) - 2 * padding - 10;
-	player_row_background.height = row_height;
-	player_row_background.color = row_color;
-	draw_rectangle(game, player_row_background);
-
-	t_draw_info name_info = init_draw_info(20, player.name, x + padding + 5, text_y);
-	name_info.color = 0xFFFFFF;
-	draw_text_left(game, name_info);
-	draw_stat_info(game, ft_itoa(player.games_played), x + stats_width - padding - 423, text_y);
-	draw_stat_info(game, ft_itoa(player.victories), x + stats_width - padding - 312, text_y);
-	draw_stat_info(game, ft_itoa(player.defeats), x + stats_width - padding - 207, text_y);
-	draw_stat_info(game, ft_itoa(player.kills), x + stats_width - padding - 138, text_y);
-	draw_stat_info(game, ft_itoa(player.play_time_hours), x + stats_width - padding - 20, text_y);
-}
-
-void	draw_stat_info(t_game *game, char *stat, int x, int y)
-{
-	t_draw_info stat_info = init_draw_info(20, stat, x, y);
-	stat_info.color = 0xFFFFFF;
-	draw_text_right(game, stat_info);
-}
-
-void	draw_back_button(t_game *game, int x, int y, int stats_height)
-{
-	const int	button_x = (game->screen_width - game->screen_width * 0.25) / 2;
-	const int	button_y = y + stats_height + 35;
-	t_draw_info	info;
-
-	if (game->menu->button_selected == 1)
-	{
-		info = init_draw_info(game->screen_height * 0.1 + 8, "",
-			button_x - 4, button_y - 4);
-		info.width = game->screen_width * 0.25 + 8;
-		info.color = MENU_BUTTON_SELECTED_COLOR;
-		info.radius = 10;
-		draw_rounded_rectangle(game, info);
-	}
-	info = init_draw_info(game->screen_height * 0.1, "", button_x, button_y);
-	info.width = game->screen_width * 0.25;
-	info.color = MENU_BUTTON_COLOR;
-	draw_rectangle(game, info);
-	info = init_draw_info(game->screen_height * 0.1 * 0.5, "Back",
-		(game->screen_width >> 1) - game->screen_width * 0.25 / 2 + 4 +
-		game->screen_width * 0.25 / 2, y + stats_height + 35 +
-		game->screen_height * 0.1 / 3 - 5);
-	info.color = MENU_BUTTON_TEXT_COLOR;
-	draw_text(game, info);
 }

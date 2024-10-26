@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 03:31:56 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/26 23:27:56 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,11 @@ void	init_player(t_game	*game, int malloc)
 		game->player = gc_malloc(game->mem, sizeof(t_player));
 		game->player->raycast = gc_malloc(game->mem, sizeof(t_raycast));
 		game->player->stats = gc_malloc(game->mem, sizeof(t_stats));
+	}
+	if (!game->player->stats || !game->player)
+	{
+		printf("stats is null\n");
+		exit(0);
 	}
 	game->player->x = 0;
 	game->player->y = 0;
