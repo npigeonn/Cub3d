@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 02:36:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/27 15:36:02 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode
 		game->menu->status = JOIN_SERVER;
 	else if (game->menu->button_selected == 5)
 	{
-		game->menu->status = OPTIONS;
+		game->menu->status = OPTIONS_KEYBOARD;
 		game->menu->last_status = SERVERS;
 	}
 	else if (game->menu->server_selected != 0)

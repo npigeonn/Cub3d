@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/27 00:34:02 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/10/27 00:46:41 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
 LIBS = -L$(MINILIBX_DIR) -lmlx -L$(LIBFT_DIR) -lft -L$(RAUDIO_SRC) -lraudio -lX11 -lXext -lm
 INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(RAUDIO_HEADERS) -I./includes/
-CFLAGS = -g -O0
+CFLAGS = -g3 -O3
 LIBS_DIR = ./libs/
 RM = rm -rf
 
@@ -138,10 +138,10 @@ $(PATH_OBJ):
 	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/chat $@game/raycaster $@game/sprite $@input $@stats
 
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
-	clang -c $(CFLAGS) $(INCLUDES) $< -o $@
+	cc -c $(CFLAGS) $(INCLUDES) $< -o $@
 
 $(NAME): $(MINILIBX) $(RAUDIO) $(LIBFT) $(OBJS) ./includes/* Makefile
-	clang $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
+	cc $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 
 # Compile libft
 $(LIBFT):

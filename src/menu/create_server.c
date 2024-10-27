@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 13:49:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 02:42:39 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/27 15:35:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ void	update_create_server_menu_text(t_game *game, int mouse_x, int mouse_y, int 
 		handle_create_server(game);
 	if (game->menu->button_selected == 5 && keycode == 1)
 	{
-		game->menu->status = OPTIONS;
+		game->menu->status = OPTIONS_KEYBOARD;
 		game->menu->last_status = SERVER_CREATE;
 	}
 }

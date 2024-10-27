@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/25 22:42:30 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/27 15:35:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ int	game_loop(t_game *game)
 		draw_get_pseudo_menu(game);
 	else if (status == MAIN_MENU)
 		draw_main_menu(game);
-	else if (status == OPTIONS)
+	else if (status == OPTIONS_KEYBOARD || status == OPTIONS_MOUSE || status == OPTIONS_SOUND)
 		draw_options_menu(game);
 	else if (status == SERVERS)
 		draw_multiplayer_menu(game);

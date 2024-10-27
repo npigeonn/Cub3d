@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:28:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 14:19:26 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/27 16:57:32 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	update_get_pseudo_button(t_game *game, int mouse_x, int mouse_y)
 	game->menu->button_selected = 0;
 	if (mouse_x >= (game->screen_width - btn_width) * 0.5 && mouse_x <= (game->screen_width + btn_width) * 0.5)
 	{
-		if (mouse_y >= y + 200 && mouse_y <= y + 200 + (btn_height + spacing) + btn_height)
+		if (mouse_y >= y + 200 && mouse_y <= y + 200 + btn_height)
 			game->menu->button_selected = 1;
 	}
 }

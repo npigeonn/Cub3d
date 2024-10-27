@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 03:32:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/27 15:35:42 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 {
 	const int	status = game->menu->status;
 
-	if (status == OPTIONS)
+	if (status == OPTIONS_KEYBOARD || status == OPTIONS_MOUSE || status == OPTIONS_SOUND)
 		update_option_menu_click(game, x, y, keycode);
 	else if (status == SERVERS)
 		update_multiplayer_click(game, x, y, keycode);
@@ -80,7 +80,7 @@ int	handle_mouse_move(int x, int y, t_game *game)
 {
 	if (game->menu->status == MAIN_MENU)
 		update_main_menu_button(game, x, y);
-	else if (game->menu->status == OPTIONS)
+	else if (game->menu->status == OPTIONS_KEYBOARD || game->menu->status == OPTIONS_MOUSE || game->menu->status == OPTIONS_SOUND)
 		update_option_menu_button(game, x, y);
 	else if (game->menu->status == SERVERS)
 		update_multiplayer_menu(game, x, y);

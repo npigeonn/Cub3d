@@ -60,6 +60,9 @@ enum GameStatus
 	GET_PSEUDO = 14,
 	STATS = 15,
 	GAME_SUCCESS = 16,
+	OPTIONS_KEYBOARD = 17,
+	OPTIONS_MOUSE = 18,
+	OPTIONS_SOUND = 19,
 	RED = 0x850606,
 	WHITE = 16777215,
 };
@@ -101,6 +104,28 @@ typedef struct	s_stats
 	float	distanc_travel;
 }	t_stats;
 
+typedef struct s_keycode
+{
+	int	up;
+	int	up2;
+	int	down;
+	int	down2;
+	int	left;
+	int	left2;
+	int	right;
+	int	right2;
+	int	use;
+	int	use2;
+	int	jump;
+	int	jump2;
+	int	escape;
+	int	escape2;
+	int	pause;
+	int	pause2;
+	int	chat;
+	int	chat2;
+}	t_keycode;
+
 typedef struct s_player
 {
 	float		x;
@@ -115,11 +140,6 @@ typedef struct s_player
 	int			floor;
 	float		anim_shoot;
 	int			begin_dir;
-
-	int			scroll;
-	int			nb_scroll;
-	int			scroll_height;
-
 	bool		being_tpted;
 	float		x_tel;
 	float		y_tel;
@@ -127,6 +147,7 @@ typedef struct s_player
 	t_stuff		*stuff;
 	t_raycast	*raycast;
 	t_stats		*stats;
+	t_keycode	*key;
 }	t_player;
 
 typedef struct s_image
@@ -207,6 +228,9 @@ typedef struct s_menu
 	bool	error_name;
 	bool	error_pseudo;
 	int		width_letter[95];
+	int		scroll;
+	int		nb_scroll;
+	int		scroll_height;
 }	t_menu;
 
 enum EnemyState

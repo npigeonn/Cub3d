@@ -15,6 +15,10 @@
 # define KEY_SPACE 32
 # define KEY_SHIFT 65505
 # define KEY_RIGHT_CLICK 1
+# define KEY_ESC 65307
+# define KEY_P 112
+# define KEY_T 116
+# define KEY_F 102
 
 //utils
 void	chatting_mode(t_game *game);

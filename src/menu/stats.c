@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 18:50:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 23:33:13 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/27 17:26:12 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	update_stats_menu_click(t_game *game, int x, int y, int keycode)
 {
 	int	scroll_bar_x = (game->screen_width - game->screen_width * 0.6) * 0.5 - 25 + game->screen_width * 0.6 + 5;
 	int	scroll_bar_width = 10;
-	int	scroll_bar_height = (game->player->scroll_height * 27) / game->player->nb_scroll;
+	int	scroll_bar_height = (game->menu->scroll_height * 27) / game->menu->nb_scroll;
 	int	scroll_bar_y = (game->screen_height - game->screen_height * 0.6) * 0.25 + 95;
 
 	if (keycode == 1)
@@ -32,28 +32,28 @@ void	update_stats_menu_click(t_game *game, int x, int y, int keycode)
 			game->menu->status = MAIN_MENU;
 		if (game->menu->button_selected == 5)
 		{
-			game->menu->status = OPTIONS;
+			game->menu->status = OPTIONS_KEYBOARD;
 			game->menu->last_status = STATS;
 		}
 		game->menu->button_selected = 0;
-		game->player->scroll = 0;
+		game->menu->scroll = 0;
 	}
 	if (keycode == 5)
-		game->player->scroll += 1;
+		game->menu->scroll += 1;
 	if (keycode == 4)
 	{
-		game->player->scroll -= 1;
-		if (game->player->scroll < 0)
-			game->player->scroll = 0;
+		game->menu->scroll -= 1;
+		if (game->menu->scroll < 0)
+			game->menu->scroll = 0;
 	}
 	if (keycode == 1 && x >= scroll_bar_x && x <= scroll_bar_x + scroll_bar_width && y >= scroll_bar_y && y <= scroll_bar_y + game->screen_height * 0.6 - 110)
 	{
 		game->menu->dragging = true;
-		game->player->scroll = ((y - scroll_bar_y) * (game->player->nb_scroll - 27)) / (game->player->scroll_height - scroll_bar_height);
-		if (game->player->scroll < 0)
-			game->player->scroll = 0;
-		else if (game->player->scroll > game->player->nb_scroll - 27)
-			game->player->scroll = game->player->nb_scroll - 27;
+		game->menu->scroll = ((y - scroll_bar_y) * (game->menu->nb_scroll - 27)) / (game->menu->scroll_height - scroll_bar_height);
+		if (game->menu->scroll < 0)
+			game->menu->scroll = 0;
+		else if (game->menu->scroll > game->menu->nb_scroll - 27)
+			game->menu->scroll = game->menu->nb_scroll - 27;
 	}
 }
 
@@ -66,7 +66,7 @@ void	update_stats_menu(t_game *game, int x, int y)
 	const int	scroll_bar_x = (game->screen_width - game->screen_width * 0.6) * 0.5 - 25 + game->screen_width * 0.6 + 5;
 	const int	scroll_bar_width = 20;
 	const int	scroll_bar_y = (game->screen_height - game->screen_height * 0.6) * 0.25 + 95;
-	const int	scroll_bar_height = (game->player->scroll_height * 27) / game->player->nb_scroll;
+	const int	scroll_bar_height = (game->menu->scroll_height * 27) / game->menu->nb_scroll;
 
 	game->menu->button_selected = 0;
 	if (x >= button_x && x <= button_x + button_width
@@ -76,11 +76,11 @@ void	update_stats_menu(t_game *game, int x, int y)
 		game->menu->dragging = false;
 	if (game->menu->dragging)
 	{
-		game->player->scroll = ((y - scroll_bar_y) * (game->player->nb_scroll - 27)) / (game->player->scroll_height - scroll_bar_height);
-		if (game->player->scroll < 0)
-			game->player->scroll = 0;
-		else if (game->player->scroll > game->player->nb_scroll - 27)
-			game->player->scroll = game->player->nb_scroll - 27;
+		game->menu->scroll = ((y - scroll_bar_y) * (game->menu->nb_scroll - 27)) / (game->menu->scroll_height - scroll_bar_height);
+		if (game->menu->scroll < 0)
+			game->menu->scroll = 0;
+		else if (game->menu->scroll > game->menu->nb_scroll - 27)
+			game->menu->scroll = game->menu->nb_scroll - 27;
 	}
 	check_mouse_on_gear(game, x, y);
 }
@@ -95,7 +95,7 @@ void draw_stats_scroll_bar(t_game *game, int x, int y, int stats_height, int num
 	else
 		bar_height = (stats_height * 27) / num_players;
 
-	int	bar_y = y + ((stats_height - bar_height) * game->player->scroll) / (num_players - 27);
+	int	bar_y = y + ((stats_height - bar_height) * game->menu->scroll) / (num_players - 27);
 	int	bar_color = 0xAAAAAA;
 
 	t_draw_info scroll_bar_background = init_draw_info(stats_height, "", x + game->screen_width * 0.6 + 5, y);
@@ -173,8 +173,8 @@ void	draw_stats_menu(t_game *game)
 	player_stats = load_player_stats("stats.txt", &num_players);
 	if (!player_stats)
 		return;
-	game->player->nb_scroll = num_players;
-	game->player->scroll_height = stats_height - 110;
+	game->menu->nb_scroll = num_players;
+	game->menu->scroll_height = stats_height - 110;
 	t_draw_info stats_background = init_draw_info(0, "", x, y);
 	stats_background.width = stats_width;
 	stats_background.height = stats_height;
@@ -195,12 +195,12 @@ void	draw_stats_menu(t_game *game)
 	draw_text_right(game, header_stats_info);
 
 	draw_line(game, x + padding, separator_y, x + stats_width - padding, separator_y, 0xFFFFFF);
-	if (game->player->scroll + 27 > num_players)
-		game->player->scroll = num_players - 27;
+	if (game->menu->scroll + 27 > num_players)
+		game->menu->scroll = num_players - 27;
 	if (num_players < 27)
-		game->player->scroll = 0;
+		game->menu->scroll = 0;
 	for (int i = 0; i < num_players && i < 27; i++)
-		draw_player_stats_row(game, player_stats[i + game->player->scroll], x, y - 6, padding, row_height, i, stats_width);
+		draw_player_stats_row(game, player_stats[i + game->menu->scroll], x, y - 6, padding, row_height, i, stats_width);
 	draw_back_button(game, x, y, stats_height);
 	draw_stats_scroll_bar(game, x - 25, y + 95, stats_height - 110, num_players);
 	free(player_stats);

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 23:27:56 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/27 20:42:37 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	init_menu(t_game *game, int malloc)
 	game->menu->error_pseudo = false;
 	game->menu->text_field_selected = 0;
 	game->menu->dragging = false;
+	game->menu->scroll = 0;
 }
 
 void	init_client(t_game *game, int malloc)
@@ -55,6 +56,31 @@ void	init_client(t_game *game, int malloc)
 	game->chatbox->is_writting = false;
 	game->chatbox->messages = NULL;
 }
+
+void	init_player_keycode(t_game *game, int malloc)
+{
+	if (malloc)
+		game->player->key = gc_malloc(game->mem, sizeof(t_keycode));
+	game->player->key->up = KEY_W;
+	game->player->key->down = KEY_S;
+	game->player->key->left = KEY_A;
+	game->player->key->right = KEY_D;
+	game->player->key->up2 = KEY_UP;
+	game->player->key->down2 = KEY_DOWN;
+	game->player->key->left2 = KEY_LEFT;
+	game->player->key->right2 = KEY_RIGHT;
+	game->player->key->jump = KEY_SPACE;
+	game->player->key->jump2 = NULL;
+	game->player->key->use = KEY_F;
+	game->player->key->use2 = NULL;
+	game->player->key->escape = KEY_ESC;
+	game->player->key->escape2 = NULL;
+	game->player->key->pause = KEY_P;
+	game->player->key->pause2 = NULL;
+	game->player->key->chat = KEY_T;
+	game->player->key->chat2 = NULL;
+}
+
 void	init_player(t_game	*game, int malloc)
 {
 	if (malloc)
@@ -87,5 +113,5 @@ void	init_player(t_game	*game, int malloc)
 	game->player->stats->nb_hit = 0;
 	game->player->stats->nb_shoot = 0;
 	game->player->stats->distanc_travel = 0;
-	game->player->scroll = 0;
+	init_player_keycode(game, malloc);
 }
