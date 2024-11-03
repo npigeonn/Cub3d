@@ -144,6 +144,7 @@ typedef struct s_player
 	float		x_tel;
 	float		y_tel;
 	float		f_tel;
+	bool		invert_mouse_x;
 	t_stuff		*stuff;
 	t_raycast	*raycast;
 	t_stats		*stats;
@@ -221,7 +222,9 @@ typedef struct s_menu
 	int		button_selected;
 	int		dragging;
 	int		message;
-	float	volume;
+	float	music_volume;
+	float	effects_volume;
+	float	menu_music_volume;
 	float	mouse_sensitivity;
 	int		server_selected;
 	int		text_field_selected;
@@ -350,6 +353,7 @@ void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y);
 void	draw_options_menu(t_game *game);
 void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y);
 void	draw_multiplayer_menu(t_game *game);
+char	*get_key_name(int keycode);
 
 //draw
 void	pixel_put(t_game *game, int x, int y, int color);
@@ -379,7 +383,7 @@ void	print_wall_door_player(t_game *game);
 //door
 int		handle_door(t_game *game);
 void	add_door(t_game *game, int x, int y, int floor);
-t_door	*get_door(t_game *game, int x, int y, int floor);
+t_door	*get_door(t_door *door, int x, int y, int floor);
 void	use_door_in_view(t_game *game);
 void	update_door_animation(t_game *game);
 	

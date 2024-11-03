@@ -33,6 +33,8 @@ typedef enum s_message_type
 	MSG_DOOR = 6,
 	MSG_CHAT = 7,
 	MSG_GET_PLAYER = 8,
+	MSG_FILE_SIZE = 9,
+	MSG_BROADCAST_ENEMIES = 10,
 }	t_message_type;
 
 typedef struct s_game_message
@@ -49,6 +51,8 @@ typedef struct s_game_message
 	int			floor;
 	int			open;
 	char		message[MAX_MESSAGE_LENGTH];
+	uint32_t	file_size;
+	t_sprite	*sprites;
 }	t_game_message;
 
 typedef struct s_move_message
@@ -68,6 +72,7 @@ typedef struct s_server
 {
 	int						sock_bc;
 	char					*ip;
+	char					**av;
 	char					name[20];
 	int						nb_player;
 	t_player_info			*players;
@@ -79,6 +84,15 @@ typedef struct s_server
 	int						epoll_fd;
 	int						addrlen;
 	struct sockaddr_in		address;
+	char					***map;
+	float					x;
+	float					y;
+	int						floor;
+	float					delta_time;
+	struct timeval			last_time;
+	t_door					*door;
+	t_sprite				*sprites;
+	t_projectile			*projectiles;
 }	t_server;
 
 //broadcast

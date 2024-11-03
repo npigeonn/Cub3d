@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/18 18:22:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 23:55:15 by ybeaucou         ###   ########.fr       */
+/*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/02 23:53:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,105 @@
 
 static void	manage_position(t_game *game, t_game_message msg)
 {
-	if (msg.x < 0 || msg.y < 0)
+	game->player->x = msg.x;
+	game->player->y = msg.y;
+	game->player->health = msg.health;
+	game->player->height = msg.height;
+	game->player->floor = msg.floor;
+}
+
+char	**add_line_to_section(char **section, char *line)
+{
+	int		line_count = 0;
+	char	**new_section;
+
+	while (section && section[line_count] != NULL)
+		line_count++;
+	new_section = realloc(section, (line_count + 2) * sizeof(char*));
+	new_section[line_count] = ft_strdup(line); 
+	new_section[line_count + 1] = NULL;
+	return new_section;
+}
+
+void replace_path(char *filename)
+{
+	const char *old_path = "./assets/maps/";
+	const char *new_path = "./assets/maps/multi/";
+
+	char *pos = strstr(filename, old_path);
+	if (pos)
 	{
-		msg.type = MSG_MOVE;
-		msg.x = game->player->x;
-		msg.y = game->player->y;
-		msg.health = game->player->health;
-		msg.height = game->player->height;
-		msg.floor = game->player->floor;
-		send(game->client->sock, &msg, sizeof(t_game_message), 0);
+		size_t new_length = strlen(filename) - strlen(old_path) + strlen(new_path);
+		char *new_filename = malloc(new_length + 1);
+		
+		size_t prefix_length = pos - filename;
+		strncpy(new_filename, filename, prefix_length);
+		new_filename[prefix_length] = '\0';
+		strcat(new_filename, new_path);
+		strcat(new_filename, pos + strlen(old_path));
+		strcpy(filename, new_filename);
+		free(new_filename);
 	}
-	else
+}
+
+char	*receive_file_from_server(int server_socket)
+{
+	char		filename[256];
+	char		buffer[1024];
+	FILE		*file;
+	t_game_message	msg;
+	uint32_t	file_size;
+	size_t		total_received;
+	ssize_t		bytes_received;
+
+	recv(server_socket, filename, sizeof(filename), 0);
+	printf("Nom de fichier reçu : %s\n", filename);
+	replace_path(filename);
+	file = fopen(filename, "wb");
+	if (!file)
+		return (NULL);
+	recv(server_socket, &msg, sizeof(t_game_message), 0);
+	file_size = ntohl(msg.file_size);
+	printf("Taille du fichier reçue : %u octets\n", file_size);
+	total_received = 0;
+	while (total_received < file_size)
 	{
-		game->player->x = msg.x;
-		game->player->y = msg.y;
-		game->player->health = msg.health;
-		game->player->height = msg.height;
-		game->player->floor = msg.floor;
+		size_t bytes_to_receive = (file_size - total_received < sizeof(buffer)) ? (file_size - total_received) : sizeof(buffer);
+		bytes_received = recv(server_socket, buffer, bytes_to_receive, 0);
+		if (bytes_received <= 0)
+		{
+			fclose(file);
+			remove(filename);
+			return (NULL);
+		}
+		fwrite(buffer, 1, bytes_received, file);
+		total_received += bytes_received;
+		printf("Reçu : %zu / %u octets\n", total_received, file_size);
 	}
+	printf("Fichier %s reçu avec succès\n", filename);
+	fclose(file);
+	return (ft_strdup(filename));
+}
+
+int	receive_map_from_server(t_game *game, int client_socket)
+{
+	char	*file;
+	char	**tmp;
+
+	file = receive_file_from_server(client_socket);
+	printf("file: %s\n", file);
+	if (!file)
+		return (0);
+	tmp = game->av;
+	game->av = malloc(sizeof(char *) * 3);
+	game->av[0] = ft_strdup("cub3d");
+	game->av[1] = file;
+	game->av[2] = NULL;
+	parsing(game->av, game);
+	printf("av[1]: %s\n", game->av[1]);
+	free_split(game->av);
+	game->av = tmp;
+	return (1);
 }
 
 static int	manage_connection(t_game *game)
@@ -41,20 +122,23 @@ static int	manage_connection(t_game *game)
 
 	recv_size = recv(game->client->sock, &connect_msg,
 			sizeof(t_game_message), 0);
-	if (recv_size <= 0)
+	if (recv_size <= 0 || connect_msg.type == MSG_FULL)
 	{
-		game->menu->status = SERVER_DISCONNECTED;
-		close(game->client->sock);
-		return (0);
-	}
-	if (connect_msg.type == MSG_FULL)
-	{
-		game->menu->status = SERVER_FULL;
+		if (recv_size <= 0)
+			game->menu->status = SERVER_DISCONNECTED;
+		else
+			game->menu->status = SERVER_FULL;
 		close(game->client->sock);
 		return (0);
 	}
 	game->client->player_id = connect_msg.player_id;
 	manage_position(game, connect_msg);
+	if (!receive_map_from_server(game, game->client->sock))
+	{
+		game->menu->status = SERVER_DISCONNECTED;
+		close(game->client->sock);
+		return (0);
+	}
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 18:36:10 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/03 22:11:10 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,16 @@ void	create_server(t_game *game)
 	server->game_queue = NULL;
 	server->server_ready = false;
 	server->game_lock = malloc(sizeof(pthread_mutex_t));
+	server->map = game->map;
+	server->x = game->player->x;
+	server->y = game->player->y;
+	server->floor = game->player->floor;
+	server->door = game->door;
+	server->sprites = game->sprites;
+	server->projectiles = game->projectiles;
+	server->delta_time = 0;
+	server->last_time = game->last_time;
+	server->av = game->av;
 	ft_strcpy(server->name, game->client->name);
 	pthread_mutex_init(server->game_lock, NULL);
 	pthread_create(&server_thread, NULL, (void *)main_server, (void *)server);

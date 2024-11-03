@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:17:21 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 23:57:18 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/03 03:26:45 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,29 @@ void	add_connection_msg(t_game *game, char *pseudo)
 	new_msg->color = 0x32CD32;
 	gettimeofday(&new_msg->time, NULL);
 	game->chatbox->messages = new_msg;
+}
+
+static void	update_enemies_client(t_game *game, t_game_message msg)
+{
+	t_sprite	*current_enemy;
+	t_sprite	*incoming_enemy;
+
+	current_enemy = game->sprites;
+	incoming_enemy = msg.sprites;
+	while (current_enemy && incoming_enemy)
+	{
+		if (current_enemy->type == SPRITE_ENEMY)
+		{
+			current_enemy->x = incoming_enemy->x;
+			current_enemy->y = incoming_enemy->y;
+			current_enemy->health = incoming_enemy->health;
+			current_enemy->dirX = incoming_enemy->dirX;
+			current_enemy->dirY = incoming_enemy->dirY;
+			current_enemy->floor = incoming_enemy->floor;
+		}
+		current_enemy = current_enemy->next;
+		incoming_enemy = incoming_enemy->next;
+	}
 }
 
 static void	add_msg_chat(t_game *game, t_game_message msg)
@@ -63,8 +86,8 @@ static int	gestion_message(t_game *game, t_game_message msg)
 		update_door(game, msg);
 	else if (msg.type == MSG_CHAT)
 		add_msg_chat(game, msg);
-	else
-		printf("Unknown message type received: %d\n", msg.type);
+	else if (msg.type == MSG_BROADCAST_ENEMIES)
+		update_enemies_client(game, msg);
 	return (1);
 }
 

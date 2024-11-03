@@ -5,70 +5,224 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/06 14:42:20 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/27 21:57:33 by ybeaucou         ###   ########.fr       */
+/*   Created: 2024/10/29 23:55:27 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/10/30 22:02:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	update_option_menu_slider(t_game *game, int mouse_x, int mouse_y, int keycode)
-{
-	const int		btn_width = game->screen_width * 0.25;
-	const int		btn_height = game->screen_height * 0.1;
-	const int		spacing = game->screen_height * 0.05;
-	const int		x = (game->screen_width - btn_width) * 0.5;
-	const int		y = game->screen_height * 0.25;
-
-	if (keycode != 1)
-		return ;
-	if (game->menu->button_selected == 1)
-	{
-		game->menu->volume = (mouse_x - x) * 100 / btn_width;
-		if (game->menu->volume < 0) game->menu->volume = 0;
-		if (game->menu->volume > 100) game->menu->volume = 100;
-		game->menu->dragging = true;
-	}
-	else if (game->menu->button_selected == 2)
-	{
-		game->menu->mouse_sensitivity = (mouse_x - x) * 100 / btn_width;
-		if (game->menu->mouse_sensitivity < 0.0001) game->menu->mouse_sensitivity = 0.0001;
-		if (game->menu->mouse_sensitivity > 100) game->menu->mouse_sensitivity = 100;
-		game->menu->dragging = true;
-	}
-	else
-		game->menu->dragging = false;
-}
-
 void	update_option_menu_click(t_game *game, int mouse_x, int mouse_y, int keycode)
 {
 	if (keycode != 1)
 		return ;
+	if (game->menu->status == OPTIONS_KEYBOARD)
+		update_option_menu_click_keyboard(game, mouse_x, mouse_y);
+	if (game->menu->status == OPTIONS_MOUSE)
+		update_mouse_options_interaction(game, mouse_x, mouse_y);
+	if (game->menu->status == OPTIONS_SOUND)
+		update_sound_options_interaction(game, mouse_x, mouse_y);
 	if (game->menu->button_selected == 1)
-	{
 		game->menu->status = OPTIONS_KEYBOARD;
-		game->menu->button_selected = 0;
-		return ;
-	}
-	if (game->menu->button_selected == 2)
-	{
+	else if (game->menu->button_selected == 2)
 		game->menu->status = OPTIONS_MOUSE;
-		game->menu->button_selected = 0;
-		return ;
-	}
-	if (game->menu->button_selected == 3)
-	{
+	else if (game->menu->button_selected == 3)
 		game->menu->status = OPTIONS_SOUND;
-		game->menu->button_selected = 0;
-		return ;
-	}
-	if (game->menu->button_selected == 4)
-	{
+	else if (game->menu->button_selected == 4)
 		game->menu->status = game->menu->last_status;
-		game->menu->button_selected = 0;
+	else
 		return ;
+	game->menu->button_selected = 0;
+}
+
+void	update_option_menu_key_keyboard(t_game *game, int keycode)
+{
+	int binding_count = 9;
+	int *primary_keys[] = { &game->player->key->up, &game->player->key->down,
+		&game->player->key->left, &game->player->key->right,
+		&game->player->key->jump, &game->player->key->use,
+		&game->player->key->escape, &game->player->key->pause,
+		&game->player->key->chat
+	};
+	int *secondary_keys[] = { &game->player->key->up2,
+		&game->player->key->down2, &game->player->key->left2,
+		&game->player->key->right2, &game->player->key->jump2,
+		&game->player->key->use2,&game->player->key->escape2,
+		&game->player->key->pause2, &game->player->key->chat2
+	};
+	if (game->menu->text_field_selected == 0)
+		return ;
+	for (int i = 0; i < binding_count; i++)
+	{
+		if (*primary_keys[i] == keycode)
+			*primary_keys[i] = -1;
+		else if (*secondary_keys[i] == keycode)
+			*secondary_keys[i] = -1;
+		if (game->menu->text_field_selected == (i * 2 + 1))
+			*primary_keys[i] = keycode;
+		else if (game->menu->text_field_selected == (i * 2 + 2))
+			*secondary_keys[i] = keycode;
 	}
-	update_option_menu_slider(game, mouse_x, mouse_y, keycode);
+	game->menu->text_field_selected = 0;
+}
+
+void	update_mouse_options_interaction(t_game *game, int mouse_x, int mouse_y)
+{
+	float panel_width = game->screen_width * 0.9;
+	float panel_height = game->screen_height * 0.9;
+	float panel_x = (game->screen_width - panel_width) * 0.5;
+	float panel_y = (game->screen_height - panel_height) * 0.5;
+
+	const char *options[] = {"Mouse Sensitivity", "Invert Mouse X"};
+	int option_count = sizeof(options) / sizeof(options[0]);
+	float option_y = panel_y + panel_height * 0.372;
+
+	for (int i = 0; i < option_count; i++)
+	{
+		if (i == 0)
+		{
+			int slider_x = (panel_width - panel_width * 0.3) * 0.5 + panel_x;
+			int slider_y = panel_y + panel_height * 0.4;
+			int slider_width = panel_width * 0.3;
+			int slider_height = game->screen_height * 0.025;
+
+			if (mouse_x >= slider_x && mouse_x <= slider_x + slider_width &&
+				mouse_y >= slider_y && mouse_y <= slider_y + slider_height)
+			{
+				game->menu->mouse_sensitivity = ((float)(mouse_x - slider_x) / slider_width) * 100;
+				if (game->menu->mouse_sensitivity < 0) game->menu->mouse_sensitivity = 0;
+				if (game->menu->mouse_sensitivity > 100) game->menu->mouse_sensitivity = 100;
+				game->menu->dragging = true;
+			}
+		}
+		if (i == 1)
+		{
+			int checkbox_size = 20;
+			int checkbox_x =  (panel_x + panel_width * 0.135) + panel_width * 0.5;
+			int checkbox_y = option_y - 5;
+			if (mouse_x >= checkbox_x && mouse_x <= checkbox_x + checkbox_size &&
+				mouse_y >= checkbox_y && mouse_y <= checkbox_y + checkbox_size)
+					game->player->invert_mouse_x = !game->player->invert_mouse_x;
+		}
+		option_y += panel_height * 0.15;
+	}
+}
+
+void	update_sound_options_interaction(t_game *game, int mouse_x, int mouse_y)
+{
+	float panel_width = game->screen_width * 0.9;
+	float panel_height = game->screen_height * 0.9;
+	float panel_x = (game->screen_width - panel_width) * 0.5;
+	float panel_y = (game->screen_height - panel_height) * 0.5;
+
+	int slider_width = panel_width * 0.3;
+	int slider_height = game->screen_height * 0.025;
+	int slider_x = (panel_width - panel_width * 0.3) * 0.5 + panel_x;
+	int slider_y = panel_y + panel_height * 0.4;
+
+	float *values[] = {&game->menu->music_volume, &game->menu->effects_volume, &game->menu->menu_music_volume};
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (mouse_x >= slider_x && mouse_x <= slider_x + slider_width &&
+			mouse_y >= slider_y && mouse_y <= slider_y + slider_height)
+		{
+			*values[i] = ((float)(mouse_x - slider_x) / slider_width) * 100;
+			if (*values[i] < 0) *values[i] = 0;
+			if (*values[i] > 100) *values[i] = 100;
+			game->menu->dragging = true;
+		}
+		slider_y += panel_height * 0.15;
+	}
+}
+
+void	update_option_menu_click_keyboard(t_game *game, int mouse_x, int mouse_y)
+{
+	float panel_width = game->screen_width * 0.9;
+	float panel_height = game->screen_height * 0.9;
+	float panel_x = (game->screen_width - panel_width) * 0.5;
+	float panel_y = (game->screen_height - panel_height) * 0.5;
+
+	int option_y = panel_y + panel_height * 0.30;
+	int binding_count = 9;
+	game->menu->text_field_selected = 0;
+	for (int i = 0; i < binding_count; i++)
+	{
+		int key_x1 = (panel_width - panel_width * 0.5) * 0.5 + panel_width * 0.24;
+		int key_x2 = key_x1 + panel_width * 0.2;
+		int key_height = game->screen_height * 0.03 + 10;
+		if (mouse_x >= panel_x && mouse_x <= panel_x + panel_width &&
+			mouse_y >= option_y && mouse_y <= option_y + key_height)
+		{
+			if (mouse_x >= key_x1 - 5 && mouse_x <= key_x1 + panel_width * 0.15)
+				game->menu->text_field_selected = i * 2 + 1; 
+			else if (mouse_x >= key_x2 - 5 && mouse_x <= key_x2 + panel_width * 0.15)
+				game->menu->text_field_selected = i * 2 + 2;
+		}
+		option_y += 50;
+	}
+}
+
+void	update_option_menu_button_sound(t_game *game, int mouse_x, int mouse_y)
+{
+	if (!game->menu->dragging)
+		return ;
+
+	float panel_width = game->screen_width * 0.9;
+	float panel_height = game->screen_height * 0.9;
+	float panel_x = (game->screen_width - panel_width) * 0.5;
+	float panel_y = (game->screen_height - panel_height) * 0.5;
+
+	int slider_width = panel_width * 0.3;
+	int slider_height = game->screen_height * 0.025;
+	int slider_x = (panel_width - panel_width * 0.3) * 0.5 + panel_x;
+	int slider_y = panel_y + panel_height * 0.4;
+
+	float *values[] = {&game->menu->music_volume, &game->menu->effects_volume, &game->menu->menu_music_volume};
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (mouse_x >= slider_x && mouse_x <= slider_x + slider_width &&
+			mouse_y >= slider_y && mouse_y <= slider_y + slider_height)
+		{
+			*values[i] = ((float)(mouse_x - slider_x) / slider_width) * 100;
+			if (*values[i] < 0) *values[i] = 0;
+			if (*values[i] > 100) *values[i] = 100;
+			return ;
+		}
+		slider_y += panel_height * 0.15;
+	}
+	game->menu->dragging = false;
+}
+
+void	update_option_menu_button_mouse(t_game *game, int mouse_x, int mouse_y)
+{
+	if (!game->menu->dragging)
+		return ;
+
+	float panel_width = game->screen_width * 0.9;
+	float panel_height = game->screen_height * 0.9;
+	float panel_x = (game->screen_width - panel_width) * 0.5;
+	float panel_y = (game->screen_height - panel_height) * 0.5;
+
+	float option_y = panel_y + panel_height * 0.372;
+	int slider_x = (panel_width - panel_width * 0.3) * 0.5 + panel_x;
+	int slider_y = panel_y + panel_height * 0.4;
+	int slider_width = panel_width * 0.3;
+	int slider_height = game->screen_height * 0.025;
+
+	if (game->menu->dragging)
+	{
+		if (!(mouse_x >= slider_x && mouse_x <= slider_x + slider_width &&
+			mouse_y >= slider_y && mouse_y <= slider_y + slider_height))
+		{
+			game->menu->dragging = false;
+			return ;
+		}
+		game->menu->mouse_sensitivity = ((float)(mouse_x - slider_x) / slider_width) * 100;
+		if (game->menu->mouse_sensitivity < 0.0001) game->menu->mouse_sensitivity = 0.0001;
+		if (game->menu->mouse_sensitivity > 100) game->menu->mouse_sensitivity = 100;
+	}
 }
 
 void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y)
@@ -97,10 +251,11 @@ void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y)
 	else if (mouse_x >= x && mouse_x <= x + btn_width && mouse_y >= y && mouse_y <= y + btn_height)
 		game->menu->button_selected = 4;
 	else
-	{
 		game->menu->button_selected = 0;
-		game->menu->dragging = false;
-	}
+	if (game->menu->status == OPTIONS_MOUSE)
+		update_option_menu_button_mouse(game, mouse_x, mouse_y);
+	if (game->menu->status == OPTIONS_SOUND)
+		update_option_menu_button_sound(game, mouse_x, mouse_y);
 }
 
 static void	draw_slider(t_game *game, int x, int y, int width, int height, float value)
@@ -124,43 +279,24 @@ typedef struct	s_key_binding
 	const char	*key2;
 }	t_key_binding;
 
-const char *get_key_name(Display *display, int key_code)
-{
-    // Créer un événement XKeyEvent temporaire pour XLookupString
-    char buffer[32];
-    KeySym keysym;
-    XKeyEvent event;
-    
-    // Initialiser l'événement
-    event.display = display;
-    event.keycode = key_code;
-    event.state = 0; // Sans aucun modificateur
-
-	keysym = XKeycodeToKeysym(display, key_code, 0);
-    const char *key_name = XKeysymToString(keysym);
-	printf("key_name: %s\n", key_name);
-	printf("keysym: %d\n", keysym);
-    return key_name ? key_name : "none";
-}
-
 t_key_binding	*get_binding(t_game *game)
 {
 	t_key_binding *binding = malloc(sizeof(t_key_binding) * 9);
 	t_keycode *key = game->player->key;
 
-	binding[0] = (t_key_binding){"Move Forward", get_key_name(((t_xvar *)game->mlx)->display, key->up), get_key_name(((t_xvar *)game->mlx)->display, key->up2)};
-	binding[1] = (t_key_binding){"Move Backward", get_key_name(((t_xvar *)game->mlx)->display, key->down), get_key_name(((t_xvar *)game->mlx)->display, key->down2)};
-	binding[2] = (t_key_binding){"Move Left", get_key_name(((t_xvar *)game->mlx)->display, key->left), get_key_name(((t_xvar *)game->mlx)->display, key->left2)};
-	binding[3] = (t_key_binding){"Move Right", get_key_name(((t_xvar *)game->mlx)->display, key->right), get_key_name(((t_xvar *)game->mlx)->display, key->right2)};
-	binding[4] = (t_key_binding){"Jump", get_key_name(((t_xvar *)game->mlx)->display, key->jump), get_key_name(((t_xvar *)game->mlx)->display, key->jump2)};
-	binding[5] = (t_key_binding){"Use", get_key_name(((t_xvar *)game->mlx)->display, key->use), get_key_name(((t_xvar *)game->mlx)->display, key->use2)};
-	binding[6] = (t_key_binding){"Quit", get_key_name(((t_xvar *)game->mlx)->display, key->escape), get_key_name(((t_xvar *)game->mlx)->display, key->escape2)};
-	binding[7] = (t_key_binding){"Pause", get_key_name(((t_xvar *)game->mlx)->display, key->pause), get_key_name(((t_xvar *)game->mlx)->display, key->pause2)};
-	binding[8] = (t_key_binding){"Chat", get_key_name(((t_xvar *)game->mlx)->display, key->chat), get_key_name(((t_xvar *)game->mlx)->display, key->chat2)};
+	binding[0] = (t_key_binding){"Move Forward", get_key_name(key->up), get_key_name(key->up2)};
+	binding[1] = (t_key_binding){"Move Backward", get_key_name(key->down), get_key_name(key->down2)};
+	binding[2] = (t_key_binding){"Move Left", get_key_name(key->left), get_key_name(key->left2)};
+	binding[3] = (t_key_binding){"Move Right", get_key_name(key->right), get_key_name(key->right2)};
+	binding[4] = (t_key_binding){"Jump", get_key_name(key->jump), get_key_name(key->jump2)};
+	binding[5] = (t_key_binding){"Use", get_key_name(key->use), get_key_name(key->use2)};
+	binding[6] = (t_key_binding){"Quit", get_key_name(key->escape), get_key_name(key->escape2)};
+	binding[7] = (t_key_binding){"Pause", get_key_name(key->pause), get_key_name(key->pause2)};
+	binding[8] = (t_key_binding){"Chat", get_key_name(key->chat), get_key_name(key->chat2)};
 	return (binding);
 }
 
-void draw_options_keyboard(t_game *game)
+void	draw_options_keyboard(t_game *game)
 {
 	float panel_width = game->screen_width * 0.9;
 	float panel_height = game->screen_height * 0.9;
@@ -168,24 +304,35 @@ void draw_options_keyboard(t_game *game)
 	float panel_y = (game->screen_height - panel_height) * 0.5;
 
 	t_key_binding *bindings = get_binding(game);
-
 	t_draw_info header_info = init_draw_info(game->screen_height * 0.06, "Key Bindings", panel_x + panel_width * 0.5, panel_y + 50 + panel_height * 0.1);
 	header_info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text(game, header_info);
-
 	int option_x = (panel_width - panel_width * 0.5) * 0.47 + panel_x;
 	int option_y = panel_y + panel_height * 0.30;
-
 	for (int i = 0; i < 9; i++)
 	{
 		t_draw_info key_info = init_draw_info(game->screen_height * 0.03, bindings[i].action, option_x, option_y + 8);
 		key_info.color = MENU_BUTTON_TEXT_COLOR;
 		draw_text_left(game, key_info);
-		int key_x1 =(panel_width - panel_width * 0.5) * 0.5 + panel_width * 0.24;
+		int key_x1 = (panel_width - panel_width * 0.5) * 0.5 + panel_width * 0.24;
 		int key_x2 = key_x1 + panel_width * 0.2;
 		int key_height = game->screen_height * 0.03 + 10;
 		int key_width = panel_width * 0.15;
-		key_info = init_draw_info(key_height, "", key_x1 - 5,  option_y - 5);
+		if (game->menu->text_field_selected == (i * 2 + 1))
+		{
+			t_draw_info highlight_info = init_draw_info(key_height + 10, "", key_x1 - 10, option_y - 10);
+			highlight_info.width = key_width + 10;
+			highlight_info.color = 0xFFFFFF;
+			draw_rectangle(game, highlight_info);
+		}
+		else if (game->menu->text_field_selected == (i * 2 + 2))
+		{
+			t_draw_info highlight_info = init_draw_info(key_height + 10, "", key_x2 - 10, option_y - 10);
+			highlight_info.width = key_width + 10;
+			highlight_info.color = 0xFFFFFF;
+			draw_rectangle(game, highlight_info);
+		}
+		key_info = init_draw_info(key_height, "", key_x1 - 5, option_y - 5);
 		key_info.width = key_width;
 		key_info.color = MENU_BUTTON_SELECTED_COLOR;
 		draw_rectangle(game, key_info);
@@ -201,7 +348,7 @@ void draw_options_keyboard(t_game *game)
 	}
 }
 
-void draw_options_sound(t_game *game)
+void	draw_options_sound(t_game *game)
 {
 	float panel_width = game->screen_width * 0.9;
 	float panel_height = game->screen_height * 0.9;
@@ -211,12 +358,8 @@ void draw_options_sound(t_game *game)
 	int slider_width = panel_width * 0.3;
 	int slider_height = game->screen_height * 0.025;
 
-	float music_volume = 0.7;
-	float effects_volume = 0.5;
-	float menu_music_volume = 0.8;
-
 	const char *labels[] = {"Music Volume", "Effects Volume", "Menu Music Volume"};
-	float values[] = {music_volume, effects_volume, menu_music_volume};
+	float values[] = {game->menu->music_volume, game->menu->effects_volume, game->menu->menu_music_volume};
 
 	t_draw_info header_info = init_draw_info(game->screen_height * 0.06, "Sound Settings", panel_x + panel_width * 0.5, panel_y + 50 + panel_height * 0.1);
 	header_info.color = 0xFFFFFF;
@@ -230,12 +373,12 @@ void draw_options_sound(t_game *game)
 		t_draw_info label_info = init_draw_info(game->screen_height * 0.03, labels[i], slider_x, slider_y - slider_height);
 		label_info.color = 0xFFFFFF;
 		draw_text_left(game, label_info);
-		draw_slider(game, slider_x, slider_y, slider_width, slider_height, values[i]);
+		draw_slider(game, slider_x, slider_y, slider_width, slider_height, values[i] / 100);
 		slider_y += panel_height * 0.15;
 	}
 }
 
-void draw_options_mouse(t_game *game) 
+void	draw_options_mouse(t_game *game) 
 {
 	float panel_width = game->screen_width * 0.9;
 	float panel_height = game->screen_height * 0.9;
@@ -247,10 +390,8 @@ void draw_options_mouse(t_game *game)
 	draw_text(game, header_info);
 
 	const char *options[] = {"Mouse Sensitivity", "Invert Mouse X"};
-	float sensitivity_value = 0.5;
-	int invert_x = 1;
 	int option_count = sizeof(options) / sizeof(options[0]);
-	float option_y = panel_y + panel_height * 0.35;
+	float option_y = panel_y + panel_height * 0.372;
 
 	for (int i = 0; i < option_count; i++)
 	{
@@ -264,21 +405,25 @@ void draw_options_mouse(t_game *game)
 			int slider_y = panel_y + panel_height * 0.4;
 			int slider_width = panel_width * 0.3;
 			int slider_height = game->screen_height * 0.025;
-
-			draw_slider(game, slider_x, slider_y, slider_width, slider_height, sensitivity_value);
+			draw_slider(game, slider_x, slider_y, slider_width, slider_height, game->menu->mouse_sensitivity / 100);
 		}
 		if (i == 1)
 		{
 			int checkbox_size = 20;
-			int checkbox_x = (panel_x + panel_width * 0.1) + panel_width * 0.5 - checkbox_size * 0.5;
+			int checkbox_x = (panel_x + panel_width * 0.135) + panel_width * 0.5;
 			int checkbox_y = option_y - 5;
 
-			t_draw_info checkbox_info = init_draw_info(checkbox_size, "", checkbox_x, checkbox_y);
+			t_draw_info checkbox_info = init_draw_info(checkbox_size + 4, "", checkbox_x - 2, checkbox_y - 2);
+			checkbox_info.color = 0xFFFFFF;
+			checkbox_info.width = checkbox_size + 4;
+			draw_rectangle(game, checkbox_info);
+			checkbox_info = init_draw_info(checkbox_size, "", checkbox_x, checkbox_y);
 			checkbox_info.color = MENU_BUTTON_COLOR;
 			checkbox_info.width = checkbox_size;
-			draw_rectangle(game, checkbox_info);
+			if (!game->player->invert_mouse_x)
+				draw_rectangle(game, checkbox_info);
 			checkbox_info.color = 0xFF0000;
-			if (invert_x)
+			if (game->player->invert_mouse_x)
 				draw_rectangle(game, checkbox_info);
 		}
 		option_y += panel_height * 0.15;

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 21:43:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 18:10:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/01 17:12:15 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,12 @@ static void	new_player_add(t_server *server, int i, int socket, char *pseudo)
 	add_player_node(server, i, pseudo);
 	msg.type = MSG_CONNECT;
 	msg.player_id = i;
-	msg.x = -1;
-	msg.y = -1;
+	msg.x = server->x;
+	msg.y = server->y;
+	msg.floor = server->floor;
+	msg.health = 1;
+	msg.height = 0;
+	// msg.ammo = 30;
 	ft_strcpy(msg.pseudo, pseudo);
 	add_game_message_to_queue(server, msg);
 }

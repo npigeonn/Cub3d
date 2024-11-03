@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 17:00:58 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/10/30 01:36:06 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@ void	show_menu_message(t_game *game)
 	if (game->menu->message == OPEN_DOOR)
 	{
 		draw_rectangle(game, info);
-		ft_strcpy(info.str, "Appuyer sur F pour ouvrir");
+		ft_strcpy(info.str, "Press ");
+		ft_strlcat(info.str, get_key_name(game->player->key->use), 256);
+		ft_strlcat(info.str, " to open", 256);
 		info.height = 30;
 		info.y = game->screen_height * 0.5 - 129;
 		info.x = game->screen_width * 0.5;
@@ -50,7 +52,9 @@ void	show_menu_message(t_game *game)
 	else if (game->menu->message == CLOSE_DOOR)
 	{
 		draw_rectangle(game, info);
-		ft_strcpy(info.str, "Appuyer sur F pour fermer");
+		ft_strcpy(info.str, "Press ");
+		ft_strlcat(info.str, get_key_name(game->player->key->use), 256);
+		ft_strlcat(info.str, " to close", 256);
 		info.height = 30;
 		info.y = game->screen_height * 0.5 - 129;
 		info.x = game->screen_width * 0.5;
@@ -62,7 +66,9 @@ void	show_menu_message(t_game *game)
 		info.x -= 80;
 		info.width += 160;
 		draw_rectangle(game, info);
-		ft_strcpy(info.str, "Appuyer sur F pour vous teleportez");
+		ft_strcpy(info.str, "Press ");
+		ft_strlcat(info.str, get_key_name(game->player->key->use), 256);
+		ft_strlcat(info.str, " to teleport", 256);
 		info.height = 30;
 		info.y = game->screen_height * 0.5 - 129;
 		info.x = game->screen_width * 0.5;

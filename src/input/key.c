@@ -6,32 +6,39 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 14:19:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 00:30:15 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/30 00:23:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-static int	get_key_index(int keycode)
+static int	get_key_index(t_game *game, int keycode)
 {
-	const int keycode_map[11] =
+	const int keycode_map[19] =
 	{
-		KEY_W,
-		KEY_S,
-		KEY_A,
-		KEY_D,
-		KEY_UP,
-		KEY_DOWN,
-		KEY_LEFT,
-		KEY_RIGHT,
-		KEY_SPACE,
-		KEY_SHIFT,
-		KEY_RIGHT_CLICK
+		game->player->key->up,
+		game->player->key->up2,
+		game->player->key->down,
+		game->player->key->down2,
+		game->player->key->left,
+		game->player->key->left2,
+		game->player->key->right,
+		game->player->key->right2,
+		game->player->key->jump,
+		game->player->key->jump2,
+		game->player->key->use,
+		game->player->key->use2,
+		game->player->key->escape,
+		game->player->key->escape2,
+		game->player->key->pause,
+		game->player->key->pause2,
+		game->player->key->chat,
+		game->player->key->chat2
 	};
 	int i;
 	
 	i = -1;
-	while (++i < 10)
+	while (++i < 18)
 	{
 		if (keycode_map[i] == keycode)
 			return (i);
@@ -41,7 +48,7 @@ static int	get_key_index(int keycode)
 
 void	set_key_flag(t_game *game, int keycode, int is_pressed)
 {
-	const int	index = get_key_index(keycode);
+	const int	index = get_key_index(game, keycode);
 
 	if (index >= 0)
 	{
@@ -54,17 +61,22 @@ void	set_key_flag(t_game *game, int keycode, int is_pressed)
 
 int	is_key_pressed(t_game *game, int keycode)
 {
-	const int index = get_key_index(keycode);
+	const int index = get_key_index(game, keycode);
 
 	if (index < 0)
 		return (0);
 	return ((game->key_flags & (1U << index)) != 0);
 }
 
-bool	is_keyflag(int keycode)
+bool	is_keyflag(t_game *game, int keycode)
 {
-	return (keycode == KEY_UP || keycode == KEY_DOWN || keycode == KEY_LEFT
-		|| keycode == KEY_RIGHT || keycode == KEY_W || keycode == KEY_A
-		|| keycode == KEY_S || keycode == KEY_D || keycode == KEY_SPACE
-		|| keycode == KEY_SHIFT);
+	return (keycode == game->player->key->up || keycode == game->player->key->up2
+	|| keycode == game->player->key->down || keycode == game->player->key->down2
+	|| keycode == game->player->key->left || keycode == game->player->key->left2
+	|| keycode == game->player->key->right || keycode == game->player->key->right2
+	|| keycode == game->player->key->jump || keycode == game->player->key->jump2
+	|| keycode == game->player->key->use || keycode == game->player->key->use2
+	|| keycode == game->player->key->escape || keycode == game->player->key->escape2
+	|| keycode == game->player->key->pause || keycode == game->player->key->pause2
+	|| keycode == game->player->key->chat || keycode == game->player->key->chat2);
 }

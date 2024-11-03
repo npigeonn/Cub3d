@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/27 20:42:37 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/30 21:42:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,13 @@ void	init_var(t_game *game, int malloc)
 void	init_menu(t_game *game, int malloc)
 {
 	if (malloc)
+	{
 		game->menu = gc_malloc(game->mem, sizeof(t_menu));
-	game->menu->volume = 20;
-	game->menu->mouse_sensitivity = 20;
+		game->menu->music_volume = 30;
+		game->menu->effects_volume = 30;
+		game->menu->menu_music_volume = 30;
+		game->menu->mouse_sensitivity = 20;
+	}
 	game->menu->message = NOTHING;
 	game->menu->status = GET_PSEUDO;
 	game->menu->button_selected = 0;
@@ -45,7 +49,10 @@ void	init_menu(t_game *game, int malloc)
 void	init_client(t_game *game, int malloc)
 {
 	if (malloc)
+	{
 		game->client = gc_malloc(game->mem, sizeof(t_client));
+		game->client->pseudo[0] = '\0';
+	}
 	game->client->players = NULL;
 	game->client->name[0] = '\0';
 	game->client->ip[0] = '\0';
@@ -61,6 +68,8 @@ void	init_player_keycode(t_game *game, int malloc)
 {
 	if (malloc)
 		game->player->key = gc_malloc(game->mem, sizeof(t_keycode));
+	else
+		return ;
 	game->player->key->up = KEY_W;
 	game->player->key->down = KEY_S;
 	game->player->key->left = KEY_A;
@@ -88,11 +97,7 @@ void	init_player(t_game	*game, int malloc)
 		game->player = gc_malloc(game->mem, sizeof(t_player));
 		game->player->raycast = gc_malloc(game->mem, sizeof(t_raycast));
 		game->player->stats = gc_malloc(game->mem, sizeof(t_stats));
-	}
-	if (!game->player->stats || !game->player)
-	{
-		printf("stats is null\n");
-		exit(0);
+		game->player->invert_mouse_x = 0;
 	}
 	game->player->x = 0;
 	game->player->y = 0;

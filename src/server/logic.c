@@ -6,26 +6,54 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 18:11:39 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/03 23:26:02 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
+void	send_file_to_client(int client_socket, const char *filename)
+{
+	const FILE		*file = fopen(filename, "rb");
+	char			buffer[1024];
+	size_t			bytes_read;
+	t_game_message	msg;
+
+	if (!file)
+		return ;
+	send(client_socket, filename, strlen(filename) + 1, 0);
+	ft_memset(&msg, 0, sizeof(t_game_message));
+	msg.type = MSG_FILE_SIZE;
+	fseek(file, 0, SEEK_END);
+	msg.file_size = htonl(ftell(file));
+	fseek(file, 0, SEEK_SET);
+	send(client_socket, &msg, sizeof(t_game_message), 0);
+	bytes_read = fread(buffer, 1, sizeof(buffer), file);
+	while (bytes_read  > 0)
+	{
+		send(client_socket, buffer, bytes_read, 0);
+		bytes_read = fread(buffer, 1, sizeof(buffer), file);
+	}
+	fclose(file);
+}
+
+void	send_info(t_server *server, t_game_message msg)
+{
+	send(server->client_sockets[msg.player_id], &msg, sizeof(t_game_message), 0);
+	send_file_to_client(server->client_sockets[msg.player_id], server->av[1]);
+	send_all_players(server, msg.player_id);
+}
+
 static void	use_type(t_server *server, t_game_message msg)
 {
 	if (msg.type == MSG_CONNECT)
 	{
-		send(server->client_sockets[msg.player_id], &msg,
-			sizeof(t_game_message), 0);
-		send_all_players(server, msg.player_id);
+		send_info(server, msg);
 		notify_players_of_connection(server, msg.player_id, msg.pseudo);
 	}
 	else if (msg.type == MSG_RECONNECT)
 	{
-		send(server->client_sockets[msg.player_id], &msg,
-			sizeof(t_game_message), 0);
-		send_all_players(server, msg.player_id);
+		send_info(server, msg);
 		notify_players_of_reconnection(server, msg.player_id, msg.pseudo);
 	}
 	else if (msg.type == MSG_DISCONNECT)
@@ -36,6 +64,207 @@ static void	use_type(t_server *server, t_game_message msg)
 		notify_players_of_door(server, msg);
 	else if (msg.type == MSG_CHAT)
 		notify_players_of_chat(server, msg);
+}
+
+long	get_current_time()
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+void	broadcast_enemies(t_server *server)
+{
+	t_game_message	msg;
+	t_player_info	*current;
+	
+	current = server->players;
+	ft_memset(&msg, 0, sizeof(t_game_message));
+	msg.type = MSG_BROADCAST_ENEMIES;
+	msg.player_id = -1;
+	msg.sprites = server->sprites;
+	while (current)
+	{
+		if (current->player_id >= 0)
+			send(server->client_sockets[current->player_id], &msg, sizeof(t_game_message), 0);
+		current = current->next;
+	}
+}
+
+int	can_move_server(t_server *server, float x, float y, int floor)
+{
+	t_door		*door;
+	int			check_x;
+	int			check_y;
+	const float	buffer = 0.13;
+
+	check_y = (int)(y - buffer) - 1;
+	while (++check_y <= (int)(y + buffer))
+	{
+		check_x = (int)(x - buffer) - 1;
+		while (++check_x <= (int)(x + buffer))
+		{
+			if (check_x < 0 || check_y < 0 || check_y >= tablen(server->map[floor]) || check_x >= (int)ft_strlen(server->map[floor][check_y]))
+				return (false);
+			if (server->map[floor][check_y][check_x] == '1')
+				return (false);
+			if (server->map[floor][check_y][check_x] == 'D')
+			{
+				door = get_door(server->door, check_x, check_y, floor);
+				if (!door->open)
+					return (false);
+			}
+		}
+	}
+	return (true);  
+}
+
+bool	has_line_of_sight_server(t_server *server, t_point enemy_pos, t_point player_pos, float enemy_facing_angle, float fov_angle)
+{
+	float dx = player_pos.x - enemy_pos.x;
+	float dy = player_pos.y - enemy_pos.y;
+	float distance = sqrt(dx * dx + dy * dy);
+
+	float angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
+	float angle_diff = fabsf(angle_to_player - enemy_facing_angle);
+
+	if (angle_diff <= fov_angle * 0.5)
+	{
+		float step_x = dx / distance;
+		float step_y = dy / distance;
+		for (float t = 0; t < distance; t += 0.1f)
+		{
+			enemy_pos.x += step_x * 0.1f;
+			enemy_pos.y += step_y * 0.1f;
+			if (!can_move_server(server, enemy_pos.x, enemy_pos.y, enemy_pos.floor))
+				return (false);
+		}
+		return (true);
+	}
+	return (false);
+}
+
+void	shoot_at_player_server(t_sprite *enemy, t_point player_pos, t_server *server)
+{
+	float dx = player_pos.x - enemy->x;
+	float dy = player_pos.y - enemy->y;
+	float angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
+	float angle_diff = fmodf(fabsf(angle_to_player - enemy->direction), 360.0f);
+		
+	if (angle_diff > 180.0f)
+		angle_diff = 360.0f - angle_diff;
+	if (enemy->animation > 0)
+		enemy->animation -= 15 * server->delta_time;
+	if (enemy->animation < 0)
+		enemy->selected_anim = 0;
+	if (angle_diff < 5.0f && enemy->shoot_delay <= 0)
+	{
+		t_projectile *new_projectile = malloc(sizeof(t_projectile));
+		enemy->selected_anim = 1;
+		enemy->animation = 5;
+		
+		if (new_projectile)
+		{
+			new_projectile->x = enemy->x;
+			new_projectile->y = enemy->y;
+			new_projectile->direction = angle_to_player;
+			new_projectile->speed = 0.4f;
+			new_projectile->next = NULL;
+			new_projectile->owner = NULL;
+			new_projectile->enemy = enemy;
+			new_projectile->next = server->projectiles; 
+			new_projectile->floor = enemy->floor;
+			new_projectile->damage = 0.09f;
+			server->projectiles = new_projectile;
+		}
+		enemy->shoot_delay = 1;
+	}
+	else if (enemy->shoot_delay > 0)
+		enemy->shoot_delay -= 0.6 * server->delta_time;
+}
+
+void	update_enemies_server(t_server *server)
+{
+	t_sprite	*current_enemy = server->sprites;
+
+	while (current_enemy)
+	{
+		if (current_enemy->type != SPRITE_ENEMY || current_enemy->health <= 0)
+		{
+			if (current_enemy->type == SPRITE_ENEMY && current_enemy->animation > 0)
+			{
+				current_enemy->animation -= server->delta_time * 2.5;
+				current_enemy->selected_anim = (int)(4 - current_enemy->animation);
+			}
+			current_enemy = current_enemy->next;
+			continue;
+		}
+		t_player_info *target_player = NULL;
+		float min_distance = INFINITY;
+
+		t_player_info *current = server->players;
+		while (current)
+		{
+			if (current->player_id < 0 || current->floor != current_enemy->floor)
+			{
+				current = current->next;
+				continue;
+			}
+			float dx = current->x - current_enemy->x;
+			float dy = current->y - current_enemy->y;
+			float distance = sqrt(dx * dx + dy * dy);
+
+			if (distance < min_distance && distance < 10 && has_line_of_sight_server(server, (t_point){current_enemy->x, current_enemy->y, current_enemy->floor}, (t_point){current->x, current->y, current->floor}, current_enemy->direction, current_enemy->fov))
+			{
+				min_distance = distance;
+				target_player = current;
+			}
+			current = current->next;
+		}
+		if (!target_player)
+		{
+			if (current_enemy->state != PATROL)
+			{
+				current_enemy->state = PATROL;
+				current_enemy->frame_count = 0;
+			}
+			if (current_enemy->frame_count % 220 == 0)
+				current_enemy->direction = rand() % 360;
+			
+			current_enemy->animation += server->delta_time;
+			current_enemy->selected_anim = (int)(current_enemy->animation * 2) % 4;
+			float angle_in_radians = current_enemy->direction * (M_PI / 180);
+			current_enemy->dirX = cos(angle_in_radians);
+			current_enemy->dirY = sin(angle_in_radians);
+			float new_x = current_enemy->x + current_enemy->dirX * 0.02;
+			float new_y = current_enemy->y + current_enemy->dirY * 0.02;
+			if (can_move_server(server, new_x, new_y, current_enemy->floor))
+			{
+				current_enemy->x = new_x;
+				current_enemy->y = new_y;
+			}
+			else
+			{
+				current_enemy->direction = rand() % 360;
+				current_enemy->frame_count = 0;
+			}
+		}
+		else
+		{
+			current_enemy->state = CHASE;
+			float dx = target_player->x - current_enemy->x;
+			float dy = target_player->y - current_enemy->y;
+			current_enemy->direction = atan2(dy, dx) * (180 / M_PI);
+			float angle_in_radians = current_enemy->direction * (M_PI / 180);
+			current_enemy->dirX = cos(angle_in_radians);
+			current_enemy->dirY = sin(angle_in_radians);
+			if (min_distance < 7)
+				shoot_at_player_server(current_enemy, (t_point){target_player->x, target_player->y, target_player->floor}, server);
+		}
+		current_enemy->frame_count++;
+		current_enemy = current_enemy->next;
+	}
 }
 
 void	*logic_game(void *arg)
@@ -55,6 +284,19 @@ void	*logic_game(void *arg)
 			free(current);
 		}
 		pthread_mutex_unlock(server->game_lock);
-		usleep(1000);
+		struct timeval current_time;
+		gettimeofday(&current_time, NULL);
+
+		float seconds = (current_time.tv_sec - server->last_time.tv_sec) +
+						(current_time.tv_usec - server->last_time.tv_usec) / 1000000.0f;
+		if (seconds > 0.1)
+		{
+			pthread_mutex_lock(server->game_lock);
+			server->delta_time = seconds;
+			server->last_time = current_time;
+			update_enemies_server(server);
+			broadcast_enemies(server);
+			pthread_mutex_unlock(server->game_lock);
+		}
 	}
 }

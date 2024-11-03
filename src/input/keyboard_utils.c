@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keyboard_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:51:35 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/03 02:13:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	can_move(t_game *game, float x, float y, int floor)
 				return (false);
 			if (game->map[floor][check_y][check_x] == 'D')
 			{
-				door = get_door(game, check_x, check_y, floor);
+				door = get_door(game->door, check_x, check_y, floor);
 				if (!door->open)
 					return (false);
 			}

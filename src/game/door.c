@@ -3,25 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   door.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 11:38:31 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/03 02:13:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-t_door	*get_door(t_game *game, int x, int y, int floor)
+t_door	*get_door(t_door *door, int x, int y, int floor)
 {
 	t_door	*current;
 
-	current = game->door;
-	if (!game->door)
+	if (!door)
 		return (NULL);
+	current = door;
 	while (current)
 	{
-		// printf("%d, %d\n", (int)x, (int)y);
 		if ((int)current->x == x && (int)current->y == y && current->floor == floor)
 			return (current);
 		current = current->next;
@@ -43,7 +42,7 @@ void	use_door_in_view(t_game *game)
 	x = (int)(player->x + player->dirX * distance);
 	y = (int)(player->y + player->dirY * distance);
 
-	door = get_door(game, x, y, player->floor);
+	door = get_door(game->door, x, y, player->floor);
 	if (door)
 	{
 		door->open = !door->open;
@@ -146,7 +145,7 @@ int	handle_door(t_game *game)
 		distance = (raycast->map_y - game->player->y + (1 - raycast->step_y) * 0.5) / raycast->ray_dir_y;
 	if (game->map[game->player->floor][raycast->map_y][raycast->map_x] == 'D')
 	{
-		door = get_door(game, raycast->map_x, raycast->map_y, game->player->floor);
+		door = get_door(game->door, raycast->map_x, raycast->map_y, game->player->floor);
 		if (!door)
 			return (0);
 		if (visible_door(door))

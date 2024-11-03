@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/27 15:35:42 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/10/30 19:23:49 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ static void	handle_mouse_game(t_game *game, int x, int y)
 	t_player	*p;
 
 	p = game->player;
+	if (p->invert_mouse_x)
+		rotation *= -1;
 	p->dirX = old_dir_x * cos(rotation) - p->dirY * sin(rotation);
 	p->dirY = old_dir_x * sin(rotation) + p->dirY * cos(rotation);
 	p->planeX = old_plane_x * cos(rotation) - p->planeY * sin(rotation);

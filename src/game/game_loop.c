@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/27 15:35:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/03 02:42:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	game_engine(t_game *game)
 	cast_rays(game);
 	cast_floor(game);
 	draw_players(game);
-	if (game->menu->status != GAME_OVER)
+	if (game->menu->status == PLAYING)
 	{
 		update_door_animation(game);
 		update_enemies(game);

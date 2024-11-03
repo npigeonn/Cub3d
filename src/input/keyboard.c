@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:43:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/25 23:45:39 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/03 22:39:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,22 +29,22 @@ static void	mouvement(t_game *game, t_player *p)
 
 	new_x = p->x;
 	new_y = p->y;
-	if (is_key_pressed(game, KEY_UP) || is_key_pressed(game, KEY_W))
+	if (is_key_pressed(game, game->player->key->up) || is_key_pressed(game, game->player->key->up2))
 	{
 		new_x += p->dirX * 0.1;
 		new_y += p->dirY * 0.1;
 	}
-	if (is_key_pressed(game, KEY_DOWN) || is_key_pressed(game, KEY_S))
+	if (is_key_pressed(game, game->player->key->down) || is_key_pressed(game, game->player->key->down2))
 	{
 		new_x -= p->dirX * 0.1;
 		new_y -= p->dirY * 0.1;
 	}
-	if (is_key_pressed(game, KEY_RIGHT) || is_key_pressed(game, KEY_D))
+	if (is_key_pressed(game, game->player->key->right) || is_key_pressed(game, game->player->key->right2))
 	{
 		new_x += p->planeX * 0.1;
 		new_y += p->planeY * 0.1;
 	}
-	if (is_key_pressed(game, KEY_LEFT) || is_key_pressed(game, KEY_A))
+	if (is_key_pressed(game, game->player->key->left) || is_key_pressed(game, game->player->key->left2))
 	{
 		new_x -= p->planeX * 0.1;
 		new_y -= p->planeY * 0.1;
@@ -56,12 +56,14 @@ void	send_update_position(t_game *game)
 {
 	t_game_message	msg;
 
+	ft_bzero(&msg, sizeof(t_game_message));
 	msg.type = MSG_MOVE;
 	msg.player_id = game->client->player_id;
 	msg.x = game->player->x;
 	msg.y = game->player->y;
 	msg.floor = game->player->floor;
 	msg.height = game->player->height;
+	msg.health = game->player->health;
 	ft_strcpy(msg.pseudo, game->client->pseudo);
 	send(game->client->sock, &msg, sizeof(t_game_message), 0);
 }
@@ -82,16 +84,18 @@ int	handle_key_press(int keycode, t_game *game)
 	const int	status = game->menu->status;
 	
 	p = game->player;
-	if (keycode == 65307)
+	if (keycode == game->player->key->escape || keycode == game->player->key->escape2)
 		handle_close(game);
+	else if (status == OPTIONS_KEYBOARD)
+		update_option_menu_key_keyboard(game, keycode);
 	else if (status == SERVER_CREATE || status == JOIN_SERVER)
 		handle_text_input(game, keycode);
 	if (status == CHATING)
 		chat_input(game, keycode);
-	if (keycode == 116 && (status == MULTI_PLAYER || status == CHATING)
+	if ((keycode == game->player->key->chat || keycode == game->player->key->chat2) && (status == MULTI_PLAYER || status == CHATING)
 		&& !game->chatbox->is_writting)
 		chatting_mode(game);
-	if (is_keyflag(keycode))
+	if (is_keyflag(game, keycode))
 		set_key_flag(game, keycode, 1);
 	if (status == GET_PSEUDO)
 		handle_pseudo_input(game, keycode);
@@ -101,14 +105,14 @@ int	handle_key_press(int keycode, t_game *game)
 		p->height -= 0.1;
 	if (keycode == 98)
 		p->height += 0.1;
-	if (keycode == 102)
+	if (keycode == game->player->key->use || keycode == game->player->key->use2)
 		use_item(game);
 	return (0);
 }
 
 int	handle_key_release(int keycode, t_game *game)
 {
-	if (is_keyflag(keycode))
+	if (is_keyflag(game, keycode))
 		set_key_flag(game, keycode, 0);
 	return (0);
 }
