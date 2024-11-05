@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   gc_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 21:20:34 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/05/24 09:24:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 10:50:03 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
  * Iterates through each element of the hash table, frees the memory of each
  * block, and the table itself.
  */
-void	gc_exit(t_memory_table *memory_table)
+void	gc_exit(t_memory_table *memory_table, int res)
 {
 	register size_t	i;
 	t_memory_block	*block;
@@ -39,5 +39,5 @@ void	gc_exit(t_memory_table *memory_table)
 	if (memory_table)
 		free(memory_table->table);
 	free(memory_table);
-	exit(EXIT_SUCCESS);
+	exit(res);
 }

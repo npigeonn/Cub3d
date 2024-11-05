@@ -105,15 +105,33 @@ Y : gerer les mouvements en meme temps ex: droite et haut
 # define KEY_D 100
 # define KEY_Q 113
 
+void    destroy_mlx_img(t_block_info *params)
+{
+    mlx_destroy_image(params->ptr, params->ptr2);
+}
+
+void	destroy_mlx_display(t_block_info *params)
+{
+	mlx_destroy_display(params->ptr);
+	free(params->ptr);
+}
+
 void	load_texture(t_game *game, t_image *img, char *path)
 {
+	t_block_info	*param;
+
 	img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width, &img->height);
 	if (!img->img)
 	{
-		printf("Erreur lors du chargement de la texture : %s\n", path);
-		exit(1); // TODO free
+		printf("%s\n", path);
+		gc_exit(game->mem, err("Erreur lors du chargement de la texture\n"));
 	}
 	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line, &img->endian);
+	param = gc_malloc(game->mem, sizeof(t_block_info));
+    param->ptr = game->mlx;
+    param->ptr2 = img->img;
+    gc_add_memory_block(game->mem, img->img, destroy_mlx_img, param);
+    gc_free(game->mem, param);
 }
 
 void	init_img(t_game *game)
@@ -163,6 +181,13 @@ void	init_floorcast(t_game *game)
 
 void	load_game_texture(t_game *game)
 {
+	t_block_info	*param;
+
+	param = gc_malloc(game->mem, sizeof(t_block_info));
+    param->ptr = game->mlx;
+    param->ptr2 = NULL;
+    gc_add_memory_block(game->mem, game->mlx, destroy_mlx_display, param);
+    gc_free(game->mem, param);
 	game->textures = gc_malloc(game->mem, sizeof(t_textures));
 	game->textures->east = gc_malloc(game->mem, sizeof(t_image));
 	game->textures->north = gc_malloc(game->mem, sizeof(t_image));
@@ -253,18 +278,11 @@ void	test_music(void)
 	CloseAudioDevice();
 }
 
-# include <X11/X.h>
-# include <X11/keysym.h>
-
 int	main(int ac, char **av)
 {
 	t_game		game;
 	(void)ac;
 
-	// init structs pr cacher window
-	// t_xvar *moha;
-	// t_win_list *window;
-	
 	// test_music();
 	game.mem = gc_init();
 	game.mlx = mlx_init();
@@ -273,19 +291,12 @@ int	main(int ac, char **av)
 	game.screen_height = 1080;
 	game.screen_width = 1920;
 	init_var(&game, 1);
-	// //
-	// moha = game.mlx;
-	// window = game.win;
-	// // hide
-	// XFixesHideCursor(moha->display, window->window);
-	// // show
-	// XFixesShowCursor(moha->display, window->window);
-	// //
 	init_player(&game, 1);
 	init_menu(&game, 1);
 	init_client(&game, 1);
 	load_game_texture(&game);
 	parsing(av, &game);
+	gc_exit(game.mem, 1);
 	set_direction(&game, game.player->begin_dir);
 	init_floorcast(&game);
 	init_img(&game);

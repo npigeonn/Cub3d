@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   gc.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 17:23:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/04 14:15:55 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:15:19 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void			*gc_strndup(t_memory_table *memory_table, char *s, int len);
 void			*gc_strjoin(t_memory_table *memory_table, char *s1, char *s2);
 void			*gc_strnjoin(t_memory_table *memory_table, char *s1, char *s2, size_t len);
 void			*gc_strjoin_char(t_memory_table *memory_table, char *s1, char s2);
-void			gc_exit(t_memory_table *memory_table);
+void			gc_exit(t_memory_table *memory_table, int res);
 void			gc_free(t_memory_table *memory_table, void *ptr);
 char			**gc_split(t_memory_table *mem, char const *str, char charset);
 char			*gc_substr(t_memory_table *mem, char const *s, unsigned int start, size_t len);
@@ -51,5 +51,6 @@ uint32_t		hash(t_memory_table *memory_table, void *ptr);
 void			gc_error(t_memory_table *memory_table, char *msg);
 void			gc_add_memory_block(t_memory_table *memory_table, void *ptr,
 					void (*free_func)(t_block_info *), t_block_info *info);
+char			*gc_get_next_line(t_memory_table *mem, int fd);
 
 #endif

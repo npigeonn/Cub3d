@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:45:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/10 11:01:20 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/05 11:35:59 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void is_a_valid_teleporter(char c, t_game *game)
 		}
 	}
 	if (count != 2)
-		exit(err("teleporter's issue\n"));
+		gc_exit(game->mem, err("teleporter's issue\n"));
 }
 
 void	teleportation_check(t_game *game)

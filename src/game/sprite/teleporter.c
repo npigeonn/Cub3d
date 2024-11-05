@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 16:02:25 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/05 11:35:43 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	add_teleporter(t_game *game, int x, int y, int floor)
 {
 	t_sprite	*tp;
 	
-	tp = malloc(sizeof(t_sprite));
+	tp = gc_malloc(game->mem, sizeof(t_sprite));
 	tp->x = x + 0.5;
 	tp->y = y + 0.5;
 	tp->floor = floor;

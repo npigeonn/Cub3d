@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   textures.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:35:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/22 08:55:29 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:45:57 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,21 +16,17 @@ int	is_a_color(char *color, t_game *game)
 {
 	char **split;
 
-	split = ft_split(color, ',');
+	split = gc_split(game->mem, color, ',');
 	if (!split || !split[0] || !split[1] || !split[2] || split[3])
-		return (free_split(split), 0);
+		return (free_split(game->mem, split), 0);
 	if (ft_strlen(split[0]) > 4 || ft_strlen(split[1]) > 4 
 		|| ft_strlen(split[2]) > 4
 		|| !(0 <= ft_atoi(split[0]) && ft_atoi(split[0]) <= 255)
 		|| !(0 <= ft_atoi(split[1]) && ft_atoi(split[1]) <= 255)
 		|| !(0 <= ft_atoi(split[2]) && ft_atoi(split[2]) <= 255))
-	{
-		free_split(split);
-		exit(err("Texture's color is not right"));
-	}
+		gc_exit(game->mem, err("Texture's color is not right"));
     game->clr = (atoi(split[0]) << 16) | (atoi(split[1]) << 8) | atoi(split[2]);
-	free_split(split);
-	return (1);
+	return (free_split(game->mem, split), 1);
 }
 
 int	file_dot_xpm(char *file_textre)
@@ -52,25 +48,25 @@ int	set_up_txtr(t_game *game, char *line)
 	int		fd;
 
 	game->clr = -1;
-	split = ft_split(line + 2, ' ');
+	split = gc_split(game->mem, line + 2, ' ');
 	if (split[0][ft_strlen(split[0]) - 1] == '\n')
 		split[0][ft_strlen(split[0]) - 1] = '\0';
 	if (!split || !split[0] || split[1])
-		return (exit(err("Texture cannot be opened\n")), 0);// free_split(split);
+		return (gc_exit(game->mem, err("Texture cannot be opened\n")), 0);
 	if (is_a_color(split[0], game))
-		return (free_split(split), 1);
+		return (free_split(game->mem, split), 1);
 	if (!file_dot_xpm(split[0]))
-		return (free_split(split), exit(err("Texture without .xpm\n")), 0);
+		return (gc_exit(game->mem, err("Texture without .xpm\n")), 0);
 	fd = open(split[0], O_RDONLY);
 	if (fd <= 0)
-		return (free_split(split), exit(err("Can't open this texture\n")), 0);
+		return (gc_exit(game->mem, err("Can't open this texture\n")), 0);
 	close(fd);
 	fd = open(split[0], O_RDONLY | O_DIRECTORY);
 	if (fd > -1)
-		return (free_split(split), exit(err("Is a folder\n")), 0);
+		return (gc_exit(game->mem, err("Is a folder\n")), 0);
 	close(fd);
 	load_txtre_globale(game, line, split[0]);
-	return (free_split(split), 1);
+	return (free_split(game->mem, split), 1);
 }
 
 
@@ -78,7 +74,6 @@ int	txtre_or_nline(char *line, t_game *game)
 {
 	if (!line)
 		return (0);
-	// printf(" la comp a%sa et NO , %d\n", line, ft_strncmp(line, "F ", 2));
 	if (!ft_strncmp(line, "C ", 2) && set_up_txtr(game, line))
 		return (game->textures->color_c = game->clr, game->textures->c++, 1);
 	else if (!ft_strncmp(line, "NO ", 3) && set_up_txtr(game, line))
@@ -141,18 +136,18 @@ int	textures(char *to_open, t_game *game)
 	char	*line;
 
 	fd = open(to_open, O_RDONLY);
-	line = get_next_line(fd);
+	line = gc_get_next_line(game->mem, fd);
 	while (txtre_or_nline(line, game))
 	{
 		
 		line = switch_line(line, fd);
 		game->map_begin++;
 	}
-	free(line);
+	gc_free(game->mem, line);
 	close(fd);
 	if (game->textures->so != 1 || game->textures->no != 1
 		|| game->textures->we != 1 || game->textures->c != 1
 		|| game->textures->f != 1 || game->textures->ea != 1)
-		exit(err("Texture problem\n"));
+		gc_exit(game->mem, err("Texture problem\n"));
 	return (1);
 }

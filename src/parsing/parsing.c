@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/25 15:01:51 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/05 11:53:53 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,23 +32,23 @@ int	file_dot_cub(char *file_map)
 	return (!ft_strcmp(".cub", file_map + i - 4));
 }
 
-static int	op_in(char **av)
+static int	op_in(char **av, t_game *game)
 {
 	int	fd;
 
 	if (!av[1])
-		exit(err("No map mentionned\n"));
+		gc_exit(game->mem, err("No map mentionned\n"));
 	if (av[2])
-		exit(err("Too many arguments\n"));
+		gc_exit(game->mem, err("Too many arguments\n"));
 	if (!file_dot_cub(av[1]))
-		exit(err("File without .cub\n"));
+		gc_exit(game->mem, err("File without .cub\n"));
 	fd = open(av[1], O_RDONLY);
 	if (fd <= 0)
-		exit(err("Impossible to open this file\n"));
+		gc_exit(game->mem, err("Impossible to open this file\n"));
 	close(fd);
 	fd = open(av[1], O_RDONLY | O_DIRECTORY);
 	if (fd > -1)
-		exit(err("Is a folder\n"));
+		gc_exit(game->mem, err("Is a folder\n"));
 	close(fd);
 	return (0);
 }
@@ -74,8 +74,8 @@ void	check_char_n_walls(t_game *game)
 					|| game->map_cy[i[0]][i[1]][i[2]] == '\n')
 					continue ;
 				if (!check_walls(game, i[2], i[1], i[0]))
-					return (free_map_copy(game),
-						exit(err("Need walls all around the playable map\n")));
+					return (free_map_copy(game),gc_exit(game->mem,\
+							err("Need walls all around the playable map\n")));
 			}
 		}
 	}
@@ -84,7 +84,7 @@ void	check_char_n_walls(t_game *game)
 
 void	parsing(char **av, t_game *game)
 {
-	op_in(av);
+	op_in(av, game);
 	init_data(game);
 	textures(av[1], game);
 	map_set_up(av, game);

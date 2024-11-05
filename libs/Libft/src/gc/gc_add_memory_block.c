@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   gc_add_memory_block.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/24 13:55:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/03/27 09:34:16 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 10:49:43 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void (*free_func)(t_block_info *), t_block_info *info)
 		return ;
 	new_block = (t_memory_block *)malloc(sizeof(t_memory_block));
 	if (new_block == NULL)
-		gc_exit(memory_table);
+		gc_exit(memory_table, 1);
 	new_block->info = (t_block_info *)gc_malloc(memory_table,
 			sizeof(t_block_info));
 	*(new_block->info) = *info;

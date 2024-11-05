@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   door.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/03 02:13:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:55:37 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	add_door(t_game *game, int x, int y, int floor)
 {
 	t_door *new_door;
 
-	new_door = malloc(sizeof(t_door));
+	new_door = gc_malloc(game->mem, sizeof(t_door));
 	new_door->x = x;
 	new_door->y = y;
 	new_door->floor = floor;

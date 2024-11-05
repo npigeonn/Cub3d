@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/25 15:09:58 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/05 11:42:09 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ int	check_allowed_char(t_game *game, int floor, int x, int y)
 	if (!c || !(ft_strchr("01NSWEDMBHX", c) || ('a' <= c && c <= 'z')))
 	{
 		printf("%c\n", c);
-		free_map_copy(game);
-		exit(err("Not allowed character\n"));
+		gc_exit(game->mem, err("Not allowed character\n"));
 		return (0);
 	}
 	return (1);
@@ -129,7 +128,7 @@ void	search_departure_position(t_game *game)
 					return (begin_player_position(game, i, j, k));
 		}
 	}
-	exit(err("No player found\n"));
+	gc_exit(game->mem, err("No player found\n"));
 }
 
 int	map_copy(t_game *game)
@@ -138,23 +137,24 @@ int	map_copy(t_game *game)
 	int	j;
 
 	i = -1;
-	game->map_cy = malloc((game->nb_floor + 1) * sizeof(char **));
+	game->map_cy = gc_malloc(game->mem, (game->nb_floor + 1)\
+		* sizeof(char **));
 	if (!game->map_cy)
-		exit(err("error system\n"));
+		gc_exit(game->mem, err("error system\n"));
 	while (game->map[++i])
 	{
 		j = 0;
 		while (game->map[i][j])
 			j++;
-		game->map_cy[i] = malloc((j + 1) * sizeof(char *));
+		game->map_cy[i] = gc_malloc(game->mem, (j + 1) * sizeof(char *));
 		if (!game->map_cy[i])
-			exit(err("error system\n"));
+			gc_exit(game->mem, err("error system\n"));
 		game->map_cy[i][j] = NULL;
 		while (--j >= 0)
 		{
-			game->map_cy[i][j] = ft_strdup(game->map[i][j]);
+			game->map_cy[i][j] = gc_strdup(game->mem, game->map[i][j]);
 			if (!game->map_cy[i][j])
-				return (exit(err("error system\n")), 1); // free line !free_tab(floor, game, j, i)
+				return (gc_exit(game->mem, err("error system\n")), 1);
 		}
 	}
 	return (game->map_cy[i] = NULL, 1);
@@ -166,9 +166,6 @@ void	floodfill(t_game *game)
 	if (!map_copy(game)
 		|| !check_path(game, game->player->x, game->player->y,
 			game->player->floor))
-	{
-		free_map_copy(game);
-		exit(err("No exit...\n"));
-	}
+		gc_exit(game->mem, err("No exit...\n"));
 	free_map_copy(game);
 }

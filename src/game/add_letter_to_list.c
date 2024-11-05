@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:38:19 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/24 11:40:05 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/05 11:58:35 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	add_ammo(t_game *game, int x, int y, int floor)
 {
 	t_sprite *new_ammo;
 
-	new_ammo = malloc(sizeof(t_sprite));
+	new_ammo = gc_malloc(game->mem, sizeof(t_sprite));
 	new_ammo->x = x;
 	new_ammo->y = y;
 	new_ammo->floor = floor;
@@ -30,7 +30,7 @@ void	add_health(t_game *game, int x, int y, int floor)
 {
 	t_sprite *new_health;
 
-	new_health = malloc(sizeof(t_sprite));
+	new_health = gc_malloc(game->mem, sizeof(t_sprite));
 	new_health->x = x;
 	new_health->y = y;
 	new_health->floor = floor;
@@ -44,7 +44,7 @@ void	add_exit(t_game *game, int x, int y, int floor)
 {
 	t_sprite *new_exit;
 
-	new_exit = malloc(sizeof(t_sprite));
+	new_exit = gc_malloc(game->mem, sizeof(t_sprite));
 	new_exit->x = x;
 	new_exit->y = y;
 	new_exit->floor = floor;
@@ -55,29 +55,27 @@ void	add_exit(t_game *game, int x, int y, int floor)
 
 void	door_ennemi_ammo_health_mngmt(t_game *game)
 {
-	int	i;
-	int	j;
-	int	k;
+	int	i[3];
 	
-	i = -1;
-	while (game->map[++i])
+	i[0] = -1;
+	while (game->map[++i[0]])
 	{
-		j = -1;
-		while (game->map[i][++j])
+		i[1] = -1;
+		while (game->map[i[0]][++i[1]])
 		{
-			k = -1;
-			while (game->map[i][j][++k])
+			i[2] = -1;
+			while (game->map[i[0]][i[1]][++i[2]])
 			{
-				if (game->map[i][j][k] == 'D')
-					add_door(game, k, j, i);
-				else if (game->map[i][j][k] == 'M')
-					add_ammo(game, k + 0.5, j + 0.5, i);
-				else if (game->map[i][j][k] == 'B')
-					add_enemies(game, k, j, i);
-				else if (game->map[i][j][k] == 'H')
-					add_health(game, k, j + 0.5, i + 0.5);
-				else if (game->map[i][j][k] == 'e')
-					add_exit(game, k, j + 0.5, i + 0.5);
+				if (game->map[i[0]][i[1]][i[2]] == 'D')
+					add_door(game, i[2], i[1], i);
+				else if (game->map[i[0]][i[1]][i[2]] == 'M')
+					add_ammo(game, i[2] + 0.5, i[1] + 0.5, i);
+				else if (game->map[i[0]][i[1]][i[2]] == 'B')
+					add_enemies(game, i[2], i[1], i);
+				else if (game->map[i[0]][i[1]][i[2]] == 'H')
+					add_health(game, i[2], i[1] + 0.5, i + 0.5);
+				else if (game->map[i[0]][i[1]][i[2]] == 'e')
+					add_exit(game, i[2], i[1] + 0.5, i + 0.5);
 			}
 		}
 	}

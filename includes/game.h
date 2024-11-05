@@ -436,7 +436,7 @@ void	load_txtre_globale(t_game *game, char *line, char *path);
 // free
 int	free_map(t_game *game);
 int free_map_copy(t_game *game);
-int	free_split(char **str);
+int	free_split(t_game *game, char **str);
 
 //server
 void	create_server(t_game *game);
