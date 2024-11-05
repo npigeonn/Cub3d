@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 15:00:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 08:57:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,10 +160,41 @@ void	update_projectiles(t_game *game)
 
 	while (current)
 	{
+		float x_old = current->x;
+		float y_old = current->y;
+
 		current->x += cos(current->direction * (M_PI / 180.0f)) * current->speed;
 		current->y += sin(current->direction * (M_PI / 180.0f)) * current->speed;
 
-		if (!can_move(game, current->x, current->y, current->floor))
+		float dx = current->x - x_old;
+		float dy = current->y - y_old;
+		float distance = sqrt(dx * dx + dy * dy);
+
+		int steps = (int)(distance / 0.1f) + 1;
+		bool collision = false;
+
+		float x_check = x_old;
+		float y_check = y_old;
+
+		for (int i = 0; i < steps; i++)
+		{
+			x_check = x_old + dx * ((float)i / steps);
+			y_check = y_old + dy * ((float)i / steps);
+			current->x = x_check;
+			current->y = y_check;
+			if (!can_move(game, current->x, current->y, current->floor) || check_collision_with_entity(game, current))
+			{
+				collision = true;
+				break;
+			}
+		}
+		if (!collision)
+		{
+			current->x = x_check;
+			current->y = y_check;
+		}
+
+		if (collision)
 		{
 			if (prev)
 				prev->next = current->next;
@@ -175,21 +206,8 @@ void	update_projectiles(t_game *game)
 		}
 		else
 		{
-			if (check_collision_with_entity(game, current))
-			{
-				if (prev)
-					prev->next = current->next;
-				else
-					game->projectiles = current->next;
-				t_projectile *temp = current;
-				current = current->next;
-				free(temp);
-			}
-			else
-			{
-				prev = current;
-				current = current->next;
-			}
+			prev = current;
+			current = current->next;
 		}
 	}
 }
@@ -218,7 +236,7 @@ void	shoot_at_player(t_sprite *enemy, t_point player_pos, t_game *game)
 			new_projectile->x = enemy->x;
 			new_projectile->y = enemy->y;
 			new_projectile->direction = angle_to_player;
-			new_projectile->speed = 0.4f;
+			new_projectile->speed = 25;
 			new_projectile->next = NULL;
 			new_projectile->owner = NULL;
 			new_projectile->enemy = enemy;

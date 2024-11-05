@@ -6,64 +6,37 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 23:55:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/30 22:02:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 08:40:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	update_option_menu_click(t_game *game, int mouse_x, int mouse_y, int keycode)
+void	update_option_menu_click_keyboard(t_game *game, int mouse_x, int mouse_y)
 {
-	if (keycode != 1)
-		return ;
-	if (game->menu->status == OPTIONS_KEYBOARD)
-		update_option_menu_click_keyboard(game, mouse_x, mouse_y);
-	if (game->menu->status == OPTIONS_MOUSE)
-		update_mouse_options_interaction(game, mouse_x, mouse_y);
-	if (game->menu->status == OPTIONS_SOUND)
-		update_sound_options_interaction(game, mouse_x, mouse_y);
-	if (game->menu->button_selected == 1)
-		game->menu->status = OPTIONS_KEYBOARD;
-	else if (game->menu->button_selected == 2)
-		game->menu->status = OPTIONS_MOUSE;
-	else if (game->menu->button_selected == 3)
-		game->menu->status = OPTIONS_SOUND;
-	else if (game->menu->button_selected == 4)
-		game->menu->status = game->menu->last_status;
-	else
-		return ;
-	game->menu->button_selected = 0;
-}
+	float panel_width = game->screen_width * 0.9;
+	float panel_height = game->screen_height * 0.9;
+	float panel_x = (game->screen_width - panel_width) * 0.5;
+	float panel_y = (game->screen_height - panel_height) * 0.5;
 
-void	update_option_menu_key_keyboard(t_game *game, int keycode)
-{
+	int option_y = panel_y + panel_height * 0.30;
 	int binding_count = 9;
-	int *primary_keys[] = { &game->player->key->up, &game->player->key->down,
-		&game->player->key->left, &game->player->key->right,
-		&game->player->key->jump, &game->player->key->use,
-		&game->player->key->escape, &game->player->key->pause,
-		&game->player->key->chat
-	};
-	int *secondary_keys[] = { &game->player->key->up2,
-		&game->player->key->down2, &game->player->key->left2,
-		&game->player->key->right2, &game->player->key->jump2,
-		&game->player->key->use2,&game->player->key->escape2,
-		&game->player->key->pause2, &game->player->key->chat2
-	};
-	if (game->menu->text_field_selected == 0)
-		return ;
+	game->menu->text_field_selected = 0;
 	for (int i = 0; i < binding_count; i++)
 	{
-		if (*primary_keys[i] == keycode)
-			*primary_keys[i] = -1;
-		else if (*secondary_keys[i] == keycode)
-			*secondary_keys[i] = -1;
-		if (game->menu->text_field_selected == (i * 2 + 1))
-			*primary_keys[i] = keycode;
-		else if (game->menu->text_field_selected == (i * 2 + 2))
-			*secondary_keys[i] = keycode;
+		int key_x1 = (panel_width - panel_width * 0.5) * 0.5 + panel_width * 0.24;
+		int key_x2 = key_x1 + panel_width * 0.2;
+		int key_height = game->screen_height * 0.03 + 10;
+		if (mouse_x >= panel_x && mouse_x <= panel_x + panel_width &&
+			mouse_y >= option_y && mouse_y <= option_y + key_height)
+		{
+			if (mouse_x >= key_x1 - 5 && mouse_x <= key_x1 + panel_width * 0.15)
+				game->menu->text_field_selected = i * 2 + 1; 
+			else if (mouse_x >= key_x2 - 5 && mouse_x <= key_x2 + panel_width * 0.15)
+				game->menu->text_field_selected = i * 2 + 2;
+		}
+		option_y += 50;
 	}
-	game->menu->text_field_selected = 0;
 }
 
 void	update_mouse_options_interaction(t_game *game, int mouse_x, int mouse_y)
@@ -136,31 +109,58 @@ void	update_sound_options_interaction(t_game *game, int mouse_x, int mouse_y)
 	}
 }
 
-void	update_option_menu_click_keyboard(t_game *game, int mouse_x, int mouse_y)
+void	update_option_menu_click(t_game *game, int mouse_x, int mouse_y, int keycode)
 {
-	float panel_width = game->screen_width * 0.9;
-	float panel_height = game->screen_height * 0.9;
-	float panel_x = (game->screen_width - panel_width) * 0.5;
-	float panel_y = (game->screen_height - panel_height) * 0.5;
+	if (keycode != 1)
+		return ;
+	if (game->menu->status == OPTIONS_KEYBOARD)
+		update_option_menu_click_keyboard(game, mouse_x, mouse_y);
+	if (game->menu->status == OPTIONS_MOUSE)
+		update_mouse_options_interaction(game, mouse_x, mouse_y);
+	if (game->menu->status == OPTIONS_SOUND)
+		update_sound_options_interaction(game, mouse_x, mouse_y);
+	if (game->menu->button_selected == 1)
+		game->menu->status = OPTIONS_KEYBOARD;
+	else if (game->menu->button_selected == 2)
+		game->menu->status = OPTIONS_MOUSE;
+	else if (game->menu->button_selected == 3)
+		game->menu->status = OPTIONS_SOUND;
+	else if (game->menu->button_selected == 4)
+		game->menu->status = game->menu->last_status;
+	else
+		return ;
+	game->menu->button_selected = 0;
+}
 
-	int option_y = panel_y + panel_height * 0.30;
+void	update_option_menu_key_keyboard(t_game *game, int keycode)
+{
 	int binding_count = 9;
-	game->menu->text_field_selected = 0;
+	int *primary_keys[] = { &game->player->key->up, &game->player->key->down,
+		&game->player->key->left, &game->player->key->right,
+		&game->player->key->jump, &game->player->key->use,
+		&game->player->key->escape, &game->player->key->pause,
+		&game->player->key->chat
+	};
+	int *secondary_keys[] = { &game->player->key->up2,
+		&game->player->key->down2, &game->player->key->left2,
+		&game->player->key->right2, &game->player->key->jump2,
+		&game->player->key->use2,&game->player->key->escape2,
+		&game->player->key->pause2, &game->player->key->chat2
+	};
+	if (game->menu->text_field_selected == 0)
+		return ;
 	for (int i = 0; i < binding_count; i++)
 	{
-		int key_x1 = (panel_width - panel_width * 0.5) * 0.5 + panel_width * 0.24;
-		int key_x2 = key_x1 + panel_width * 0.2;
-		int key_height = game->screen_height * 0.03 + 10;
-		if (mouse_x >= panel_x && mouse_x <= panel_x + panel_width &&
-			mouse_y >= option_y && mouse_y <= option_y + key_height)
-		{
-			if (mouse_x >= key_x1 - 5 && mouse_x <= key_x1 + panel_width * 0.15)
-				game->menu->text_field_selected = i * 2 + 1; 
-			else if (mouse_x >= key_x2 - 5 && mouse_x <= key_x2 + panel_width * 0.15)
-				game->menu->text_field_selected = i * 2 + 2;
-		}
-		option_y += 50;
+		if (*primary_keys[i] == keycode)
+			*primary_keys[i] = -1;
+		else if (*secondary_keys[i] == keycode)
+			*secondary_keys[i] = -1;
+		if (game->menu->text_field_selected == (i * 2 + 1))
+			*primary_keys[i] = keycode;
+		else if (game->menu->text_field_selected == (i * 2 + 2))
+			*secondary_keys[i] = keycode;
 	}
+	game->menu->text_field_selected = 0;
 }
 
 void	update_option_menu_button_sound(t_game *game, int mouse_x, int mouse_y)
