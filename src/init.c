@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/30 21:42:51 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:32:49 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	init_client(t_game *game, int malloc)
 		game->client = gc_malloc(game->mem, sizeof(t_client));
 		game->client->pseudo[0] = '\0';
 	}
-	game->client->players = NULL;
 	game->client->name[0] = '\0';
 	game->client->ip[0] = '\0';
 	if (malloc)
@@ -78,8 +77,6 @@ void	init_player_keycode(t_game *game, int malloc)
 	game->player->key->down2 = KEY_DOWN;
 	game->player->key->left2 = KEY_LEFT;
 	game->player->key->right2 = KEY_RIGHT;
-	game->player->key->jump = KEY_SPACE;
-	game->player->key->jump2 = NULL;
 	game->player->key->use = KEY_F;
 	game->player->key->use2 = NULL;
 	game->player->key->escape = KEY_ESC;
@@ -103,8 +100,8 @@ void	init_player(t_game	*game, int malloc)
 	game->player->y = 0;
 	game->player->floor = 0;
 	game->player->height = 0;
-	game->player->dirX = 1;
-	game->player->dirY = 0;
+	game->player->dir_x = 1;
+	game->player->dir_y = 0;
 	game->player->planeX = 0;
 	game->player->anim_shoot = 0;
 	game->player->health = 1;

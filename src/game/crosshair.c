@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:16:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/22 12:23:48 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:20:53 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,19 +66,19 @@ void	create_projectile(t_game *game)
 	t_projectile	*new_projectile;
 	t_player		*p;
 
-	float angle = game->player->dirX;
+	float angle = game->player->dir_x;
 	
 	new_projectile = malloc(sizeof(t_projectile));
 	p = game->player;
 	new_projectile->x = p->x;
 	new_projectile->y = p->y;
-	new_projectile->direction = atan2(p->dirY, p->dirX) * (180.0f / M_PI);
+	new_projectile->direction = atan2(p->dir_y, p->dir_x) * (180.0f / M_PI);
 	new_projectile->speed = 0.4f;
 	new_projectile->next = NULL;
 	new_projectile->next = game->projectiles; 
 	new_projectile->floor = p->floor;
-	new_projectile->dir_x = p->dirX;
-	new_projectile->dir_y = p->dirY;
+	new_projectile->dir_x = p->dir_x;
+	new_projectile->dir_y = p->dir_y;
 	new_projectile->damage = 0.10f;
 	new_projectile->owner = p;
 	new_projectile->enemy = NULL;

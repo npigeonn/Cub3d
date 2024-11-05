@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:17:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 18:11:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:27:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	handle_client_msg(t_server *server, t_game_message msg)
 {
-	int				i;
-	t_player_info	*player;
+	int			i;
+	t_sprite	*player;
 
 	pthread_mutex_lock(server->game_lock);
 	if (msg.type == MSG_MOVE)
@@ -28,7 +28,6 @@ void	handle_client_msg(t_server *server, t_game_message msg)
 			player->dir_x = msg.dir_x;
 			player->dir_y = msg.dir_y;
 			player->floor = msg.floor;
-			player->height = msg.height;
 			add_game_message_to_queue(server, msg);
 		}
 	}

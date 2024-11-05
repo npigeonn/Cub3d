@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 21:43:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/01 17:12:15 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 12:01:57 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,18 @@ void	new_player(t_server *server, int new_socket, char *pseudo)
 	pthread_mutex_unlock(server->game_lock);
 }
 
-void	set_player_id(t_server *server, t_player_info *player)
+void	set_player_id(t_server *server, t_sprite *player)
 {
 	int	i;
 
 	i = -1;
 	while (++i < MAX_PLAYERS)
 	{
+		if (player->type != SPRITE_PLAYER)
+		{
+			i--;
+			continue ;
+		}
 		if (server->client_sockets[i] == -1)
 		{
 			player->player_id = i;
@@ -74,7 +79,7 @@ void	set_player_id(t_server *server, t_player_info *player)
 	}
 }
 
-static int	reconnect_player(t_server *server, t_player_info *player,
+static int	reconnect_player(t_server *server, t_sprite *player,
 int socket)
 {
 	struct epoll_event	event;
@@ -97,8 +102,8 @@ int socket)
 
 char	*existing_player(t_server *server, int new_socket)
 {
-	char				pseudo[MAX_PSEUDO_LENGTH];
-	t_player_info		*player;
+	char			pseudo[MAX_PSEUDO_LENGTH];
+	t_sprite		*player;
 
 	pseudo[0] = '\0';
 	if (new_socket < 0)

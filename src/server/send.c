@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 13:21:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:33:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 void	send_all_players(t_server *server, int id)
 {
-	t_player_info	*current;
+	t_sprite		*current;
 	t_game_message	connect_msg;
 
-	current = server->players;
+	current = server->sprites;
 	connect_msg.type = MSG_GET_PLAYER;
 	while (current)
 	{
-		if (current->player_id >= 0 && current->player_id != id)
+		if (current->type == SPRITE_PLAYER && current->player_id >= 0 && current->player_id != id)
 		{
 			connect_msg.player_id = current->player_id;
 			connect_msg.x = current->x;
@@ -29,7 +29,6 @@ void	send_all_players(t_server *server, int id)
 			connect_msg.dir_x = current->dir_x;
 			connect_msg.dir_y = current->dir_y;
 			connect_msg.floor = current->floor;
-			connect_msg.height = current->height;
 			ft_strcpy(connect_msg.pseudo, current->pseudo);
 			send(server->client_sockets[id], &connect_msg,
 				sizeof(t_game_message), 0);
@@ -38,7 +37,7 @@ void	send_all_players(t_server *server, int id)
 	}
 }
 
-void	send_reconnected_message(t_server *server, t_player_info *player,
+void	send_reconnected_message(t_server *server, t_sprite *player,
 char *pseudo)
 {
 	t_game_message	connect_msg;
@@ -51,7 +50,6 @@ char *pseudo)
 	connect_msg.dir_y = player->dir_y;
 	connect_msg.floor = player->floor;
 	connect_msg.health = player->health;
-	connect_msg.height = player->height;
 	ft_strcpy(connect_msg.pseudo, pseudo);
 	add_game_message_to_queue(server, connect_msg);
 }

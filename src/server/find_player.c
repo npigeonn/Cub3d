@@ -6,34 +6,34 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 14:37:17 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 15:47:30 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:33:06 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-t_player_info	*find_player_by_pseudo(t_server *server, char *pseudo)
+t_sprite	*find_player_by_pseudo(t_server *server, char *pseudo)
 {
-	t_player_info	*current;
+	t_sprite	*current;
 
-	current = server->players;
+	current = server->sprites;
 	while (current)
 	{
-		if (strcmp(current->pseudo, pseudo) == 0)
+		if (current->type == SPRITE_PLAYER && ft_strcmp(current->pseudo, pseudo) == 0)
 			return (current);
 		current = current->next;
 	}
 	return (NULL);
 }
 
-t_player_info	*find_player_by_id(t_player_info *this_players, int id)
+t_sprite	*find_player_by_id(t_sprite *this_players, int id)
 {
-	t_player_info	*current;
+	t_sprite	*current;
 
 	current = this_players;
 	while (current)
 	{
-		if (current->player_id == id)
+		if (current->type == SPRITE_PLAYER && current->player_id == id)
 			return (current);
 		current = current->next;
 	}

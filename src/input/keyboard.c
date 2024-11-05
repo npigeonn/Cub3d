@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:43:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/03 22:39:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 12:59:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static void	check_mouvement(t_game *game, t_player *p, double new_x,
 	double new_y)
 {
-	if (!can_move(game, new_x, new_y, game->player->floor))
+	if (!can_move(game->map, game->door, new_x, new_y, game->player->floor))
 		return ;
 	p->stats->distanc_travel += sqrt(pow(new_x - p->x, 2) + pow(new_y - p->y, 2));
 	p->x = new_x;
@@ -31,13 +31,13 @@ static void	mouvement(t_game *game, t_player *p)
 	new_y = p->y;
 	if (is_key_pressed(game, game->player->key->up) || is_key_pressed(game, game->player->key->up2))
 	{
-		new_x += p->dirX * 0.1;
-		new_y += p->dirY * 0.1;
+		new_x += p->dir_x * 0.1;
+		new_y += p->dir_y * 0.1;
 	}
 	if (is_key_pressed(game, game->player->key->down) || is_key_pressed(game, game->player->key->down2))
 	{
-		new_x -= p->dirX * 0.1;
-		new_y -= p->dirY * 0.1;
+		new_x -= p->dir_x * 0.1;
+		new_y -= p->dir_y * 0.1;
 	}
 	if (is_key_pressed(game, game->player->key->right) || is_key_pressed(game, game->player->key->right2))
 	{
@@ -101,10 +101,6 @@ int	handle_key_press(int keycode, t_game *game)
 		handle_pseudo_input(game, keycode);
 	if (status != PLAYING && status != MULTI_PLAYER)
 		return (0);
-	if (keycode == 32)
-		p->height -= 0.1;
-	if (keycode == 98)
-		p->height += 0.1;
 	if (keycode == game->player->key->use || keycode == game->player->key->use2)
 		use_item(game);
 	return (0);

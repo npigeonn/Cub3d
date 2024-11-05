@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/02 23:53:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 13:58:28 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,6 @@ static void	manage_position(t_game *game, t_game_message msg)
 	game->player->health = msg.health;
 	game->player->height = msg.height;
 	game->player->floor = msg.floor;
-}
-
-char	**add_line_to_section(char **section, char *line)
-{
-	int		line_count = 0;
-	char	**new_section;
-
-	while (section && section[line_count] != NULL)
-		line_count++;
-	new_section = realloc(section, (line_count + 2) * sizeof(char*));
-	new_section[line_count] = ft_strdup(line); 
-	new_section[line_count + 1] = NULL;
-	return new_section;
 }
 
 void replace_path(char *filename)
@@ -57,13 +44,13 @@ void replace_path(char *filename)
 
 char	*receive_file_from_server(int server_socket)
 {
-	char		filename[256];
-	char		buffer[1024];
-	FILE		*file;
+	char			filename[256];
+	char			buffer[1024];
+	FILE			*file;
 	t_game_message	msg;
-	uint32_t	file_size;
-	size_t		total_received;
-	ssize_t		bytes_received;
+	uint32_t		file_size;
+	size_t			total_received;
+	ssize_t			bytes_received;
 
 	recv(server_socket, filename, sizeof(filename), 0);
 	printf("Nom de fichier reçu : %s\n", filename);

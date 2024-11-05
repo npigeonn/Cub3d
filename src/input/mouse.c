@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/30 19:23:49 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:20:53 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,15 +64,17 @@ static void	handle_mouse_game(t_game *game, int x, int y)
 {
 	const int	center_x = game->screen_width * 0.5;
 	float		rotation = (x - center_x) * ((game->menu->mouse_sensitivity / 20.0f) * ROTATION_SPEED);
-	const float	old_dir_x = game->player->dirX;
+	const float	old_dir_x = game->player->dir_x;
 	const float	old_plane_x = game->player->planeX;
 	t_player	*p;
 
+	if (x == center_x)
+		return ;
 	p = game->player;
 	if (p->invert_mouse_x)
 		rotation *= -1;
-	p->dirX = old_dir_x * cos(rotation) - p->dirY * sin(rotation);
-	p->dirY = old_dir_x * sin(rotation) + p->dirY * cos(rotation);
+	p->dir_x = old_dir_x * cos(rotation) - p->dir_y * sin(rotation);
+	p->dir_y = old_dir_x * sin(rotation) + p->dir_y * cos(rotation);
 	p->planeX = old_plane_x * cos(rotation) - p->planeY * sin(rotation);
 	p->planeY = old_plane_x * sin(rotation) + p->planeY * cos(rotation);
 	mlx_mouse_move(game->mlx, game->win, center_x, game->screen_height * 0.5);

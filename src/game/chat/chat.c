@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 13:24:33 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 13:13:10 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 12:58:50 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	add_message(t_game *game)
 	t_game_message	chat_msg;
 
 	new = malloc(sizeof(t_message));
+	ft_bzero(&chat_msg, sizeof(t_game_message));
 	ft_strlcpy(new->message, game->chatbox->message, MAX_MESSAGE_LENGTH);
 	ft_strlcpy(new->pseudo, game->client->pseudo, 20);
 	gettimeofday(&new->time, NULL);

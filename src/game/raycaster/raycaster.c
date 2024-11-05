@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/30 01:36:06 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:20:53 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,29 +118,29 @@ void	set_direction(t_game *game, int dir)
 {
 	if (dir == 0) // Nord
 	{
-		game->player->dirX = 0;
-		game->player->dirY = -1;
+		game->player->dir_x = 0;
+		game->player->dir_y = -1;
 		game->player->planeX = 0.66;
 		game->player->planeY = 0;
 	}
 	else if (dir == 1) // Sud
 	{
-		game->player->dirX = 0;
-		game->player->dirY = 1;
+		game->player->dir_x = 0;
+		game->player->dir_y = 1;
 		game->player->planeX = -0.66;
 		game->player->planeY = 0;
 	}
 	else if (dir == 2) // Est
 	{
-		game->player->dirX = 1;
-		game->player->dirY = 0;
+		game->player->dir_x = 1;
+		game->player->dir_y = 0;
 		game->player->planeX = 0;
 		game->player->planeY = 0.66;
 	}
 	else if (dir == 3) // Ouest
 	{
-		game->player->dirX = -1;
-		game->player->dirY = 0;
+		game->player->dir_x = -1;
+		game->player->dir_y = 0;
 		game->player->planeX = 0;
 		game->player->planeY = -0.66;
 	}

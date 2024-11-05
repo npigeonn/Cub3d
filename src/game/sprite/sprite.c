@@ -42,14 +42,14 @@ void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y,
 	float relative_sprite_x = sprite_x - game->player->x;
 	float relative_sprite_y = sprite_y - game->player->y;
 
-	float inv_det = 1.0f / (game->player->planeX * game->player->dirY - game->player->dirX * game->player->planeY);
+	float inv_det = 1.0f / (game->player->planeX * game->player->dir_y - game->player->dir_x * game->player->planeY);
 
-	float transform_x = inv_det * (game->player->dirY * relative_sprite_x - game->player->dirX * relative_sprite_y);
+	float transform_x = inv_det * (game->player->dir_y * relative_sprite_x - game->player->dir_x * relative_sprite_y);
 	float transform_y = inv_det * (-game->player->planeY * relative_sprite_x + game->player->planeX * relative_sprite_y);
 
 	if (transform_y <= 0)
 		return;
-	float player_angle = atan2(game->player->dirY, game->player->dirX);
+	float player_angle = atan2(game->player->dir_y, game->player->dir_x);
 	float relative_angle = sprite_dir - player_angle;
 
 	if (relative_angle > M_PI) relative_angle -= 2 * M_PI;
@@ -154,7 +154,7 @@ void	sort_sprites(t_sprite **head, float camX, float camY, int player_floor)
 int is_player_in_front(t_sprite *enemy, t_player *player)
 {
 	const float	angle_to_player = atan2(player->y - enemy->y, player->x - enemy->x);
-	const float	enemy_angle = atan2(enemy->dirY, enemy->dirX);
+	const float	enemy_angle = atan2(enemy->dir_y, enemy->dir_x);
 	const float	angle_difference = fmod(angle_to_player - enemy_angle + M_PI, 2 * M_PI) - M_PI;
 
 	return (fabs(angle_difference) < M_PI / 4);
@@ -182,14 +182,16 @@ void	draw_sprites(t_game *game)
 			if (current->health <= 0)
 				draw_sprite(game, game->textures->enemy_death, current->x, current->y, 0, 1, 0, current->selected_anim);
 			else if (current->state == CHASE && is_player_in_front(current, game->player))
-				draw_sprite(game, game->textures->enemy_fire, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0, current->selected_anim);
+				draw_sprite(game, game->textures->enemy_fire, current->x, current->y, atan2(current->dir_y, current->dir_x), 1, 0, current->selected_anim);
 			else
-				draw_sprite(game, game->textures->enemy, current->x, current->y, atan2(current->dirY, current->dirX), 1, 0, current->selected_anim);
+				draw_sprite(game, game->textures->enemy, current->x, current->y, atan2(current->dir_y, current->dir_x), 1, 0, current->selected_anim);
 		}
 		else if (current->type == SPRITE_AMMO && current->still_exist && current->floor == game->player->floor)
 			draw_sprite(game, game->textures->ammo, current->x, current->y, 150, 0.2, 2.1, 0);
 		else if (current->type == SPRITE_HEALTH && current->still_exist && current->floor == game->player->floor)
 			draw_anim_health(game, current->x, current->y, game->textures->health);
+		else if (current->type == SPRITE_PLAYER && current->floor == game->player->floor)
+			draw_sprite(game, game->textures->enemy, current->x, current->y, atan2(current->dir_y, current->dir_x), 1, 0, 0);
 		current = current->next;
 	}
 }

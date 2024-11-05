@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 23:55:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 08:40:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 10:42:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	update_option_menu_click_keyboard(t_game *game, int mouse_x, int mouse_y)
 	float panel_y = (game->screen_height - panel_height) * 0.5;
 
 	int option_y = panel_y + panel_height * 0.30;
-	int binding_count = 9;
+	int binding_count = 8;
 	game->menu->text_field_selected = 0;
 	for (int i = 0; i < binding_count; i++)
 	{
@@ -134,16 +134,16 @@ void	update_option_menu_click(t_game *game, int mouse_x, int mouse_y, int keycod
 
 void	update_option_menu_key_keyboard(t_game *game, int keycode)
 {
-	int binding_count = 9;
+	int binding_count = 8;
 	int *primary_keys[] = { &game->player->key->up, &game->player->key->down,
 		&game->player->key->left, &game->player->key->right,
-		&game->player->key->jump, &game->player->key->use,
+		&game->player->key->use,
 		&game->player->key->escape, &game->player->key->pause,
 		&game->player->key->chat
 	};
 	int *secondary_keys[] = { &game->player->key->up2,
 		&game->player->key->down2, &game->player->key->left2,
-		&game->player->key->right2, &game->player->key->jump2,
+		&game->player->key->right2,
 		&game->player->key->use2,&game->player->key->escape2,
 		&game->player->key->pause2, &game->player->key->chat2
 	};
@@ -281,18 +281,17 @@ typedef struct	s_key_binding
 
 t_key_binding	*get_binding(t_game *game)
 {
-	t_key_binding *binding = malloc(sizeof(t_key_binding) * 9);
+	t_key_binding *binding = malloc(sizeof(t_key_binding) * 8);
 	t_keycode *key = game->player->key;
 
 	binding[0] = (t_key_binding){"Move Forward", get_key_name(key->up), get_key_name(key->up2)};
 	binding[1] = (t_key_binding){"Move Backward", get_key_name(key->down), get_key_name(key->down2)};
 	binding[2] = (t_key_binding){"Move Left", get_key_name(key->left), get_key_name(key->left2)};
 	binding[3] = (t_key_binding){"Move Right", get_key_name(key->right), get_key_name(key->right2)};
-	binding[4] = (t_key_binding){"Jump", get_key_name(key->jump), get_key_name(key->jump2)};
-	binding[5] = (t_key_binding){"Use", get_key_name(key->use), get_key_name(key->use2)};
-	binding[6] = (t_key_binding){"Quit", get_key_name(key->escape), get_key_name(key->escape2)};
-	binding[7] = (t_key_binding){"Pause", get_key_name(key->pause), get_key_name(key->pause2)};
-	binding[8] = (t_key_binding){"Chat", get_key_name(key->chat), get_key_name(key->chat2)};
+	binding[4] = (t_key_binding){"Use", get_key_name(key->use), get_key_name(key->use2)};
+	binding[5] = (t_key_binding){"Quit", get_key_name(key->escape), get_key_name(key->escape2)};
+	binding[6] = (t_key_binding){"Pause", get_key_name(key->pause), get_key_name(key->pause2)};
+	binding[7] = (t_key_binding){"Chat", get_key_name(key->chat), get_key_name(key->chat2)};
 	return (binding);
 }
 
@@ -309,7 +308,7 @@ void	draw_options_keyboard(t_game *game)
 	draw_text(game, header_info);
 	int option_x = (panel_width - panel_width * 0.5) * 0.47 + panel_x;
 	int option_y = panel_y + panel_height * 0.30;
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		t_draw_info key_info = init_draw_info(game->screen_height * 0.03, bindings[i].action, option_x, option_y + 8);
 		key_info.color = MENU_BUTTON_TEXT_COLOR;

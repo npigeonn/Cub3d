@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/03 23:26:02 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 13:55:26 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	send_file_to_client(int client_socket, const char *filename)
 	msg.type = MSG_FILE_SIZE;
 	fseek(file, 0, SEEK_END);
 	msg.file_size = htonl(ftell(file));
+	printf("Sending file %s of size %d\n", filename, ntohl(msg.file_size));
 	fseek(file, 0, SEEK_SET);
 	send(client_socket, &msg, sizeof(t_game_message), 0);
 	bytes_read = fread(buffer, 1, sizeof(buffer), file);
@@ -77,47 +78,18 @@ long	get_current_time()
 void	broadcast_enemies(t_server *server)
 {
 	t_game_message	msg;
-	t_player_info	*current;
+	t_sprite		*current;
 	
-	current = server->players;
+	current = server->sprites;
 	ft_memset(&msg, 0, sizeof(t_game_message));
 	msg.type = MSG_BROADCAST_ENEMIES;
 	msg.player_id = -1;
 	msg.sprites = server->sprites;
 	while (current)
 	{
-		if (current->player_id >= 0)
-			send(server->client_sockets[current->player_id], &msg, sizeof(t_game_message), 0);
+		send(server->client_sockets[current->player_id], &msg, sizeof(t_game_message), 0);
 		current = current->next;
 	}
-}
-
-int	can_move_server(t_server *server, float x, float y, int floor)
-{
-	t_door		*door;
-	int			check_x;
-	int			check_y;
-	const float	buffer = 0.13;
-
-	check_y = (int)(y - buffer) - 1;
-	while (++check_y <= (int)(y + buffer))
-	{
-		check_x = (int)(x - buffer) - 1;
-		while (++check_x <= (int)(x + buffer))
-		{
-			if (check_x < 0 || check_y < 0 || check_y >= tablen(server->map[floor]) || check_x >= (int)ft_strlen(server->map[floor][check_y]))
-				return (false);
-			if (server->map[floor][check_y][check_x] == '1')
-				return (false);
-			if (server->map[floor][check_y][check_x] == 'D')
-			{
-				door = get_door(server->door, check_x, check_y, floor);
-				if (!door->open)
-					return (false);
-			}
-		}
-	}
-	return (true);  
 }
 
 bool	has_line_of_sight_server(t_server *server, t_point enemy_pos, t_point player_pos, float enemy_facing_angle, float fov_angle)
@@ -137,7 +109,7 @@ bool	has_line_of_sight_server(t_server *server, t_point enemy_pos, t_point playe
 		{
 			enemy_pos.x += step_x * 0.1f;
 			enemy_pos.y += step_y * 0.1f;
-			if (!can_move_server(server, enemy_pos.x, enemy_pos.y, enemy_pos.floor))
+			if (!can_move(server->map, server->door, enemy_pos.x, enemy_pos.y, enemy_pos.floor))
 				return (false);
 		}
 		return (true);
@@ -200,13 +172,13 @@ void	update_enemies_server(t_server *server)
 			current_enemy = current_enemy->next;
 			continue;
 		}
-		t_player_info *target_player = NULL;
+		t_sprite *target_player = NULL;
 		float min_distance = INFINITY;
 
-		t_player_info *current = server->players;
+		t_sprite *current = server->sprites;
 		while (current)
 		{
-			if (current->player_id < 0 || current->floor != current_enemy->floor)
+			if (current->type != SPRITE_PLAYER || current->player_id < 0 || current->floor != current_enemy->floor)
 			{
 				current = current->next;
 				continue;
@@ -235,11 +207,11 @@ void	update_enemies_server(t_server *server)
 			current_enemy->animation += server->delta_time;
 			current_enemy->selected_anim = (int)(current_enemy->animation * 2) % 4;
 			float angle_in_radians = current_enemy->direction * (M_PI / 180);
-			current_enemy->dirX = cos(angle_in_radians);
-			current_enemy->dirY = sin(angle_in_radians);
-			float new_x = current_enemy->x + current_enemy->dirX * 0.02;
-			float new_y = current_enemy->y + current_enemy->dirY * 0.02;
-			if (can_move_server(server, new_x, new_y, current_enemy->floor))
+			current_enemy->dir_x = cos(angle_in_radians);
+			current_enemy->dir_y = sin(angle_in_radians);
+			float new_x = current_enemy->x + current_enemy->dir_x * 0.02;
+			float new_y = current_enemy->y + current_enemy->dir_y * 0.02;
+			if (can_move(server->map, server->door, new_x, new_y, current_enemy->floor))
 			{
 				current_enemy->x = new_x;
 				current_enemy->y = new_y;
@@ -257,8 +229,8 @@ void	update_enemies_server(t_server *server)
 			float dy = target_player->y - current_enemy->y;
 			current_enemy->direction = atan2(dy, dx) * (180 / M_PI);
 			float angle_in_radians = current_enemy->direction * (M_PI / 180);
-			current_enemy->dirX = cos(angle_in_radians);
-			current_enemy->dirY = sin(angle_in_radians);
+			current_enemy->dir_x = cos(angle_in_radians);
+			current_enemy->dir_y = sin(angle_in_radians);
 			if (min_distance < 7)
 				shoot_at_player_server(current_enemy, (t_point){target_player->x, target_player->y, target_player->floor}, server);
 		}

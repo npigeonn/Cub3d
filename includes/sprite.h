@@ -21,8 +21,8 @@ typedef struct s_sprite
 	float			y;
 	float			x1;
 	float			y1;
-	float			dirX;
-	float			dirY;
+	float			dir_x;
+	float			dir_y;
 	int				floor;
 	int				floor1;
 	float			health;
@@ -35,6 +35,9 @@ typedef struct s_sprite
 	bool			still_exist;
 	float			animation;
 	int				selected_anim;
+	int				player_id;
+	int				ammo;
+	char			pseudo[32];
 	struct s_sprite	*next;
 }	t_sprite;
 

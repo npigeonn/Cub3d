@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/18 18:17:21 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/03 03:26:45 by ybeaucou         ###   ########.fr       */
+/*   Created: 2024/11/05 11:05:54 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/05 13:54:13 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,28 +29,88 @@ void	add_connection_msg(t_game *game, char *pseudo)
 	game->chatbox->messages = new_msg;
 }
 
-static void	update_enemies_client(t_game *game, t_game_message msg)
+static void update_enemies_client(t_game *game, t_game_message msg)
 {
-	t_sprite	*current_enemy;
-	t_sprite	*incoming_enemy;
+	t_sprite *current_enemy;
+	t_sprite *incoming_enemy = msg.sprites;
 
-	current_enemy = game->sprites;
-	incoming_enemy = msg.sprites;
-	while (current_enemy && incoming_enemy)
+	while (incoming_enemy)
 	{
-		if (current_enemy->type == SPRITE_ENEMY)
+		current_enemy = game->sprites;
+		int exists = 0;
+
+		while (current_enemy)
 		{
-			current_enemy->x = incoming_enemy->x;
-			current_enemy->y = incoming_enemy->y;
-			current_enemy->health = incoming_enemy->health;
-			current_enemy->dirX = incoming_enemy->dirX;
-			current_enemy->dirY = incoming_enemy->dirY;
-			current_enemy->floor = incoming_enemy->floor;
+			if (incoming_enemy->type == SPRITE_ENEMY && current_enemy->type == SPRITE_ENEMY &&
+				current_enemy->x == incoming_enemy->x && current_enemy->y == incoming_enemy->y)
+			{
+				current_enemy->health = incoming_enemy->health;
+				current_enemy->dir_x = incoming_enemy->dir_x;
+				current_enemy->dir_y = incoming_enemy->dir_y;
+				current_enemy->floor = incoming_enemy->floor;
+				exists = 1;
+				break;
+			}
+			current_enemy = current_enemy->next;
 		}
-		current_enemy = current_enemy->next;
+		if (!exists && incoming_enemy->type == SPRITE_ENEMY)
+		{
+			t_sprite *new_enemy = malloc(sizeof(t_sprite));
+			if (new_enemy)
+			{
+				new_enemy->type = incoming_enemy->type;
+				new_enemy->x = incoming_enemy->x;
+				new_enemy->y = incoming_enemy->y;
+				new_enemy->health = incoming_enemy->health;
+				new_enemy->dir_x = incoming_enemy->dir_x;
+				new_enemy->dir_y = incoming_enemy->dir_y;
+				new_enemy->floor = incoming_enemy->floor;
+				new_enemy->next = game->sprites;
+				game->sprites = new_enemy;
+			}
+		}
 		incoming_enemy = incoming_enemy->next;
 	}
+
+	current_enemy = game->sprites;
+	t_sprite *previous_enemy = NULL;
+
+	while (current_enemy)
+	{
+		incoming_enemy = msg.sprites;
+		int found = 0;
+
+		while (incoming_enemy)
+		{
+			if (current_enemy->type == SPRITE_ENEMY && 
+				current_enemy->x == incoming_enemy->x && current_enemy->y == incoming_enemy->y && 
+				current_enemy->floor == incoming_enemy->floor && 
+				current_enemy->health == incoming_enemy->health &&
+				current_enemy->dir_x == incoming_enemy->dir_x && 
+				current_enemy->dir_y == incoming_enemy->dir_y) {
+				found = 1;
+				break;
+			}
+			incoming_enemy = incoming_enemy->next;
+		}
+
+		if (!found)
+		{
+			if (previous_enemy)
+				previous_enemy->next = current_enemy->next;
+			else
+				game->sprites = current_enemy->next;
+			free(current_enemy);
+			current_enemy = (previous_enemy) ? previous_enemy->next : game->sprites;
+		}
+		else
+		{
+			previous_enemy = current_enemy;
+			current_enemy = current_enemy->next;
+		}
+	}
 }
+
 
 static void	add_msg_chat(t_game *game, t_game_message msg)
 {
@@ -76,7 +136,7 @@ static int	gestion_message(t_game *game, t_game_message msg)
 		return (0);
 	}
 	else if (msg.type == MSG_MOVE)
-		update_player_position(game->client, msg);
+		update_player_position(game, msg);
 	else if (msg.type == MSG_RECONNECT || msg.type == MSG_CONNECT
 		|| msg.type == MSG_GET_PLAYER)
 		add_player(game, msg);

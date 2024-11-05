@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/03 22:11:10 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 13:36:16 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,25 @@ void	main_server(void	*arg)
 	loop_server(server);
 }
 
+void	copy_sprite(t_game *game, t_server *server)
+{
+	t_sprite	*current;
+	
+	current = game->sprites;
+	
+	while(current)
+	{
+		t_sprite	*new_sprite = malloc(sizeof(t_sprite));
+		if (new_sprite)
+		{
+			ft_memcpy(new_sprite, current, sizeof(t_sprite));
+			new_sprite->next = server->sprites;
+			server->sprites = new_sprite;
+		}
+		current = current->next;	
+	}
+}
+
 void	create_server(t_game *game)
 {
 	pthread_t	server_thread;
@@ -109,7 +128,6 @@ void	create_server(t_game *game)
 	is_good = 0;
 	server = malloc(sizeof(t_server));
 	server->nb_player = 0;
-	server->players = NULL;
 	server->game_queue = NULL;
 	server->server_ready = false;
 	server->game_lock = malloc(sizeof(pthread_mutex_t));
@@ -118,11 +136,13 @@ void	create_server(t_game *game)
 	server->y = game->player->y;
 	server->floor = game->player->floor;
 	server->door = game->door;
-	server->sprites = game->sprites;
+	server->sprites = NULL;
+	copy_sprite(game, server);
 	server->projectiles = game->projectiles;
 	server->delta_time = 0;
 	server->last_time = game->last_time;
 	server->av = game->av;
+	server->mem = game->mem;
 	ft_strcpy(server->name, game->client->name);
 	pthread_mutex_init(server->game_lock, NULL);
 	pthread_create(&server_thread, NULL, (void *)main_server, (void *)server);

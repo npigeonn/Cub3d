@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 14:48:35 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 16:03:54 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:33:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char *pseudo)
 {
 	t_game_message	connect_msg;
 	int				i;
-	t_player_info	*player;
+	t_sprite		*player;
 
 	player = find_player_by_pseudo(server, pseudo);
 	if (!player)
@@ -27,7 +27,6 @@ char *pseudo)
 	connect_msg.x = player->x;
 	connect_msg.y = player->y;
 	connect_msg.floor = player->floor;
-	connect_msg.height = player->height;
 	connect_msg.dir_x = player->dir_x;
 	connect_msg.dir_y = player->dir_y;
 	connect_msg.health = player->health;
@@ -44,7 +43,7 @@ char *pseudo)
 {
 	t_game_message	connect_msg;
 	int				i;
-	t_player_info	*player;
+	t_sprite		*player;
 
 	player = find_player_by_pseudo(server, pseudo);
 	if (!player)
@@ -54,7 +53,6 @@ char *pseudo)
 	connect_msg.x = player->x;
 	connect_msg.y = player->y;
 	connect_msg.floor = player->floor;
-	connect_msg.height = player->height;
 	connect_msg.dir_x = player->dir_x;
 	connect_msg.dir_y = player->dir_y;
 	connect_msg.health = player->health;
@@ -68,11 +66,11 @@ char *pseudo)
 
 void	notify_players_of_disconnection(t_server *server, int id)
 {
-	t_player_info	*player;
+	t_sprite		*player;
 	t_game_message	disconnect_msg;
 	int				i;
 
-	player = find_player_by_id(server->players, id);
+	player = find_player_by_id(server->sprites, id);
 	if (!player)
 		return ;
 	disconnect_msg.player_id = player->player_id;

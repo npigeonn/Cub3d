@@ -273,7 +273,10 @@ void	test_music(void)
 	PlayMusicStream(music);
 
 	while (1)
+	{
 		UpdateMusicStream(music);
+		sleep(0.1);
+	}
 	UnloadMusicStream(music);
 	CloseAudioDevice();
 }

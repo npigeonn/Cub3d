@@ -116,8 +116,6 @@ typedef struct s_keycode
 	int	right2;
 	int	use;
 	int	use2;
-	int	jump;
-	int	jump2;
 	int	escape;
 	int	escape2;
 	int	pause;
@@ -130,8 +128,8 @@ typedef struct s_player
 {
 	float		x;
 	float		y;
-	float		dirX;
-	float		dirY;
+	float		dir_x;
+	float		dir_y;
 	float		planeX;
 	float		planeY;
 	float		height;
@@ -261,20 +259,6 @@ typedef struct s_server_info
 	struct s_server_info	*next;
 }	t_server_info;
 
-typedef struct	s_player_info
-{
-	int						player_id;
-	char					pseudo[32];
-	float					x;
-	float					y;
-	float					dir_x;
-	float					dir_y;
-	float					height;
-	float					health;
-	int						floor;
-	struct s_player_info	*next;
-}	t_player_info;
-
 typedef struct	s_client
 {
 	int				sock;
@@ -282,7 +266,7 @@ typedef struct	s_client
 	char			name[20];
 	char			ip[16];
 	int				player_id;
-	t_player_info	*players;
+	t_sprite		*sprites;
 } t_client;
 
 #define	MAX_MESSAGE_LENGTH 256

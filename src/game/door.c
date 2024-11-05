@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   door.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:55:37 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/05 14:00:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,15 @@ void	use_door_in_view(t_game *game)
 	if (game->menu->message != CLOSE_DOOR && game->menu->message != OPEN_DOOR)
 		return ;
 
-	x = (int)(player->x + player->dirX * distance);
-	y = (int)(player->y + player->dirY * distance);
+	x = (int)(player->x + player->dir_x * distance);
+	y = (int)(player->y + player->dir_y * distance);
 
 	door = get_door(game->door, x, y, player->floor);
 	if (door)
 	{
 		door->open = !door->open;
 		t_game_message	msg_door;
+		ft_bzero(&msg_door, sizeof(t_game_message));
 		msg_door.type = MSG_DOOR;
 		msg_door.x = door->x;
 		msg_door.y = door->y;

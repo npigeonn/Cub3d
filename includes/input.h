@@ -22,7 +22,7 @@
 
 //utils
 void	chatting_mode(t_game *game);
-int		can_move(t_game *game, float x, float y, int floor);
+int		can_move(char ***map, t_door *door, float x, float y, int floor);
 void	use_item(t_game *game);
 
 //keyboard

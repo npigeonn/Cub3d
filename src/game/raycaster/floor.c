@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 01:01:10 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 09:18:26 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:20:53 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,10 @@ static int	get_color(t_game *game, t_floorcast floorcast, int x, int y)
 
 static void	init_calc_floorcast(t_game *game, t_floorcast *f)
 {
-	f->ray_dir_x0 = game->player->dirX - game->player->planeX;
-	f->ray_dir_x1 = game->player->dirX + game->player->planeX;
-	f->ray_dir_y0 = game->player->dirY - game->player->planeY;
-	f->ray_dir_y1 = game->player->dirY + game->player->planeY;
+	f->ray_dir_x0 = game->player->dir_x - game->player->planeX;
+	f->ray_dir_x1 = game->player->dir_x + game->player->planeX;
+	f->ray_dir_y0 = game->player->dir_y - game->player->planeY;
+	f->ray_dir_y1 = game->player->dir_y + game->player->planeY;
 	f->pos_z = game->screen_height * 0.5f;
 	f->diff_ray_dir_x = f->ray_dir_x1 - f->ray_dir_x0;
 	f->diff_ray_dir_y = f->ray_dir_y1 - f->ray_dir_y0;

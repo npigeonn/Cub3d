@@ -15,13 +15,6 @@
 #define PORT 12345
 #define BROADCAST_PORT 12345
 
-typedef struct t_player_node
-{
-	char					pseudo[MAX_PSEUDO_LENGTH];
-	t_player_info			player;
-	struct t_player_node	*next;
-}	t_player_node;
-
 typedef enum s_message_type
 {
 	MSG_CONNECT = 0,
@@ -75,7 +68,6 @@ typedef struct s_server
 	char					**av;
 	char					name[20];
 	int						nb_player;
-	t_player_info			*players;
 	int						client_sockets[MAX_PLAYERS];
 	bool					server_ready;
 	pthread_mutex_t			*game_lock;
@@ -93,14 +85,15 @@ typedef struct s_server
 	t_door					*door;
 	t_sprite				*sprites;
 	t_projectile			*projectiles;
+	t_memory_table			*mem;
 }	t_server;
 
 //broadcast
 int				init_broadcast(t_server *server);
 
 //find player
-t_player_info	*find_player_by_pseudo(t_server *server, char *pseudo);
-t_player_info	*find_player_by_id(t_player_info *players, int id);
+t_sprite	*find_player_by_pseudo(t_server *server, char *pseudo);
+t_sprite	*find_player_by_id(t_sprite *players, int id);
 
 //logic
 void	*logic_game(void *arg);
@@ -126,6 +119,6 @@ void	add_game_message_to_queue(t_server *server, t_game_message msg);
 
 //send
 void	send_all_players(t_server *server, int id);
-void	send_reconnected_message(t_server *server, t_player_info *player, char *pseudo);
+void	send_reconnected_message(t_server *server, t_sprite *player, char *pseudo);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 14:19:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/30 00:23:08 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 10:38:36 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	get_key_index(t_game *game, int keycode)
 {
-	const int keycode_map[19] =
+	const int keycode_map[17] =
 	{
 		game->player->key->up,
 		game->player->key->up2,
@@ -24,8 +24,6 @@ static int	get_key_index(t_game *game, int keycode)
 		game->player->key->left2,
 		game->player->key->right,
 		game->player->key->right2,
-		game->player->key->jump,
-		game->player->key->jump2,
 		game->player->key->use,
 		game->player->key->use2,
 		game->player->key->escape,
@@ -74,7 +72,6 @@ bool	is_keyflag(t_game *game, int keycode)
 	|| keycode == game->player->key->down || keycode == game->player->key->down2
 	|| keycode == game->player->key->left || keycode == game->player->key->left2
 	|| keycode == game->player->key->right || keycode == game->player->key->right2
-	|| keycode == game->player->key->jump || keycode == game->player->key->jump2
 	|| keycode == game->player->key->use || keycode == game->player->key->use2
 	|| keycode == game->player->key->escape || keycode == game->player->key->escape2
 	|| keycode == game->player->key->pause || keycode == game->player->key->pause2

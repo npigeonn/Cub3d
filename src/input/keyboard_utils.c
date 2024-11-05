@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/03 02:13:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/05 11:35:13 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	tablen(char **tab)
 	return (i);
 }
 
-int	can_move(t_game *game, float x, float y, int floor)
+int	can_move(char ***map, t_door *doors, float x, float y, int floor)
 {
 	t_door		*door;
 	int			check_x;
@@ -49,13 +49,13 @@ int	can_move(t_game *game, float x, float y, int floor)
 		check_x = (int)(x - buffer) - 1;
 		while (++check_x <= (int)(x + buffer))
 		{
-			if (check_x < 0 || check_y < 0 || check_y >= tablen(game->map[floor]) || check_x >= (int)ft_strlen(game->map[floor][check_y]))
+			if (check_x < 0 || check_y < 0 || check_y >= tablen(map[floor]) || check_x >= (int)ft_strlen(map[floor][check_y]))
 				return (false);
-			if (game->map[floor][check_y][check_x] == '1')
+			if (map[floor][check_y][check_x] == '1')
 				return (false);
-			if (game->map[floor][check_y][check_x] == 'D')
+			if (map[floor][check_y][check_x] == 'D')
 			{
-				door = get_door(game->door, check_x, check_y, floor);
+				door = get_door(doors, check_x, check_y, floor);
 				if (!door->open)
 					return (false);
 			}
