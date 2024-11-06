@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:38:19 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 08:33:58 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 09:12:28 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,18 +67,15 @@ void	door_ennemi_ammo_health_mngmt(t_game *game)
 			while (game->map[i[0]][i[1]][++i[2]])
 			{
 				if (game->map[i[0]][i[1]][i[2]] == 'D')
-					add_door(game, i[2], i[1], i);
+					add_door(game, i[2], i[1], i[0]);
 				else if (game->map[i[0]][i[1]][i[2]] == 'M')
-					add_ammo(game, i[2] + 0.5, i[1] + 0.5, i);
+					add_ammo(game, i[2] + 0.5, i[1] + 0.5, i[0]);
 				else if (game->map[i[0]][i[1]][i[2]] == 'B')
-					add_enemies(game, i[2], i[1], i);
+					add_enemies(game, i[2], i[1], i[0]);
 				else if (game->map[i[0]][i[1]][i[2]] == 'H')
-					add_health(game, i[2], i[1] + 0.5, i);
+					add_health(game, i[2], i[1] + 0.5, i[0] + 0.5);
 				else if (game->map[i[0]][i[1]][i[2]] == 'e')
-					add_exit(game, i[2], i[1] + 0.5, i);
-				// 	add_health(game, i[2], i[1] + 0.5, i + 0.5);
-				// else if (game->map[i[0]][i[1]][i[2]] == 'e')
-				// 	add_exit(game, i[2], i[1] + 0.5, i + 0.5);
+					add_exit(game, i[2], i[1] + 0.5, i[0] + 0.5);
 			}
 		}
 	}

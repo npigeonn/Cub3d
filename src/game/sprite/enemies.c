@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 12:14:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 09:42:54 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ static inline float distance_squared(float x1, float y1, float x2, float y2)
 	return (dx * dx + dy * dy);
 }
 
-bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
+bool	check_collision_with_entity(t_game *game, t_projectile *projectile, float x, float y)
 {
 	t_sprite *current = game->sprites;
 
@@ -104,7 +104,7 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
 	{
 		if (current->type == SPRITE_ENEMY && current->health > 0 && current->floor == projectile->floor && current != projectile->enemy)
 		{
-			if (distance_squared(current->x, current->y, projectile->x, projectile->y) < COLLISION_THRESHOLD)
+			if (distance_squared(current->x, current->y, x, y) < COLLISION_THRESHOLD)
 			{
 				if (projectile->owner == game->player)
 					game->player->stats->nb_hit++;
@@ -119,17 +119,15 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile)
 		}
 		current = current->next;
 	}
-
 	if (game->player->floor == projectile->floor && projectile->owner != game->player)
 	{
-		if (distance_squared(game->player->x, game->player->y, projectile->x, projectile->y) < COLLISION_THRESHOLD)
+		if (distance_squared(game->player->x, game->player->y, x, y) < COLLISION_THRESHOLD)
 		{
 			game->player->stats->nb_degats += projectile->damage;
 			game->player->health -= projectile->damage;
 			game->time_regen = 0;
-			if (game->player->health <= 0) {
+			if (game->player->health <= 0)
 				game->player->health = 0;
-			}
 			damages_red_draw(game);
 			return (true);
 		}
@@ -150,38 +148,38 @@ void	update_projectiles(t_game *game)
 		float dx = cos(current->direction * (M_PI / 180.0f)) * current->speed;
 		float dy = sin(current->direction * (M_PI / 180.0f)) * current->speed;
 
-		float total_distance = sqrt(dx * dx + dy * dy);
-		float step_distance = fmax(0.1f, total_distance / 100.0f);
-		int steps = (int)(total_distance / step_distance) + 1;
+		float distance = sqrt(dx * dx + dy * dy);
 		bool collision = false;
-		
-		for (int i = 1; i <= steps; i++)
-		{
-			float t = (float)i / steps;
-			float x_check = x_old + dx * t;
-			float y_check = y_old + dy * t;
 
-			if (!can_move(game->map, game->door, x_check, y_check, current->floor) || check_collision_with_entity(game, current))
+		float x_ray = x_old;
+		float y_ray = y_old;
+		float step = 0.1f;
+
+		for (float traveled = 0; traveled < distance; traveled += step)
+		{
+			x_ray += cos(current->direction * (M_PI / 180.0f)) * step;
+			y_ray += sin(current->direction * (M_PI / 180.0f)) * step;
+
+			if (!can_move(game->map, game->door, x_ray, y_ray, current->floor) || check_collision_with_entity(game, current, x_ray, y_ray))
 			{
 				collision = true;
-				break ;
+				break;
 			}
-			current->x = x_check;
-			current->y = y_check;
+			current->x = x_ray;
+			current->y = y_ray;
 		}
-
 		if (!collision)
 		{
 			current->x = x_old + dx;
 			current->y = y_old + dy;
 		}
-
 		if (collision)
 		{
 			if (prev)
 				prev->next = current->next;
 			else
 				game->projectiles = current->next;
+
 			t_projectile *temp = current;
 			current = current->next;
 			free(temp);
@@ -218,7 +216,7 @@ void	shoot_at_player(t_sprite *enemy, t_point player_pos, t_game *game)
 			new_projectile->x = enemy->x;
 			new_projectile->y = enemy->y;
 			new_projectile->direction = angle_to_player;
-			new_projectile->speed = 5000;
+			new_projectile->speed = 2000;
 			new_projectile->next = NULL;
 			new_projectile->owner = NULL;
 			new_projectile->enemy = enemy;

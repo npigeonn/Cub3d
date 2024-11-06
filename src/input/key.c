@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/23 14:19:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 10:38:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 08:49:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static int	get_key_index(t_game *game, int keycode)
 	int i;
 	
 	i = -1;
-	while (++i < 18)
+	while (++i < 16)
 	{
 		if (keycode_map[i] == keycode)
 			return (i);

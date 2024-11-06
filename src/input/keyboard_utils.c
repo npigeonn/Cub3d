@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:35:13 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 09:15:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@ int	can_move(char ***map, t_door *doors, float x, float y, int floor)
 		check_x = (int)(x - buffer) - 1;
 		while (++check_x <= (int)(x + buffer))
 		{
-			if (check_x < 0 || check_y < 0 || check_y >= tablen(map[floor]) || check_x >= (int)ft_strlen(map[floor][check_y]))
+			if (check_x < 0 || check_y < 0 || check_y >= tablen(map[floor])
+				|| check_x >= (int)ft_strlen(map[floor][check_y]))
 				return (false);
 			if (map[floor][check_y][check_x] == '1')
 				return (false);
