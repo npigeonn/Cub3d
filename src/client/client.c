@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 13:58:28 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 08:36:07 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int	receive_map_from_server(t_game *game, int client_socket)
 	game->av[2] = NULL;
 	parsing(game->av, game);
 	printf("av[1]: %s\n", game->av[1]);
-	free_split(game->av);
+	free_split(game, game->av);
 	game->av = tmp;
 	return (1);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:43:21 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/05 11:48:16 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/06 08:40:00 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,13 @@ int free_map(t_game *game)
 	return (0);
 }
 
-int	free_split(t_game *game, char **str)
+int	free_split(t_memory_table *mem, char **str)
 {
 	int	i;
 
 	i = -1;
 	while (str[++i])
-		gc_free(game->mem, str[i]);
-	gc_free(game->mem, str);
+		gc_free(mem, str[i]);
+	gc_free(mem, str);
 	return (0);
 }

@@ -409,7 +409,7 @@ void	animation_teleportation(t_game *game);
 
 // map
 int		map_copy(t_game *game);
-char	*switch_line(char *line, int fd);
+char	*switch_line(t_memory_table *mem, char *line, int fd);
 void	map_set_up(char **av, t_game *game);
 
 // texture check
@@ -420,7 +420,7 @@ void	load_txtre_globale(t_game *game, char *line, char *path);
 // free
 int	free_map(t_game *game);
 int free_map_copy(t_game *game);
-int	free_split(t_game *game, char **str);
+int	free_split(t_memory_table *mem, char **str);
 
 //server
 void	create_server(t_game *game);

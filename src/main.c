@@ -299,7 +299,7 @@ int	main(int ac, char **av)
 	init_client(&game, 1);
 	load_game_texture(&game);
 	parsing(av, &game);
-	gc_exit(game.mem, 1);
+	// gc_exit(game.mem, 1);
 	set_direction(&game, game.player->begin_dir);
 	init_floorcast(&game);
 	init_img(&game);

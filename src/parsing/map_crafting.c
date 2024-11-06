@@ -3,31 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   map_crafting.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:52:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/05 11:51:46 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/06 08:35:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-char *go_to_the_map_line(t_game *game, int fd, int begin)
+char *go_to_the_map_line(t_memory_table *mem, int fd, int begin)
 {
 	int		i;
 	char	*line;
 
 	i = -1;
-	line = gc_get_next_line(game->mem, fd);
+	line = gc_get_next_line(mem, fd);
 	while (++i < begin)
-		line = switch_line(game->mem, line, fd);
+		line = switch_line(mem, line, fd);
 	return (line);
 }
 
-char	*switch_line(t_game *game, char *line, int fd)
+char	*switch_line(t_memory_table *mem, char *line, int fd)
 {
-	gc_free(game->mem, line);
-	return (gc_get_next_line(game->mem, fd));
+	gc_free(mem, line);
+	return (gc_get_next_line(mem, fd));
 }
 
 int	nb_floors(char **av, t_game *game)

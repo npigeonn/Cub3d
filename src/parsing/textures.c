@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   textures.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:35:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/05 11:45:57 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/06 08:35:16 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ int	textures(char *to_open, t_game *game)
 	while (txtre_or_nline(line, game))
 	{
 		
-		line = switch_line(line, fd);
+		line = switch_line(game->mem, line, fd);
 		game->map_begin++;
 	}
 	gc_free(game->mem, line);
