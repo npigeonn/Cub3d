@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:17:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 13:16:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:34:17 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	handle_client_msg(t_server *server, t_game_message msg)
 			add_game_message_to_queue(server, msg);
 		}
 	}
-	if (msg.type == MSG_CHAT || msg.type == MSG_PLAYER_SHOOT || msg.type == MSG_DOOR)
+	if (msg.type == MSG_CHAT || msg.type == MSG_PLAYER_SHOOT || msg.type == MSG_DOOR || msg.type == MSG_PLAYER_SHOOT)
 		add_game_message_to_queue(server, msg);
 	pthread_mutex_unlock(server->game_lock);
 }

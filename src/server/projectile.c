@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:16:55 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 13:21:57 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:39:18 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,11 @@ bool	check_collision_with_entity_server(t_server *server, t_projectile *projecti
 		{
 			if (distance_squared(current->x, current->y, x, y) < COLLISION_THRESHOLD)
 			{
+				printf("Collision with entity\n");
 				current->health -= projectile->damage;
 				if (current->type == SPRITE_PLAYER)
 				{
+					printf("Player hit\n");
 					t_game_message msg;
 					ft_bzero(&msg, sizeof(t_game_message));
 					msg.type = MSG_PLAYER_HIT;
@@ -53,8 +55,8 @@ bool	check_collision_with_entity_server(t_server *server, t_projectile *projecti
 
 void	update_projectiles_server(t_server *server)
 {
-	t_projectile *current = server->projectiles;
-	t_projectile *prev = NULL;
+	t_projectile	*current = server->projectiles;
+	t_projectile	*prev = NULL;
 
 	while (current)
 	{

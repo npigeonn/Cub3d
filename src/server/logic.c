@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 13:22:50 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:42:35 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,17 @@ void	add_projectile(t_server *server, t_game_message msg)
 	t_projectile	*new;
 	t_sprite		*sprite;
 
-	sprite = find_player_by_id(server, msg.player_id);
-	new = gc_malloc(server->mem, sizeof(t_projectile));
-	new->x = msg.x;
-	new->y = msg.y;
-	new->dir_x = msg.dir_x;
-	new->dir_y = msg.dir_y;
-	new->floor = msg.floor;
-	new->speed = 2000;
-	new->enemy = sprite;
-	new->next = server->projectiles;
-	server->projectiles = new;
+	// sprite = find_player_by_id(server->sprites, msg.player_id);
+	// new = gc_malloc(server->mem, sizeof(t_projectile));
+	// new->x = msg.x;
+	// new->y = msg.y;
+	// new->dir_x = msg.dir_x;
+	// new->dir_y = msg.dir_y;
+	// new->floor = msg.floor;
+	// new->speed = 2000;
+	// new->enemy = sprite;
+	// new->next = server->projectiles;
+	// server->projectiles = new;
 }
 
 static void	use_type(t_server *server, t_game_message msg)
@@ -109,6 +109,7 @@ void	broadcast_enemies(t_server *server)
 	msg.sprites = server->sprites;
 	while (current)
 	{
+		if (current->type == SPRITE_PLAYER && current->player_id >= 0)
 		send(server->client_sockets[current->player_id], &msg, sizeof(t_game_message), 0);
 		current = current->next;
 	}
