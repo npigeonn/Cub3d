@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   projectile.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:16:55 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:18:01 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/06 13:21:57 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,41 +14,39 @@
 
 #define COLLISION_THRESHOLD 0.25f
 
+static inline float distance_squared(float x1, float y1, float x2, float y2)
+{
+	float dx = x2 - x1;
+	float dy = y2 - y1;
+	return (dx * dx + dy * dy);
+}
+
 bool	check_collision_with_entity_server(t_server *server, t_projectile *projectile, float x, float y)
 {
 	t_sprite *current = server->sprites;
 
 	while (current)
 	{
-		if (current->type == SPRITE_ENEMY && current->health > 0 && current->floor == projectile->floor && current != projectile->enemy)
+		if ((current->type == SPRITE_ENEMY || current->type == SPRITE_PLAYER) && current->health > 0 && current->floor == projectile->floor && current != projectile->enemy)
 		{
 			if (distance_squared(current->x, current->y, x, y) < COLLISION_THRESHOLD)
 			{
-				if (projectile->owner == server->player)
-					server->player->stats->nb_hit++;
 				current->health -= projectile->damage;
-				if (current->health <= 0)
+				if (current->type == SPRITE_PLAYER)
 				{
-					server->player->stats->nb_kills++;
-					current->animation = 2;
+					t_game_message msg;
+					ft_bzero(&msg, sizeof(t_game_message));
+					msg.type = MSG_PLAYER_HIT;
+					msg.health = current->health;
+					msg.player_id = current->player_id;
+					add_game_message_to_queue(server, msg);
 				}
+				if (current->health <= 0)
+					current->animation = 2;
 				return (true);
 			}
 		}
 		current = current->next;
-	}
-	if (server->player->floor == projectile->floor && projectile->owner != server->player)
-	{
-		if (distance_squared(server->player->x, server->player->y, x, y) < COLLISION_THRESHOLD)
-		{
-			server->player->stats->nb_degats += projectile->damage;
-			server->player->health -= projectile->damage;
-			server->time_regen = 0;
-			if (server->player->health <= 0)
-				server->player->health = 0;
-			damages_red_draw(server);
-			return (true);
-		}
 	}
 	return (false);
 }

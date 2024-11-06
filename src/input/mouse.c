@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mouse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 11:50:40 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/06 13:22:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,34 @@ int	handle_mouse_key_release(int keycode, int x, int y, t_game *game)
 	return (0);
 }
 
+void	send_shoot(t_game *game)
+{
+	t_game_message	msg;
+
+	ft_bzero(&msg, sizeof(t_game_message));
+	msg.type = MSG_PLAYER_SHOOT;
+	msg.player_id = game->client->player_id;
+	msg.x = game->player->x;
+	msg.y = game->player->y;
+	msg.dir_x = game->player->dir_x;
+	msg.dir_y = game->player->dir_y;
+	msg.floor = game->player->floor;
+	send(game->client->sock, &msg, sizeof(t_game_message), 0);
+}
+
 int	handle_mouse_key_press2(int keycode, int x, int y, t_game *game)
 {
 	const int	status = game->menu->status;
 
 	if ((status == PLAYING || status == MULTI_PLAYER)
 		&& keycode == 1 && game->player->ammo > 0)
-		return (game->player->anim_shoot = 1, game->player->ammo--,
-			game->player->stats->nb_shoot++, 0);
+	{
+		game->player->anim_shoot = 1;
+		game->player->ammo--;
+		game->player->stats->nb_shoot++;
+		if (game->menu->status == MULTI_PLAYER)
+			send_shoot(game);
+	}
 	else if (status == STATS)
 		update_stats_menu_click(game, x, y, keycode);
 	return (0);

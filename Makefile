@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/10/29 15:57:29 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/11/06 12:36:55 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -71,7 +71,8 @@ SRC_SERVER = $(addprefix $(PATH_SRC)server/, \
 				notification.c \
 				player_node.c \
 				queue.c \
-				send.c )
+				send.c \
+				projectile.c )
 
 SRC_CLIENT = $(addprefix $(PATH_SRC)client/, \
 				client.c \

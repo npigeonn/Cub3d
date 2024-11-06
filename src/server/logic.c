@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   logic.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:07:28 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/06 13:22:50 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	send_file_to_client(int client_socket, const char *filename)
 {
-	const FILE		*file = fopen(filename, "rb");
+	FILE			*file = fopen(filename, "rb");
 	char			buffer[1024];
 	size_t			bytes_read;
 	t_game_message	msg;
@@ -26,8 +26,8 @@ void	send_file_to_client(int client_socket, const char *filename)
 	msg.type = MSG_FILE_SIZE;
 	fseek(file, 0, SEEK_END);
 	msg.file_size = htonl(ftell(file));
-	printf("Sending file %s of size %d\n", filename, ntohl(msg.file_size));
 	fseek(file, 0, SEEK_SET);
+	printf("Sending file %s of size %u\n", filename, msg.file_size);
 	send(client_socket, &msg, sizeof(t_game_message), 0);
 	bytes_read = fread(buffer, 1, sizeof(buffer), file);
 	while (bytes_read  > 0)
@@ -43,6 +43,24 @@ void	send_info(t_server *server, t_game_message msg)
 	send(server->client_sockets[msg.player_id], &msg, sizeof(t_game_message), 0);
 	send_file_to_client(server->client_sockets[msg.player_id], server->av[1]);
 	send_all_players(server, msg.player_id);
+}
+
+void	add_projectile(t_server *server, t_game_message msg)
+{
+	t_projectile	*new;
+	t_sprite		*sprite;
+
+	sprite = find_player_by_id(server, msg.player_id);
+	new = gc_malloc(server->mem, sizeof(t_projectile));
+	new->x = msg.x;
+	new->y = msg.y;
+	new->dir_x = msg.dir_x;
+	new->dir_y = msg.dir_y;
+	new->floor = msg.floor;
+	new->speed = 2000;
+	new->enemy = sprite;
+	new->next = server->projectiles;
+	server->projectiles = new;
 }
 
 static void	use_type(t_server *server, t_game_message msg)
@@ -65,6 +83,10 @@ static void	use_type(t_server *server, t_game_message msg)
 		notify_players_of_door(server, msg);
 	else if (msg.type == MSG_CHAT)
 		notify_players_of_chat(server, msg);
+	else if (msg.type == MSG_PLAYER_HIT)
+		notify_players_of_hit(server, msg);
+	else if (msg.type == MSG_PLAYER_SHOOT)
+		add_projectile(server, msg);
 }
 
 long	get_current_time()
@@ -268,6 +290,7 @@ void	*logic_game(void *arg)
 			server->last_time = current_time;
 			update_enemies_server(server);
 			broadcast_enemies(server);
+			update_projectiles_server(server);
 			pthread_mutex_unlock(server->game_lock);
 		}
 	}

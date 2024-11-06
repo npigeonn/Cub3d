@@ -17,7 +17,7 @@ typedef struct s_projectile
 	float	direction;
 	int		floor;
 	struct s_player	*owner;
-	struct s_enemy	*enemy;
+	struct s_prite	*enemy;
 	struct s_projectile	*next;
 }	t_projectile;
 

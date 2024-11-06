@@ -6,7 +6,11 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/11/06 12:19:56 by npigeon          ###   ########.fr       */
+=======
+/*   Updated: 2024/11/06 11:54:38 by ybeaucou         ###   ########.fr       */
+>>>>>>> 042954a (add projectil)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +101,7 @@ int	receive_map_from_server(t_game *game, int client_socket)
 	game->av[2] = NULL;
 	parsing(game->av, game);
 	printf("av[1]: %s\n", game->av[1]);
-	free_split(game, game->av);
+	// free_split(game->mem, game->av);
 	game->av = tmp;
 	return (1);
 }

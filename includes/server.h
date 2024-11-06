@@ -28,6 +28,8 @@ typedef enum s_message_type
 	MSG_GET_PLAYER = 8,
 	MSG_FILE_SIZE = 9,
 	MSG_BROADCAST_ENEMIES = 10,
+	MSG_PLAYER_HIT = 11,
+	MSG_PLAYER_SHOOT = 12,
 }	t_message_type;
 
 typedef struct s_game_message

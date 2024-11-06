@@ -6,7 +6,11 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:05:54 by ybeaucou          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/11/06 11:55:26 by npigeon          ###   ########.fr       */
+=======
+/*   Updated: 2024/11/06 12:35:14 by ybeaucou         ###   ########.fr       */
+>>>>>>> 042954a (add projectil)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +98,7 @@ static void update_enemies_client(t_game *game, t_game_message msg)
 			incoming_enemy = incoming_enemy->next;
 		}
 
-		if (!found)
+		if (!found && current_enemy->type == SPRITE_ENEMY)
 		{
 			if (previous_enemy)
 				previous_enemy->next = current_enemy->next;
@@ -127,6 +131,26 @@ static void	add_msg_chat(t_game *game, t_game_message msg)
 	game->chatbox->messages = new_msg;
 }
 
+static void	update_player_health(t_game *game, t_game_message msg)
+{
+	t_sprite *current = game->sprites;
+
+	if (msg.player_id == game->client->player_id)
+	{
+		game->player->health = msg.health;
+		return ;
+	}
+	while (current)
+	{
+		if (current->type == SPRITE_PLAYER && current->player_id == msg.player_id)
+		{
+			current->health = msg.health;
+			break ;
+		}
+		current = current->next;
+	}
+}
+
 static int	gestion_message(t_game *game, t_game_message msg)
 {
 	if (msg.type == MSG_FULL)
@@ -148,6 +172,8 @@ static int	gestion_message(t_game *game, t_game_message msg)
 		add_msg_chat(game, msg);
 	else if (msg.type == MSG_BROADCAST_ENEMIES)
 		update_enemies_client(game, msg);
+	else if (msg.type == MSG_PLAYER_HIT)
+		update_player_health(game, msg);
 	return (1);
 }
 

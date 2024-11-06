@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 14:48:35 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:33:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:29:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,5 +114,15 @@ void	notify_players_of_chat(t_server *server, t_game_message msg)
 	i = -1;
 	while (++i < MAX_PLAYERS)
 		if (server->client_sockets[i] > 0 && i != msg.player_id)
+			send(server->client_sockets[i], &msg, sizeof(t_game_message), 0);
+}
+
+void	notify_players_of_hit(t_server *server, t_game_message msg)
+{
+	int	i;
+
+	i = -1;
+	while (++i < MAX_PLAYERS)
+		if (server->client_sockets[i] > 0)
 			send(server->client_sockets[i], &msg, sizeof(t_game_message), 0);
 }
