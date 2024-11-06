@@ -3,18 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   get_key_name.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:40:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/30 01:36:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:13:28 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-char	*letter_to_name(int keycode)
+#include "../includes/cub3d.h"
+
+char	*letter_to_name(t_game *game, int keycode)
 {
 	char	*name;
 
-	name = malloc(2);
+	name = gc_malloc(game->mem, 2);
 	name[1] = '\0';
 	name[0] = ft_toupper((char)keycode);
 	return (name);
@@ -74,14 +76,14 @@ char	*get_key_name3(int keycode)
 	return (get_key_name4(keycode));
 }
 
-char	*get_key_name2(int keycode)
+char	*get_key_name2(t_game *game, int keycode)
 {
 	if (keycode == 65481)
 		return ("F12");
 	if (keycode == 65289)
 		return ("TAB");
 	if (keycode >= 97 && keycode <= 122)
-		return (letter_to_name(keycode));
+		return (letter_to_name(game, keycode));
 	if (keycode == 65509)
 		return ("CAPS LOCK");
 	if (keycode == 65505)
@@ -103,7 +105,7 @@ char	*get_key_name2(int keycode)
 	return (get_key_name3(keycode));
 }
 
-char	*get_key_name(int keycode)
+char	*get_key_name(t_game *game, int keycode)
 {
 	if (keycode == 65307)
 		return ("ESC");
@@ -129,5 +131,5 @@ char	*get_key_name(int keycode)
 		return ("F10");
 	if (keycode == 65480)
 		return ("F11");
-	return (get_key_name2(keycode));
+	return (get_key_name2(game, keycode));
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   option.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 23:55:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 10:42:04 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:14:57 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,17 +281,17 @@ typedef struct	s_key_binding
 
 t_key_binding	*get_binding(t_game *game)
 {
-	t_key_binding *binding = malloc(sizeof(t_key_binding) * 8);
+	t_key_binding *binding = gc_malloc(game->mem, sizeof(t_key_binding) * 8);
 	t_keycode *key = game->player->key;
 
-	binding[0] = (t_key_binding){"Move Forward", get_key_name(key->up), get_key_name(key->up2)};
-	binding[1] = (t_key_binding){"Move Backward", get_key_name(key->down), get_key_name(key->down2)};
-	binding[2] = (t_key_binding){"Move Left", get_key_name(key->left), get_key_name(key->left2)};
-	binding[3] = (t_key_binding){"Move Right", get_key_name(key->right), get_key_name(key->right2)};
-	binding[4] = (t_key_binding){"Use", get_key_name(key->use), get_key_name(key->use2)};
-	binding[5] = (t_key_binding){"Quit", get_key_name(key->escape), get_key_name(key->escape2)};
-	binding[6] = (t_key_binding){"Pause", get_key_name(key->pause), get_key_name(key->pause2)};
-	binding[7] = (t_key_binding){"Chat", get_key_name(key->chat), get_key_name(key->chat2)};
+	binding[0] = (t_key_binding){"Move Forward", get_key_name(game, key->up), get_key_name(game, key->up2)};
+	binding[1] = (t_key_binding){"Move Backward", get_key_name(game, key->down), get_key_name(game, key->down2)};
+	binding[2] = (t_key_binding){"Move Left", get_key_name(game, key->left), get_key_name(game, key->left2)};
+	binding[3] = (t_key_binding){"Move Right", get_key_name(game, key->right), get_key_name(game, key->right2)};
+	binding[4] = (t_key_binding){"Use", get_key_name(game, key->use), get_key_name(game, key->use2)};
+	binding[5] = (t_key_binding){"Quit", get_key_name(game, key->escape), get_key_name(game, key->escape2)};
+	binding[6] = (t_key_binding){"Pause", get_key_name(game, key->pause), get_key_name(game, key->pause2)};
+	binding[7] = (t_key_binding){"Chat", get_key_name(game, key->chat), get_key_name(game, key->chat2)};
 	return (binding);
 }
 

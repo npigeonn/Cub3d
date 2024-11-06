@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 13:36:16 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:09:30 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	loop_server(t_server *server)
 
 	server->epoll_fd = 0;
 	server->epoll_fd = epoll_create1(0);
-	events = malloc(sizeof(struct epoll_event) * MAX_PLAYERS);
+	events = gc_malloc(server->mem, sizeof(struct epoll_event) * MAX_PLAYERS);
 	if (server->epoll_fd == -1)
 		exit(EXIT_FAILURE);
 	event.events = EPOLLIN;
@@ -108,7 +108,7 @@ void	copy_sprite(t_game *game, t_server *server)
 	
 	while(current)
 	{
-		t_sprite	*new_sprite = malloc(sizeof(t_sprite));
+		t_sprite	*new_sprite = gc_malloc(game->mem, sizeof(t_sprite));
 		if (new_sprite)
 		{
 			ft_memcpy(new_sprite, current, sizeof(t_sprite));
@@ -126,11 +126,11 @@ void	create_server(t_game *game)
 	t_server	*server;
 
 	is_good = 0;
-	server = malloc(sizeof(t_server));
+	server = gc_malloc(game->mem, sizeof(t_server));
 	server->nb_player = 0;
 	server->game_queue = NULL;
 	server->server_ready = false;
-	server->game_lock = malloc(sizeof(pthread_mutex_t));
+	server->game_lock = gc_malloc(game->mem, sizeof(pthread_mutex_t));
 	server->map = game->map;
 	server->x = game->player->x;
 	server->y = game->player->y;

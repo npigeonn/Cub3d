@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 08:53:41 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:03:19 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,7 @@ static int	op_in(char **av, t_game *game)
 	close(fd);
 	fd = open(av[1], O_RDONLY | O_DIRECTORY);
 	if (fd > -1)
-		gc_exit(game->mem, err("Is a folder\n"));
-	close(fd);
+		return (close(fd), gc_exit( game->mem, err("Is a folder\n")), 1);
 	return (0);
 }
 

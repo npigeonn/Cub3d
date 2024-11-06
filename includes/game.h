@@ -337,7 +337,7 @@ void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y);
 void	draw_options_menu(t_game *game);
 void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y);
 void	draw_multiplayer_menu(t_game *game);
-char	*get_key_name(int keycode);
+char	*get_key_name(t_game *game, int keycode);
 
 //draw
 void	pixel_put(t_game *game, int x, int y, int color);

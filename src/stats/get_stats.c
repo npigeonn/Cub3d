@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_stats.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 02:56:17 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/26 23:39:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:10:00 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ bool is_a_player(char *line)
 	return (true);
 }
 
-t_player_stats*	load_player_stats(const char *filename, int *num_players)
+t_player_stats*	load_player_stats(t_game *game, const char *filename, int *num_players)
 {
 	FILE			*file;
 	t_player_stats	*stats;
@@ -59,7 +59,7 @@ t_player_stats*	load_player_stats(const char *filename, int *num_players)
 			(*num_players)++;
 	}
 	rewind(file);
-	stats = malloc(sizeof(t_player_stats) * (*num_players));
+	stats = gc_malloc(game->mem, sizeof(t_player_stats) * (*num_players));
 	for (int i = 0; i < *num_players; i++)
 	{
 		fgets(line, sizeof(line), file);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   projectile.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:16:55 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 09:45:19 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:18:01 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void	update_projectiles_server(t_server *server)
 
 			t_projectile *temp = current;
 			current = current->next;
-			free(temp);
+			gc_free(server->mem, temp);
 		}
 		else
 		{

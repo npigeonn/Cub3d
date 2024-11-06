@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:19:15 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 12:13:45 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 11:56:16 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	add_player(t_game *game, t_game_message msg)
 	t_sprite	*new_player;
 	t_sprite	*current;
 
-	new_player = malloc(sizeof(t_sprite));
+	new_player = gc_malloc(game->mem, sizeof(t_sprite));
 	new_player->player_id = msg.player_id;
 	new_player->x = msg.x;
 	new_player->y = msg.y;
@@ -61,7 +61,7 @@ static t_message	*get_message_deconnection(t_game *game, char *pseudo)
 {
 	t_message	*new_msg;
 
-	new_msg = malloc(sizeof(t_message));
+	new_msg = gc_malloc(game->mem, sizeof(t_message));
 	ft_strlcpy(new_msg->message, pseudo, MAX_PSEUDO_LENGTH);
 	ft_strlcat(new_msg->message + ft_strlen(pseudo), " left the game.",
 		MAX_MESSAGE_LENGTH);
@@ -90,7 +90,7 @@ void	remove_player(t_game *game, int player_id)
 				prev->next = current->next;
 			else
 				game->sprites = current->next;
-			free(current);
+			gc_free(game->mem, current);
 			break ;
 		}
 		prev = current;

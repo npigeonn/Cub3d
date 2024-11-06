@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   crosshair.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:16:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/05 11:20:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:01:23 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	create_projectile(t_game *game)
 
 	float angle = game->player->dir_x;
 	
-	new_projectile = malloc(sizeof(t_projectile));
+	new_projectile = gc_malloc(game->mem, sizeof(t_projectile));
 	p = game->player;
 	new_projectile->x = p->x;
 	new_projectile->y = p->y;
@@ -91,7 +91,7 @@ void	gun_draw(t_game *game)
 	t_image		*im;
 	t_draw_info	info;
 	
-	im = malloc(sizeof(t_image));
+	im = gc_malloc(game->mem, sizeof(t_image));
 	if (game->player->anim_shoot < 0)
 		game->player->anim_shoot = 0;
 	if (game->player->anim_shoot > 0)

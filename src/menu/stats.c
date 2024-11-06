@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stats.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 18:50:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/27 17:26:12 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:39:29 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,11 +124,11 @@ void	draw_player_stats_row(t_game *game, t_player_stats player, int x, int y, in
 	t_draw_info name_info = init_draw_info(20, player.name, x + padding + 5, text_y);
 	name_info.color = 0xFFFFFF;
 	draw_text_left(game, name_info);
-	draw_stat_info(game, ft_itoa(player.games_played), x + stats_width - padding - 423, text_y);
-	draw_stat_info(game, ft_itoa(player.victories), x + stats_width - padding - 312, text_y);
-	draw_stat_info(game, ft_itoa(player.defeats), x + stats_width - padding - 207, text_y);
-	draw_stat_info(game, ft_itoa(player.kills), x + stats_width - padding - 138, text_y);
-	draw_stat_info(game, ft_itoa(player.play_time_hours), x + stats_width - padding - 20, text_y);
+	draw_stat_info(game, gc_itoa(game->mem, player.games_played), x + stats_width - padding - 423, text_y);
+	draw_stat_info(game, gc_itoa(game->mem, player.victories), x + stats_width - padding - 312, text_y);
+	draw_stat_info(game, gc_itoa(game->mem, player.defeats), x + stats_width - padding - 207, text_y);
+	draw_stat_info(game, gc_itoa(game->mem, player.kills), x + stats_width - padding - 138, text_y);
+	draw_stat_info(game, gc_itoa(game->mem, player.play_time_hours), x + stats_width - padding - 20, text_y);
 }
 
 void	draw_back_button(t_game *game, int x, int y, int stats_height)
@@ -170,7 +170,7 @@ void	draw_stats_menu(t_game *game)
 	int				num_players;
 	int				separator_y = y + 3 * padding + 20;
 
-	player_stats = load_player_stats("stats.txt", &num_players);
+	player_stats = load_player_stats(game, "stats.txt", &num_players);
 	if (!player_stats)
 		return;
 	game->menu->nb_scroll = num_players;
@@ -203,7 +203,7 @@ void	draw_stats_menu(t_game *game)
 		draw_player_stats_row(game, player_stats[i + game->menu->scroll], x, y - 6, padding, row_height, i, stats_width);
 	draw_back_button(game, x, y, stats_height);
 	draw_stats_scroll_bar(game, x - 25, y + 95, stats_height - 110, num_players);
-	free(player_stats);
+	gc_free(game->mem, player_stats);
 	const int	gear_size = game->screen_width * 0.035;
 	const int	gear_x = game->screen_width - gear_size - 17;
 	const int	gear_y = 15;

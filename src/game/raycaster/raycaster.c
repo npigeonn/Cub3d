@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:20:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:57:38 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,8 @@
 int	handle_close(t_game *game)
 {
 	mlx_destroy_image(game->mlx, game->images->base->img);
-	mlx_destroy_image(game->mlx, game->images->alphanum_sprite->img);
 	mlx_destroy_window(game->mlx, game->win);
-	mlx_destroy_display(game->mlx);
-	free_map(game);
-	gc_free(game->mem, game->images->base);
-	gc_free(game->mem, game->images->alphanum_sprite);
-	free(game->mlx);
-	exit(0);
+	gc_exit(game->mem, 0);
 }
 
 void	show_menu_message(t_game *game)
@@ -41,7 +35,7 @@ void	show_menu_message(t_game *game)
 	{
 		draw_rectangle(game, info);
 		ft_strcpy(info.str, "Press ");
-		ft_strlcat(info.str, get_key_name(game->player->key->use), 256);
+		ft_strlcat(info.str, get_key_name(game, game->player->key->use), 256);
 		ft_strlcat(info.str, " to open", 256);
 		info.height = 30;
 		info.y = game->screen_height * 0.5 - 129;
@@ -53,7 +47,7 @@ void	show_menu_message(t_game *game)
 	{
 		draw_rectangle(game, info);
 		ft_strcpy(info.str, "Press ");
-		ft_strlcat(info.str, get_key_name(game->player->key->use), 256);
+		ft_strlcat(info.str, get_key_name(game, game->player->key->use), 256);
 		ft_strlcat(info.str, " to close", 256);
 		info.height = 30;
 		info.y = game->screen_height * 0.5 - 129;
@@ -67,7 +61,7 @@ void	show_menu_message(t_game *game)
 		info.width += 160;
 		draw_rectangle(game, info);
 		ft_strcpy(info.str, "Press ");
-		ft_strlcat(info.str, get_key_name(game->player->key->use), 256);
+		ft_strlcat(info.str, get_key_name(game, game->player->key->use), 256);
 		ft_strlcat(info.str, " to teleport", 256);
 		info.height = 30;
 		info.y = game->screen_height * 0.5 - 129;
@@ -109,7 +103,7 @@ void	calculate_fps(t_game *game)
 	t_draw_info	info = init_draw_info(30, "FPS: ", 5, 20);
 	info.color = 0xFFFFF;
 	draw_text_left(game, info);
-	ft_strcpy(info.str, ft_itoa(fps));
+	ft_strcpy(info.str, gc_itoa(game->mem, fps));
 	info.x = 60;
 	draw_text_left(game, info);
 }

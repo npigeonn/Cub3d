@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 09:42:54 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:16:29 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 {
 	t_sprite	*new;
 
-	new = malloc(sizeof(t_sprite));
+	new = gc_malloc(game->mem, sizeof(t_sprite));
 	new->x = x + 0.5;
 	new->y = y + 0.5;
 	new->floor = floor;
@@ -182,7 +182,7 @@ void	update_projectiles(t_game *game)
 
 			t_projectile *temp = current;
 			current = current->next;
-			free(temp);
+			gc_free(game->mem, temp);
 		}
 		else
 		{
@@ -207,7 +207,7 @@ void	shoot_at_player(t_sprite *enemy, t_point player_pos, t_game *game)
 		enemy->selected_anim = 0;
 	if (angle_diff < 5.0f && enemy->shoot_delay <= 0)
 	{
-		t_projectile *new_projectile = malloc(sizeof(t_projectile));
+		t_projectile *new_projectile = gc_malloc(game->mem, sizeof(t_projectile));
 		enemy->selected_anim = 1;
 		enemy->animation = 5;
 		

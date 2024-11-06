@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 17:23:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:15:19 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/06 12:37:32 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,6 @@ void			gc_error(t_memory_table *memory_table, char *msg);
 void			gc_add_memory_block(t_memory_table *memory_table, void *ptr,
 					void (*free_func)(t_block_info *), t_block_info *info);
 char			*gc_get_next_line(t_memory_table *mem, int fd);
+char			*gc_itoa(t_memory_table *mem, long int n);
 
 #endif

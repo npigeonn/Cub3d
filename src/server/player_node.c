@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player_node.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:03:47 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 12:04:19 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:07:51 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	add_player_node(t_server *server, int id, char *pseudo)
 	t_sprite	*new_node;
 	t_sprite	*current;
 
-	new_node = malloc(sizeof(t_sprite));
+	new_node = gc_malloc(server->mem, sizeof(t_sprite));
 	new_node->player_id = id;
 	ft_strcpy(new_node->pseudo, pseudo);
 	new_node->x = -1;

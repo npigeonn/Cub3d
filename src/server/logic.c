@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   logic.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 13:55:26 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:07:28 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void	shoot_at_player_server(t_sprite *enemy, t_point player_pos, t_server *serve
 		enemy->selected_anim = 0;
 	if (angle_diff < 5.0f && enemy->shoot_delay <= 0)
 	{
-		t_projectile *new_projectile = malloc(sizeof(t_projectile));
+		t_projectile *new_projectile = gc_malloc(server->mem, sizeof(t_projectile));
 		enemy->selected_anim = 1;
 		enemy->animation = 5;
 		
@@ -253,7 +253,7 @@ void	*logic_game(void *arg)
 			current = server->game_queue;
 			server->game_queue = server->game_queue->next;
 			use_type(server, current->message);
-			free(current);
+			gc_free(server->mem, current);
 		}
 		pthread_mutex_unlock(server->game_lock);
 		struct timeval current_time;

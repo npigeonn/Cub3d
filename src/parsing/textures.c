@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   textures.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:35:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 08:35:16 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 13:01:37 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,7 @@ int	set_up_txtr(t_game *game, char *line)
 	close(fd);
 	fd = open(split[0], O_RDONLY | O_DIRECTORY);
 	if (fd > -1)
-		return (gc_exit(game->mem, err("Is a folder\n")), 0);
-	close(fd);
+		return (close(fd), gc_exit(game->mem, err("Is a folder\n")), 0);
 	load_txtre_globale(game, line, split[0]);
 	return (free_split(game->mem, split), 1);
 }

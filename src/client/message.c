@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   message.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:05:54 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 13:54:13 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 11:55:26 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	add_connection_msg(t_game *game, char *pseudo)
 
 	if (pseudo[0] == '\0')
 		return ;
-	new_msg = malloc(sizeof(t_message));
+	new_msg = gc_malloc(game->mem, sizeof(t_message));
 	ft_strlcpy(new_msg->message, pseudo, MAX_PSEUDO_LENGTH);
 	ft_strlcat(new_msg->message + ft_strlen(pseudo), " join the game.",
 		MAX_MESSAGE_LENGTH);
@@ -55,7 +55,7 @@ static void update_enemies_client(t_game *game, t_game_message msg)
 		}
 		if (!exists && incoming_enemy->type == SPRITE_ENEMY)
 		{
-			t_sprite *new_enemy = malloc(sizeof(t_sprite));
+			t_sprite *new_enemy = gc_malloc(game->mem, sizeof(t_sprite));
 			if (new_enemy)
 			{
 				new_enemy->type = incoming_enemy->type;
@@ -100,7 +100,7 @@ static void update_enemies_client(t_game *game, t_game_message msg)
 				previous_enemy->next = current_enemy->next;
 			else
 				game->sprites = current_enemy->next;
-			free(current_enemy);
+			gc_free(game->mem, current_enemy);
 			current_enemy = (previous_enemy) ? previous_enemy->next : game->sprites;
 		}
 		else
@@ -118,7 +118,7 @@ static void	add_msg_chat(t_game *game, t_game_message msg)
 
 	if (msg.pseudo[0] == '\0')
 		return ;
-	new_msg = malloc(sizeof(t_message));
+	new_msg = gc_malloc(game->mem, sizeof(t_message));
 	ft_strlcpy(new_msg->message, msg.message, MAX_MESSAGE_LENGTH);
 	ft_strlcpy(new_msg->pseudo, msg.pseudo, 20);
 	new_msg->next = game->chatbox->messages;

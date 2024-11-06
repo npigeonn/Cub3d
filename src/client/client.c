@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 08:36:07 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:19:56 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	manage_position(t_game *game, t_game_message msg)
 	game->player->floor = msg.floor;
 }
 
-void replace_path(char *filename)
+void replace_path(t_game *game, char *filename)
 {
 	const char *old_path = "./assets/maps/";
 	const char *new_path = "./assets/maps/multi/";
@@ -30,7 +30,7 @@ void replace_path(char *filename)
 	if (pos)
 	{
 		size_t new_length = strlen(filename) - strlen(old_path) + strlen(new_path);
-		char *new_filename = malloc(new_length + 1);
+		char *new_filename = gc_malloc(game->mem, new_length + 1);
 		
 		size_t prefix_length = pos - filename;
 		strncpy(new_filename, filename, prefix_length);
@@ -38,11 +38,11 @@ void replace_path(char *filename)
 		strcat(new_filename, new_path);
 		strcat(new_filename, pos + strlen(old_path));
 		strcpy(filename, new_filename);
-		free(new_filename);
+		gc_free(game->mem, new_filename);
 	}
 }
 
-char	*receive_file_from_server(int server_socket)
+char	*receive_file_from_server(t_game *game, int server_socket)
 {
 	char			filename[256];
 	char			buffer[1024];
@@ -54,7 +54,7 @@ char	*receive_file_from_server(int server_socket)
 
 	recv(server_socket, filename, sizeof(filename), 0);
 	printf("Nom de fichier reçu : %s\n", filename);
-	replace_path(filename);
+	replace_path(game, filename);
 	file = fopen(filename, "wb");
 	if (!file)
 		return (NULL);
@@ -78,7 +78,7 @@ char	*receive_file_from_server(int server_socket)
 	}
 	printf("Fichier %s reçu avec succès\n", filename);
 	fclose(file);
-	return (ft_strdup(filename));
+	return (gc_strdup(game->mem, filename));
 }
 
 int	receive_map_from_server(t_game *game, int client_socket)
@@ -86,13 +86,13 @@ int	receive_map_from_server(t_game *game, int client_socket)
 	char	*file;
 	char	**tmp;
 
-	file = receive_file_from_server(client_socket);
+	file = receive_file_from_server(game, client_socket);
 	printf("file: %s\n", file);
 	if (!file)
 		return (0);
 	tmp = game->av;
-	game->av = malloc(sizeof(char *) * 3);
-	game->av[0] = ft_strdup("cub3d");
+	game->av = gc_malloc(game->mem, sizeof(char *) * 3);
+	game->av[0] = gc_strdup(game->mem, "cub3d");
 	game->av[1] = file;
 	game->av[2] = NULL;
 	parsing(game->av, game);

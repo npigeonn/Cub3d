@@ -12,6 +12,6 @@ typedef struct	s_player_stats
 	float	play_time_hours;
 }	t_player_stats;
 
-t_player_stats*	load_player_stats(const char *filename, int *num_players);
+t_player_stats*	load_player_stats(t_game *game, const char *filename, int *num_players);
 
 #endif

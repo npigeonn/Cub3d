@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/05 15:34:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/20 21:31:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:01:46 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,12 +251,12 @@ void draw_rectangle(t_game *game, t_draw_info info)
 	int size_line = game->images->base->size_line;
 	char *data = game->images->base->data;
 	int offset_base = info.y * size_line + info.x * game->images->base->bpp * 0.125;
-	int *line_buffer = malloc(info.width * sizeof(int));
+	int *line_buffer = gc_malloc(game->mem, info.width * sizeof(int));
 	
 	if (!line_buffer) return;
 	for (int j = 0; j < info.width; j++)
 		line_buffer[j] = info.color;
 	for (int i = 0; i < info.height; i++)
 		ft_memcpy(data + offset_base + i * size_line, line_buffer, info.width * sizeof(int));
-	free(line_buffer); 
+	gc_free(game->mem, line_buffer); 
 }

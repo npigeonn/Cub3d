@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 08:53:58 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:41:57 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,32 +80,32 @@ void	draw_success(t_game *game)
 
 	info = init_draw_info(game->screen_height, "", 0, 0);
 	info.width = game->screen_width;
-	info.color = 13107400;
+	info.color = 3289650;
 	draw_rectangle(game, info);
 	mlx_mouse_show(game->mlx, game->win);
 	info = init_draw_info(70, "MISSION SUCCEED", game->screen_width >> 1, game->screen_height * 0.4);
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text(game, info);
-	// info2 = init_draw_info(0, "", x - 4, y + 2 * (btn_height + spacing) - 4);
-	// info2.width = btn_width + 8;
-	// info2.height = btn_height + 8;
-	// info2.color = MENU_BUTTON_SELECTED_COLOR;
-	// info2.radius = 10;
-	// if (game->menu->button_selected == 1)
-	// 	draw_rounded_rectangle(game, info2);
-	// info = init_draw_info(0, "", x, y + 2 * (btn_height + spacing));
-	// info2 = init_draw_info(btn_height, "", x, y + 2 * (btn_height + spacing));
-	// info2.color = MENU_BUTTON_COLOR;
-	// info2.width = btn_width;
-	// draw_rectangle(game, info2);
-	// info.color = MENU_BUTTON_TEXT_COLOR;
-	// ft_strcpy(info.str, "Main menu");
-	// info.y = y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;
-	// info.height = btn_height * 0.5;
-	// info.x = x + btn_width / 2;
-	// draw_text(game, info);
-	// game->chatbox->visible = false;
-	// game->chatbox->is_writting = false;
+	info2 = init_draw_info(0, "", x - 4, y + 2 * (btn_height + spacing) - 4);
+	info2.width = btn_width + 8;
+	info2.height = btn_height + 8;
+	info2.color = MENU_BUTTON_SELECTED_COLOR;
+	info2.radius = 10;
+	if (game->menu->button_selected == 1)
+		draw_rounded_rectangle(game, info2);
+	info = init_draw_info(0, "", x, y + 2 * (btn_height + spacing));
+	info2 = init_draw_info(btn_height, "", x, y + 2 * (btn_height + spacing));
+	info2.color = MENU_BUTTON_COLOR;
+	info2.width = btn_width;
+	draw_rectangle(game, info2);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	ft_strcpy(info.str, "Main menu");
+	info.y = y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;
+	info.height = btn_height * 0.5;
+	info.x = x + btn_width / 2;
+	draw_text(game, info);
+	game->chatbox->visible = false;
+	game->chatbox->is_writting = false;
 }
 
 static void	victory_screen(t_game *game)

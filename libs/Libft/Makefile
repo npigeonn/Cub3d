@@ -6,7 +6,7 @@
 #    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/06 11:16:39 by ybeaucou          #+#    #+#              #
-#    Updated: 2024/11/05 11:16:05 by npigeon          ###   ########.fr        #
+#    Updated: 2024/11/06 12:38:25 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ WRITE_SRCS = ft_putchar_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
 			 ft_putstr_fd.c
 GC_SRCS = gc_exit.c gc_free.c gc_alloc.c gc_hash.c gc_utils.c \
 			gc_initialise.c gc_add_memory_block.c gc_split.c \
-			gc_strdup.c gc_strjoin.c gc_gnl.c
+			gc_strdup.c gc_strjoin.c gc_gnl.c gc_itoa.c
 OTHER_SRCS = ft_striteri.c ft_strmapi.c ft_rand.c
 
 SRCS =	$(addprefix $(SRC_DIR)/gnl/, $(GNL_SRCS)) \

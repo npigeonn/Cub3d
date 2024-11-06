@@ -238,7 +238,7 @@ void	reset_game(t_game *game)
 	while (current)
 	{
 		next = current->next;
-		free(current);
+		gc_free(game->mem, current);
 		current = next;
 	}
 	init_var(game, 0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mouse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:20:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 11:50:40 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 		update_main_menu_click(game, x, y, keycode);
 	else if (status == SERVER_DISCONNECTED || status == SERVER_FULL)
 		update_server_error_click(game, x, y, keycode);
-	else if (status == GAME_OVER && game->fade_progress >= 1)
+	else if ((status == GAME_OVER || status == GAME_SUCCESS) && game->fade_progress >= 1)
 		update_game_over_click(game, x, y, keycode);
 	else if (status == CHATING)
 		handle_mouse_chat(game, x, y, keycode);
@@ -95,7 +95,7 @@ int	handle_mouse_move(int x, int y, t_game *game)
 	else if (game->menu->status == SERVER_DISCONNECTED
 		|| game->menu->status == SERVER_FULL)
 		update_server_error_button(game, x, y);
-	else if (game->menu->status == GAME_OVER && game->fade_progress >= 1)
+	else if ((game->menu->status == GAME_OVER || game->menu->status == GAME_SUCCESS) && game->fade_progress >= 1)
 		update_game_over_button(game, x, y);
 	else if (game->menu->status == GET_PSEUDO)
 		update_get_pseudo_button(game, x, y);

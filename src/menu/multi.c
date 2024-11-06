@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   multi.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/27 15:36:02 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/06 12:04:19 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,17 +176,17 @@ void	*discover_servers_thread(void *arg)
 			buffer[bytes_received] = '\0';
 			if (strstr(buffer, "ServerInfo") != NULL)
 			{
-				t_server_info *new_server = malloc(sizeof(t_server_info));
+				t_server_info *new_server = gc_malloc(game->mem, sizeof(t_server_info));
 				if (new_server == NULL)
 				{
 					perror("malloc failed");
 					break;
 				}
-				new_server->name = malloc(64);
+				new_server->name = gc_malloc(game->mem, 64);
 				if (new_server->name == NULL)
 				{
 					perror("malloc failed");
-					free(new_server);
+					gc_free(game->mem, new_server);
 					break;
 				}
 				sscanf(buffer, "ServerInfo:%[^;];Players:%d/%d;Ping:%dms", new_server->name, &new_server->players, &new_server->max_players, &new_server->ping);
@@ -209,9 +209,9 @@ void	*discover_servers_thread(void *arg)
 							current->last_seen = now;
 							current->players = new_server->players;
 							current->ping = new_server->ping;
-							free(new_server->name);
-							free(new_server->ip);
-							free(new_server);
+							gc_free(game->mem, new_server->name);
+							gc_free(game->mem, new_server->ip);
+							gc_free(game->mem, new_server);
 							server_exists = 1;
 							break;
 						}
@@ -235,9 +235,9 @@ void	*discover_servers_thread(void *arg)
 					prev->next = current->next;
 				t_server_info *to_delete = current;
 				current = current->next;
-				free(to_delete->name);
-				free(to_delete->ip);
-				free(to_delete);
+				gc_free(game->mem, to_delete->name);
+				gc_free(game->mem, to_delete->ip);
+				gc_free(game->mem, to_delete);
 			}
 			else
 			{
