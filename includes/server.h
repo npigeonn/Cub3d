@@ -35,19 +35,21 @@ typedef enum s_message_type
 typedef struct s_game_message
 {
 	t_message_type	type;
-	int			player_id;
-	char		pseudo[MAX_PSEUDO_LENGTH];
-	float		x;
-	float		y;
-	float		dir_x;
-	float		dir_y;
-	float		height;
-	float		health;
-	int			floor;
-	int			open;
-	char		message[MAX_MESSAGE_LENGTH];
-	uint32_t	file_size;
-	t_sprite	*sprites;
+	int				player_id;
+	char			pseudo[MAX_PSEUDO_LENGTH];
+	float			x;
+	float			y;
+	float			dir_x;
+	float			dir_y;
+	float			height;
+	float			health;
+	int				floor;
+	int				open;
+	char			message[MAX_MESSAGE_LENGTH];
+	int				file_size;
+	float			animation;
+	int				selected_anim;
+	int				state;
 }	t_game_message;
 
 typedef struct s_move_message

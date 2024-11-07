@@ -3,19 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:16:29 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 13:13:37 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
+static int	get_enemies_id(t_game *game)
+{
+	int			id;
+	t_sprite	*current;
+
+	id = 0;
+	current = game->sprites;
+	while (current)
+	{
+		if (current->type == SPRITE_ENEMY)
+			id++;
+		current = current->next;
+	}
+	return (id);
+}
+
 void	add_enemies(t_game *game, int x, int y, int floor)
 {
 	t_sprite	*new;
-
+	const int	id = get_enemies_id(game);
+	
 	new = gc_malloc(game->mem, sizeof(t_sprite));
 	new->x = x + 0.5;
 	new->y = y + 0.5;
@@ -27,6 +44,7 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 	new->state = PATROL;
 	new->direction = 200;
 	new->frame_count = 0;
+	new->player_id = id;
 	new->fov = 60;
 	new->shoot_delay = 0;
 	new->type = SPRITE_ENEMY;

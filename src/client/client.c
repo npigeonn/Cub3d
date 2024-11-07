@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 09:24:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:48:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	*receive_file_from_server(t_game *game, int server_socket)
 	if (!file)
 		return (NULL);
 	recv(server_socket, &msg, sizeof(t_game_message), 0);
-	file_size = ntohl(msg.file_size);
+	file_size = msg.file_size;
 	printf("Taille du fichier reçue : %u octets\n", file_size);
 	total_received = 0;
 	while (total_received < file_size)
@@ -145,6 +145,34 @@ static int	manage_error(t_game *game, struct sockaddr_in serv_addr)
 	return (1);
 }
 
+void	reset_enemies(t_game *game)
+{
+	t_sprite	*current;
+	t_sprite	*previous;
+	t_sprite	*next;
+
+	previous = NULL;
+	current = game->sprites;
+	while (current)
+	{
+		if (current->type == SPRITE_ENEMY)
+		{
+			next = current->next;
+			gc_free(game->mem, current);
+			if (previous)
+				previous->next = next;
+			else
+				game->sprites = next;
+			current = next;
+		}
+		else
+		{
+			previous = current;
+			current = current->next;
+		}
+	}
+}
+
 int	join_server(t_game *game)
 {
 	struct sockaddr_in	serv_addr;
@@ -152,6 +180,7 @@ int	join_server(t_game *game)
 	pthread_t			thread_id;
 
 	ft_strcpy(pseudo, game->client->pseudo);
+	reset_enemies(game);
 	game->client->sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (game->client->sock < 0)
 	{

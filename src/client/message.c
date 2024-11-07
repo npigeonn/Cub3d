@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:05:54 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 12:57:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:57:50 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,65 +29,31 @@ void	add_connection_msg(t_game *game, char *pseudo)
 	game->chatbox->messages = new_msg;
 }
 
-static void	update_enemy_data(t_sprite *dest, t_sprite *src)
-{
-	dest->health = src->health;
-	dest->dir_x = src->dir_x;
-	dest->dir_y = src->dir_y;
-	dest->floor = src->floor;
-}
-
-static t_sprite	*find_enemy(t_sprite *list, t_sprite *target)
-{
-	while (list)
-	{
-		if (list->type == SPRITE_ENEMY && list->x == target->x && list->y == target->y && list->floor == target->floor)
-			return (list);
-		list = list->next;
-	}
-	return (NULL);
-}
-
-typedef struct	s_serialized_sprite
-{
-	int							type;
-	float						x;
-	float						y;
-	float						direction;
-	float						health;
-	int							animation;
-	int							floor;
-	int							selected_anim;
-	struct s_serialized_sprite	*next;
-}	t_serialized_sprite;
-
 void	update_enemies_client(t_game *game, t_game_message msg)
 {
-	t_serialized_sprite *incoming_enemy = msg.sprites;
 
 	pthread_mutex_lock(&game->game_lock);
-	while (incoming_enemy) {
-		if (incoming_enemy->type == SPRITE_ENEMY) {
-			t_sprite *existing_enemy = find_enemy(game->sprites, incoming_enemy);
-			if (existing_enemy)
-				update_enemy_data(existing_enemy, incoming_enemy);
-			else
-			{
-				t_sprite *new_enemy = gc_malloc(game->mem, sizeof(t_sprite));
-				if (new_enemy)
-				{
-					new_enemy->type = incoming_enemy->type;
-					new_enemy->x = incoming_enemy->x;
-					new_enemy->y = incoming_enemy->y;
-					new_enemy->direction = incoming_enemy->direction;
-					new_enemy->health = incoming_enemy->health;
-					new_enemy->next = game->sprites;
-					game->sprites = new_enemy;
-				}
-			}
+	t_sprite	*current = game->sprites;
+
+	while (current)
+	{
+		if (current->type == SPRITE_ENEMY && current->player_id == msg.player_id)
+		{
+			current->x = msg.x;
+			current->y = msg.y;
+			current->health = msg.health;
+			current->dir_x = msg.dir_x;
+			current->dir_y = msg.dir_y;
+			current->floor = msg.floor;
+			current->animation = msg.animation;
+			current->selected_anim = msg.selected_anim;
+			current->still_exist = msg.state;
+			pthread_mutex_unlock(&game->game_lock);
+			return ;
 		}
-		incoming_enemy = incoming_enemy->next;
+		current = current->next;
 	}
+	add_enemies(game, msg.x, msg.y, msg.floor);
 	pthread_mutex_unlock(&game->game_lock);
 }
 
@@ -113,6 +79,7 @@ static void	update_player_health(t_game *game, t_game_message msg)
 	if (msg.player_id == game->client->player_id)
 	{
 		game->player->health = msg.health;
+		game->time_regen = 0;
 		return ;
 	}
 	while (current)

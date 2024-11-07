@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 13:51:45 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 11:22:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:57:31 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,8 +175,7 @@ void	draw_sprites(t_game *game)
 	{
 		if (game->menu->status == MULTI_PLAYER || game->menu->status == CHATING)
 			pthread_mutex_lock(&game->game_lock);
-		else
-		if (current && current->type && current->type == SPRITE_TELEPORTER)
+		if (current->type == SPRITE_TELEPORTER)
 		{
 			if (current->floor == game->player->floor)
 				draw_sprite(game, game->textures->tp, current->x, current->y, 150, 0.4, 1, 0);
@@ -185,7 +184,7 @@ void	draw_sprites(t_game *game)
 		}
 		if (current->type == SPRITE_EXIT && current->floor == game->player->floor)
 			draw_sprite(game, game->textures->exit, current->x + 0.5, current->y + 0.5, 150, 1.5, 0.005, 0);
-		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor && current->health > 0)
+		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor)
 		{
 			if (current->health <= 0)
 				draw_sprite(game, game->textures->enemy_death, current->x, current->y, 0, 1, 0, current->selected_anim);

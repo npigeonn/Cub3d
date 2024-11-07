@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 12:56:32 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 13:58:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	send_file_to_client(int client_socket, const char *filename)
 	ft_memset(&msg, 0, sizeof(t_game_message));
 	msg.type = MSG_FILE_SIZE;
 	fseek(file, 0, SEEK_END);
-	msg.file_size = htonl(ftell(file));
+	msg.file_size = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	printf("Sending file %s of size %u\n", filename, msg.file_size);
 	send(client_socket, &msg, sizeof(t_game_message), 0);
@@ -99,70 +99,41 @@ long	get_current_time()
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-typedef struct	s_serialized_sprite
+void	send_enemies(t_server *server, t_game_message msg)
 {
-	int							type;
-	float						x;
-	float						y;
-	float						direction;
-	float						health;
-	int							animation;
-	int							floor;
-	int							selected_anim;
-	struct s_serialized_sprite	*next;
-}	t_serialized_sprite;
+	int	i;
+
+	i = -1;
+	while (++i < MAX_PLAYERS)
+		if (server->client_sockets[i] > 0)
+			send(server->client_sockets[i], &msg, sizeof(t_game_message), 0);
+}
 
 void	broadcast_enemies(t_server *server)
 {
-	t_game_message msg;
-	t_sprite *current;
-	t_serialized_sprite *serialized_sprites = NULL;
-	t_serialized_sprite *serialized_last = NULL;
-	
-	ft_memset(&msg, 0, sizeof(t_game_message));
+	t_game_message	msg;
+	t_sprite		*current;
+
+	ft_bzero(&msg, sizeof(t_game_message));
 	msg.type = MSG_BROADCAST_ENEMIES;
-	msg.player_id = -1;
 	current = server->sprites;
-	while (current)
+	while(current)
 	{
 		if (current->type == SPRITE_ENEMY)
 		{
-			t_serialized_sprite *new_sprite = gc_malloc(server->mem, sizeof(t_serialized_sprite));
-			new_sprite->type = current->type;
-			new_sprite->x = current->x;
-			new_sprite->y = current->y;
-			new_sprite->direction = current->direction;
-			new_sprite->health = current->health;
-			new_sprite->animation = current->animation;
-			new_sprite->floor = current->floor;
-			new_sprite->selected_anim = current->selected_anim;
-			if (serialized_sprites == NULL)
-			{
-				serialized_sprites = new_sprite;
-				serialized_last = new_sprite;
-			}
-			else
-			{
-				serialized_last->next = new_sprite;
-				serialized_last = new_sprite;
-			}
+			msg.x = current->x;
+			msg.y = current->y;
+			msg.floor = current->floor;
+			msg.dir_x = current->dir_x;
+			msg.dir_y = current->dir_y;
+			msg.health = current->health;
+			msg.player_id = current->player_id;
+			msg.animation = current->animation;
+			msg.selected_anim = current->selected_anim;
+			msg.state = current->state;
+			send_enemies(server, msg);
 		}
 		current = current->next;
-	}
-	
-	msg.sprites = serialized_sprites;
-	current = server->sprites;
-	while (current)
-	{
-		if (current->type == SPRITE_PLAYER && current->player_id >= 0)
-			send(server->client_sockets[current->player_id], &msg, sizeof(t_game_message), 0);
-		current = current->next;
-	}
-	while (serialized_sprites)
-	{
-		t_serialized_sprite *temp = serialized_sprites;
-		serialized_sprites = serialized_sprites->next;
-		gc_free(server->mem, temp);
 	}
 }
 
@@ -209,21 +180,17 @@ void	shoot_at_player_server(t_sprite *enemy, t_point player_pos, t_server *serve
 		t_projectile *new_projectile = gc_malloc(server->mem, sizeof(t_projectile));
 		enemy->selected_anim = 1;
 		enemy->animation = 5;
-		
-		if (new_projectile)
-		{
-			new_projectile->x = enemy->x;
-			new_projectile->y = enemy->y;
-			new_projectile->direction = angle_to_player;
-			new_projectile->speed = 2000;
-			new_projectile->next = NULL;
-			new_projectile->owner = NULL;
-			new_projectile->enemy = enemy;
-			new_projectile->next = server->projectiles; 
-			new_projectile->floor = enemy->floor;
-			new_projectile->damage = 0.09f;
-			server->projectiles = new_projectile;
-		}
+		new_projectile->x = enemy->x;
+		new_projectile->y = enemy->y;
+		new_projectile->direction = angle_to_player;
+		new_projectile->speed = 2000;
+		new_projectile->next = NULL;
+		new_projectile->owner = NULL;
+		new_projectile->enemy = enemy;
+		new_projectile->next = server->projectiles; 
+		new_projectile->floor = enemy->floor;
+		new_projectile->damage = 0.09f;
+		server->projectiles = new_projectile;
 		enemy->shoot_delay = 1;
 	}
 	else if (enemy->shoot_delay > 0)
@@ -337,7 +304,7 @@ void	*logic_game(void *arg)
 
 		float seconds = (current_time.tv_sec - server->last_time.tv_sec) +
 						(current_time.tv_usec - server->last_time.tv_usec) / 1000000.0f;
-		if (seconds > 0.1)
+		if (seconds > 0.04)
 		{
 			pthread_mutex_lock(server->game_lock);
 			server->delta_time = seconds;
