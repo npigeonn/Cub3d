@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:45:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/07 18:21:12 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 19:36:22 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	is_a_teleporter(char c)
 {
 	if (c != 'e' && 'a' <= c && c <= 'z')
 		return (1);
-	return (gc_exit(game->mem, err("teleporter's issue\n")), 0);
+	return (0);
 }
 
 int	is_a_valid_teleporter(char c, t_game *game)
@@ -28,7 +28,6 @@ int	is_a_valid_teleporter(char c, t_game *game)
 
 	i = -1;
 	count = 0;
-	is_a_teleporter(c)
 	while (game->map[++i])
 	{
 		j = -1;
@@ -62,7 +61,8 @@ void	teleportation_check(t_game *game)
 		{
 			k = -1;
 			while (game->map[i][j][++k])
-				if (is_a_valid_teleporter(game->map[i][j][k], game) != 2)
+				if (is_a_teleporter(game->map[i][j][k])
+					&& is_a_valid_teleporter(game->map[i][j][k], game) != 2)
 					gc_exit(game->mem, err("teleporter's issue\n"));
 		}
 	}
