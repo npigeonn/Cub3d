@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/07 11:38:27 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 17:05:49 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,9 @@ void	parsing(char **av, t_game *game)
 	textures(av[1], game);
 	map_set_up(av, game);
 	teleportation_check(game);
+	game->check_w = 1;
 	check_char_n_walls(game);
+	game->check_w = 0;
 	floodfill(game);
 	door_ennemi_ammo_health_mngmt(game);
 }

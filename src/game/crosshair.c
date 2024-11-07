@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:16:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 12:01:23 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 18:30:11 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void	draw_image(t_game *game, t_image *img, t_draw_info info)
 	{
 		for (x1 = 0; x1 < info.height; x1++)
 		{
-			int source_x = (x1 * img->width / info.height);//  + (pos_x * img->width)
-			int source_y = (y1 * img->height / info.height);//  + (pos_y * img->height)
+			int source_x = (x1 * img->width / info.height);
+			int source_y = (y1 * img->height / info.height);
 			original_pixel_index = source_y * img->size_line + source_x * (img->bpp / 8);
 			int color;
 			color = *(unsigned int *)(img->data + original_pixel_index);
@@ -67,7 +67,6 @@ void	create_projectile(t_game *game)
 	t_player		*p;
 
 	float angle = game->player->dir_x;
-	
 	new_projectile = gc_malloc(game->mem, sizeof(t_projectile));
 	p = game->player;
 	new_projectile->x = p->x;
@@ -75,7 +74,7 @@ void	create_projectile(t_game *game)
 	new_projectile->direction = atan2(p->dir_y, p->dir_x) * (180.0f / M_PI);
 	new_projectile->speed = 0.4f;
 	new_projectile->next = NULL;
-	new_projectile->next = game->projectiles; 
+	new_projectile->next = game->projectiles;
 	new_projectile->floor = p->floor;
 	new_projectile->dir_x = p->dir_x;
 	new_projectile->dir_y = p->dir_y;
@@ -90,17 +89,19 @@ void	gun_draw(t_game *game)
 {
 	t_image		*im;
 	t_draw_info	info;
-	
+
 	im = gc_malloc(game->mem, sizeof(t_image));
 	if (game->player->anim_shoot < 0)
 		game->player->anim_shoot = 0;
 	if (game->player->anim_shoot > 0)
 	{
 		game->player->anim_shoot -= 15 * game->delta_time;
-		info = init_draw_info(game->screen_height * 0.10, " ", game->screen_width * 0.473, game->screen_height * 0.552);
+		info = init_draw_info(game->screen_height * 0.10, " ",
+			game->screen_width * 0.473, game->screen_height * 0.552);
 		draw_image(game, game->textures->fire, info);
 		create_projectile(game);
 	}
-	info = init_draw_info(game->screen_height * 0.33, " ", game->screen_width * 0.38, game->screen_height * 0.61);
+	info = init_draw_info(game->screen_height * 0.33, " ",
+		game->screen_width * 0.38, game->screen_height * 0.61);
 	draw_image(game, game->textures->weapon, info);
 }

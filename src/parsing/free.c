@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:43:21 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 08:40:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 16:50:50 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-int free_map_copy(t_game *game)
+int	free_map_copy(t_game *game)
 {
 	int	i;
 	int	floor;
@@ -28,7 +28,7 @@ int free_map_copy(t_game *game)
 	return (gc_free(game->mem, game->map_cy), 0);
 }
 
-int free_map(t_game *game)
+int	free_map(t_game *game)
 {
 	int	i;
 	int	floor;

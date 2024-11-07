@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 11:12:40 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 17:08:49 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ void	use_item(t_game *game)
 		game->player->y_tel = (int)game->player->y;
 		game->player->f_tel = (int)game->player->floor;		
 		game->player->being_tpted = 1;
-		// animation_teleportation(game);
-		// use_teleporter(game);
 	}
 }
 

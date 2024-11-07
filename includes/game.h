@@ -303,6 +303,7 @@ typedef struct s_game
 	char			***map;
 	char 			***map_cy;
 	bool			mouse;
+	bool			check_w;
 	int				x_minimap;
 	int				y_minimap;
 	int				clr;
@@ -410,7 +411,7 @@ void	teleportation_check(t_game *game);
 void	use_teleporter(t_game *game);
 void	set_output_teleporter(t_game *game, int x, int y, int floor);
 void	add_teleporter(t_game *game, int x, int y, int floor);
-int		teleportation(t_game *game, int x, int y, int floor, char c);
+int		teleportation(t_game *game, int x, int y, int floor);
 void	animation_teleportation(t_game *game);
 
 // map

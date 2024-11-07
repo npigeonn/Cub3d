@@ -6,13 +6,13 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:52:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/07 11:44:24 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 16:35:18 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-char *go_to_the_map_line(t_memory_table *mem, int fd, int begin)
+char	*go_to_the_map_line(t_memory_table *mem, int fd, int begin)
 {
 	int		i;
 	char	*line;
@@ -112,8 +112,8 @@ void	map_set_up(char **av, t_game *game)
 	game->nb_floor = nb_floors(av, game);
 	if (!game->nb_floor)
 		gc_exit(game->mem, err("Empty\n"));
-	game->map = gc_malloc(game->mem, (game->nb_floor + 1)\
-		* sizeof(char **));
+	game->map = gc_malloc(game->mem, (game->nb_floor + 1)
+			* sizeof(char **));
 	if (!game->map)
 		gc_exit(game->mem, err("error system\n"));
 	size_floors(av, game, game->nb_floor);
