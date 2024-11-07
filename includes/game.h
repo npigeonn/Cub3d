@@ -5,6 +5,7 @@
 # include "libft.h"
 # include <sys/time.h>
 # include <netdb.h>
+# include <pthread.h>
 
 typedef struct s_projectile
 {
@@ -320,6 +321,7 @@ typedef struct s_game
 	t_client		*client;
 	t_server_info	*servers;
 	pthread_t		discover_servers_thread;
+	pthread_mutex_t	game_lock;
 	float			fade_progress;
 	char			**av;
 }	t_game;

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 14:48:35 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:29:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 09:02:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ char *pseudo)
 	player = find_player_by_pseudo(server, pseudo);
 	if (!player)
 		return ;
+	ft_bzero(&connect_msg, sizeof(t_game_message));
 	connect_msg.type = MSG_CONNECT;
 	connect_msg.player_id = player_id;
 	connect_msg.x = player->x;
@@ -48,6 +49,7 @@ char *pseudo)
 	player = find_player_by_pseudo(server, pseudo);
 	if (!player)
 		return ;
+	ft_bzero(&connect_msg, sizeof(t_game_message));
 	connect_msg.type = MSG_CONNECT;
 	connect_msg.player_id = player_id;
 	connect_msg.x = player->x;
@@ -73,6 +75,7 @@ void	notify_players_of_disconnection(t_server *server, int id)
 	player = find_player_by_id(server->sprites, id);
 	if (!player)
 		return ;
+	ft_bzero(&disconnect_msg, sizeof(t_game_message));
 	disconnect_msg.player_id = player->player_id;
 	disconnect_msg.type = MSG_DISCONNECT;
 	ft_strlcpy(disconnect_msg.pseudo, player->pseudo, MAX_PSEUDO_LENGTH);

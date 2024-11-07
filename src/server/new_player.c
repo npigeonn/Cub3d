@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_player.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 21:43:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 09:36:45 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 13:06:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static void	new_player_add(t_server *server, int i, int socket, char *pseudo)
 
 	server->client_sockets[i] = socket;
 	add_player_node(server, i, pseudo);
+	ft_bzero(&msg, sizeof(t_game_message));
 	msg.type = MSG_CONNECT;
 	msg.player_id = i;
 	msg.x = server->x;
@@ -34,6 +35,7 @@ static void	new_player_full(int new_socket)
 {
 	t_game_message	msg;
 
+	ft_bzero(&msg, sizeof(t_game_message));
 	msg.type = MSG_FULL;
 	send(new_socket, &msg, sizeof(t_game_message), 0);
 	close(new_socket);

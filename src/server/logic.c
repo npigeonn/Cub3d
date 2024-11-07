@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 13:42:35 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 12:56:32 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,20 +47,22 @@ void	send_info(t_server *server, t_game_message msg)
 
 void	add_projectile(t_server *server, t_game_message msg)
 {
-	t_projectile	*new;
+	t_projectile	*new_projectile;
 	t_sprite		*sprite;
 
-	// sprite = find_player_by_id(server->sprites, msg.player_id);
-	// new = gc_malloc(server->mem, sizeof(t_projectile));
-	// new->x = msg.x;
-	// new->y = msg.y;
-	// new->dir_x = msg.dir_x;
-	// new->dir_y = msg.dir_y;
-	// new->floor = msg.floor;
-	// new->speed = 2000;
-	// new->enemy = sprite;
-	// new->next = server->projectiles;
-	// server->projectiles = new;
+	sprite = find_player_by_id(server->sprites, msg.player_id);
+	new_projectile = gc_malloc(server->mem, sizeof(t_projectile));
+	new_projectile->x = msg.x;
+	new_projectile->y = msg.y;
+	new_projectile->direction = atan2(msg.dir_y, msg.dir_x) * (180.0f / M_PI);
+	new_projectile->speed = 2000;
+	new_projectile->next = NULL;
+	new_projectile->owner = NULL;
+	new_projectile->enemy = sprite;
+	new_projectile->next = server->projectiles; 
+	new_projectile->floor = msg.floor;
+	new_projectile->damage = 0.2;
+	server->projectiles = new_projectile;
 }
 
 static void	use_type(t_server *server, t_game_message msg)
@@ -97,21 +99,70 @@ long	get_current_time()
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
+typedef struct	s_serialized_sprite
+{
+	int							type;
+	float						x;
+	float						y;
+	float						direction;
+	float						health;
+	int							animation;
+	int							floor;
+	int							selected_anim;
+	struct s_serialized_sprite	*next;
+}	t_serialized_sprite;
+
 void	broadcast_enemies(t_server *server)
 {
-	t_game_message	msg;
-	t_sprite		*current;
+	t_game_message msg;
+	t_sprite *current;
+	t_serialized_sprite *serialized_sprites = NULL;
+	t_serialized_sprite *serialized_last = NULL;
 	
-	current = server->sprites;
 	ft_memset(&msg, 0, sizeof(t_game_message));
 	msg.type = MSG_BROADCAST_ENEMIES;
 	msg.player_id = -1;
-	msg.sprites = server->sprites;
+	current = server->sprites;
+	while (current)
+	{
+		if (current->type == SPRITE_ENEMY)
+		{
+			t_serialized_sprite *new_sprite = gc_malloc(server->mem, sizeof(t_serialized_sprite));
+			new_sprite->type = current->type;
+			new_sprite->x = current->x;
+			new_sprite->y = current->y;
+			new_sprite->direction = current->direction;
+			new_sprite->health = current->health;
+			new_sprite->animation = current->animation;
+			new_sprite->floor = current->floor;
+			new_sprite->selected_anim = current->selected_anim;
+			if (serialized_sprites == NULL)
+			{
+				serialized_sprites = new_sprite;
+				serialized_last = new_sprite;
+			}
+			else
+			{
+				serialized_last->next = new_sprite;
+				serialized_last = new_sprite;
+			}
+		}
+		current = current->next;
+	}
+	
+	msg.sprites = serialized_sprites;
+	current = server->sprites;
 	while (current)
 	{
 		if (current->type == SPRITE_PLAYER && current->player_id >= 0)
-		send(server->client_sockets[current->player_id], &msg, sizeof(t_game_message), 0);
+			send(server->client_sockets[current->player_id], &msg, sizeof(t_game_message), 0);
 		current = current->next;
+	}
+	while (serialized_sprites)
+	{
+		t_serialized_sprite *temp = serialized_sprites;
+		serialized_sprites = serialized_sprites->next;
+		gc_free(server->mem, temp);
 	}
 }
 
@@ -164,7 +215,7 @@ void	shoot_at_player_server(t_sprite *enemy, t_point player_pos, t_server *serve
 			new_projectile->x = enemy->x;
 			new_projectile->y = enemy->y;
 			new_projectile->direction = angle_to_player;
-			new_projectile->speed = 0.4f;
+			new_projectile->speed = 2000;
 			new_projectile->next = NULL;
 			new_projectile->owner = NULL;
 			new_projectile->enemy = enemy;
@@ -191,6 +242,8 @@ void	update_enemies_server(t_server *server)
 			{
 				current_enemy->animation -= server->delta_time * 2.5;
 				current_enemy->selected_anim = (int)(4 - current_enemy->animation);
+				if (current_enemy->selected_anim < 0)
+					current_enemy->selected_anim = 0;
 			}
 			current_enemy = current_enemy->next;
 			continue;

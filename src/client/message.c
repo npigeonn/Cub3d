@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:05:54 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 13:23:39 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 12:57:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,88 +29,67 @@ void	add_connection_msg(t_game *game, char *pseudo)
 	game->chatbox->messages = new_msg;
 }
 
-static void update_enemies_client(t_game *game, t_game_message msg)
+static void	update_enemy_data(t_sprite *dest, t_sprite *src)
 {
-	t_sprite *current_enemy;
-	t_sprite *incoming_enemy = msg.sprites;
+	dest->health = src->health;
+	dest->dir_x = src->dir_x;
+	dest->dir_y = src->dir_y;
+	dest->floor = src->floor;
+}
 
-	while (incoming_enemy)
+static t_sprite	*find_enemy(t_sprite *list, t_sprite *target)
+{
+	while (list)
 	{
-		current_enemy = game->sprites;
-		int exists = 0;
+		if (list->type == SPRITE_ENEMY && list->x == target->x && list->y == target->y && list->floor == target->floor)
+			return (list);
+		list = list->next;
+	}
+	return (NULL);
+}
 
-		while (current_enemy)
-		{
-			if (incoming_enemy->type == SPRITE_ENEMY && current_enemy->type == SPRITE_ENEMY &&
-				current_enemy->x == incoming_enemy->x && current_enemy->y == incoming_enemy->y)
+typedef struct	s_serialized_sprite
+{
+	int							type;
+	float						x;
+	float						y;
+	float						direction;
+	float						health;
+	int							animation;
+	int							floor;
+	int							selected_anim;
+	struct s_serialized_sprite	*next;
+}	t_serialized_sprite;
+
+void	update_enemies_client(t_game *game, t_game_message msg)
+{
+	t_serialized_sprite *incoming_enemy = msg.sprites;
+
+	pthread_mutex_lock(&game->game_lock);
+	while (incoming_enemy) {
+		if (incoming_enemy->type == SPRITE_ENEMY) {
+			t_sprite *existing_enemy = find_enemy(game->sprites, incoming_enemy);
+			if (existing_enemy)
+				update_enemy_data(existing_enemy, incoming_enemy);
+			else
 			{
-				current_enemy->health = incoming_enemy->health;
-				current_enemy->dir_x = incoming_enemy->dir_x;
-				current_enemy->dir_y = incoming_enemy->dir_y;
-				current_enemy->floor = incoming_enemy->floor;
-				exists = 1;
-				break;
-			}
-			current_enemy = current_enemy->next;
-		}
-		if (!exists && incoming_enemy->type == SPRITE_ENEMY)
-		{
-			t_sprite *new_enemy = gc_malloc(game->mem, sizeof(t_sprite));
-			if (new_enemy)
-			{
-				new_enemy->type = incoming_enemy->type;
-				new_enemy->x = incoming_enemy->x;
-				new_enemy->y = incoming_enemy->y;
-				new_enemy->health = incoming_enemy->health;
-				new_enemy->dir_x = incoming_enemy->dir_x;
-				new_enemy->dir_y = incoming_enemy->dir_y;
-				new_enemy->floor = incoming_enemy->floor;
-				new_enemy->next = game->sprites;
-				game->sprites = new_enemy;
+				t_sprite *new_enemy = gc_malloc(game->mem, sizeof(t_sprite));
+				if (new_enemy)
+				{
+					new_enemy->type = incoming_enemy->type;
+					new_enemy->x = incoming_enemy->x;
+					new_enemy->y = incoming_enemy->y;
+					new_enemy->direction = incoming_enemy->direction;
+					new_enemy->health = incoming_enemy->health;
+					new_enemy->next = game->sprites;
+					game->sprites = new_enemy;
+				}
 			}
 		}
 		incoming_enemy = incoming_enemy->next;
 	}
-
-	current_enemy = game->sprites;
-	t_sprite *previous_enemy = NULL;
-
-	while (current_enemy)
-	{
-		incoming_enemy = msg.sprites;
-		int found = 0;
-
-		while (incoming_enemy)
-		{
-			if (current_enemy->type == SPRITE_ENEMY && 
-				current_enemy->x == incoming_enemy->x && current_enemy->y == incoming_enemy->y && 
-				current_enemy->floor == incoming_enemy->floor && 
-				current_enemy->health == incoming_enemy->health &&
-				current_enemy->dir_x == incoming_enemy->dir_x && 
-				current_enemy->dir_y == incoming_enemy->dir_y) {
-				found = 1;
-				break;
-			}
-			incoming_enemy = incoming_enemy->next;
-		}
-
-		if (!found && current_enemy->type == SPRITE_ENEMY)
-		{
-			if (previous_enemy)
-				previous_enemy->next = current_enemy->next;
-			else
-				game->sprites = current_enemy->next;
-			gc_free(game->mem, current_enemy);
-			current_enemy = (previous_enemy) ? previous_enemy->next : game->sprites;
-		}
-		else
-		{
-			previous_enemy = current_enemy;
-			current_enemy = current_enemy->next;
-		}
-	}
+	pthread_mutex_unlock(&game->game_lock);
 }
-
 
 static void	add_msg_chat(t_game *game, t_game_message msg)
 {

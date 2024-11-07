@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 13:23:29 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 09:24:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,5 +166,6 @@ int	join_server(t_game *game)
 	if (!manage_connection(game))
 		return (0);
 	pthread_create(&thread_id, NULL, receive_updates, game);
+	pthread_mutex_init(&game->game_lock, NULL);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 13:51:45 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 13:56:22 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 11:22:36 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ void	draw_vertical_sprite_band(t_game *game, int x, int draw_start, int draw_end
 {
 	if (x < 0 || x >= game->screen_width || draw_start >= game->screen_height || draw_end < 0)
 		return ;
-
+	if (anim < 0)
+		anim = 0;
 	if (draw_start < 0) draw_start = 0;
 	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
 
@@ -61,7 +62,7 @@ void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y,
 
 	int sprite_index = (int)((relative_angle + M_PI) / (2 * M_PI) * texture->nb_sprite) % texture->nb_sprite;
 	sprite_index = sprite_order[sprite_index];
-	if(sprite_index >= texture->nb_sprite)
+	if (sprite_index >= texture->nb_sprite || sprite_index < 0)
 		sprite_index = 0;
 
 	int sprite_screen_x = (int)((game->screen_width * 0.5f) * (1 + transform_x / transform_y));
@@ -172,7 +173,10 @@ void	draw_sprites(t_game *game)
 	current = game->sprites;
 	while (current)
 	{
-		if (current->type == SPRITE_TELEPORTER)
+		if (game->menu->status == MULTI_PLAYER || game->menu->status == CHATING)
+			pthread_mutex_lock(&game->game_lock);
+		else
+		if (current && current->type && current->type == SPRITE_TELEPORTER)
 		{
 			if (current->floor == game->player->floor)
 				draw_sprite(game, game->textures->tp, current->x, current->y, 150, 0.4, 1, 0);
@@ -181,7 +185,7 @@ void	draw_sprites(t_game *game)
 		}
 		if (current->type == SPRITE_EXIT && current->floor == game->player->floor)
 			draw_sprite(game, game->textures->exit, current->x + 0.5, current->y + 0.5, 150, 1.5, 0.005, 0);
-		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor)
+		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor && current->health > 0)
 		{
 			if (current->health <= 0)
 				draw_sprite(game, game->textures->enemy_death, current->x, current->y, 0, 1, 0, current->selected_anim);
@@ -198,5 +202,7 @@ void	draw_sprites(t_game *game)
 		else if (current->type == SPRITE_PLAYER && current->floor == game->player->floor)
 			draw_sprite(game, game->textures->enemy, current->x, current->y, atan2(current->dir_y, current->dir_x), 1, 0, 0);
 		current = current->next;
+		if (game->menu->status == MULTI_PLAYER || game->menu->status == CHATING)
+			pthread_mutex_unlock(&game->game_lock);
 	}
 }

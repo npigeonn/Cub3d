@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:33:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 09:02:37 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	send_all_players(t_server *server, int id)
 	t_game_message	connect_msg;
 
 	current = server->sprites;
+	ft_bzero(&connect_msg, sizeof(t_game_message));
 	connect_msg.type = MSG_GET_PLAYER;
 	while (current)
 	{

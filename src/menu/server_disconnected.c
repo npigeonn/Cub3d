@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_disconnected.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:21:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 11:13:09 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 13:06:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void	draw_server_error_menu(t_game *game)
 	info2.color = MENU_BUTTON_SELECTED_COLOR;
 	if (game->menu->button_selected == 1)
 		draw_rectangle(game, info2);
-	info2 = init_draw_info(x, y + 2 * (btn_height + spacing), btn_width, btn_height);
 	info2 = init_draw_info(btn_height, "", x, y + 2 * (btn_height + spacing));
 	info2.color = MENU_BUTTON_COLOR;
 	info2.width = btn_width;
