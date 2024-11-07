@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_disconnected.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:21:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 13:10:09 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 11:13:09 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	draw_server_error_menu(t_game *game)
 	t_draw_info	info2;
 	t_draw_info	info;
 
-	mlx_mouse_show(game->mlx, game->win);
+	x_fixes_cursor(game, 's');
 	if (game->menu->status == SERVER_FULL)
 		message = "Server is full.";
 	else

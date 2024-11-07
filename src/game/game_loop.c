@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:41:57 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 11:11:57 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	draw_success(t_game *game)
 	info.width = game->screen_width;
 	info.color = 3289650;
 	draw_rectangle(game, info);
-	mlx_mouse_show(game->mlx, game->win);
+	x_fixes_cursor(game, 's');
 	info = init_draw_info(70, "MISSION SUCCEED", game->screen_width >> 1, game->screen_height * 0.4);
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text(game, info);

@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:04:19 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 09:35:51 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ void	*discover_servers_thread(void *arg)
 					break;
 				}
 				sscanf(buffer, "ServerInfo:%[^;];Players:%d/%d;Ping:%dms", new_server->name, &new_server->players, &new_server->max_players, &new_server->ping);
-				new_server->ip = ft_strdup(inet_ntoa(recv_addr.sin_addr));
+				new_server->ip = gc_strdup(game->mem, inet_ntoa(recv_addr.sin_addr));
 				new_server->port = ntohs(recv_addr.sin_port);
 				new_server->last_seen = now;
 				new_server->next = NULL;

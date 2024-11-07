@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 23:32:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/27 15:35:59 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 11:13:00 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	update_main_menu_click(t_game *game, int mouse_x, int mouse_y, int keycode)
 	if (game->menu->button_selected == 1)
 	{
 		game->menu->status = PLAYING;
-		mlx_mouse_hide(game->mlx, game->win);
+		x_fixes_cursor(game, 'h');
 	}
 	else if (game->menu->button_selected == 2)
 	{

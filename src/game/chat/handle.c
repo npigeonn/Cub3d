@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:48:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 12:58:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 11:12:25 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	handle_mouse_chat(t_game *game, int x, int y, int keycode)
 	{
 		game->chatbox->visible = false;
 		game->chatbox->is_writting = false;
-		mlx_mouse_hide(game->mlx, game->win);
+		x_fixes_cursor(game, 'h');
 		game->menu->status = MULTI_PLAYER;
 	}
 }
@@ -57,7 +57,7 @@ void	chat_input(t_game *game, int keycode)
 		game->menu->status = MULTI_PLAYER;
 		game->chatbox->is_writting = false;
 		game->chatbox->visible = false;
-		mlx_mouse_hide(game->mlx, game->win);
+		x_fixes_cursor(game, 'h');
 		add_message(game);
 	}
 }

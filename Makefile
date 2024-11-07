@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
+#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/11/06 12:36:55 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/11/07 11:46:17 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
 LIBS = -L$(MINILIBX_DIR) -lmlx -L$(LIBFT_DIR) -lft -L$(RAUDIO_SRC) -lraudio -lX11 -lXext -lm
 INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(RAUDIO_HEADERS) -I./includes/
-CFLAGS = -g3 -O3
+CFLAGS = -g3 -O3 -lXfixes
 LIBS_DIR = ./libs/
 RM = rm -rf
 
@@ -59,6 +59,7 @@ SRC_PARSING = $(addprefix $(PATH_SRC)parsing/, \
 				teleportation.c \
 				floodfill.c \
 				textures.c \
+				lil_functions.c \
 				map_crafting.c )
 
 SRC_SERVER = $(addprefix $(PATH_SRC)server/, \

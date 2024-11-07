@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 08:35:41 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/25 17:11:51 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 11:12:48 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	draw_game_over(t_game *game)
 	info.width = game->screen_width;
 	info.color = 0x850606;
 	draw_rectangle(game, info);
-	mlx_mouse_show(game->mlx, game->win);
+	x_fixes_cursor(game, 's');
 	info = init_draw_info(70, "You are dead.", game->screen_width >> 1, game->screen_height * 0.4);
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text(game, info);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keyboard_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 09:15:11 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 11:12:40 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,12 @@ void	chatting_mode(t_game *game)
 	if (game->menu->status == MULTI_PLAYER)
 	{
 		game->menu->status = CHATING;
-		mlx_mouse_show(game->mlx, game->win);
+		x_fixes_cursor(game, 's');
 	}
 	else
 	{
 		game->menu->status = MULTI_PLAYER;
-		mlx_mouse_hide(game->mlx, game->win);
+		x_fixes_cursor(game, 'h');
 	}
 	game->chatbox->visible = !game->chatbox->visible;
 }

@@ -281,6 +281,27 @@ void	test_music(void)
 	CloseAudioDevice();
 }
 
+void	x_fixes_cursor(t_game *game, char to_do)
+{
+	if (to_do == 'h' && game->mouse)
+	{
+		XFixesHideCursor(((t_xvar *)(game->mlx))->display,\
+			((t_win_list *)(game->win))->window);
+		game->mouse = 0;
+		return ;
+	}
+	else if ((to_do == 'h' && !game->mouse)
+		|| (to_do == 's' && game->mouse))
+		return ;
+	else if (to_do == 's' && !game->mouse)
+	{
+		XFixesShowCursor(((t_xvar *)(game->mlx))->display,\
+			((t_win_list *)(game->win))->window);
+		game->mouse = 1;
+		return ;
+	}
+}
+
 int	main(int ac, char **av)
 {
 	t_game		game;
@@ -299,12 +320,11 @@ int	main(int ac, char **av)
 	init_client(&game, 1);
 	load_game_texture(&game);
 	parsing(av, &game);
-	// gc_exit(game.mem, 1);
 	set_direction(&game, game.player->begin_dir);
 	init_floorcast(&game);
 	init_img(&game);
 	set_width_all_letter(&game);
-	game.win = mlx_new_window(game.mlx, game.screen_width, game.screen_height, "Cub3D");
-	hooks(&game);
-	return (0);
+	game.win = mlx_new_window(game.mlx, game.screen_width,
+		game.screen_height, "Cub3D");
+	return (hooks(&game), 0);
 }

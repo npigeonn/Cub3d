@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_crafting.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:52:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 08:35:51 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 11:44:24 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,6 @@ char *go_to_the_map_line(t_memory_table *mem, int fd, int begin)
 	while (++i < begin)
 		line = switch_line(mem, line, fd);
 	return (line);
-}
-
-char	*switch_line(t_memory_table *mem, char *line, int fd)
-{
-	gc_free(mem, line);
-	return (gc_get_next_line(mem, fd));
 }
 
 int	nb_floors(char **av, t_game *game)
@@ -77,7 +71,7 @@ void	size_floors(char **av, t_game *game, int floor)
 		}
 		game->map[j] = gc_malloc(game->mem, (i + 1) * sizeof(char *));
 		if (!game->map[j])
-			gc_exit(game->mem, 1); // free line !free_tab(floor, game, j, 0)
+			gc_exit(game->mem, 1);
 		j++;
 	}
 	gc_free(game->mem, line);
@@ -103,7 +97,7 @@ void	map_ready(char **av, t_game *game, int floor)
 		{
 			game->map[j][i] = gc_strdup(game->mem, line);
 			if (!game->map[j][i])
-				gc_exit(game->mem, err("error system\n")); // free line !free_tab(floor, game, j, i)
+				gc_exit(game->mem, err("error system\n"));
 			i++;
 			line = switch_line(game->mem, line, fd);
 		}

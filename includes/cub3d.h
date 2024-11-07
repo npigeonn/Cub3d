@@ -17,6 +17,9 @@
 # include "input.h"
 # include "stats.h"
 
+# include <X11/X.h>
+# include <X11/keysym.h>
+# include <X11/extensions/Xfixes.h>
 # include "mlx_int.h"
 
 # define MOVEMENT_SPEED 0.05f

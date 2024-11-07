@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   new_player.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 21:43:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 12:01:57 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/07 09:36:45 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,5 +124,5 @@ char	*existing_player(t_server *server, int new_socket)
 			return (NULL);
 	}
 	pthread_mutex_unlock(server->game_lock);
-	return (ft_strdup(pseudo));
+	return (gc_strdup(server->mem, pseudo));
 }

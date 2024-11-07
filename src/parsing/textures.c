@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 15:35:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 13:01:37 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 11:48:16 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,19 @@
 
 int	is_a_color(char *color, t_game *game)
 {
-	char **split;
+	char	**split;
 
 	split = gc_split(game->mem, color, ',');
 	if (!split || !split[0] || !split[1] || !split[2] || split[3])
 		return (free_split(game->mem, split), 0);
-	if (ft_strlen(split[0]) > 4 || ft_strlen(split[1]) > 4 
+	if (ft_strlen(split[0]) > 4 || ft_strlen(split[1]) > 4
 		|| ft_strlen(split[2]) > 4
 		|| !(0 <= ft_atoi(split[0]) && ft_atoi(split[0]) <= 255)
 		|| !(0 <= ft_atoi(split[1]) && ft_atoi(split[1]) <= 255)
 		|| !(0 <= ft_atoi(split[2]) && ft_atoi(split[2]) <= 255))
 		gc_exit(game->mem, err("Texture's color is not right"));
-    game->clr = (atoi(split[0]) << 16) | (atoi(split[1]) << 8) | atoi(split[2]);
+	game->clr = (atoi(split[0]) << 16) | (atoi(split[1]) << 8) | atoi(split[2]);
 	return (free_split(game->mem, split), 1);
-}
-
-int	file_dot_xpm(char *file_textre)
-{
-	int	i;
-
-	i = 0;
-	while (file_textre[i])
-		i++;
-	if (i < 5)
-		return (0);
-	
-	return (!ft_strcmp(".xpm", file_textre + i - 4));
 }
 
 int	set_up_txtr(t_game *game, char *line)
@@ -68,7 +55,6 @@ int	set_up_txtr(t_game *game, char *line)
 	return (free_split(game->mem, split), 1);
 }
 
-
 int	txtre_or_nline(char *line, t_game *game)
 {
 	if (!line)
@@ -91,23 +77,6 @@ int	txtre_or_nline(char *line, t_game *game)
 		return (0);
 }
 
-void	init_data(t_game *game)
-{
-	game->textures->so = 0;
-	game->textures->no = 0;
-	game->textures->c = 0;
-	game->textures->f = 0;
-	game->textures->ea = 0;
-	game->textures->we = 0;
-	game->textures->color_so = -1;
-	game->textures->color_no = -1;
-	game->textures->color_c = -1;
-	game->textures->color_f = -1;
-	game->textures->color_ea = -1;
-	game->textures->color_we = -1;
-	game->map_begin = 0;
-}
-
 void	load_txtre_globale(t_game *game, char *line, char *path)
 {
 	if (!path || path[0] == '\n')
@@ -126,7 +95,6 @@ void	load_txtre_globale(t_game *game, char *line, char *path)
 		load_texture(game, game->textures->west, path);
 	else
 		return ;
-	
 }
 
 int	textures(char *to_open, t_game *game)
@@ -138,7 +106,6 @@ int	textures(char *to_open, t_game *game)
 	line = gc_get_next_line(game->mem, fd);
 	while (txtre_or_nline(line, game))
 	{
-		
 		line = switch_line(game->mem, line, fd);
 		game->map_begin++;
 	}

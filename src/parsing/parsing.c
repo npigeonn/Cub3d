@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 13:03:19 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 11:38:27 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static int	op_in(char **av, t_game *game)
 	close(fd);
 	fd = open(av[1], O_RDONLY | O_DIRECTORY);
 	if (fd > -1)
-		return (close(fd), gc_exit( game->mem, err("Is a folder\n")), 1);
+		return (close(fd), gc_exit(game->mem, err("Is a folder\n")), 1);
 	return (0);
 }
 
@@ -73,7 +73,7 @@ void	check_char_n_walls(t_game *game)
 					|| game->map_cy[i[0]][i[1]][i[2]] == '\n')
 					continue ;
 				if (!check_walls(game, i[2], i[1], i[0]))
-					return (free_map_copy(game),gc_exit(game->mem,\
+					return (free_map_copy(game), gc_exit(game->mem,
 							err("Need walls all around the playable map\n")));
 			}
 		}

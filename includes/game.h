@@ -301,7 +301,7 @@ typedef struct s_game
 	int				map_begin;
 	char			***map;
 	char 			***map_cy;
-
+	bool			mouse;
 	int				x_minimap;
 	int				y_minimap;
 	int				clr;
@@ -328,6 +328,7 @@ typedef struct s_game
 int		game_loop(t_game *game);
 int		handle_close(t_game *game);
 void	set_direction(t_game *game, int dir);
+void	x_fixes_cursor(t_game *game, char to_do);
 
 //menu
 void	draw_main_menu(t_game *game);
@@ -394,6 +395,9 @@ char	*get_next_line(int fd);
 void	floodfill(t_game *game);
 int		check_path(t_game *game, int x, int y, int floor);
 void	door_ennemi_ammo_health_mngmt(t_game *game);
+int		file_dot_xpm(char *file_textre);
+void	init_data(t_game *game);
+char	*switch_line(t_memory_table *mem, char *line, int fd);
 
 // walls
 int		check_walls(t_game *game, int x, int y, int floor);

@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:09:30 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/07 09:38:57 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ struct epoll_event *event, int i)
 			epoll_ctl(server->epoll_fd, EPOLL_CTL_ADD, new_socket, event);
 			new_player(server, new_socket, pseudo);
 		}
+		gc_free(server->mem, pseudo);
 	}
 	else
 		handle_client_receive_msg(server, events[i].data.fd);
