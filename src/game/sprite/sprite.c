@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sprite.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 13:51:45 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 13:57:31 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 09:22:13 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,8 @@ float	calculate_distance(t_sprite *sprite, float camX, float camY, int player_fl
 		sprite_y = sprite->y;
 	}
 
-	return (sqrtf((sprite_x - camX) * (sprite_x - camX) + (sprite_y - camY) * (sprite_y - camY)));
+	return (sqrtf((sprite_x - camX) * (sprite_x - camX)
+		+ (sprite_y - camY) * (sprite_y - camY)));
 }
 
 void	sort_sprites(t_sprite **head, float camX, float camY, int player_floor)

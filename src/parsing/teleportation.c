@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:45:09 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/07 19:36:22 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 09:08:39 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ int	is_a_valid_teleporter(char c, t_game *game)
 					add_teleporter(game, k, j, i);
 				else if (game->map[i][j][k] == c && count == 1)
 					set_output_teleporter(game, k, j, i);
-				count++;
+				if (game->map[i][j][k] == c)
+					count++;
 			}
 		}
 	}

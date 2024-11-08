@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:35:43 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 09:25:38 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,9 @@ void	use_teleporter(t_game *game)
 	tp = get_teleporter(game, game->player->x_tel, game->player->y_tel);
 	if (tp)
 	{
-		if (game->player->x_tel == (int)tp->x1 && game->player->y_tel == (int)tp->y1 && game->player->f_tel == tp->floor1)// if ((int)p->x == (int)tp->x1 && (int)p->y == (int)tp->y1 && p->floor == tp->floor1)
+		if (game->player->x_tel == (int)tp->x1
+			&& game->player->y_tel == (int)tp->y1
+			&& game->player->f_tel == tp->floor1)
 		{
 			p->x = tp->x;
 			p->y = tp->y;

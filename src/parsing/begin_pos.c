@@ -41,11 +41,13 @@ void	search_departure_position(t_game *game)
 		{
 			k = -1;
 			while (game->map[i][j][++k])
+			{
 				if (ft_strchr("EWNS", game->map[i][j][k]))
 				{
 					begin_player_position(game, i, j, k);
 					return ;
 				}
+			}
 		}
 	}
 	gc_exit(game->mem, err("No player found\n"));

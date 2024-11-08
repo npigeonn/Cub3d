@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/07 17:09:01 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 09:19:56 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	check_path(t_game *game, int x, int y, int floor)
 	return (0);
 }
 
-int	count_spawns(t_game *game) // TODO
+int	count_spawns(t_game *game)
 {
 	int	i;
 	int	j;
@@ -115,6 +115,8 @@ int	map_copy(t_game *game)
 void	floodfill(t_game *game)
 {
 	search_departure_position(game);
+	if (count_spawns != 1)
+		gc_exit(game->mem, err("Need ONE spawn problem\n"));
 	if (!map_copy(game)
 		|| !check_path(game, game->player->x, game->player->y,
 			game->player->floor))
