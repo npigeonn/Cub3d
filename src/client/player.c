@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:19:15 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 11:56:16 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 12:36:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	update_player_position(t_game *game, t_game_message msg)
 		player->dir_y = msg.dir_y;
 		player->health = msg.health;
 		player->floor = msg.floor;
+		player->planeX = msg.plane_x;
+		player->planeY = msg.plane_y;
 	}
 }
 

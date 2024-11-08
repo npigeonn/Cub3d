@@ -23,6 +23,8 @@ typedef struct s_sprite
 	float			y1;
 	float			dir_x;
 	float			dir_y;
+	float			planeX;
+	float			planeY;
 	int				floor;
 	int				floor1;
 	float			health;

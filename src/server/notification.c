@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 14:48:35 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 09:02:11 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 12:37:58 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ char *pseudo)
 	connect_msg.dir_x = player->dir_x;
 	connect_msg.dir_y = player->dir_y;
 	connect_msg.health = player->health;
+	connect_msg.plane_x = player->planeX;
+	connect_msg.plane_y = player->planeY;
 	ft_strlcpy(connect_msg.pseudo, pseudo, MAX_PSEUDO_LENGTH);
 	i = -1;
 	while (++i < MAX_PLAYERS)
@@ -58,6 +60,8 @@ char *pseudo)
 	connect_msg.dir_x = player->dir_x;
 	connect_msg.dir_y = player->dir_y;
 	connect_msg.health = player->health;
+	connect_msg.plane_x = player->planeX;
+	connect_msg.plane_y = player->planeY;
 	ft_strlcpy(connect_msg.pseudo, pseudo, MAX_PSEUDO_LENGTH);
 	i = -1;
 	while (++i < MAX_PLAYERS)

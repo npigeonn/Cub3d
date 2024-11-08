@@ -88,12 +88,6 @@ enum Message
 	FINISH,
 };
 
-typedef struct s_stuff
-{
-	int	munitions;
-	int	weapon;
-}	t_stuff;
-
 typedef struct	s_stats
 {
 	int		nb_kills;
@@ -145,7 +139,7 @@ typedef struct s_player
 	float		y_tel;
 	float		f_tel;
 	bool		invert_mouse_x;
-	t_stuff		*stuff;
+	int			selected_anim;
 	t_raycast	*raycast;
 	t_stats		*stats;
 	t_keycode	*key;
@@ -353,7 +347,7 @@ void	draw_text(t_game *data, t_draw_info info);
 void	draw_text_left(t_game *game, t_draw_info info);
 void	draw_text_right(t_game *game, t_draw_info info);
 void	draw_char(t_game *data, t_draw_info info);
-void	draw_sprite(t_game *game, t_image *texture, float x, float y, float angle_to_sprite, float scale, float z_offset, int anim);
+void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite, float sprite_dir, float scale, float z_offset);
 void	draw_sprites(t_game *game);
 void	draw_rounded_rectangle(t_game *game, t_draw_info info);
 void	crosshair(t_game *game);
@@ -394,7 +388,7 @@ void	add_enemies(t_game *game, int x, int y, int floor);
 // health
 void	on_life(t_game *game);
 void	draw_collectible_life(t_game *game);
-void	draw_anim_health(t_game *game, int x, int y, t_image *im_health);
+void	draw_anim_health(t_game *game, t_sprite *sprite, t_image *im_health);
 
 // PARSING
 int		err(char *str);

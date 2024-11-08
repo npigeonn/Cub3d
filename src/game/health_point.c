@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/08 08:51:30 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 11:29:46 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,15 @@ void	health_point_draw(t_game *game)
 }
 
 
-void	draw_anim_health(t_game *game, int x, int y, t_image *im_health)
+void	draw_anim_health(t_game *game, t_sprite *sprite, t_image *im_health)
 {
 	static float	time_sprites = 0;
 
 	time_sprites += game->delta_time * 10;
 	if ((int)time_sprites > 18000000)
 		time_sprites = 0;
-	draw_sprite(game, im_health, x, y, 0, 0.2, 2, (int)time_sprites % 18);
+	sprite->selected_anim = (int)time_sprites % 18;
+	draw_sprite(game, im_health, sprite, 0, 0.2, 2);
 }
 
 void	on_life(t_game *game)

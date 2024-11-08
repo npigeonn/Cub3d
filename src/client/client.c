@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 09:29:43 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 12:51:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ static void	manage_position(t_game *game, t_game_message msg)
 	game->player->health = msg.health;
 	game->player->height = msg.height;
 	game->player->floor = msg.floor;
+	if (game->player->health < 0)
+		game->player->health = 0;
 }
 
 void replace_path(t_game *game, char *filename)
@@ -53,13 +55,11 @@ char	*receive_file_from_server(t_game *game, int server_socket)
 	ssize_t			bytes_received;
 
 	recv(server_socket, filename, sizeof(filename), 0);
-	printf("Nom de fichier reçu : %s\n", filename);
 	replace_path(game, filename);
 	file = fopen(filename, "wb");
 	if (!file)
 		return (NULL);
 	recv(server_socket, &file_size, sizeof(file_size), 0);
-	printf("Taille du fichier reçue : %u octets\n", file_size);
 	total_received = 0;
 	while (total_received < file_size)
 	{
@@ -73,9 +73,7 @@ char	*receive_file_from_server(t_game *game, int server_socket)
 		}
 		fwrite(buffer, 1, bytes_received, file);
 		total_received += bytes_received;
-		printf("Reçu : %zu / %u octets\n", total_received, file_size);
 	}
-	printf("Fichier %s reçu avec succès\n", filename);
 	fclose(file);
 	return (gc_strdup(game->mem, filename));
 }
@@ -86,7 +84,6 @@ int	receive_map_from_server(t_game *game, int client_socket)
 	char	**tmp;
 
 	file = receive_file_from_server(game, client_socket);
-	printf("file: %s\n", file);
 	if (!file)
 		return (0);
 	tmp = game->av;
@@ -95,8 +92,7 @@ int	receive_map_from_server(t_game *game, int client_socket)
 	game->av[1] = file;
 	game->av[2] = NULL;
 	parsing(game->av, game);
-	printf("av[1]: %s\n", game->av[1]);
-	// free_split(game->mem, game->av);
+	free_split(game->mem, game->av);
 	game->av = tmp;
 	return (1);
 }

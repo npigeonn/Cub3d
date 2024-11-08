@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 11:46:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 12:41:01 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	handle_mouse_key_press2(int keycode, int x, int y, t_game *game)
 	const int	status = game->menu->status;
 
 	if ((status == PLAYING || status == MULTI_PLAYER)
-		&& keycode == 1 && game->player->ammo > 0)
+		&& keycode == 1 && game->player->ammo > 0 && game->player->health > 0)
 	{
 		game->player->anim_shoot = 1;
 		game->player->ammo--;
@@ -88,7 +88,7 @@ static void	handle_mouse_game(t_game *game, int x, int y)
 	const float	old_plane_x = game->player->planeX;
 	t_player	*p;
 
-	if (x == center_x)
+	if (x == center_x || game->player->health <= 0)
 		return ;
 	p = game->player;
 	if (p->invert_mouse_x)
@@ -97,6 +97,7 @@ static void	handle_mouse_game(t_game *game, int x, int y)
 	p->dir_y = old_dir_x * sin(rotation) + p->dir_y * cos(rotation);
 	p->planeX = old_plane_x * cos(rotation) - p->planeY * sin(rotation);
 	p->planeY = old_plane_x * sin(rotation) + p->planeY * cos(rotation);
+	send_update_position(game);
 	mlx_mouse_move(game->mlx, game->win, center_x, game->screen_height * 0.5);
 }
 

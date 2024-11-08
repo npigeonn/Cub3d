@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 11:11:57 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 13:00:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,30 @@ static void	draw_hud(t_game *game)
 	if (game->player->being_tpted)
 		animation_teleportation(game);
 	calculate_fps(game);
+}
+
+static void	game_multi_death(t_game *game)
+{
+	t_sprite	*current;
+
+	if ((game->menu->status != MULTI_PLAYER && game->menu->status != CHATING) || game->player->health > 0)
+		return ;
+	current = game->sprites;
+	while (current)
+	{
+		if (current->type == SPRITE_PLAYER && current->health > 0)
+		{
+			game->player->x = current->x;
+			game->player->y = current->y;
+			game->player->floor = current->floor;
+			game->player->dir_x = current->dir_x;
+			game->player->dir_y = current->dir_y;
+			game->player->planeX = current->planeX;
+			game->player->planeY = current->planeY;
+			break ;
+		}
+		current = current->next;
+	}
 }
 
 static void	game_engine(t_game *game)
@@ -46,6 +70,7 @@ static void	game_engine(t_game *game)
 	draw_sprites(game);
 	chat_draw(game);
 	show_message(game);
+	game_multi_death(game);
 	draw_hud(game);
 	if (is_a_teleporter(game->map[p->floor][(int)p->y][(int)p->x]))
 		game->menu->message = TELEPORT;
@@ -64,7 +89,10 @@ static void	create_join_server(t_game *game)
 	else if (game->menu->status == VALID_JOIN_SERVER)
 	{
 		if (join_server(game) == 1)
+		{
 			game->menu->status = MULTI_PLAYER;
+			x_fixes_cursor(game, 'h');
+		}
 	}
 }
 
@@ -113,14 +141,10 @@ static void	victory_screen(t_game *game)
 	t_player	*p;
 
 	p = game->player;
-	if (p->health <= 0)
+	if (p->health <= 0 && game->menu->status != CHATING && game->menu->status != MULTI_PLAYER)
 		game->menu->status = GAME_OVER;
 	if (game->map[p->floor][(int)p->y][(int)p->x] == 'e')
-	{
-		// ft_printf("VICTORY\n");
 		game->menu->status = GAME_SUCCESS;
-		// exit(EXIT_SUCCESS);
-	}
 }
 
 int	game_loop(t_game *game)

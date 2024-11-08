@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:43:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 12:59:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 13:27:14 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ static void	mouvement(t_game *game, t_player *p)
 
 	new_x = p->x;
 	new_y = p->y;
+	if (game->player->health <= 0)
+		return ;
 	if (is_key_pressed(game, game->player->key->up) || is_key_pressed(game, game->player->key->up2))
 	{
 		new_x += p->dir_x * 0.1;
@@ -62,8 +64,12 @@ void	send_update_position(t_game *game)
 	msg.x = game->player->x;
 	msg.y = game->player->y;
 	msg.floor = game->player->floor;
-	msg.height = game->player->height;
 	msg.health = game->player->health;
+	msg.plane_x = game->player->planeX;
+	msg.plane_y = game->player->planeY;
+	msg.dir_x = game->player->dir_x;
+	msg.dir_y = game->player->dir_y;
+	msg.selected_anim = game->player->selected_anim;
 	ft_strcpy(msg.pseudo, game->client->pseudo);
 	send(game->client->sock, &msg, sizeof(t_game_message), 0);
 }
@@ -101,7 +107,7 @@ int	handle_key_press(int keycode, t_game *game)
 		handle_pseudo_input(game, keycode);
 	if (status != PLAYING && status != MULTI_PLAYER)
 		return (0);
-	if (keycode == game->player->key->use || keycode == game->player->key->use2)
+	if ((keycode == game->player->key->use || keycode == game->player->key->use2) && p->health > 0)
 		use_item(game);
 	return (0);
 }

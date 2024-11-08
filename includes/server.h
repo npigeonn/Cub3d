@@ -41,6 +41,8 @@ typedef struct s_game_message
 	float			y;
 	float			dir_x;
 	float			dir_y;
+	float			plane_x;
+	float			plane_y;
 	float			height;
 	float			health;
 	int				floor;

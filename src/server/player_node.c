@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player_node.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:03:47 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:07:51 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 13:26:54 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,7 @@ void	update_player_node(t_server *server, char *pseudo, t_game_message msg)
 	player->dir_y = msg.dir_y;
 	player->floor = msg.floor;
 	player->health = msg.health;
+	player->planeX = msg.plane_x;
+	player->planeY = msg.plane_y;
+	player->selected_anim = msg.selected_anim;
 }

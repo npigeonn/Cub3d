@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   sprite.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 13:51:45 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 09:22:13 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 12:18:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	draw_vertical_sprite_band(t_game *game, int x, int draw_start, int draw_end, t_image *texture, int tex_x, int sprite_height, int anim)
+void	draw_vertical_sprite_band(t_game *game, int x, int draw_start, int draw_end, t_image *texture, int tex_x, int sprite_height, int anim, int sprite_type)
 {
 	if (x < 0 || x >= game->screen_width || draw_start >= game->screen_height || draw_end < 0)
 		return ;
@@ -34,18 +34,20 @@ void	draw_vertical_sprite_band(t_game *game, int x, int draw_start, int draw_end
 		tex_pos += step;
 		tex_y = tex_y < 0 ? 0 : (tex_y >= texture->sprite_height ? texture->sprite_height - 1 : tex_y);
 		int color = *((int *)(texture_data + (tex_y + texture->sprite_height * anim_frame) * texture->size_line + tex_x * bpp_div_8));
+		if (sprite_type == SPRITE_PLAYER && color >= 0)
+			color = blend_colors(color, 0x51789, 0.5);
 		if (color >= 0)
 			pixel_put(game, x, y, color);
 	}
 }
 
 
-void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y, float sprite_dir, float scale, float z_offset, int anim)
+void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite, float sprite_dir, float scale, float z_offset)
 {
 	int sprite_order[8] = {5, 6, 7, 3, 2, 1, 0, 4};
 
-	float relative_sprite_x = sprite_x - game->player->x;
-	float relative_sprite_y = sprite_y - game->player->y;
+	float relative_sprite_x = sprite->x - game->player->x;
+	float relative_sprite_y = sprite->y - game->player->y;
 
 	float inv_det = 1.0f / (game->player->planeX * game->player->dir_y - game->player->dir_x * game->player->planeY);
 
@@ -53,7 +55,7 @@ void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y,
 	float transform_y = inv_det * (-game->player->planeY * relative_sprite_x + game->player->planeX * relative_sprite_y);
 
 	if (transform_y <= 0)
-		return;
+		return ;
 	float player_angle = atan2(game->player->dir_y, game->player->dir_x);
 	float relative_angle = sprite_dir - player_angle;
 
@@ -74,7 +76,7 @@ void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y,
 	int draw_end_y = (sprite_height / 2) + (game->screen_height / 2) - (int)(game->player->height * sprite_height) + (int)(z_offset * sprite_height);
 
 	if (sprite_width <= 0 || draw_end_y <= 0 || draw_start_y >= game->screen_height)
-		return;
+		return ;
 
 	int stripe_start = sprite_screen_x - (sprite_width / 2);
 	int stripe_end = sprite_screen_x + (sprite_width / 2);
@@ -86,8 +88,18 @@ void	draw_sprite(t_game *game, t_image *texture, float sprite_x, float sprite_y,
 			int tex_x_base = (int)((stripe - stripe_start) * texture->sprite_width / sprite_width);
 			int tex_x = tex_x_base + sprite_index * texture->sprite_width;
 			if (tex_x_base >= 0 && tex_x < texture->width)
-				draw_vertical_sprite_band(game, stripe, draw_start_y, draw_end_y, texture, tex_x, sprite_height, anim);
+				draw_vertical_sprite_band(game, stripe, draw_start_y, draw_end_y, texture, tex_x, sprite_height, sprite->selected_anim, sprite->type);
 		}
+	}
+	if (sprite->type == SPRITE_PLAYER)
+	{
+		t_draw_info	info;
+		
+		float distance = sqrtf(relative_sprite_x * relative_sprite_x + relative_sprite_y * relative_sprite_y);
+		int height = game->screen_height * 0.1 / distance;
+		info = init_draw_info(height, sprite->pseudo, sprite_screen_x, draw_start_y + 20);
+		info.color = 0xFFFFF;
+		draw_text(game, info);
 	}
 }
 
@@ -179,28 +191,28 @@ void	draw_sprites(t_game *game)
 		if (current->type == SPRITE_TELEPORTER)
 		{
 			if (current->floor == game->player->floor)
-				draw_sprite(game, game->textures->tp, current->x, current->y, 150, 0.4, 1, 0);
+				draw_sprite(game, game->textures->tp, current, 150, 0.4, 1);
 			if (current->floor1 == game->player->floor)
-				draw_sprite(game, game->textures->tp, current->x1, current->y1, 150, 0.4, 1, 0);
+				draw_sprite(game, game->textures->tp, current, 150, 0.4, 1);
 		}
 		if (current->type == SPRITE_EXIT && current->floor == game->player->floor)
-			draw_sprite(game, game->textures->exit, current->x + 0.5, current->y + 0.5, 150, 1.5, 0.005, 0);
+			draw_sprite(game, game->textures->exit, current, 150, 1.5, 0.005);
 		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor)
 		{
 			if (current->health <= 0)
-				draw_sprite(game, game->textures->enemy_death, current->x, current->y, 0, 1, 0, current->selected_anim);
+				draw_sprite(game, game->textures->enemy_death, current, 0, 1, 0);
 			else if (current->state == CHASE
 				&& is_player_in_front(current, game->player))
-				draw_sprite(game, game->textures->enemy_fire, current->x, current->y, atan2(current->dir_y, current->dir_x), 1, 0, current->selected_anim);
+				draw_sprite(game, game->textures->enemy_fire, current, atan2(current->dir_y, current->dir_x), 1, 0);
 			else
-				draw_sprite(game, game->textures->enemy, current->x, current->y, atan2(current->dir_y, current->dir_x), 1, 0, current->selected_anim);
+				draw_sprite(game, game->textures->enemy, current, atan2(current->dir_y, current->dir_x), 1, 0);
 		}
 		else if (current->type == SPRITE_AMMO && current->still_exist && current->floor == game->player->floor)
-			draw_sprite(game, game->textures->ammo, current->x, current->y, 150, 0.2, 2.1, 0);
+			draw_sprite(game, game->textures->ammo, current, 150, 0.2, 2.1);
 		else if (current->type == SPRITE_HEALTH && current->still_exist && current->floor == game->player->floor)
-			draw_anim_health(game, current->x, current->y, game->textures->health);
+			draw_anim_health(game, current, game->textures->health);
 		else if (current->type == SPRITE_PLAYER && current->floor == game->player->floor)
-			draw_sprite(game, game->textures->enemy, current->x, current->y, atan2(current->dir_y, current->dir_x), 1, 0, 0);
+			draw_sprite(game, game->textures->enemy, current, atan2(current->dir_y, current->dir_x), 1, 0);
 		current = current->next;
 		if (game->menu->status == MULTI_PLAYER || game->menu->status == CHATING)
 			pthread_mutex_unlock(&game->game_lock);
