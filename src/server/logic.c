@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 13:58:30 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 09:19:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,15 @@ void	send_file_to_client(int client_socket, const char *filename)
 	FILE			*file = fopen(filename, "rb");
 	char			buffer[1024];
 	size_t			bytes_read;
-	t_game_message	msg;
 
 	if (!file)
 		return ;
-	send(client_socket, filename, strlen(filename) + 1, 0);
-	ft_memset(&msg, 0, sizeof(t_game_message));
-	msg.type = MSG_FILE_SIZE;
+	send(client_socket, filename, ft_strlen(filename) + 1, 0);
 	fseek(file, 0, SEEK_END);
-	msg.file_size = ftell(file);
+	long file_size = ftell(file);
 	fseek(file, 0, SEEK_SET);
-	printf("Sending file %s of size %u\n", filename, msg.file_size);
-	send(client_socket, &msg, sizeof(t_game_message), 0);
+	printf("Taille du fichier à envoyer : %ld octets\n", file_size);
+	send(client_socket, &file_size, sizeof(long), 0);
 	bytes_read = fread(buffer, 1, sizeof(buffer), file);
 	while (bytes_read  > 0)
 	{

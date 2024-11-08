@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 13:48:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 09:29:43 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char	*receive_file_from_server(t_game *game, int server_socket)
 	char			buffer[1024];
 	FILE			*file;
 	t_game_message	msg;
-	uint32_t		file_size;
+	long			file_size;
 	size_t			total_received;
 	ssize_t			bytes_received;
 
@@ -58,8 +58,7 @@ char	*receive_file_from_server(t_game *game, int server_socket)
 	file = fopen(filename, "wb");
 	if (!file)
 		return (NULL);
-	recv(server_socket, &msg, sizeof(t_game_message), 0);
-	file_size = msg.file_size;
+	recv(server_socket, &file_size, sizeof(file_size), 0);
 	printf("Taille du fichier reçue : %u octets\n", file_size);
 	total_received = 0;
 	while (total_received < file_size)

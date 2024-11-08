@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   crosshair.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:16:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/07 18:30:11 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 09:32:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	create_projectile(t_game *game)
 	new_projectile->x = p->x;
 	new_projectile->y = p->y;
 	new_projectile->direction = atan2(p->dir_y, p->dir_x) * (180.0f / M_PI);
-	new_projectile->speed = 0.4f;
+	new_projectile->speed = 2000;
 	new_projectile->next = NULL;
 	new_projectile->next = game->projectiles;
 	new_projectile->floor = p->floor;
