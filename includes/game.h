@@ -401,6 +401,7 @@ void	door_ennemi_ammo_health_mngmt(t_game *game);
 int		file_dot_xpm(char *file_textre);
 void	init_data(t_game *game);
 char	*switch_line(t_memory_table *mem, char *line, int fd);
+int		count_spawns(t_game *game);
 
 // walls
 int		check_walls(t_game *game, int x, int y, int floor);

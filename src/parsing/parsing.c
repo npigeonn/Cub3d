@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/07 17:05:49 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 09:38:39 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ void	parsing(char **av, t_game *game)
 	init_data(game);
 	textures(av[1], game);
 	map_set_up(av, game);
+	if (count_spawns(game) != 1)
+		gc_exit(game->mem, err("Need ONE spawn\n"));
 	teleportation_check(game);
 	game->check_w = 1;
 	check_char_n_walls(game);

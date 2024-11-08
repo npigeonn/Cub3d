@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 09:25:38 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 09:47:26 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,11 @@ static t_sprite	*get_teleporter(t_game *game, int x, int y)
 
 void	animation_teleportation(t_game *game)
 {
-	int	x;
-	int	y;
-	int	color;
-	int	new_color;
-	const float alpha = game->fade_progress;
+	int			x;
+	int			y;
+	int			color;
+	int			new_color;
+	const float	alpha = game->fade_progress;
 
 	y = 0;
 	while (y < game->screen_height)
@@ -85,10 +85,9 @@ void	animation_teleportation(t_game *game)
 void	use_teleporter(t_game *game)
 {
 	t_sprite	*tp;
-	t_player	*p = game->player;
+	t_player	*p;
 
 	p = game->player;
-
 	tp = get_teleporter(game, game->player->x_tel, game->player->y_tel);
 	if (tp)
 	{
