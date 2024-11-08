@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 10:47:58 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 13:50:19 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,5 +115,7 @@ void	init_player(t_game	*game, int malloc)
 	game->player->stats->nb_hit = 0;
 	game->player->stats->nb_shoot = 0;
 	game->player->stats->distanc_travel = 0;
+	game->player->animation = 0;
+	game->player->selected_anim = 0;
 	init_player_keycode(game, malloc);
 }

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 13:00:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 13:51:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,19 @@ static void	game_multi_death(t_game *game)
 	}
 }
 
+static void	set_anim(t_game *game)
+{
+	game->player->animation += game->delta_time;
+	if (game->player->animation >= 2)
+		game->player->animation = 0.5;
+	if (game->player->animation >= 0.5 && game->player->animation < 1)
+		game->player->selected_anim = 1;
+	else if (game->player->animation >= 1 && game->player->animation < 1.5)
+		game->player->selected_anim = 2;
+	else if (game->player->animation >= 1.5 && game->player->animation < 2)
+		game->player->selected_anim = 3;
+}
+
 static void	game_engine(t_game *game)
 {
 	t_player	*p;
@@ -67,6 +80,7 @@ static void	game_engine(t_game *game)
 		update_projectiles(game);
 		on_life(game);
 	}
+	set_anim(game);
 	draw_sprites(game);
 	chat_draw(game);
 	show_message(game);

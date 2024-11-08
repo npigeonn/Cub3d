@@ -140,6 +140,7 @@ typedef struct s_player
 	float		f_tel;
 	bool		invert_mouse_x;
 	int			selected_anim;
+	int			animation;
 	t_raycast	*raycast;
 	t_stats		*stats;
 	t_keycode	*key;
