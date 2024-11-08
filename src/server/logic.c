@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 09:19:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 09:44:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	send_file_to_client(int client_socket, const char *filename)
 
 	if (!file)
 		return ;
-	send(client_socket, filename, ft_strlen(filename) + 1, 0);
+	send(client_socket, filename, 256, 0);
 	fseek(file, 0, SEEK_END);
 	long file_size = ftell(file);
 	fseek(file, 0, SEEK_SET);
