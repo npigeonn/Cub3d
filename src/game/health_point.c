@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/26 00:15:57 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 08:51:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,16 @@ void	life(t_game *game)
 	int	y;
 	
 	y = game->screen_height * 0.855;
-	game->time_regen += game->delta_time * 10;
-	if ((int)game->time_regen > 18000000)
-		game->time_regen = 100;
-	if (game->time_regen > 100 && game->player->health < 0.9999)
-		game->player->health += 0.00015;
-	if (game->player->health > 1)
-		game->player->health = 1;
+	if (game->menu->status != MULTI_PLAYER && game->menu->status != CHATING)
+	{
+		game->time_regen += game->delta_time * 10;
+		if ((int)game->time_regen > 18000000)
+			game->time_regen = 100;
+		if (game->time_regen > 100 && game->player->health < 0.9999)
+			game->player->health += 0.00015;
+		if (game->player->health > 1)
+			game->player->health = 1;
+	}
 	while (++y < game->screen_height * 0.88)
 	{
 		x = game->screen_width * 0.583;
