@@ -6,7 +6,7 @@
 #    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/11/07 19:40:42 by npigeon          ###   ########.fr        #
+#    Updated: 2024/11/08 11:21:43 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -104,7 +104,11 @@ SRC_INPUT = $(addprefix $(PATH_SRC)input/, \
 				keyboard_utils.c \
 				key.c )
 
-SRC =	$(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT) $(SRC_RAYCASTER) $(SRC_INPUT) $(SRC_SPRITES) $(SRC_STATS)
+SRC_SOUND = $(addprefix $(PATH_SRC)game/sound/, \
+				sound_global.c \
+				side_sounds.c )
+
+SRC =	$(SRC_SOUND) $(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT) $(SRC_RAYCASTER) $(SRC_INPUT) $(SRC_SPRITES) $(SRC_STATS)
 
 ############### MINILIBX ###############
 
@@ -139,7 +143,7 @@ all: $(NAME)
 $(OBJS): ./includes/* Makefile
 
 $(PATH_OBJ):
-	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/chat $@game/raycaster $@game/sprite $@input $@stats
+	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/sound $@game/chat $@game/raycaster $@game/sprite $@input $@stats
 
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
 	cc -c $(CFLAGS) $(INCLUDES) $< -o $@

@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 15:09:22 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/07 18:28:05 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 10:34:36 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ void	ammo_written(t_game *game)
 	im = gc_malloc(game->mem, sizeof(t_image));
 	str = gc_itoa(game->mem, game->player->ammo);
 	info = init_draw_info(game->screen_height * 0.05, str,
-		game->screen_width * 0.82, game->screen_height * 0.885);
+			game->screen_width * 0.82, game->screen_height * 0.885);
 	info.color = 16777215;
 	draw_text_right(game, info);
 	info = init_draw_info(game->screen_height * 0.06, "",
-		game->screen_width * 0.81, game->screen_height * 0.875);
+			game->screen_width * 0.81, game->screen_height * 0.875);
 	draw_image(game, game->textures->bullet, info);
 	gc_free(game->mem, str);
 }

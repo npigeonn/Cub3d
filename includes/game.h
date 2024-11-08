@@ -6,6 +6,7 @@
 # include <sys/time.h>
 # include <netdb.h>
 # include <pthread.h>
+# include "raudio.h"
 
 typedef struct s_projectile
 {
@@ -307,6 +308,7 @@ typedef struct s_game
 	int				x_minimap;
 	int				y_minimap;
 	int				clr;
+	pthread_t		*thread;
 
 	int				nb_floor;
 	t_door			*door;
@@ -367,6 +369,10 @@ void	apply_fade_to(t_game *game, int color);
 // mini map
 void	mini_map(t_game *game);
 void	print_wall_door_player(t_game *game);
+
+// sound
+void	*test_music(void *arg);
+void	music_launch(t_game *game);
 
 //door
 int		handle_door(t_game *game);

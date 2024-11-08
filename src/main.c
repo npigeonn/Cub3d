@@ -264,23 +264,6 @@ void	hooks(t_game *game)
 	mlx_loop(game->mlx);
 }
 
-#include "raudio.h"
-void	test_music(void)
-{
-	InitAudioDevice();
-
-	Music music = LoadMusicStream("./assets/sound/sound.wav");
-	PlayMusicStream(music);
-
-	while (1)
-	{
-		UpdateMusicStream(music);
-		sleep(0.1);
-	}
-	UnloadMusicStream(music);
-	CloseAudioDevice();
-}
-
 void	x_fixes_cursor(t_game *game, char to_do)
 {
 	if (to_do == 'h' && game->mouse)
@@ -307,7 +290,6 @@ int	main(int ac, char **av)
 	t_game		game;
 	(void)ac;
 
-	// test_music();
 	game.mem = gc_init();
 	game.mlx = mlx_init();
 	game.av = av;
@@ -326,5 +308,6 @@ int	main(int ac, char **av)
 	set_width_all_letter(&game);
 	game.win = mlx_new_window(game.mlx, game.screen_width,
 		game.screen_height, "Cub3D");
+	// music_launch(&game);
 	return (hooks(&game), 0);
 }

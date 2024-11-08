@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   add_letter_to_list.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:38:19 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 09:12:28 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/08 10:35:22 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	add_ammo(t_game *game, int x, int y, int floor)
 {
-	t_sprite *new_ammo;
+	t_sprite	*new_ammo;
 
 	new_ammo = gc_malloc(game->mem, sizeof(t_sprite));
 	new_ammo->x = x;
@@ -28,7 +28,7 @@ void	add_ammo(t_game *game, int x, int y, int floor)
 
 void	add_health(t_game *game, int x, int y, int floor)
 {
-	t_sprite *new_health;
+	t_sprite	*new_health;
 
 	new_health = gc_malloc(game->mem, sizeof(t_sprite));
 	new_health->x = x;
@@ -42,7 +42,7 @@ void	add_health(t_game *game, int x, int y, int floor)
 
 void	add_exit(t_game *game, int x, int y, int floor)
 {
-	t_sprite *new_exit;
+	t_sprite	*new_exit;
 
 	new_exit = gc_malloc(game->mem, sizeof(t_sprite));
 	new_exit->x = x;
@@ -56,7 +56,7 @@ void	add_exit(t_game *game, int x, int y, int floor)
 void	door_ennemi_ammo_health_mngmt(t_game *game)
 {
 	int	i[3];
-	
+
 	i[0] = -1;
 	while (game->map[++i[0]])
 	{

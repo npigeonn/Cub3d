@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 09:47:26 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/08 10:11:36 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	add_teleporter(t_game *game, int x, int y, int floor)
 {
 	t_sprite	*tp;
-	
+
 	tp = gc_malloc(game->mem, sizeof(t_sprite));
 	tp->x = x + 0.5;
 	tp->y = y + 0.5;
@@ -45,7 +45,7 @@ static t_sprite	*get_teleporter(t_game *game, int x, int y)
 		if (current->type != SPRITE_TELEPORTER)
 		{
 			current = current->next;
-			continue;
+			continue ;
 		}
 		if ((int)current->x == x && (int)current->y == y)
 			return (current);
