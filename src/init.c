@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 13:50:19 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/09 18:01:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ void	init_var(t_game *game, int malloc)
 	game->door = NULL;
 	game->key_flags = 0;
 	game->projectiles = NULL;
-	
+	game->cen_x = game->screen_width * .5;
+	game->cen_y = game->screen_height * .5;
+	game->half_cen_x = game->screen_width * .5 * .5;
+	game->half_cen_y = game->screen_height * .5 * .5;
 	game->fade_progress = 0;
 	if (malloc)
 		game->wall_distances = gc_malloc(game->mem, sizeof(float) * game->screen_width);

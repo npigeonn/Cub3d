@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:12:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/10/25 16:07:38 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/09 17:54:06 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,27 +22,16 @@ int get_pixel_color_from_image(t_game *game, int x, int y)
 	return *(int *)(img->data + offset);
 }
 
-// Fonction pour placer un pixel à une position donnée dans une image
-void	put_pixel_to_image(char *img_data, int x, int y, int color, int line_length, int bpp)
-{
-	char	*dst;
-
-	// Calculer l'adresse du pixel
-	dst = img_data + (y * line_length + x * (bpp / 8));
-	*(unsigned int *)dst = color;
-}
-
-int blend_colors(int bg_color, int fg_color, float alpha)
+int	blend_colors(int bg_color, int fg_color, float alpha)
 {
 	const int	alpha_int = (int)(alpha * 255);
 	const int	inv_alpha_int = 255 - alpha_int;
-	const int	r_result = (((fg_color >> 16) & 0xFF) * alpha_int + ((bg_color >> 16) & 0xFF) * inv_alpha_int) >> 8;
-	const int	g_result = (((fg_color >> 8) & 0xFF) * alpha_int + ((bg_color >> 8) & 0xFF) * inv_alpha_int) >> 8;
-	const int	b_result = (((fg_color) & 0xFF) * alpha_int + ((bg_color) & 0xFF) * inv_alpha_int) >> 8;
+	const int	r_result = ((fg_color & 0xFF0000) * alpha_int + (bg_color & 0xFF0000) * inv_alpha_int) >> 8 & 0xFF0000;
+	const int	g_result = ((fg_color & 0x00FF00) * alpha_int + (bg_color & 0x00FF00) * inv_alpha_int) >> 8 & 0x00FF00;
+	const int	b_result = ((fg_color & 0x0000FF) * alpha_int + (bg_color & 0x0000FF) * inv_alpha_int) >> 8 & 0x0000FF;
 
-    return (r_result << 16) | (g_result << 8) | b_result;
+	return (r_result | g_result | b_result);
 }
-
 
 int	y_size_floor(t_game *game)
 {

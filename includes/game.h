@@ -258,12 +258,12 @@ typedef struct s_server_info
 
 typedef struct	s_client
 {
-	int				sock;
-	char			pseudo[20];
-	char			name[20];
-	char			ip[16];
-	int				player_id;
-	t_sprite		*sprites;
+	int			sock;
+	char		pseudo[20];
+	char		name[20];
+	char		ip[16];
+	int			player_id;
+	t_sprite	*sprites;
 } t_client;
 
 #define	MAX_MESSAGE_LENGTH 256
@@ -322,6 +322,11 @@ typedef struct s_game
 	pthread_mutex_t	game_lock;
 	float			fade_progress;
 	char			**av;
+
+	float			cen_x;
+	float			cen_y;
+	float			half_cen_x;
+	float			half_cen_y;
 }	t_game;
 
 //game
@@ -381,14 +386,13 @@ void	draw_wall(t_game *game);
 void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height);
 
 //ennemies
-void	init_enemies(t_game *game);
 void	update_enemies(t_game *game);
 void	damages_red_draw(t_game *game);
+void	draw_dead_screen_multiplayer(t_game *game);
 void	add_enemies(t_game *game, int x, int y, int floor);
 
 // health
 void	on_life(t_game *game);
-void	draw_collectible_life(t_game *game);
 void	draw_anim_health(t_game *game, t_sprite *sprite, t_image *im_health);
 
 // PARSING
@@ -427,9 +431,9 @@ void	load_texture(t_game *game, t_image *img, char *path);
 void	load_txtre_globale(t_game *game, char *line, char *path);
 
 // free
-int	free_map(t_game *game);
-int free_map_copy(t_game *game);
-int	free_split(t_memory_table *mem, char **str);
+int		free_map(t_game *game);
+int 	free_map_copy(t_game *game);
+int		free_split(t_memory_table *mem, char **str);
 
 //server
 void	create_server(t_game *game);

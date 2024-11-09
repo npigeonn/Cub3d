@@ -6,22 +6,24 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 13:51:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/09 15:41:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "../../includes/cub3d.h"
 
 static void	draw_hud(t_game *game)
 {
-	head_up_display(game);
 	mini_map(game);
 	crosshair(game);
 	gun_draw(game);
 	if (game->player->being_tpted)
 		animation_teleportation(game);
+	health_point_draw(game);
+	ammo_written(game);
+	// damages_red_draw(game);
+	if (game->player->health <= 0 && (game->menu->status == CHATING || game->menu->status == MULTI_PLAYER))
+		draw_dead_screen_multiplayer(game);
 	calculate_fps(game);
 }
 

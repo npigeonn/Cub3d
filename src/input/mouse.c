@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 12:41:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/09 15:38:36 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,13 +82,12 @@ int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 
 static void	handle_mouse_game(t_game *game, int x, int y)
 {
-	const int	center_x = game->screen_width * 0.5;
-	float		rotation = (x - center_x) * ((game->menu->mouse_sensitivity / 20.0f) * ROTATION_SPEED);
+	float		rotation = (x - game->cen_x) * ((game->menu->mouse_sensitivity / 20.0f) * ROTATION_SPEED);
 	const float	old_dir_x = game->player->dir_x;
 	const float	old_plane_x = game->player->planeX;
 	t_player	*p;
 
-	if (x == center_x || game->player->health <= 0)
+	if (x == game->cen_x || game->player->health <= 0)
 		return ;
 	p = game->player;
 	if (p->invert_mouse_x)
@@ -98,7 +97,7 @@ static void	handle_mouse_game(t_game *game, int x, int y)
 	p->planeX = old_plane_x * cos(rotation) - p->planeY * sin(rotation);
 	p->planeY = old_plane_x * sin(rotation) + p->planeY * cos(rotation);
 	send_update_position(game);
-	mlx_mouse_move(game->mlx, game->win, center_x, game->screen_height * 0.5);
+	mlx_mouse_move(game->mlx, game->win, game->cen_x, game->screen_height * 0.5);
 }
 
 int	handle_mouse_move(int x, int y, t_game *game)

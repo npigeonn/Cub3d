@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:57:38 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/09 15:36:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ void	show_menu_message(t_game *game)
 		ft_strlcat(info.str, get_key_name(game, game->player->key->use), 256);
 		ft_strlcat(info.str, " to open", 256);
 		info.height = 30;
-		info.y = game->screen_height * 0.5 - 129;
-		info.x = game->screen_width * 0.5;
+		info.y = game->cen_y - 129;
+		info.x = game->cen_x;
 		info.color = MENU_BUTTON_TEXT_COLOR;
 		draw_text(game, info);
 	}
@@ -50,8 +50,8 @@ void	show_menu_message(t_game *game)
 		ft_strlcat(info.str, get_key_name(game, game->player->key->use), 256);
 		ft_strlcat(info.str, " to close", 256);
 		info.height = 30;
-		info.y = game->screen_height * 0.5 - 129;
-		info.x = game->screen_width * 0.5;
+		info.y = game->cen_y - 129;
+		info.x = game->cen_x;
 		info.color = MENU_BUTTON_TEXT_COLOR;
 		draw_text(game, info);
 	}
@@ -64,8 +64,8 @@ void	show_menu_message(t_game *game)
 		ft_strlcat(info.str, get_key_name(game, game->player->key->use), 256);
 		ft_strlcat(info.str, " to teleport", 256);
 		info.height = 30;
-		info.y = game->screen_height * 0.5 - 129;
-		info.x = game->screen_width * 0.5;
+		info.y = game->cen_y - 129;
+		info.x = game->cen_x;
 		info.color = MENU_BUTTON_TEXT_COLOR;
 		draw_text(game, info);
 	}

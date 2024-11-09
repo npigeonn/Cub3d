@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/05 15:34:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 10:49:48 by npigeon          ###   ########.fr       */
+/*   Created: 2024/11/09 14:55:04 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/09 18:00:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 int	get_index_char(char c)
 {
-	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+\
-		0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
+	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
 	int			i;
 
 	i = -1;
@@ -62,8 +61,7 @@ int	get_char_width_opti(t_game *game, char x)
 
 void	set_width_all_letter(t_game *game)
 {
-	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+\
-		0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
+	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
 	int			i;
 
 	i = -1;
@@ -77,25 +75,41 @@ void	set_width_all_letter(t_game *game)
 	}
 }
 
+int	get_color(t_game *game, int x, int y, int color)
+{
+	const float	adjusted_alpha = 0.2 * (1 - game->player->health) *
+		(1 + (abs(x - game->cen_x) / (game->half_cen_x)) +
+		(abs(y - game->cen_y) / (game->half_cen_y)));
+	return (blend_colors(color, 9830400, adjusted_alpha));
+}
+
 void	pixel_put(t_game *game, int x, int y, int color)
 {
-	if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
-	{
-		int	bpp = game->images->base->bpp * 0.125;
-		int	offset = y * game->images->base->size_line + x * bpp;
-		
-		*((int *)(game->images->base->data + offset)) = color;
-	}
+	int		offset;
+	t_image	*img;
+
+	img = game->images->base;
+	offset = y * img->size_line + x * img->bpp / 8;
+	if (game->player->health < 1)
+		*((int *)(img->data + offset)) = get_color(game, x, y, color);
+	else
+		*((int *)(img->data + offset)) = color;
 }
 
 void	secure_pixel_put(t_game *game, int x, int y, int color)
 {
-	if (x >= 0 && x < game->screen_width && y >= 0 && y < game->screen_height)
-	{
-		int offset = y * game->images->base->size_line + x * (game->images->base->bpp >> 3);
-		int *pixel = (int *)(game->images->base->data + offset);
+	int		offset;
+	int		*pixel;
+	t_image	*img;
 
-		if (*pixel == 0)
+	img = game->images->base;
+	offset = y * img->size_line + x * (img->bpp >> 3);
+	pixel = (int *)(img->data + offset);
+	if (*pixel == 0)
+	{
+		if (game->player->health < 1)
+			*pixel = get_color(game, x, y, color);
+		else
 			*pixel = color;
 	}
 }
@@ -114,7 +128,7 @@ int	is_pixel_transparent(t_image *img, int x, int y)
 
 void	get_pos_char(char c, int *x, int *y)
 {
-	int			index;
+	int	index;
 
 	index = get_index_char(c);
 	*x = index % 10;

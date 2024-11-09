@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   crosshair.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:16:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/08 10:33:22 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/09 15:35:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,11 @@ void	crosshair(t_game *game)
 	cross_len = game->screen_height * 0.02;
 	cross_width = game->screen_height * 0.005;
 	alpha = 0.6;
-	y = game->screen_height / 2 - cross_len - 1;
-	while (++y <= game->screen_height / 2 + cross_len)
+	y = game->cen_y - cross_len - 1;
+	while (++y <= game->cen_y + cross_len)
 	{
-		x = game->screen_width / 2 - cross_len - 1;
-		while (++x <= game->screen_width / 2 + cross_len)
+		x = game->cen_x - cross_len - 1;
+		while (++x <= game->cen_x + cross_len)
 			if (((game->screen_width - cross_width) / 2 <= x
 					&& x <= (game->screen_width + cross_width) / 2)
 				|| ((game->screen_height - cross_width) / 2 <= y

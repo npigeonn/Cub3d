@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
+#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/11/08 11:21:43 by npigeon          ###   ########.fr        #
+#    Updated: 2024/11/09 12:58:31 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,9 @@ NAME = cub3D
 PATH_SRC = ./src/
 PATH_OBJ = ./objs/
 OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
-LIBS = -L$(MINILIBX_DIR) -lmlx -L$(LIBFT_DIR) -lft -L$(RAUDIO_SRC) -lraudio -lX11 -lXext -lm
+LIBS = -L$(MINILIBX_DIR) -lmlx -L$(LIBFT_DIR) -lft -L$(RAUDIO_SRC) -lraudio -lX11 -lXfixes -lXext -lm 
 INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(RAUDIO_HEADERS) -I./includes/
-CFLAGS = -g3 -O3 -lmlx -lX11 -lXext -lXfixes
+CFLAGS = -g3 -O0
 LIBS_DIR = ./libs/
 RM = rm -rf
 
@@ -28,11 +28,11 @@ SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
 				wall.c \
 				minimap.c \
 				crosshair.c \
-				head_up_display.c \
 				health_point.c \
 				ammo.c \
 				add_letter_to_list.c \
-				game_loop.c )
+				game_loop.c \
+				dead.c )
 
 SRC_STATS =	$(addprefix $(PATH_SRC)stats/, \
 				get_stats.c )
