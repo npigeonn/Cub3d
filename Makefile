@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/11/09 12:58:31 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/11/09 18:56:03 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -108,7 +108,10 @@ SRC_SOUND = $(addprefix $(PATH_SRC)game/sound/, \
 				sound_global.c \
 				side_sounds.c )
 
-SRC =	$(SRC_SOUND) $(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT) $(SRC_RAYCASTER) $(SRC_INPUT) $(SRC_SPRITES) $(SRC_STATS)
+SRC_MULTITHREAD = $(addprefix $(PATH_SRC)multithread/, \
+				init.c )
+
+SRC =	$(SRC_SOUND) $(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT) $(SRC_RAYCASTER) $(SRC_INPUT) $(SRC_SPRITES) $(SRC_STATS) $(SRC_MULTITHREAD)
 
 ############### MINILIBX ###############
 
@@ -143,7 +146,7 @@ all: $(NAME)
 $(OBJS): ./includes/* Makefile
 
 $(PATH_OBJ):
-	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/sound $@game/chat $@game/raycaster $@game/sprite $@input $@stats
+	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/sound $@game/chat $@game/raycaster $@game/sprite $@input $@stats $@multithread
 
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
 	cc -c $(CFLAGS) $(INCLUDES) $< -o $@

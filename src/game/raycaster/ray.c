@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 00:57:29 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:20:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/10 18:18:39 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,11 @@ static void	get_step(t_player *p, t_raycast *r)
 	}
 }
 
-static void	calc_base_raycast(t_game *game)
+static void	calc_base_raycast(t_game *game, t_raycast *raycast)
 {
-	t_raycast	*raycast;
 	t_player	*player;
 
 	player = game->player;
-	raycast = player->raycast;
 	raycast->map_x = (int)player->x;
 	raycast->map_y = (int)player->y;
 	raycast->camera_x = 2 * raycast->x / (float)game->screen_width - 1;
@@ -81,25 +79,18 @@ static void	get_side(t_raycast *raycast)
 	}
 }
 
-void	cast_rays(t_game *game)
+void	cast_rays(t_game *game, t_raycast *r)
 {
-	t_raycast	*r;
-
-	r = game->player->raycast;
-	r->x = -1;
-	while (++r->x < game->screen_width)
+	calc_base_raycast(game, r);
+	while (1)
 	{
-		calc_base_raycast(game);
-		while (1)
+		get_side(r);
+		if (game->map[game->player->floor][r->map_y][r->map_x] == '1')
 		{
-			get_side(r);
-			if (game->map[game->player->floor][r->map_y][r->map_x] == '1')
-			{
-				draw_wall(game);
-				break ;
-			}
-			if (handle_door(game))
-				break ;
+			draw_wall(game, r);
+			break ;
 		}
+		if (handle_door(game))
+			break ;
 	}
 }

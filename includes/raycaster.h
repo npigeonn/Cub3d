@@ -29,6 +29,7 @@ typedef struct	s_floorcast
 	float	diff_screen_x;
 	float	diff_screen_y;
 	int		p;
+	int		y;
 }	t_floorcast;
 
 typedef struct	s_raycast

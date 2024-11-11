@@ -6,31 +6,31 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 01:01:10 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:20:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/11 18:01:14 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-static int	get_texture_color(t_floorcast f, int x, t_image *t)
+static int	get_texture_color(t_floorcast *f, int x, t_image *t)
 {
-	const float	f_x = f.floor_x + x * f.floor_step_x;
-	const float	f_y = f.floor_y + x * f.floor_step_y;
-	const int	t_x = (int)(f_x * f.f_tex_width) % f.f_tex_width;
-	const int	t_y = (int)(f_y * f.f_tex_height) % f.f_tex_height;
+	const float	f_x = f->floor_x + x * f->floor_step_x;
+	const float	f_y = f->floor_y + x * f->floor_step_y;
+	const int	t_x = (int)(f_x * f->f_tex_width) % f->f_tex_width;
+	const int	t_y = (int)(f_y * f->f_tex_height) % f->f_tex_height;
 
-	return (*((int *)(f.f_tex_data + t_y * t->size_line + t_x * f.f_bpp)));
+	return (*((int *)(f->f_tex_data + t_y * t->size_line + t_x * f->f_bpp)));
 }
 
-static int	get_color(t_game *game, t_floorcast floorcast, int x, int y)
+static int	get_color(t_game *game, t_floorcast *floorcast, int x, int y)
 {
-	if (game->textures->color_f < 0 && y > floorcast.screen_mid)
+	if (game->textures->color_f < 0 && y > floorcast->screen_mid)
 		return (get_texture_color(floorcast, x, game->textures->floor));
-	else if (y > floorcast.screen_mid)
+	else if (y > floorcast->screen_mid)
 		return (game->textures->color_f);
-	if (game->textures->color_c < 0 && y < floorcast.screen_mid)
+	if (game->textures->color_c < 0 && y < floorcast->screen_mid)
 		return (get_texture_color(floorcast, x, game->textures->ceil));
-	else if (y < floorcast.screen_mid)
+	else if (y < floorcast->screen_mid)
 		return (game->textures->color_c);
 }
 
@@ -61,20 +61,14 @@ static void	get_step_floorcast(t_game *game, t_floorcast *f, int y)
 	f->floor_y = game->player->y + f->row_distance * f->ray_dir_y0;
 }
 
-void	cast_floor(t_game *game)
+void	cast_floor(t_game *game, t_floorcast *floorcast)
 {
-	t_floorcast	floorcast;
 	int			x;
-	int			y;
 
-	y = -1;
-	floorcast = game->player->raycast->floorcast;
-	init_calc_floorcast(game, &floorcast);
-	while (++y < game->screen_height)
-	{
-		get_step_floorcast(game, &floorcast, y);
-		x = -1;
-		while (++x < game->screen_width)
-			secure_pixel_put(game, x, y, get_color(game, floorcast, x, y));
-	}
+	init_calc_floorcast(game, floorcast);
+	init_floorcast(game, floorcast);
+	get_step_floorcast(game, floorcast, floorcast->y);
+	x = -1;
+	while (++x < game->screen_width)
+		secure_pixel_put(game, x, floorcast->y, get_color(game, floorcast, x, floorcast->y));
 }

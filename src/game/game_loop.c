@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/09 15:41:11 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/11 23:12:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,21 +72,22 @@ static void	game_engine(t_game *game)
 	game->menu->message = NOTHING;
 	handle_key(game);
 	calculate_delta_time(game);
-	cast_rays(game);
-	cast_floor(game);
 	if (game->menu->status == PLAYING)
 	{
 		update_door_animation(game);
 		update_enemies(game);
-		on_ammo(game);
 		update_projectiles(game);
+		on_ammo(game);
 		on_life(game);
 	}
 	set_anim(game);
-	draw_sprites(game);
-	chat_draw(game);
-	show_message(game);
 	game_multi_death(game);
+
+	// draw_sprites(game);
+	// chat_draw(game);
+	// show_message(game);
+
+	render_multithreaded(game);
 	draw_hud(game);
 	if (is_a_teleporter(game->map[p->floor][(int)p->y][(int)p->x]))
 		game->menu->message = TELEPORT;

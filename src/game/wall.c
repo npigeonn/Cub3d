@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:13:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/22 08:55:26 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/09 18:44:36 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,9 @@ bool	is_colored_wall(t_game *game, int side, int x, int draw_start, int draw_end
 	return (true);
 }
 
-void	draw_wall(t_game *game)
+void	draw_wall(t_game *game, t_raycast *raycast)
 {
 	t_image		*texture;
-	t_raycast	*raycast = game->player->raycast;
 		
 	raycast->perp_wall_dist = (raycast->side == SIDE_EAST || raycast->side == SIDE_WEST)
 		? (raycast->map_x - game->player->x + ((1 - raycast->step_x) >> 1)) / raycast->ray_dir_x

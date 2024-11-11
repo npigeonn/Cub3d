@@ -16,6 +16,7 @@
 # include "client.h"
 # include "input.h"
 # include "stats.h"
+# include "multithread.h"
 
 # include <X11/X.h>
 # include <X11/keysym.h>

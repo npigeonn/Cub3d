@@ -158,25 +158,22 @@ void	init_img(t_game *game)
 	game->textures->ammo->sprite_width = game->textures->ammo->width;
 }
 
-void	init_floorcast(t_game *game)
+void	init_floorcast(t_game *game, t_floorcast *f)
 {
-	t_floorcast	floorcast;
-
 	if (game->textures->color_f < 0)
 	{
-		floorcast.f_tex_width = game->textures->floor->width;
-		floorcast.f_tex_height = game->textures->floor->height;
-		floorcast.f_tex_data = game->textures->floor->data;
-		floorcast.f_bpp = game->textures->floor->bpp / 8;
+		f->f_tex_width = game->textures->floor->width;
+		f->f_tex_height = game->textures->floor->height;
+		f->f_tex_data = game->textures->floor->data;
+		f->f_bpp = game->textures->floor->bpp / 8;
 	}
 	if (game->textures->color_c < 0)
 	{
-		floorcast.c_tex_width = game->textures->ceil->width;
-		floorcast.c_tex_height = game->textures->ceil->height;
-		floorcast.c_tex_data = game->textures->ceil->data;
-		floorcast.c_bpp = game->textures->ceil->bpp / 8;
+		f->c_tex_width = game->textures->ceil->width;
+		f->c_tex_height = game->textures->ceil->height;
+		f->c_tex_data = game->textures->ceil->data;
+		f->c_bpp = game->textures->ceil->bpp / 8;
 	}
-	game->player->raycast->floorcast = floorcast;
 }
 
 void	load_game_texture(t_game *game)
@@ -303,9 +300,12 @@ int	main(int ac, char **av)
 	load_game_texture(&game);
 	parsing(av, &game);
 	set_direction(&game, game.player->begin_dir);
-	init_floorcast(&game);
+	// init_floorcast(&game);
 	init_img(&game);
 	set_width_all_letter(&game);
+
+	init_thread_pool(&game, 4);
+
 	game.win = mlx_new_window(game.mlx, game.screen_width,
 		game.screen_height, "Cub3D");
 	// music_launch(&game);

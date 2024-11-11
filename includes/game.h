@@ -327,6 +327,7 @@ typedef struct s_game
 	float			cen_y;
 	float			half_cen_x;
 	float			half_cen_y;
+	struct s_thread_pool	*pool;
 }	t_game;
 
 //game
@@ -382,7 +383,7 @@ void	use_door_in_view(t_game *game);
 void	update_door_animation(t_game *game);
 	
 //wall
-void	draw_wall(t_game *game);
+void	draw_wall(t_game *game, t_raycast *raycast);
 void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height);
 
 //ennemies
