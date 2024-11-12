@@ -304,7 +304,7 @@ int	main(int ac, char **av)
 	init_img(&game);
 	set_width_all_letter(&game);
 
-	init_thread_pool(&game, 4);
+	init_thread_pool(&game, 6);
 
 	game.win = mlx_new_window(game.mlx, game.screen_width,
 		game.screen_height, "Cub3D");

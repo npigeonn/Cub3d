@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   add_letter_to_list.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:38:19 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/08 10:35:22 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/12 09:57:19 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	add_ammo(t_game *game, int x, int y, int floor)
+void	add_ammo(t_game *game, float x, float y, int floor)
 {
 	t_sprite	*new_ammo;
 
@@ -26,7 +26,7 @@ void	add_ammo(t_game *game, int x, int y, int floor)
 	game->sprites = new_ammo;
 }
 
-void	add_health(t_game *game, int x, int y, int floor)
+void	add_health(t_game *game, float x, float y, int floor)
 {
 	t_sprite	*new_health;
 
@@ -40,7 +40,7 @@ void	add_health(t_game *game, int x, int y, int floor)
 	game->sprites = new_health;
 }
 
-void	add_exit(t_game *game, int x, int y, int floor)
+void	add_exit(t_game *game, float x, float y, int floor)
 {
 	t_sprite	*new_exit;
 
@@ -73,9 +73,9 @@ void	door_ennemi_ammo_health_mngmt(t_game *game)
 				else if (game->map[i[0]][i[1]][i[2]] == 'B')
 					add_enemies(game, i[2], i[1], i[0]);
 				else if (game->map[i[0]][i[1]][i[2]] == 'H')
-					add_health(game, i[2], i[1] + 0.5, i[0] + 0.5);
+					add_health(game, i[2] + 0.5, i[1] + 0.5, i[0]);
 				else if (game->map[i[0]][i[1]][i[2]] == 'e')
-					add_exit(game, i[2], i[1] + 0.5, i[0] + 0.5);
+					add_exit(game, i[2] + 0.5, i[1] + 0.5, i[0]);
 			}
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 09:12:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 10:32:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ static void	draw_hud(t_game *game)
 		animation_teleportation(game);
 	health_point_draw(game);
 	ammo_written(game);
-	// damages_red_draw(game);
 	if (game->player->health <= 0 && (game->menu->status == CHATING || game->menu->status == MULTI_PLAYER))
 		draw_dead_screen_multiplayer(game);
 	calculate_fps(game);

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 14:16:47 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 09:13:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 11:49:05 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	create_task_sprite(t_game *game, t_image *texture, t_sprite *sprite, float 
 	task->sprite->sprite_dir = sprite_dir;
 	task->sprite->scale = scale;
 	task->sprite->z_offset = z_offset;
-	if (sprite->type == TELEPORT && game->player->floor == sprite->floor1)
+	if (sprite->type == SPRITE_TELEPORTER && game->player->floor == sprite->floor1)
 	{
 		task->sprite->sprite->x = sprite->x1;
 		task->sprite->sprite->y = sprite->y1;
@@ -131,28 +131,18 @@ void	*worker_thread(void *arg)
 			{
 				task->raycast->x = task->x;
 				cast_rays(task->game, task->raycast);
-				gc_free(task->game->mem, task->raycast);
 			}
 			else if (task->type == CAST_FLOOR)
 			{
 				task->floorcast->y = task->x;
 				cast_floor(task->game, task->floorcast);
-				gc_free(task->game->mem, task->floorcast);
 			}
 			else if (task->type == SPRITE)
-			{
 				draw_sprite(pool->game, task->sprite->texture, task->sprite->sprite, task->sprite->sprite_dir, task->sprite->scale, task->sprite->z_offset);
-				gc_free(task->game->mem, task->sprite->sprite);
-				gc_free(task->game->mem, task->sprite);
-			}
 			else if (task->type == HEALTH)
-			{
 				draw_anim_health(pool->game, task->sprite->sprite, task->sprite->texture);
-				gc_free(task->game->mem, task->sprite);
-			}
 			else if (task->type == FILTER_RED)
 				damages_red_draw(task->game, task->x);
-			gc_free(task->game->mem, task);
 		}
 		pthread_mutex_lock(&pool->queue_mutex);
 		if (pool->tasks_remaining == 0)
@@ -188,6 +178,31 @@ void	wait_for_all_tasks(t_thread_pool *pool)
 	pthread_mutex_unlock(&pool->queue_mutex);;
 }
 
+void	free_all_pool(t_game *game)
+{
+	t_task	*task;
+	t_task	*next;
+
+	task = game->pool->task_queue;
+	while (task)
+	{
+		next = task->next;
+		if (task->type == SPRITE)
+		{
+			gc_free(game->mem, task->sprite->sprite);
+			gc_free(game->mem, task->sprite);
+		}
+		else if (task->type == HEALTH)
+			gc_free(game->mem, task->sprite);
+		else if (task->type == CAST_FLOOR)
+			gc_free(game->mem, task->floorcast);
+		else if (task->type == RAYCAST)
+			gc_free(game->mem, task->raycast);
+		gc_free(game->mem, task);
+		task = next;
+	}
+}
+
 void	render_multithreaded(t_game *game)
 {
 	int	x;
@@ -204,6 +219,7 @@ void	render_multithreaded(t_game *game)
 		create_task(game, x, FILTER_RED);
 	pthread_cond_broadcast(&game->pool->queue_cond);
 	wait_for_all_tasks(game->pool);
+	free_all_pool(game);
 }
 
 void	init_thread_pool(t_game *game, int num_threads)
