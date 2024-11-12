@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 19:09:07 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/11 22:22:50 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 09:05:36 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ typedef enum	e_task_type
 	RAYCAST,
 	CAST_FLOOR,
 	SPRITE,
+	HEALTH,
+	FILTER_RED,
 }	t_task_type;
 
 typedef struct	s_task_sprite

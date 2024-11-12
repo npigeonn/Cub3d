@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 13:51:45 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/11 23:36:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 08:55:35 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,29 +230,27 @@ void	draw_sprites(t_game *game)
 			pthread_mutex_lock(&game->game_lock);
 		if (current->type == SPRITE_TELEPORTER)
 		{
-			// if (current->floor == game->player->floor)
-				// create_task_sprite(game, game->textures->tp, current, 150, 0.4, 1);
-			if (current->floor1 == game->player->floor)
+			if (current->floor1 == game->player->floor || current->floor == game->player->floor)
 				create_task_sprite(game, game->textures->tp, current, 150, 0.4, 1);
 		}
-		// if (current->type == SPRITE_EXIT && current->floor == game->player->floor)
-		// 	draw_sprite(game, game->textures->exit, current, 150, 1.5, 0.005);
-		// else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor)
-		// {
-		// 	if (current->health <= 0)
-		// 		draw_sprite(game, game->textures->enemy_death, current, 0, 1, 0);
-		// 	else if (current->state == CHASE
-		// 		&& is_player_in_front(current, game->player))
-		// 		draw_sprite(game, game->textures->enemy_fire, current, atan2(current->dir_y, current->dir_x), 1, 0);
-		// 	else
-		// 		draw_sprite(game, game->textures->enemy, current, atan2(current->dir_y, current->dir_x), 1, 0);
-		// }
-		// else if (current->type == SPRITE_AMMO && current->still_exist && current->floor == game->player->floor)
-		// 	draw_sprite(game, game->textures->ammo, current, 150, 0.2, 2.1);
-		// else if (current->type == SPRITE_HEALTH && current->still_exist && current->floor == game->player->floor)
-		// 	draw_anim_health(game, current, game->textures->health);
-		// else if (current->type == SPRITE_PLAYER && current->floor == game->player->floor)
-		// 	draw_sprite(game, game->textures->enemy, current, atan2(current->dir_y, current->dir_x), 1, 0);
+		if (current->type == SPRITE_EXIT && current->floor == game->player->floor)
+			create_task_sprite(game, game->textures->exit, current, 150, 1.5, 0.005);
+		else if (current->type == SPRITE_ENEMY && current->floor == game->player->floor)
+		{
+			if (current->health <= 0)
+				create_task_sprite(game, game->textures->enemy_death, current, 0, 1, 0);
+			else if (current->state == CHASE
+				&& is_player_in_front(current, game->player))
+				create_task_sprite(game, game->textures->enemy_fire, current, atan2(current->dir_y, current->dir_x), 1, 0);
+			else
+				create_task_sprite(game, game->textures->enemy, current, atan2(current->dir_y, current->dir_x), 1, 0);
+		}
+		else if (current->type == SPRITE_AMMO && current->still_exist && current->floor == game->player->floor)
+			create_task_sprite(game, game->textures->ammo, current, 150, 0.2, 2.1);
+		else if (current->type == SPRITE_HEALTH && current->still_exist && current->floor == game->player->floor)
+			create_task_sprite_health(game, current, game->textures->health);
+		else if (current->type == SPRITE_PLAYER && current->floor == game->player->floor)
+			create_task_sprite(game, game->textures->enemy, current, atan2(current->dir_y, current->dir_x), 1, 0);
 		current = current->next;
 		if (game->menu->status == MULTI_PLAYER || game->menu->status == CHATING)
 			pthread_mutex_unlock(&game->game_lock);

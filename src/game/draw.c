@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 14:55:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/11 21:57:42 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 09:11:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,14 +75,6 @@ void	set_width_all_letter(t_game *game)
 	}
 }
 
-int	get_color(t_game *game, int x, int y, int color)
-{
-	const float	adjusted_alpha = 0.2 * (1 - game->player->health) *
-		(1 + (abs(x - game->cen_x) / (game->half_cen_x)) +
-		(abs(y - game->cen_y) / (game->half_cen_y)));
-	return (blend_colors(color, 9830400, adjusted_alpha));
-}
-
 void	pixel_put(t_game *game, int x, int y, int color)
 {
 	int		offset;
@@ -90,10 +82,7 @@ void	pixel_put(t_game *game, int x, int y, int color)
 
 	img = game->images->base;
 	offset = y * img->size_line + x * img->bpp / 8;
-	if (game->player->health < 1)
-		*((int *)(img->data + offset)) = get_color(game, x, y, color);
-	else
-		*((int *)(img->data + offset)) = color;
+	*((int *)(img->data + offset)) = color;
 }
 
 void	secure_pixel_put(t_game *game, int x, int y, int color)
@@ -106,12 +95,7 @@ void	secure_pixel_put(t_game *game, int x, int y, int color)
 	offset = y * img->size_line + x * (img->bpp >> 3);
 	pixel = (int *)(img->data + offset);
 	if (*pixel == 0)
-	{
-		if (game->player->health < 1)
-			*pixel = get_color(game, x, y, color);
-		else
-			*pixel = color;
-	}
+		*pixel = color;
 }
 
 int	is_pixel_transparent(t_image *img, int x, int y)

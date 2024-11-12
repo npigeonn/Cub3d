@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 14:00:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 09:14:06 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,10 +134,9 @@ bool	visible_door(t_door *door)
 	return (false);
 }
 
-int	handle_door(t_game *game)
+int	handle_door(t_game *game, t_raycast *raycast)
 {
 	t_door		*door;
-	t_raycast	*raycast = game->player->raycast;
 	float		distance = raycast->perp_wall_dist;
 
 	if (raycast->side == SIDE_EAST || raycast->side == SIDE_WEST)

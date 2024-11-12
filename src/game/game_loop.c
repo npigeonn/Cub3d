@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/11 23:12:51 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 09:12:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,12 +82,9 @@ static void	game_engine(t_game *game)
 	}
 	set_anim(game);
 	game_multi_death(game);
-
-	// draw_sprites(game);
-	// chat_draw(game);
-	// show_message(game);
-
 	render_multithreaded(game);
+	chat_draw(game);
+	show_message(game);
 	draw_hud(game);
 	if (is_a_teleporter(game->map[p->floor][(int)p->y][(int)p->x]))
 		game->menu->message = TELEPORT;

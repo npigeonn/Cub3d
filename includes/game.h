@@ -376,7 +376,7 @@ void	*test_music(void *arg);
 void	music_launch(t_game *game);
 
 //door
-int		handle_door(t_game *game);
+int		handle_door(t_game *game, t_raycast *raycast);
 void	add_door(t_game *game, int x, int y, int floor);
 t_door	*get_door(t_door *door, int x, int y, int floor);
 void	use_door_in_view(t_game *game);
@@ -388,7 +388,7 @@ void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int dr
 
 //ennemies
 void	update_enemies(t_game *game);
-void	damages_red_draw(t_game *game);
+void	damages_red_draw(t_game *game, int y);
 void	draw_dead_screen_multiplayer(t_game *game);
 void	add_enemies(t_game *game, int x, int y, int floor);
 

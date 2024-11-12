@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 00:57:29 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/10 18:18:39 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 09:14:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	cast_rays(t_game *game, t_raycast *r)
 			draw_wall(game, r);
 			break ;
 		}
-		if (handle_door(game))
+		if (handle_door(game, r))
 			break ;
 	}
 }
