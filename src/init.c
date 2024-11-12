@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/09 18:13:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 11:33:26 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,12 @@ void	init_player(t_game	*game, int malloc)
 	game->player->dir_y = 0;
 	game->player->planeX = 0;
 	game->player->anim_shoot = 0;
+	game->player->is_shooting = 0;
 	game->player->health = 1;
+	game->player->life_up = 0;
+	game->player->injured = 0;
 	game->player->ammo = 30;
+	game->player->picking_up_ammo = 0;
 	game->player->being_tpted = 0;
 	game->time_regen = 0;
 	game->servers = NULL;

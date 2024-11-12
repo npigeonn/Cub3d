@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   gc.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 17:23:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 08:29:25 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 11:00:43 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@ typedef struct s_block_info
 {
 	void	*ptr;
 	void	*ptr2;
+	void	*ptr3;
+	void	*ptr4;
+	void	*ptr5;
+	void	*ptr6;	
 }	t_block_info;
 
 typedef struct s_memory_block {

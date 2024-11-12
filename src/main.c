@@ -308,6 +308,6 @@ int	main(int ac, char **av)
 
 	game.win = mlx_new_window(game.mlx, game.screen_width,
 		game.screen_height, "Cub3D");
-	// music_launch(&game);
+	music_launch(&game);
 	return (hooks(&game), 0);
 }

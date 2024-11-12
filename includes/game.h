@@ -130,9 +130,13 @@ typedef struct s_player
 	float		planeY;
 	float		height;
 	float		health;
+	int			life_up;
+	int			injured;
 	int			ammo;
 	int			floor;
 	float		anim_shoot;
+	int			is_shooting;
+	int			picking_up_ammo;
 	int			begin_dir;
 	bool		being_tpted;
 	float		x_tel;
@@ -303,7 +307,7 @@ typedef struct s_game
 	int				x_minimap;
 	int				y_minimap;
 	int				clr;
-	pthread_t		*thread;
+	pthread_t		thread;
 
 	int				nb_floor;
 	t_door			*door;

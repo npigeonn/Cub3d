@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   health_point.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/08 11:29:46 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/12 11:55:42 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,14 @@ void	on_life(t_game *game)
 		{
 			if ((int)game->player->x <= current->x + 1 && (int)game->player->x >= current->x - 1
 				&& (int)game->player->y <= current->y + 1 && (int)game->player->y >= current->y - 1
-				&& current->type == SPRITE_HEALTH)
+				&& current->type == SPRITE_HEALTH && current->still_exist)
 			{
-				if (current->still_exist == 1 && game->player->health < 0.75)
-					game->player->health += 0.25;
-				else if (current->still_exist == 1)
-					game->player->health = 1;
+				game->player->life_up = 1;
 				current->still_exist = 0;
+				if (game->player->health < 0.75)
+					game->player->health += 0.25;
+				else
+					game->player->health = 1;
 				return ;
 			}
 			current = current->next;
