@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 23:32:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 11:13:00 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/13 13:10:29 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,4 +224,3 @@ void	draw_main_menu(t_game *game)
 	const int	gear_y = 15;
 	draw_gear_icon(game, gear_x, gear_y, gear_size);
 }
-

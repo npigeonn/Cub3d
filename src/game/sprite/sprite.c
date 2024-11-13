@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 13:51:45 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 11:58:29 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 13:19:49 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,10 @@ void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite, float sprite_
 {
 	int sprite_order[8] = {5, 6, 7, 3, 2, 1, 0, 4};
 
+	pthread_mutex_lock(&game->mutex);
 	float relative_sprite_x = sprite->x - game->player->x;
 	float relative_sprite_y = sprite->y - game->player->y;
+	pthread_mutex_unlock(&game->mutex);
 
 	float inv_det = 1.0f / (game->player->planeX * game->player->dir_y - game->player->dir_x * game->player->planeY);
 

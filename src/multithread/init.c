@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/11 14:16:47 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 12:03:26 by ybeaucou         ###   ########.fr       */
+/*   Created: 2024/11/13 12:23:37 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/13 13:36:32 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,23 +210,31 @@ void	render_multithreaded(t_game *game)
 	x = -1;
 	while (++x < game->screen_width)
 		create_task(game, x, RAYCAST);
+	pthread_mutex_lock(&game->pool->queue_mutex);
 	pthread_cond_broadcast(&game->pool->queue_cond);
+	pthread_mutex_unlock(&game->pool->queue_mutex);
 	wait_for_all_tasks(game->pool);
 	free_all_pool(game);
 	x = -1;
 	while (++x < game->screen_height)
 		create_task(game, x, CAST_FLOOR);
+	pthread_mutex_lock(&game->pool->queue_mutex);
 	pthread_cond_broadcast(&game->pool->queue_cond);
+	pthread_mutex_unlock(&game->pool->queue_mutex);
 	wait_for_all_tasks(game->pool);
 	free_all_pool(game);
 	draw_sprites(game);
+	pthread_mutex_lock(&game->pool->queue_mutex);
 	pthread_cond_broadcast(&game->pool->queue_cond);
+	pthread_mutex_unlock(&game->pool->queue_mutex);
 	wait_for_all_tasks(game->pool);
 	free_all_pool(game);
 	x = -1;
 	while (++x < game->screen_height)
 		create_task(game, x, FILTER_RED);
+	pthread_mutex_lock(&game->pool->queue_mutex);
 	pthread_cond_broadcast(&game->pool->queue_cond);
+	pthread_mutex_unlock(&game->pool->queue_mutex);
 	wait_for_all_tasks(game->pool);
 	free_all_pool(game);
 }

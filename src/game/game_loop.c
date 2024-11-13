@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 12:13:28 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/13 14:01:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,9 @@ static void	game_engine(t_game *game)
 	set_anim(game);
 	game_multi_death(game);
 	render_multithreaded(game);
-	chat_draw(game);
-	show_message(game);
-	draw_hud(game);
+	// chat_draw(game);
+	// show_message(game);
+	// draw_hud(game);
 	if (is_a_teleporter(game->map[p->floor][(int)p->y][(int)p->x]))
 		game->menu->message = TELEPORT;
 	if (game->menu->message != NOTHING)
