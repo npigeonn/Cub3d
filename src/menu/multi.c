@@ -5,93 +5,13 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/07 22:26:36 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 08:32:05 by ybeaucou         ###   ########.fr       */
+/*   Created: 2024/11/13 10:04:42 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/13 10:32:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode)
-{
-	if (keycode != 1)
-		return ;
-	if (game->menu->button_selected == 3)
-		game->menu->status = MAIN_MENU;
-	else if (game->menu->button_selected == 2)
-		game->menu->status = SERVER_CREATE;
-	else if (game->menu->button_selected == 1)
-		game->menu->status = JOIN_SERVER;
-	else if (game->menu->button_selected == 5)
-	{
-		game->menu->status = OPTIONS_KEYBOARD;
-		game->menu->last_status = SERVERS;
-	}
-	else if (game->menu->server_selected != 0)
-	{
-		int	i = 1;
-		t_server_info *current;
-
-		current = game->servers;
-		while (current)
-		{
-			if (i == game->menu->server_selected)
-			{
-				ft_strcpy(game->client->ip, current->ip);
-				game->menu->status = VALID_JOIN_SERVER;
-				break;
-			}
-			current = current->next;
-			i++;
-		}
-	}
-	game->menu->button_selected = 0;
-}
-
-void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
-{
-	const int	btn_width = game->screen_width * 0.25;
-	const int	btn_height = game->screen_height * 0.1;
-	const int	spacing = game->screen_height * 0.05;
-		
-	const int	list_width = game->screen_width * 0.65 - 20;
-	const int	list_height = game->screen_height * 0.8;
-	const int	list_x = (game->screen_width - list_width) * 0.1 + 10;
-	const int	list_y = (game->screen_height - list_height) * 0.35;
-	int			server_y_offset = list_y + 80;
-	
-	t_server_info	*current;
-	int				i = 1;
-
-	game->menu->button_selected = 0;
-	game->menu->server_selected = 0;
-	current = game->servers;
-	while (current)
-	{
-		if (mouse_x >= list_x && mouse_x <= list_x + list_width &&
-			mouse_y >= server_y_offset && mouse_y <= server_y_offset + 80)
-		{
-			game->menu->server_selected = i;
-			return;
-		}
-		server_y_offset += 60;
-		current = current->next;
-		i++;
-	}
-	const int	remaining_space = game->screen_width - (list_x + list_width);
-	const int	btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
-	const int	btn_y_start = game->screen_height * 0.25;
-	if (mouse_x >= btn_x && mouse_x <= btn_x + btn_width)
-	{
-		if (mouse_y >= btn_y_start && mouse_y <= btn_y_start + btn_height)
-			game->menu->button_selected = 1;
-		else if (mouse_y >= btn_y_start + btn_height + spacing && mouse_y <= btn_y_start + 2 * btn_height + spacing)
-			game->menu->button_selected = 2;
-		else if (mouse_y >= btn_y_start + 2 * (btn_height + spacing) && mouse_y <= btn_y_start + 3 * btn_height + 2 * spacing)
-			game->menu->button_selected = 3;
-	}
-	check_mouse_on_gear(game, mouse_x, mouse_y);
-}
 
 void	draw_arc(t_game *game, int cx, int cy, int radius, float start_angle, float end_angle, int color)
 {
@@ -138,14 +58,99 @@ void	draw_rounded_rectangle(t_game *game, t_draw_info info)
 	}
 }
 
+void update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode) {
+    if (keycode != 1) return;
+
+    // Protéger l'accès à `game->menu` et `game->servers`
+    pthread_mutex_lock(&game->game_lock);
+    
+    if (game->menu->button_selected == 3)
+        game->menu->status = MAIN_MENU;
+    else if (game->menu->button_selected == 2)
+        game->menu->status = SERVER_CREATE;
+    else if (game->menu->button_selected == 1)
+        game->menu->status = JOIN_SERVER;
+    else if (game->menu->button_selected == 5) {
+        game->menu->status = OPTIONS_KEYBOARD;
+        game->menu->last_status = SERVERS;
+    } else if (game->menu->server_selected != 0) {
+        int i = 1;
+        t_server_info *current = game->servers;
+
+        while (current) {
+            if (i == game->menu->server_selected) {
+                ft_strcpy(game->client->ip, current->ip);
+                game->menu->status = VALID_JOIN_SERVER;
+                break;
+            }
+            current = current->next;
+            i++;
+        }
+    }
+    
+    game->menu->button_selected = 0;
+    pthread_mutex_unlock(&game->game_lock); // Déverrouiller après mise à jour
+}
+
+
+void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
+{
+	pthread_mutex_lock(&game->game_lock);
+	const int	btn_width = game->screen_width * 0.25;
+	const int	btn_height = game->screen_height * 0.1;
+	const int	spacing = game->screen_height * 0.05;
+
+	const int	list_width = game->screen_width * 0.65 - 20;
+	const int	list_height = game->screen_height * 0.8;
+	const int	list_x = (game->screen_width - list_width) * 0.1 + 10;
+	const int	list_y = (game->screen_height - list_height) * 0.35;
+	int			server_y_offset = list_y + 80;
+
+	t_server_info	*current;
+	int				i = 1;
+
+	game->menu->button_selected = 0;
+	game->menu->server_selected = 0;
+	current = game->servers;
+	while (current)
+	{
+		if (mouse_x >= list_x && mouse_x <= list_x + list_width &&
+			mouse_y >= server_y_offset && mouse_y <= server_y_offset + 80)
+		{
+			game->menu->server_selected = i;
+			pthread_mutex_unlock(&game->game_lock);
+			return ;
+		}
+		server_y_offset += 60;
+		current = current->next;
+		i++;
+	}
+
+	const int	remaining_space = game->screen_width - (list_x + list_width);
+	const int	btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
+	const int	btn_y_start = game->screen_height * 0.25;
+
+	if (mouse_x >= btn_x && mouse_x <= btn_x + btn_width)
+	{
+		if (mouse_y >= btn_y_start && mouse_y <= btn_y_start + btn_height)
+			game->menu->button_selected = 1;
+		else if (mouse_y >= btn_y_start + btn_height + spacing && mouse_y <= btn_y_start + 2 * btn_height + spacing)
+			game->menu->button_selected = 2;
+		else if (mouse_y >= btn_y_start + 2 * (btn_height + spacing) && mouse_y <= btn_y_start + 3 * btn_height + 2 * spacing)
+			game->menu->button_selected = 3;
+	}
+	pthread_mutex_unlock(&game->game_lock);
+	check_mouse_on_gear(game, mouse_x, mouse_y);
+}
+
 void	*discover_servers_thread(void *arg)
 {
-	t_game			*game = (t_game *)arg;
-	int				sockfd;
+	t_game				*game = (t_game *)arg;
+	int					sockfd;
 	struct sockaddr_in	recv_addr;
-	char			buffer[256];
-	socklen_t		addr_len = sizeof(recv_addr);
-	t_server_info	*last_server = NULL;
+	char				buffer[256];
+	socklen_t			addr_len = sizeof(recv_addr);
+	time_t				now;
 
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sockfd < 0)
@@ -153,23 +158,25 @@ void	*discover_servers_thread(void *arg)
 		perror("socket failed");
 		return NULL;
 	}
+
 	ft_memset(&recv_addr, 0, sizeof(recv_addr));
 	recv_addr.sin_family = AF_INET;
 	recv_addr.sin_port = htons(BROADCAST_PORT);
 	recv_addr.sin_addr.s_addr = INADDR_ANY;
+
 	if (bind(sockfd, (struct sockaddr *)&recv_addr, sizeof(recv_addr)) < 0)
 	{
+		perror("bind failed");
 		close(sockfd);
 		return NULL;
 	}
-	while (game->menu->status == SERVERS)
-	{
-		struct timeval tv;
-		tv.tv_sec = 1;
-		tv.tv_usec = 0;
-		setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
 
-		time_t now = time(NULL);
+	while (1)
+	{
+		struct timeval tv = {1, 0};
+		setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char *)&tv, sizeof tv);
+		now = time(NULL);
+
 		int bytes_received = recvfrom(sockfd, buffer, sizeof(buffer) - 1, 0, (struct sockaddr *)&recv_addr, &addr_len);
 		if (bytes_received > 0)
 		{
@@ -177,62 +184,61 @@ void	*discover_servers_thread(void *arg)
 			if (strstr(buffer, "ServerInfo") != NULL)
 			{
 				t_server_info *new_server = gc_malloc(game->mem, sizeof(t_server_info));
-				if (new_server == NULL)
-				{
-					perror("malloc failed");
-					break;
-				}
-				new_server->name = gc_malloc(game->mem, 64);
-				if (new_server->name == NULL)
+				if (!new_server || !(new_server->name = gc_malloc(game->mem, 64)))
 				{
 					perror("malloc failed");
 					gc_free(game->mem, new_server);
 					break;
 				}
+
 				sscanf(buffer, "ServerInfo:%[^;];Players:%d/%d;Ping:%dms", new_server->name, &new_server->players, &new_server->max_players, &new_server->ping);
 				new_server->ip = gc_strdup(game->mem, inet_ntoa(recv_addr.sin_addr));
 				new_server->port = ntohs(recv_addr.sin_port);
 				new_server->last_seen = now;
 				new_server->next = NULL;
-				if (game->servers == NULL)
-					game->servers = new_server;
-				else
-				{
-					t_server_info *current = game->servers;
-					t_server_info *last_server = NULL;
-					int server_exists = 0;
 
-					while (current != NULL)
+				pthread_mutex_lock(&game->mutex);
+				t_server_info *current = game->servers, *last_server = NULL;
+				int server_exists = 0;
+
+				while (current)
+				{
+					if (strcmp(current->ip, new_server->ip) == 0 && current->port == new_server->port)
 					{
-						if (strcmp(current->ip, new_server->ip) == 0 && current->port == new_server->port)
-						{
-							current->last_seen = now;
-							current->players = new_server->players;
-							current->ping = new_server->ping;
-							gc_free(game->mem, new_server->name);
-							gc_free(game->mem, new_server->ip);
-							gc_free(game->mem, new_server);
-							server_exists = 1;
-							break;
-						}
-						last_server = current;
-						current = current->next;
+						current->last_seen = now;
+						current->players = new_server->players;
+						current->ping = new_server->ping;
+						gc_free(game->mem, new_server->name);
+						gc_free(game->mem, new_server->ip);
+						gc_free(game->mem, new_server);
+						server_exists = 1;
+						break;
 					}
-					if (!server_exists)
-						last_server->next = new_server;
+					last_server = current;
+					current = current->next;
 				}
+				if (!server_exists)
+				{
+					if (last_server)
+						last_server->next = new_server;
+					else
+						game->servers = new_server;
+				}
+				pthread_mutex_unlock(&game->mutex);
 			}
 		}
-		t_server_info *prev = NULL;
-		t_server_info *current = game->servers;
-		while (current != NULL)
+
+		pthread_mutex_lock(&game->mutex);
+		t_server_info *current = game->servers, *prev = NULL;
+		while (current)
 		{
 			if (difftime(now, current->last_seen) > 10)
 			{
-				if (prev == NULL)
-					game->servers = current->next;
-				else
+				if (prev)
 					prev->next = current->next;
+				else
+					game->servers = current->next;
+
 				t_server_info *to_delete = current;
 				current = current->next;
 				gc_free(game->mem, to_delete->name);
@@ -245,10 +251,14 @@ void	*discover_servers_thread(void *arg)
 				current = current->next;
 			}
 		}
+		if (game->menu->status != SERVERS)
+			break ;
+		pthread_mutex_unlock(&game->mutex);
 	}
 	close(sockfd);
-	return (NULL);
+	return NULL;
 }
+
 
 static void	draw_selected_button(t_game *game)
 {
@@ -307,6 +317,7 @@ void	draw_multiplayer_menu(t_game *game)
 	else
 	{
 		int i = 1;
+		pthread_mutex_lock(&game->mutex);
 		t_server_info *current = game->servers;
 		while (current)
 		{
@@ -338,6 +349,7 @@ void	draw_multiplayer_menu(t_game *game)
 			current = current->next;
 			i++;
 		}
+		pthread_mutex_unlock(&game->mutex);
 	}
 
 	draw_selected_button(game);
@@ -369,4 +381,3 @@ void	draw_multiplayer_menu(t_game *game)
 	const int	gear_y = 15;
 	draw_gear_icon(game, gear_x, gear_y, gear_size);
 }
-

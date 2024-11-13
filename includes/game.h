@@ -334,6 +334,7 @@ typedef struct s_game
 	float			half_cen_y;
 	struct s_thread_pool	*pool;
 	bool			is_running;
+	pthread_mutex_t		mutex;
 }	t_game;
 
 //game
