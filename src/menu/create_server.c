@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 13:49:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/27 15:35:51 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 10:47:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	handle_ip_input(t_game *game, int keycode)
 	int len;
 
 	field = game->client->ip;
-	len = strlen(field);
+	len = ft_strlen(field);
 	if ((keycode >= 65429 && keycode <= 65439) ||
 		(keycode >= 48 && keycode <= 57) || keycode == 46)
 	{
@@ -81,6 +81,7 @@ void	handle_ip_input(t_game *game, int keycode)
 		else
 			game->menu->status = VALID_JOIN_SERVER;
 	}
+	pthread_mutex_unlock(&game->game_lock);
 }
 
 void	handle_text_input(t_game *game, int keycode)
@@ -88,10 +89,14 @@ void	handle_text_input(t_game *game, int keycode)
 	char	*field;
 	int		len;
 
+	pthread_mutex_lock(&game->game_lock);
 	field = get_field(game);
 	len = ft_strlen(field);
 	if (!field)
+	{
+		pthread_mutex_unlock(&game->game_lock);
 		return ;
+	}
 	if (game->menu->text_field_selected == 1 && game->menu->status == JOIN_SERVER)
 		return (handle_ip_input(game, keycode));
 	if ((keycode >= 32 && keycode <= 126) || (keycode >= 65429 && keycode <= 65439))
@@ -121,9 +126,10 @@ void	handle_text_input(t_game *game, int keycode)
 				game->menu->status = VALID_SERVER_CREATE;
 		}
 	}
+	pthread_mutex_unlock(&game->game_lock);
 }
 
-void get_local_ip(char *ip_buffer, size_t buffer_size)
+void	get_local_ip(char *ip_buffer, size_t buffer_size)
 {
 	char hostbuffer[256];
 	struct hostent *host_entry;
@@ -147,14 +153,17 @@ void get_local_ip(char *ip_buffer, size_t buffer_size)
 
 void	handle_create_server(t_game *game)
 {
+	pthread_mutex_lock(&game->game_lock);
 	if (game->client->name[0] == '\0')
 		game->menu->error_name = true;
 	if (game->client->name[0] != '\0')
 		game->menu->status = VALID_SERVER_CREATE;
+	pthread_mutex_unlock(&game->game_lock);
 }
 
 void	update_create_server_menu_text(t_game *game, int mouse_x, int mouse_y, int keycode)
 {
+	pthread_mutex_lock(&game->game_lock);
 	const int btn_width = game->screen_width * 0.25;
 	const int btn_height = game->screen_height * 0.08;
 	const int spacing = game->screen_height * 0.06;
@@ -183,9 +192,11 @@ void	update_create_server_menu_text(t_game *game, int mouse_x, int mouse_y, int 
 		game->menu->status = OPTIONS_KEYBOARD;
 		game->menu->last_status = SERVER_CREATE;
 	}
+	pthread_mutex_unlock(&game->game_lock);
 }
 void	update_create_server_menu_button(t_game *game, int mouse_x, int mouse_y)
 {
+	pthread_mutex_lock(&game->game_lock);
 	const int btn_width = game->screen_width * 0.25;  
 	const int btn_height = game->screen_height * 0.08;
 	const int spacing = game->screen_height * 0.06;
@@ -204,6 +215,7 @@ void	update_create_server_menu_button(t_game *game, int mouse_x, int mouse_y)
 		game->menu->button_selected = 2;
 	else
 		game->menu->button_selected = 0;
+	pthread_mutex_unlock(&game->game_lock);
 	check_mouse_on_gear(game, mouse_x, mouse_y);
 }
 
@@ -227,6 +239,7 @@ void	draw_text_field(t_game *game, int x, int y, int width, int height, char *te
 
 void	draw_create_server_menu(t_game *game)
 {
+	pthread_mutex_lock(&game->game_lock);
 	const int btn_width = game->screen_width * 0.25;
 	const int btn_height = game->screen_height * 0.08;
 	const int spacing = game->screen_height * 0.06;
@@ -308,4 +321,5 @@ void	draw_create_server_menu(t_game *game)
 	const int	gear_x = game->screen_width - gear_size - 17;
 	const int	gear_y = 15;
 	draw_gear_icon(game, gear_x, gear_y, gear_size);
+	pthread_mutex_unlock(&game->game_lock);
 }

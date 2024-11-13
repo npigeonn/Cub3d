@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 10:04:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 10:32:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 11:01:07 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,38 +58,45 @@ void	draw_rounded_rectangle(t_game *game, t_draw_info info)
 	}
 }
 
-void update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode) {
-    if (keycode != 1) return;
+void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode)
+{
+	if (keycode != 1) return;
+	pthread_mutex_lock(&game->game_lock);
+	if (game->menu->button_selected == 3)
+		game->menu->status = MAIN_MENU;
+	else if (game->menu->button_selected == 2)
+	{
+		game->menu->status = SERVER_CREATE;
+		pthread_mutex_unlock(&game->game_lock);
+		pthread_join(game->discover_servers_thread, NULL);
+		return ;
+	}
+	else if (game->menu->button_selected == 1)
+		game->menu->status = JOIN_SERVER;
+	else if (game->menu->button_selected == 5)
+	{
+		game->menu->status = OPTIONS_KEYBOARD;
+		game->menu->last_status = SERVERS;
+	}
+	else if (game->menu->server_selected != 0)
+	{
+		int i = 1;
+		t_server_info *current = game->servers;
 
-    // Protéger l'accès à `game->menu` et `game->servers`
-    pthread_mutex_lock(&game->game_lock);
-    
-    if (game->menu->button_selected == 3)
-        game->menu->status = MAIN_MENU;
-    else if (game->menu->button_selected == 2)
-        game->menu->status = SERVER_CREATE;
-    else if (game->menu->button_selected == 1)
-        game->menu->status = JOIN_SERVER;
-    else if (game->menu->button_selected == 5) {
-        game->menu->status = OPTIONS_KEYBOARD;
-        game->menu->last_status = SERVERS;
-    } else if (game->menu->server_selected != 0) {
-        int i = 1;
-        t_server_info *current = game->servers;
-
-        while (current) {
-            if (i == game->menu->server_selected) {
-                ft_strcpy(game->client->ip, current->ip);
-                game->menu->status = VALID_JOIN_SERVER;
-                break;
-            }
-            current = current->next;
-            i++;
-        }
-    }
-    
-    game->menu->button_selected = 0;
-    pthread_mutex_unlock(&game->game_lock); // Déverrouiller après mise à jour
+		while (current)
+		{
+			if (i == game->menu->server_selected)
+			{
+				ft_strcpy(game->client->ip, current->ip);
+				game->menu->status = VALID_JOIN_SERVER;
+				break;
+			}
+			current = current->next;
+			i++;
+		}
+	}
+	game->menu->button_selected = 0;
+	pthread_mutex_unlock(&game->game_lock);
 }
 
 

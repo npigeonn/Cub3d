@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/11 14:16:47 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 08:51:37 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 11:49:46 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,22 +208,16 @@ void	render_multithreaded(t_game *game)
 	int	x;
 
 	x = -1;
-	printf("OK\n");
 	while (++x < game->screen_width)
 		create_task(game, x, RAYCAST);
 	x = -1;
-	printf("OK\n");
 	while (++x < game->screen_height)
 		create_task(game, x, CAST_FLOOR);
-	printf("OK\n");
 	draw_sprites(game);
-	printf("OK\n");
 	x = -1;
 	while (++x < game->screen_height)
 		create_task(game, x, FILTER_RED);
-	printf("OK\n");
 	pthread_cond_broadcast(&game->pool->queue_cond);
-	printf("OK\n");
 	wait_for_all_tasks(game->pool);
 	free_all_pool(game);
 }
