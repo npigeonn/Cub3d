@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:19:15 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 12:36:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 12:08:35 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	add_player(t_game *game, t_game_message msg)
 	t_sprite	*current;
 
 	new_player = gc_malloc(game->mem, sizeof(t_sprite));
+	ft_bzero(new_player, sizeof(t_sprite));
 	new_player->player_id = msg.player_id;
 	new_player->x = msg.x;
 	new_player->y = msg.y;

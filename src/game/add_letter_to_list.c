@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:38:19 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/12 09:57:19 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 12:09:22 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void	add_ammo(t_game *game, float x, float y, int floor)
 	t_sprite	*new_ammo;
 
 	new_ammo = gc_malloc(game->mem, sizeof(t_sprite));
+	ft_bzero(new_ammo, sizeof(t_sprite));
 	new_ammo->x = x;
 	new_ammo->y = y;
 	new_ammo->floor = floor;
@@ -31,6 +32,7 @@ void	add_health(t_game *game, float x, float y, int floor)
 	t_sprite	*new_health;
 
 	new_health = gc_malloc(game->mem, sizeof(t_sprite));
+	ft_bzero(new_health, sizeof(t_sprite));
 	new_health->x = x;
 	new_health->y = y;
 	new_health->floor = floor;
@@ -45,6 +47,7 @@ void	add_exit(t_game *game, float x, float y, int floor)
 	t_sprite	*new_exit;
 
 	new_exit = gc_malloc(game->mem, sizeof(t_sprite));
+	ft_bzero(new_exit, sizeof(t_sprite));
 	new_exit->x = x;
 	new_exit->y = y;
 	new_exit->floor = floor;

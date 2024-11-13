@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 10:41:16 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/13 12:09:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 	const int	id = get_enemies_id(game);
 	
 	new = gc_malloc(game->mem, sizeof(t_sprite));
+	ft_bzero(new, sizeof(t_sprite));
 	new->x = x + 0.5;
 	new->y = y + 0.5;
 	new->floor = floor;
