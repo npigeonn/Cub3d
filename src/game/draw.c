@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 14:55:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 11:55:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 08:40:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,11 @@ int	get_char_width_opti(t_game *game, char x)
 
 void	set_width_all_letter(t_game *game)
 {
-	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
+	const char	list[97] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
 	int			i;
 
 	i = -1;
-	while (list[++i] && i <= 95)
+	while (list[++i])
 	{
 		int width = get_char_width(game->images->alphanum_sprite, list[i]);
 		int index = get_index_char(list[i]);

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/09 15:36:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 08:24:16 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	handle_close(t_game *game)
 {
 	mlx_destroy_image(game->mlx, game->images->base->img);
 	mlx_destroy_window(game->mlx, game->win);
+	game->is_running = false;
 	gc_exit(game->mem, 0);
 }
 

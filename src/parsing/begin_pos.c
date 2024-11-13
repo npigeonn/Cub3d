@@ -50,6 +50,7 @@ void	search_departure_position(t_game *game)
 			}
 		}
 	}
+	game->is_running = false;
 	gc_exit(game->mem, err("No player found\n"));
 }
 
@@ -60,6 +61,7 @@ int	check_allowed_char(t_game *game, int floor, int x, int y)
 	if (!c || !(ft_strchr("01NSWEDMBHX", c) || ('a' <= c && c <= 'z')))
 	{
 		printf("%c\n", c);
+		game->is_running = false;
 		gc_exit(game->mem, err("Not allowed character\n"));
 		return (0);
 	}

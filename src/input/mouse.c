@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mouse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 10:09:28 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/13 08:51:17 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,8 @@ static void	handle_mouse_game(t_game *game, int x, int y)
 	p->dir_y = old_dir_x * sin(rotation) + p->dir_y * cos(rotation);
 	p->planeX = old_plane_x * cos(rotation) - p->planeY * sin(rotation);
 	p->planeY = old_plane_x * sin(rotation) + p->planeY * cos(rotation);
-	send_update_position(game);
+	if (game->menu->status == MULTI_PLAYER)
+		send_update_position(game);
 	mlx_mouse_move(game->mlx, game->win, game->cen_x, game->screen_height * 0.5);
 }
 

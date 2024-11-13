@@ -124,6 +124,7 @@ void	load_texture(t_game *game, t_image *img, char *path)
 	if (!img->img)
 	{
 		printf("%s\n", path);
+		game->is_running = false;
 		gc_exit(game->mem, err("Erreur lors du chargement de la texture\n"));
 	}
 	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line, &img->endian);
@@ -181,10 +182,10 @@ void	load_game_texture(t_game *game)
 	t_block_info	*param;
 
 	param = gc_malloc(game->mem, sizeof(t_block_info));
-    param->ptr = game->mlx;
-    param->ptr2 = NULL;
-    gc_add_memory_block(game->mem, game->mlx, destroy_mlx_display, param);
-    gc_free(game->mem, param);
+	param->ptr = game->mlx;
+	param->ptr2 = NULL;
+	gc_add_memory_block(game->mem, game->mlx, destroy_mlx_display, param);
+	gc_free(game->mem, param);
 	game->textures = gc_malloc(game->mem, sizeof(t_textures));
 	game->textures->east = gc_malloc(game->mem, sizeof(t_image));
 	game->textures->north = gc_malloc(game->mem, sizeof(t_image));
@@ -300,14 +301,12 @@ int	main(int ac, char **av)
 	load_game_texture(&game);
 	parsing(av, &game);
 	set_direction(&game, game.player->begin_dir);
-	// init_floorcast(&game);
 	init_img(&game);
 	set_width_all_letter(&game);
-
-	init_thread_pool(&game, 6);
-
 	game.win = mlx_new_window(game.mlx, game.screen_width,
 		game.screen_height, "Cub3D");
-	music_launch(&game);
+	game.is_running = true;
+	init_thread_pool(&game, 4);
+	// music_launch(&game);
 	return (hooks(&game), 0);
 }

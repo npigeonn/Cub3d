@@ -332,6 +332,7 @@ typedef struct s_game
 	float			half_cen_x;
 	float			half_cen_y;
 	struct s_thread_pool	*pool;
+	bool			is_running;
 }	t_game;
 
 //game

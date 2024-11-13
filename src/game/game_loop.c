@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 10:32:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 09:01:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ static void	game_engine(t_game *game)
 
 	p = game->player;
 	game->menu->message = NOTHING;
+	printf("x: %f, y: %f\n", p->x, p->y);
 	handle_key(game);
 	calculate_delta_time(game);
 	if (game->menu->status == PLAYING)
@@ -81,6 +82,7 @@ static void	game_engine(t_game *game)
 	}
 	set_anim(game);
 	game_multi_death(game);
+	printf("x: %f, y: %f\n", p->x, p->y);
 	render_multithreaded(game);
 	chat_draw(game);
 	show_message(game);

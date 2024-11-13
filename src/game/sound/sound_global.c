@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sound_global.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 10:53:52 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/12 11:49:54 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/13 08:24:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	*test_music(void *arg)
 	block->ptr4 = &pain;
 	block->ptr5 = &life;
 	gc_add_memory_block(game->mem, &music, unload_mu, block);
-	while (1)
+	while (game->is_running)
 	{
 		UpdateMusicStream(music);
 		if (game->player->picking_up_ammo)
@@ -106,5 +106,8 @@ void	*test_music(void *arg)
 void	music_launch(t_game *game)
 {
 	if (pthread_create(&game->thread, NULL, test_music, game) != 0)
+	{
+		game->is_running = false;
 		gc_exit(game->mem, err("pb music\n"));
+	}
 }
