@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 12:09:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 12:12:47 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "../../includes/cub3d.h"
 
@@ -135,7 +136,9 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile, float x
 		{
 			game->player->stats->nb_degats += projectile->damage;
 			game->player->health -= projectile->damage;
+			pthread_mutex_lock(&game->mutex_music);
 			game->player->injured = 1;
+			pthread_mutex_unlock(&game->mutex_music);
 			game->time_regen = 0;
 			if (game->player->health <= 0)
 				game->player->health = 0;

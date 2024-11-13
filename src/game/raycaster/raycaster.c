@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 08:24:16 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 11:28:12 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@ int	handle_close(t_game *game)
 {
 	mlx_destroy_image(game->mlx, game->images->base->img);
 	mlx_destroy_window(game->mlx, game->win);
+	pthread_mutex_lock(&game->mutex_music);
 	game->is_running = false;
+	pthread_mutex_unlock(&game->mutex_music);
+	pthread_mutex_destroy(&game->mutex_music);
 	gc_exit(game->mem, 0);
 }
 

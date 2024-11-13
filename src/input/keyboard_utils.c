@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 10:13:50 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/13 10:44:44 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ void	use_item(t_game *game)
 		game->player->y_tel = (int)game->player->y;
 		game->player->f_tel = (int)game->player->floor;		
 		game->player->being_tpted = 1;
+		pthread_mutex_lock(&game->mutex_music);
 		game->player->telep_signal = 1;
+		pthread_mutex_unlock(&game->mutex_music);
 	}
 }
 

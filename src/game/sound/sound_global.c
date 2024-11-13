@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/08 10:53:52 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/13 10:25:53 by npigeon          ###   ########.fr       */
+/*   Created: 2024/11/13 10:58:52 by npigeon           #+#    #+#             */
+/*   Updated: 2024/11/13 11:36:22 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@
 
 #include "../../includes/cub3d.h"
 
-void	unload_mu(t_block_info *param)
+void	unload_mu(t_block_info *param, t_game *game)
 {
 	UnloadMusicStream(*(Music *)(param->ptr));
 	UnloadSound(*(Sound *)(param->ptr2));
@@ -69,7 +69,7 @@ void	*test_music(void *arg)
 	Sound	life;
 	Sound	telep;
 
-	InitAudioDevice();
+	pthread_mutex_lock(&game->mutex_music);
 	music = LoadMusicStream("./assets/sound/ps.wav");
 	gunshot = LoadSound("./assets/sound/gunshot.wav");
 	ammo = LoadSound("./assets/sound/pickupammo.wav");
@@ -84,9 +84,11 @@ void	*test_music(void *arg)
 	block->ptr4 = &pain;
 	block->ptr5 = &life;
 	block->ptr6 = &telep;
-	gc_add_memory_block(game->mem, &music, unload_mu, block);
-	while (game->is_running)
+	// gc_add_memory_block(game->mem, &music, unload_mu, block);
+	pthread_mutex_unlock(&game->mutex_music);
+	while (1)
 	{
+		pthread_mutex_lock(&game->mutex_music);
 		UpdateMusicStream(music);
 		if (game->player->picking_up_ammo)
 			play_sound_mine(ammo, &game->player->picking_up_ammo);
@@ -98,15 +100,19 @@ void	*test_music(void *arg)
 			play_sound_mine(life, &game->player->life_up);
 		if (game->player->telep_signal)
 			play_sound_mine(telep, &game->player->telep_signal);
+		if (!game->is_running)
+		{
+			pthread_mutex_unlock(&game->mutex_music);
+			break ;
+		}
+		pthread_mutex_unlock(&game->mutex_music);
 		sleep(0.2);
 	}
 }
 
 void	music_launch(t_game *game)
 {
+	InitAudioDevice();
 	if (pthread_create(&game->thread, NULL, test_music, game) != 0)
-	{
-		game->is_running = false;
 		gc_exit(game->mem, err("pb music\n"));
-	}
 }

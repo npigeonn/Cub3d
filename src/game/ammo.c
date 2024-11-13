@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 15:09:22 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/12 10:27:42 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/13 10:42:28 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ void	on_ammo(t_game *game)
 				{
 					current->still_exist = 0;
 					game->player->ammo += 25;
+					pthread_mutex_lock(&game->mutex_music);
 					game->player->picking_up_ammo = 1;
+					pthread_mutex_unlock(&game->mutex_music);
 				}
 				return ;
 			}

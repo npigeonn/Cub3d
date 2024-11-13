@@ -307,5 +307,6 @@ int	main(int ac, char **av)
 		game.screen_height, "Cub3D");
 	game.is_running = true;
 	init_thread_pool(&game, 4);
+	// music_launch(&game);
 	return (hooks(&game), 0);
 }

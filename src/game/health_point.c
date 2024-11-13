@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/12 11:55:42 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/13 10:44:20 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,9 @@ void	on_life(t_game *game)
 				&& (int)game->player->y <= current->y + 1 && (int)game->player->y >= current->y - 1
 				&& current->type == SPRITE_HEALTH && current->still_exist)
 			{
+				pthread_mutex_lock(&game->mutex_music);
 				game->player->life_up = 1;
+				pthread_mutex_unlock(&game->mutex_music);
 				current->still_exist = 0;
 				if (game->player->health < 0.75)
 					game->player->health += 0.25;

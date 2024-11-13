@@ -335,6 +335,7 @@ typedef struct s_game
 	struct s_thread_pool	*pool;
 	bool			is_running;
 	pthread_mutex_t		mutex;
+	pthread_mutex_t		mutex_music;
 }	t_game;
 
 //game
