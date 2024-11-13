@@ -139,6 +139,7 @@ typedef struct s_player
 	int			picking_up_ammo;
 	int			begin_dir;
 	bool		being_tpted;
+	int			telep_signal;
 	float		x_tel;
 	float		y_tel;
 	float		f_tel;

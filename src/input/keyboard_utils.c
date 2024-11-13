@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keyboard_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 10:22:51 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 10:13:50 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	use_item(t_game *game)
 		game->player->y_tel = (int)game->player->y;
 		game->player->f_tel = (int)game->player->floor;		
 		game->player->being_tpted = 1;
+		game->player->telep_signal = 1;
 	}
 }
 

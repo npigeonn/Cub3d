@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 11:33:26 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/13 09:55:05 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ void	init_player(t_game	*game, int malloc)
 	game->player->ammo = 30;
 	game->player->picking_up_ammo = 0;
 	game->player->being_tpted = 0;
+	game->player->telep_signal = 0;
 	game->time_regen = 0;
 	game->servers = NULL;
 	game->player->stats->nb_kills = 0;

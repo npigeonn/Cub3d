@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sound_global.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 10:53:52 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/13 08:24:30 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/13 10:25:53 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,12 @@ void	unload_mu(t_block_info *param)
 	CloseAudioDevice();
 }
 
+void	play_sound_mine(Sound s, int *it)
+{
+	PlaySound(s);
+	*it = 0;
+}
+
 void	*test_music(void *arg)
 {
 	t_game	*game = (t_game *)arg;
@@ -61,6 +67,7 @@ void	*test_music(void *arg)
 	Sound	ammo;
 	Sound	pain;
 	Sound	life;
+	Sound	telep;
 
 	InitAudioDevice();
 	music = LoadMusicStream("./assets/sound/ps.wav");
@@ -68,6 +75,7 @@ void	*test_music(void *arg)
 	ammo = LoadSound("./assets/sound/pickupammo.wav");
 	pain =  LoadSound("./assets/sound/dsplpain.wav");
 	life =  LoadSound("./assets/sound/lifeup.wav");
+	telep = LoadSound("./assets/sound/teleport.wav");
 	PlayMusicStream(music);
 	block = gc_malloc(game->mem, sizeof(t_block_info));
 	block->ptr = &music;
@@ -75,30 +83,21 @@ void	*test_music(void *arg)
 	block->ptr3 = &ammo;
 	block->ptr4 = &pain;
 	block->ptr5 = &life;
+	block->ptr6 = &telep;
 	gc_add_memory_block(game->mem, &music, unload_mu, block);
 	while (game->is_running)
 	{
 		UpdateMusicStream(music);
 		if (game->player->picking_up_ammo)
-		{
-			PlaySound(ammo);
-			game->player->picking_up_ammo = 0;
-		}
+			play_sound_mine(ammo, &game->player->picking_up_ammo);
 		if (game->player->is_shooting)
-		{
-			PlaySound(gunshot);
-			game->player->is_shooting = 0;  // Réinitialisation pour permettre un prochain tir
-		}
+			play_sound_mine(gunshot, &game->player->is_shooting);
 		if (game->player->injured)
-		{
-			PlaySound(pain);
-			game->player->injured = 0;
-		}
+			play_sound_mine(pain, &game->player->injured);
 		if (game->player->life_up)
-		{
-			PlaySound(life);
-			game->player->life_up = 0;			
-		}
+			play_sound_mine(life, &game->player->life_up);
+		if (game->player->telep_signal)
+			play_sound_mine(telep, &game->player->telep_signal);
 		sleep(0.2);
 	}
 }
