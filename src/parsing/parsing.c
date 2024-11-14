@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/08 09:38:39 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/14 12:23:53 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,18 @@ static int	op_in(char **av, t_game *game)
 {
 	int	fd;
 
-	if (!av[1])
+	if (!av[1] || !av[2] && (!ft_strcmp(av[1], "--volume=true")
+			|| !ft_strcmp(av[1], "--volume=false")))
 		gc_exit(game->mem, err("No map mentionned\n"));
-	if (av[2])
+	if (av[2] && ft_strcmp(av[1], "--volume=true")
+		&& ft_strcmp(av[1], "--volume=false"))
 		gc_exit(game->mem, err("Too many arguments\n"));
+	if (!ft_strcmp(av[1], "--volume=true"))
+		game->music_dif = 1;
+	else
+		game->music_dif = 0;
+	if (av[2])
+		av[1] = av[2];
 	if (!file_dot_cub(av[1]))
 		gc_exit(game->mem, err("File without .cub\n"));
 	fd = open(av[1], O_RDONLY);

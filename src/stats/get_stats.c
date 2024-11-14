@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 02:56:17 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:10:00 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/14 12:59:26 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,29 @@ bool is_a_player(char *line)
 	return (true);
 }
 
+void	ld_stats_extension(t_player_stats *stats, char *line,
+	int *num_players, FILE *file)
+{
+	int	i;
+
+	i = -1;
+	while (++i < *num_players)
+	{
+		fgets(line, sizeof(line), file);
+		if (!is_a_player(line))
+		{
+			i--;
+			continue;
+		}
+		sscanf(line, "%49[^,], %d, %d, %d, %d, %f", stats[i].name,
+			&stats[i].games_played,
+			&stats[i].victories,
+			&stats[i].defeats,
+			&stats[i].kills,
+			&stats[i].play_time_hours);
+	}
+}
+
 t_player_stats*	load_player_stats(t_game *game, const char *filename, int *num_players)
 {
 	FILE			*file;
@@ -48,10 +71,7 @@ t_player_stats*	load_player_stats(t_game *game, const char *filename, int *num_p
 	
 	file = fopen(filename, "r");
 	if (!file)
-	{
-		printf("Error opening file: %s\n", filename);
-		return NULL;
-	}
+		return (printf("Error opening file: %s\n", filename), NULL);
 	*num_players = 0;
 	while (fgets(line, sizeof(line), file))
 	{
@@ -60,22 +80,7 @@ t_player_stats*	load_player_stats(t_game *game, const char *filename, int *num_p
 	}
 	rewind(file);
 	stats = gc_malloc(game->mem, sizeof(t_player_stats) * (*num_players));
-	for (int i = 0; i < *num_players; i++)
-	{
-		fgets(line, sizeof(line), file);
-		if (!is_a_player(line))
-		{
-			i--;
-			continue;
-		}
-		sscanf(line, "%49[^,],%d,%d,%d,%d,%f",
-				stats[i].name,
-				&stats[i].games_played,
-				&stats[i].victories,
-				&stats[i].defeats,
-				&stats[i].kills,
-				&stats[i].play_time_hours);
-	}
+	ld_stats_extension(stats, line, num_players, file);
 	fclose(file);
 	return (stats);
 }
