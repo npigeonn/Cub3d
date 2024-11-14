@@ -6,72 +6,11 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 12:23:37 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 13:36:32 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:49:19 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
-
-void	create_task_sprite_health(t_game *game, t_sprite *sprite)
-{
-	t_task	*task;
-
-	task = (t_task *)gc_malloc(game->mem, sizeof(t_task));
-	task->game = game;
-	task->next = NULL;
-	task->type = HEALTH;
-	task->sprite = gc_malloc(game->mem, sizeof(t_task_sprite));
-	task->sprite->texture = game->textures->health;
-	task->sprite->sprite = sprite;
-	pthread_mutex_lock(&game->pool->queue_mutex);
-	if (game->pool->task_queue == NULL)
-	{
-		game->pool->task_queue = task;
-		game->pool->task_queue_tail = task;
-	}
-	else
-	{
-		game->pool->task_queue_tail->next = task;
-		game->pool->task_queue_tail = task;
-	}
-	game->pool->tasks_remaining++;
-	pthread_mutex_unlock(&game->pool->queue_mutex);
-}
-
-void	create_task_sprite(t_game *game, t_image *texture, t_sprite *sprite, float sprite_dir, float scale, float z_offset)
-{
-	t_task	*task;
-
-	task = (t_task *)gc_malloc(game->mem, sizeof(t_task));
-	task->game = game;
-	task->next = NULL;
-	task->type = SPRITE;
-	task->sprite = gc_malloc(game->mem, sizeof(t_task_sprite));
-	task->sprite->texture = texture;
-	task->sprite->sprite = gc_malloc(game->mem, sizeof(t_sprite));
-	ft_memcpy(task->sprite->sprite, sprite, sizeof(t_sprite));
-	task->sprite->sprite_dir = sprite_dir;
-	task->sprite->scale = scale;
-	task->sprite->z_offset = z_offset;
-	if (sprite->type == SPRITE_TELEPORTER && game->player->floor == sprite->floor1)
-	{
-		task->sprite->sprite->x = sprite->x1;
-		task->sprite->sprite->y = sprite->y1;
-	}
-	pthread_mutex_lock(&game->pool->queue_mutex);
-	if (game->pool->task_queue == NULL)
-	{
-		game->pool->task_queue = task;
-		game->pool->task_queue_tail = task;
-	}
-	else
-	{
-		game->pool->task_queue_tail->next = task;
-		game->pool->task_queue_tail = task;
-	}
-	game->pool->tasks_remaining++;
-	pthread_mutex_unlock(&game->pool->queue_mutex);
-}
 
 void	create_task(t_game *game, int x, t_task_type type)
 {
@@ -137,10 +76,6 @@ void	*worker_thread(void *arg)
 				task->floorcast->y = task->x;
 				cast_floor(task->game, task->floorcast);
 			}
-			else if (task->type == SPRITE)
-				draw_sprite(pool->game, task->sprite->texture, task->sprite->sprite, task->sprite->sprite_dir, task->sprite->scale, task->sprite->z_offset);
-			else if (task->type == HEALTH)
-				draw_anim_health(pool->game, task->sprite->sprite, task->sprite->texture);
 			else if (task->type == FILTER_RED)
 				damages_red_draw(task->game, task->x);
 		}
@@ -183,6 +118,7 @@ void	free_all_pool(t_game *game)
 	t_task	*task;
 	t_task	*next;
 
+	pthread_mutex_lock(&game->pool->queue_mutex);
 	task = game->pool->task_queue;
 	while (task)
 	{
@@ -201,6 +137,9 @@ void	free_all_pool(t_game *game)
 		gc_free(game->mem, task);
 		task = next;
 	}
+	game->pool->task_queue = NULL;
+	game->pool->task_queue_tail = NULL;
+	pthread_mutex_unlock(&game->pool->queue_mutex);
 }
 
 void	render_multithreaded(t_game *game)
@@ -210,25 +149,9 @@ void	render_multithreaded(t_game *game)
 	x = -1;
 	while (++x < game->screen_width)
 		create_task(game, x, RAYCAST);
-	pthread_mutex_lock(&game->pool->queue_mutex);
-	pthread_cond_broadcast(&game->pool->queue_cond);
-	pthread_mutex_unlock(&game->pool->queue_mutex);
-	wait_for_all_tasks(game->pool);
-	free_all_pool(game);
 	x = -1;
 	while (++x < game->screen_height)
 		create_task(game, x, CAST_FLOOR);
-	pthread_mutex_lock(&game->pool->queue_mutex);
-	pthread_cond_broadcast(&game->pool->queue_cond);
-	pthread_mutex_unlock(&game->pool->queue_mutex);
-	wait_for_all_tasks(game->pool);
-	free_all_pool(game);
-	draw_sprites(game);
-	pthread_mutex_lock(&game->pool->queue_mutex);
-	pthread_cond_broadcast(&game->pool->queue_cond);
-	pthread_mutex_unlock(&game->pool->queue_mutex);
-	wait_for_all_tasks(game->pool);
-	free_all_pool(game);
 	x = -1;
 	while (++x < game->screen_height)
 		create_task(game, x, FILTER_RED);
@@ -237,6 +160,10 @@ void	render_multithreaded(t_game *game)
 	pthread_mutex_unlock(&game->pool->queue_mutex);
 	wait_for_all_tasks(game->pool);
 	free_all_pool(game);
+	draw_sprites(game);
+	chat_draw(game);
+	show_message(game);
+	draw_hud(game);
 }
 
 void	init_thread_pool(t_game *game, int num_threads)

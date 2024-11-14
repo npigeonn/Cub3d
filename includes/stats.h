@@ -1,8 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   stats.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/14 11:08:54 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/14 11:09:22 by ybeaucou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef STATS_H
 # define STATS_H
 
-typedef struct	s_player_stats
+typedef struct s_player_stats
 {
 	char	name[50];
 	int		games_played;
@@ -12,6 +23,7 @@ typedef struct	s_player_stats
 	float	play_time_hours;
 }	t_player_stats;
 
-t_player_stats*	load_player_stats(t_game *game, const char *filename, int *num_players);
+t_player_stats	*load_player_stats(t_game *game, const char *filename,
+					int *num_players);
 
 #endif

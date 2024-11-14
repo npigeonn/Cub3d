@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mouse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 10:43:23 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ static void	handle_mouse_game(t_game *game, int x, int y)
 {
 	float		rotation = (x - game->cen_x) * ((game->menu->mouse_sensitivity / 20.0f) * ROTATION_SPEED);
 	const float	old_dir_x = game->player->dir_x;
-	const float	old_plane_x = game->player->planeX;
+	const float	old_plane_x = game->player->plane_x;
 	t_player	*p;
 
 	if (x == game->cen_x || game->player->health <= 0)
@@ -97,8 +97,8 @@ static void	handle_mouse_game(t_game *game, int x, int y)
 		rotation *= -1;
 	p->dir_x = old_dir_x * cos(rotation) - p->dir_y * sin(rotation);
 	p->dir_y = old_dir_x * sin(rotation) + p->dir_y * cos(rotation);
-	p->planeX = old_plane_x * cos(rotation) - p->planeY * sin(rotation);
-	p->planeY = old_plane_x * sin(rotation) + p->planeY * cos(rotation);
+	p->plane_x = old_plane_x * cos(rotation) - p->plane_y * sin(rotation);
+	p->plane_y = old_plane_x * sin(rotation) + p->plane_y * cos(rotation);
 	if (game->menu->status == MULTI_PLAYER)
 		send_update_position(game);
 	mlx_mouse_move(game->mlx, game->win, game->cen_x, game->screen_height * 0.5);

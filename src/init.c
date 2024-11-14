@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 10:36:43 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/14 10:57:25 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ void	init_player(t_game	*game, int malloc)
 	game->player->height = 0;
 	game->player->dir_x = 1;
 	game->player->dir_y = 0;
-	game->player->planeX = 0;
+	game->player->plane_x = 0;
 	game->player->anim_shoot = 0;
 	game->player->is_shooting = 0;
 	game->player->health = 1;

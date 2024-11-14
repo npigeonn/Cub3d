@@ -6,12 +6,12 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 10:49:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 10:49:28 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:09:29 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef INPUT_H
-#define INPUT_H
+# define INPUT_H
 
 # define KEY_W 119
 # define KEY_S 115

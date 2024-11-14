@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:43:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 13:33:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,13 @@ static void	mouvement(t_game *game, t_player *p)
 	}
 	if (is_key_pressed(game, game->player->key->right) || is_key_pressed(game, game->player->key->right2))
 	{
-		new_x += p->planeX * 0.1;
-		new_y += p->planeY * 0.1;
+		new_x += p->plane_x * 0.1;
+		new_y += p->plane_y * 0.1;
 	}
 	if (is_key_pressed(game, game->player->key->left) || is_key_pressed(game, game->player->key->left2))
 	{
-		new_x -= p->planeX * 0.1;
-		new_y -= p->planeY * 0.1;
+		new_x -= p->plane_x * 0.1;
+		new_y -= p->plane_y * 0.1;
 	}
 	check_mouvement(game, p, new_x, new_y);
 }
@@ -65,8 +65,8 @@ void	send_update_position(t_game *game)
 	msg.y = game->player->y;
 	msg.floor = game->player->floor;
 	msg.health = game->player->health;
-	msg.plane_x = game->player->planeX;
-	msg.plane_y = game->player->planeY;
+	msg.plane_x = game->player->plane_x;
+	msg.plane_y = game->player->plane_y;
 	msg.dir_x = game->player->dir_x;
 	msg.dir_y = game->player->dir_y;
 	msg.selected_anim = game->player->selected_anim;

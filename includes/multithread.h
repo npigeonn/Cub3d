@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 19:09:07 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 09:05:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:05:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <pthread.h>
 # include "cub3d.h"
 
-typedef enum	e_task_type
+typedef enum e_task_type
 {
 	RAYCAST,
 	CAST_FLOOR,
@@ -25,7 +25,7 @@ typedef enum	e_task_type
 	FILTER_RED,
 }	t_task_type;
 
-typedef struct	s_task_sprite
+typedef struct s_task_sprite
 {
 	t_image		*texture;
 	t_sprite	*sprite;
@@ -34,7 +34,7 @@ typedef struct	s_task_sprite
 	float		z_offset;
 }	t_task_sprite;
 
-typedef struct	s_task
+typedef struct s_task
 {
 	int				x;
 	t_game			*game;
@@ -45,7 +45,7 @@ typedef struct	s_task
 	struct s_task	*next;
 }	t_task;
 
-typedef struct	s_thread_pool
+typedef struct s_thread_pool
 {
 	int				num_threads;
 	int				tasks_remaining;
@@ -63,6 +63,5 @@ void	*worker_thread(void *arg);
 void	create_task(t_game *game, int x, t_task_type type);
 void	render_multithreaded(t_game *game);
 void	init_thread_pool(t_game *game, int num_threads);
-void	create_task_sprite(t_game *game, t_image *texture, t_sprite *sprite, float sprite_dir, float scale, float z_offset);
 
 #endif

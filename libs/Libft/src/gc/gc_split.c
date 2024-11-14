@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 15:34:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 08:37:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:51:16 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,8 @@ char	**gc_split(t_memory_table *mem, char const *str, char charset)
 	return (split);
 }
 
-char	*gc_substr(t_memory_table *mem, char const *s, unsigned int start, size_t len)
+char	*gc_substr(t_memory_table *mem, char const *s, unsigned int start,
+size_t len)
 {
 	char	*str2;
 	size_t	i;

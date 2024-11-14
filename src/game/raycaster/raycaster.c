@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 11:28:12 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,28 +118,28 @@ void	set_direction(t_game *game, int dir)
 	{
 		game->player->dir_x = 0;
 		game->player->dir_y = -1;
-		game->player->planeX = 0.66;
-		game->player->planeY = 0;
+		game->player->plane_x = 0.66;
+		game->player->plane_y = 0;
 	}
 	else if (dir == 1) // Sud
 	{
 		game->player->dir_x = 0;
 		game->player->dir_y = 1;
-		game->player->planeX = -0.66;
-		game->player->planeY = 0;
+		game->player->plane_x = -0.66;
+		game->player->plane_y = 0;
 	}
 	else if (dir == 2) // Est
 	{
 		game->player->dir_x = 1;
 		game->player->dir_y = 0;
-		game->player->planeX = 0;
-		game->player->planeY = 0.66;
+		game->player->plane_x = 0;
+		game->player->plane_y = 0.66;
 	}
 	else if (dir == 3) // Ouest
 	{
 		game->player->dir_x = -1;
 		game->player->dir_y = 0;
-		game->player->planeX = 0;
-		game->player->planeY = -0.66;
+		game->player->plane_x = 0;
+		game->player->plane_y = -0.66;
 	}
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   game.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/14 11:04:10 by ybeaucou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef GAME_H
 # define GAME_H
 
@@ -10,20 +22,20 @@
 
 typedef struct s_projectile
 {
-	float	x;
-	float	y;
-	float	dir_x;
-	float	dir_y;
-	float	speed;
-	float	damage;
-	float	direction;
-	int		floor;
-	struct s_player	*owner;
-	struct s_prite	*enemy;
+	float				x;
+	float				y;
+	float				dir_x;
+	float				dir_y;
+	float				speed;
+	float				damage;
+	float				direction;
+	int					floor;
+	struct s_player		*owner;
+	struct s_prite		*enemy;
 	struct s_projectile	*next;
 }	t_projectile;
 
-typedef struct	s_draw_info
+typedef struct s_draw_info
 {
 	int		width;
 	int		height;
@@ -37,13 +49,13 @@ typedef struct	s_draw_info
 	float	alpha;
 }	t_draw_info;
 
-enum Weapon
+enum e_weapon
 {
 	Pistol = 0,
 	Shotgun = 1,
 };
 
-enum GameStatus
+enum e_game_status
 {
 	PLAYING = 0,
 	PAUSED = 1,
@@ -69,7 +81,7 @@ enum GameStatus
 	WHITE = 16777215,
 };
 
-enum Direction
+enum e_direction
 {
 	SIDE_EAST,
 	SIDE_WEST,
@@ -79,7 +91,7 @@ enum Direction
 	SIDE_CEILING,
 };
 
-enum Message
+enum e_message
 {
 	NOTHING,
 	OPEN_DOOR,
@@ -88,7 +100,7 @@ enum Message
 	FINISH,
 };
 
-typedef struct	s_stats
+typedef struct s_stats
 {
 	int		nb_kills;
 	int		nb_degats;
@@ -126,8 +138,8 @@ typedef struct s_player
 	float		y;
 	float		dir_x;
 	float		dir_y;
-	float		planeX;
-	float		planeY;
+	float		plane_x;
+	float		plane_y;
 	float		height;
 	float		health;
 	int			life_up;
@@ -172,7 +184,7 @@ typedef struct s_images
 	t_image	*base;
 }	t_images;
 
-typedef	struct s_textures
+typedef struct s_textures
 {
 	t_image	*east;
 	t_image	*west;
@@ -205,7 +217,7 @@ typedef	struct s_textures
 	int		color_we;
 }	t_textures;
 
-typedef	struct s_door
+typedef struct s_door
 {
 	int				x;
 	int				y;
@@ -236,18 +248,18 @@ typedef struct s_menu
 	int		scroll_height;
 }	t_menu;
 
-enum EnemyState
+enum e_enemy_state
 {
 	PATROL = 0,
 	CHASE = 1,
 };
 
-typedef struct	s_point
+typedef struct s_point
 {
 	float	x;
 	float	y;
 	int		floor;
-} t_point;
+}	t_point;
 
 typedef struct s_server_info
 {
@@ -261,7 +273,7 @@ typedef struct s_server_info
 	struct s_server_info	*next;
 }	t_server_info;
 
-typedef struct	s_client
+typedef struct s_client
 {
 	int			sock;
 	char		pseudo[20];
@@ -269,20 +281,20 @@ typedef struct	s_client
 	char		ip[16];
 	int			player_id;
 	t_sprite	*sprites;
-} t_client;
+}	t_client;
 
-#define	MAX_MESSAGE_LENGTH 256
+# define MAX_MESSAGE_LENGTH 256
 
-typedef struct	s_message
+typedef struct s_message
 {
 	char				pseudo[20];
 	int					color;
 	char				message[MAX_MESSAGE_LENGTH];
 	struct timeval		time;
 	struct s_message	*next;
-} t_message;
+}	t_message;
 
-typedef struct	s_chatbox
+typedef struct s_chatbox
 {
 	bool		visible;
 	bool		is_writting;
@@ -292,50 +304,48 @@ typedef struct	s_chatbox
 
 typedef struct s_game
 {
-	t_menu			*menu;
-	t_memory_table	*mem;
-	t_sprite		*sprites;
-	float			time_regen;
-	void			*mlx;
-	void			*win;
-	int				screen_width;
-	int				screen_height;
-	int				map_begin;
-	char			***map;
-	char 			***map_cy;
-	bool			mouse;
-	bool			check_w;
-	int				x_minimap;
-	int				y_minimap;
-	int				clr;
-	pthread_t		thread;
-
-	int				nb_floor;
-	t_door			*door;
-	t_images		*images;
-	t_player		*player;
-	t_textures		*textures;
-	float			*wall_distances;
-	t_chatbox		*chatbox;
-	float			delta_time;
-	struct timeval	last_time;
-	int				key_flags;
-	t_projectile	*projectiles;
-	t_client		*client;
-	t_server_info	*servers;
-	pthread_t		discover_servers_thread;
-	pthread_mutex_t	game_lock;
-	float			fade_progress;
-	char			**av;
-
-	float			cen_x;
-	float			cen_y;
-	float			half_cen_x;
-	float			half_cen_y;
+	t_menu					*menu;
+	t_memory_table			*mem;
+	t_sprite				*sprites;
+	float					time_regen;
+	void					*mlx;
+	void					*win;
+	int						screen_width;
+	int						screen_height;
+	int						map_begin;
+	char					***map;
+	char					***map_cy;
+	bool					mouse;
+	bool					check_w;
+	int						x_minimap;
+	int						y_minimap;
+	int						clr;
+	pthread_t				thread;
+	int						nb_floor;
+	t_door					*door;
+	t_images				*images;
+	t_player				*player;
+	t_textures				*textures;
+	float					*wall_distances;
+	t_chatbox				*chatbox;
+	float					delta_time;
+	struct timeval			last_time;
+	int						key_flags;
+	t_projectile			*projectiles;
+	t_client				*client;
+	t_server_info			*servers;
+	pthread_t				discover_servers_thread;
+	pthread_mutex_t			game_lock;
+	float					fade_progress;
+	char					**av;
+	float					cen_x;
+	float					cen_y;
+	float					half_cen_x;
+	float					half_cen_y;
 	struct s_thread_pool	*pool;
-	bool			is_running;
-	pthread_mutex_t		mutex;
-	pthread_mutex_t		mutex_music;
+	bool					is_running;
+	pthread_mutex_t			mutex;
+	pthread_mutex_t			mutex_music;
 }	t_game;
 
 //game
@@ -347,7 +357,8 @@ void	x_fixes_cursor(t_game *game, char to_do);
 //menu
 void	draw_main_menu(t_game *game);
 void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y);
-void	update_option_menu_slider(t_game *game, int mouse_x, int mouse_y, int keycode);
+void	update_option_menu_slider(t_game *game, int mouse_x, int mouse_y,
+			int keycode);
 void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y);
 void	draw_options_menu(t_game *game);
 void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y);
@@ -362,12 +373,13 @@ void	draw_text(t_game *data, t_draw_info info);
 void	draw_text_left(t_game *game, t_draw_info info);
 void	draw_text_right(t_game *game, t_draw_info info);
 void	draw_char(t_game *data, t_draw_info info);
-void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite, float sprite_dir, float scale, float z_offset);
+void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite,
+			float sprite_dir, float scale, float z_offset);
 void	draw_sprites(t_game *game);
 void	draw_rounded_rectangle(t_game *game, t_draw_info info);
 void	crosshair(t_game *game);
-int 	blend_colors(int bg_color, int fg_color, float alpha);
-int 	get_pixel_color_from_image(t_game *game, int x, int y);
+int		blend_colors(int bg_color, int fg_color, float alpha);
+int		get_pixel_color_from_image(t_game *game, int x, int y);
 void	draw_image(t_game *game, t_image *img, t_draw_info info);
 void	gun_draw(t_game *game);
 void	get_pos_char(char c, int *x, int *y);
@@ -389,10 +401,12 @@ void	add_door(t_game *game, int x, int y, int floor);
 t_door	*get_door(t_door *door, int x, int y, int floor);
 void	use_door_in_view(t_game *game);
 void	update_door_animation(t_game *game);
-	
+
 //wall
 void	draw_wall(t_game *game, t_raycast *raycast);
-void	draw_vertical_line_with_texture(t_game *game, int x, int draw_start, int draw_end, t_image *texture, float wall_x, int line_height);
+void	draw_vertical_line_with_texture(t_game *game, int x,
+			int draw_start, int draw_end, t_image *texture,
+			float wall_x, int line_height);
 
 //ennemies
 void	update_enemies(t_game *game);
@@ -441,7 +455,7 @@ void	load_txtre_globale(t_game *game, char *line, char *path);
 
 // free
 int		free_map(t_game *game);
-int 	free_map_copy(t_game *game);
+int		free_map_copy(t_game *game);
 int		free_split(t_memory_table *mem, char **str);
 
 //server

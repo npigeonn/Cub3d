@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:19:15 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 12:08:35 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	update_player_position(t_game *game, t_game_message msg)
 		player->dir_y = msg.dir_y;
 		player->health = msg.health;
 		player->floor = msg.floor;
-		player->planeX = msg.plane_x;
-		player->planeY = msg.plane_y;
+		player->plane_x = msg.plane_x;
+		player->plane_y = msg.plane_y;
 	}
 }
 

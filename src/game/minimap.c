@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 15:12:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/09 17:54:06 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 08:59:05 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,9 +143,9 @@ void	mini_map(t_game *game)
 	int	y;
 	int	background_color;
 	int	grey_with_alpha;
-	float	alpha = 0.4; // Ajuster cette valeur entre 0 et 1 pour changer l'opacité
+	float	alpha = 0.4;
 
-	int grey = 0x000000; // Gris
+	int grey = 0x000000;
 	game->y_minimap = game->screen_height - game->screen_height / 4;
 	game->x_minimap = game->screen_width - game->screen_width / 8;
 	y = game->y_minimap;

@@ -5,27 +5,28 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/17 15:39:24 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/05/23 11:10:26 by ybeaucou         ###   ########.fr       */
+/*   Created: 2024/11/14 10:50:58 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/14 10:53:43 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*gc_strnjoin(t_memory_table *memory_table, char *s1, char *s2, size_t len)
+void	*gc_strnjoin(t_memory_table *memory_table, char *s1, char *s2,
+size_t len)
 {
-	char    *str;
+	char	*str;
 
-    if (s2 == NULL)
-        return (NULL);
-    if (s1 == NULL)
-        return (gc_strdup(memory_table, s2));
-    str = (char *)gc_malloc(memory_table, sizeof(char)
-            * (ft_strlen(s1) + len + 1));
-    ft_strlcpy(str, s1, ft_strlen(s1) + 1);
-    ft_strlcat(str, s2, ft_strlen(s1) + len + 1);
-    gc_free(memory_table, s1);
-    return (str);
+	if (s2 == NULL)
+		return (NULL);
+	if (s1 == NULL)
+		return (gc_strdup(memory_table, s2));
+	str = (char *)gc_malloc(memory_table, sizeof(char)
+			* (ft_strlen(s1) + len + 1));
+	ft_strlcpy(str, s1, ft_strlen(s1) + 1);
+	ft_strlcat(str, s2, ft_strlen(s1) + len + 1);
+	gc_free(memory_table, s1);
+	return (str);
 }
 
 void	*gc_strjoin(t_memory_table *memory_table, char *s1, char *s2)

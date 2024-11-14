@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 00:57:29 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 09:14:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ static void	calc_base_raycast(t_game *game, t_raycast *raycast)
 	raycast->map_x = (int)player->x;
 	raycast->map_y = (int)player->y;
 	raycast->camera_x = 2 * raycast->x / (float)game->screen_width - 1;
-	raycast->ray_dir_x = player->dir_x + player->planeX * raycast->camera_x;
-	raycast->ray_dir_y = player->dir_y + player->planeY * raycast->camera_x;
+	raycast->ray_dir_x = player->dir_x + player->plane_x * raycast->camera_x;
+	raycast->ray_dir_y = player->dir_y + player->plane_y * raycast->camera_x;
 	if (raycast->ray_dir_x == 0)
 		raycast->delta_dist_x = 1e30;
 	else

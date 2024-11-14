@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 18:49:11 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/05/24 11:13:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:50:12 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,5 @@ char	*ft_strjoin_no_free(char *s1, char *s2)
 	while (s2[++i])
 		join[len1 + i] = s2[i];
 	join[len1 + len2] = '\0';
-	return (join);	
+	return (join);
 }

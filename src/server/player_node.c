@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:03:47 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/08 13:26:54 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	update_player_node(t_server *server, char *pseudo, t_game_message msg)
 	player->dir_y = msg.dir_y;
 	player->floor = msg.floor;
 	player->health = msg.health;
-	player->planeX = msg.plane_x;
-	player->planeY = msg.plane_y;
+	player->plane_x = msg.plane_x;
+	player->plane_y = msg.plane_y;
 	player->selected_anim = msg.selected_anim;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 12:12:47 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/14 09:36:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,6 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile, float x
 			game->time_regen = 0;
 			if (game->player->health <= 0)
 				game->player->health = 0;
-			// damages_red_draw(game);
 			return (true);
 		}
 	}

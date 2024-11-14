@@ -1,8 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   raycaster.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/14 11:04:30 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/14 11:05:01 by ybeaucou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef RAYCASTER_H
 # define RAYCASTER_H
 
-typedef struct	s_floorcast
+typedef struct s_floorcast
 {
 	float	ray_dir_x0;
 	float	ray_dir_y0;
@@ -32,7 +43,7 @@ typedef struct	s_floorcast
 	int		y;
 }	t_floorcast;
 
-typedef struct	s_raycast
+typedef struct s_raycast
 {
 	float		dir_x;
 	float		dir_y;
@@ -56,6 +67,6 @@ typedef struct	s_raycast
 	int			draw_end;
 	int			x;
 	t_floorcast	floorcast;
-} t_raycast;
+}	t_raycast;
 
 #endif

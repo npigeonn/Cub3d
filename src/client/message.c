@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:05:54 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 11:07:46 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:14:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,14 @@ void	add_connection_msg(t_game *game, char *pseudo)
 
 void	update_enemies_client(t_game *game, t_game_message msg)
 {
+	t_sprite	*current;
 
 	pthread_mutex_lock(&game->game_lock);
-	t_sprite	*current = game->sprites;
-
+	current = game->sprites;
 	while (current)
 	{
-		if (current->type == SPRITE_ENEMY && current->player_id == msg.player_id)
+		if (current->type == SPRITE_ENEMY
+			&& current->player_id == msg.player_id)
 		{
 			current->x = msg.x;
 			current->y = msg.y;
@@ -74,8 +75,9 @@ static void	add_msg_chat(t_game *game, t_game_message msg)
 
 static void	update_player_health(t_game *game, t_game_message msg)
 {
-	t_sprite *current = game->sprites;
+	t_sprite	*current;
 
+	current = game->sprites;
 	if (msg.player_id == game->client->player_id)
 	{
 		game->player->health = msg.health;
@@ -84,7 +86,8 @@ static void	update_player_health(t_game *game, t_game_message msg)
 	}
 	while (current)
 	{
-		if (current->type == SPRITE_PLAYER && current->player_id == msg.player_id)
+		if (current->type == SPRITE_PLAYER
+			&& current->player_id == msg.player_id)
 		{
 			current->health = msg.health;
 			break ;

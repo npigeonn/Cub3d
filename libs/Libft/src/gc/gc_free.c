@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 18:40:38 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 08:19:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:51:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ void	gc_free(t_memory_table *memory_table, void *ptr)
 	t_memory_block	*block;
 	t_memory_block	*prev_block;
 
-    if (!ptr)
-	    return ;
+	if (!ptr)
+		return ;
 	index = hash(memory_table, ptr);
 	block = memory_table->table[index];
 	prev_block = NULL;

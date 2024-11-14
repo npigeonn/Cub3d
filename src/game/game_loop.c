@@ -6,14 +6,14 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 14:01:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../../includes/cub3d.h"
 
-static void	draw_hud(t_game *game)
+void	draw_hud(t_game *game)
 {
 	mini_map(game);
 	crosshair(game);
@@ -43,8 +43,8 @@ static void	game_multi_death(t_game *game)
 			game->player->floor = current->floor;
 			game->player->dir_x = current->dir_x;
 			game->player->dir_y = current->dir_y;
-			game->player->planeX = current->planeX;
-			game->player->planeY = current->planeY;
+			game->player->plane_x = current->plane_x;
+			game->player->plane_y = current->plane_y;
 			break ;
 		}
 		current = current->next;
@@ -83,9 +83,6 @@ static void	game_engine(t_game *game)
 	set_anim(game);
 	game_multi_death(game);
 	render_multithreaded(game);
-	// chat_draw(game);
-	// show_message(game);
-	// draw_hud(game);
 	if (is_a_teleporter(game->map[p->floor][(int)p->y][(int)p->x]))
 		game->menu->message = TELEPORT;
 	if (game->menu->message != NOTHING)

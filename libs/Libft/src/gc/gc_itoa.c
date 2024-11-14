@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   gc_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 12:36:27 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/06 12:38:08 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/14 10:50:29 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "gc.h"
 #include <stdio.h>

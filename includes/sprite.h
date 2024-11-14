@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sprite.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/14 11:06:06 by ybeaucou          #+#    #+#             */
+/*   Updated: 2024/11/14 11:06:13 by ybeaucou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef SPRITE_H
 # define SPRITE_H
@@ -23,8 +34,8 @@ typedef struct s_sprite
 	float			y1;
 	float			dir_x;
 	float			dir_y;
-	float			planeX;
-	float			planeY;
+	float			plane_x;
+	float			plane_y;
 	int				floor;
 	int				floor1;
 	float			health;

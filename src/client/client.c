@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 11:10:18 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:32:41 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,20 +25,21 @@ static void	manage_position(t_game *game, t_game_message msg)
 
 void replace_path(t_game *game, char *filename)
 {
-	const char *old_path = "./assets/maps/";
-	const char *new_path = "./assets/maps/multi/";
+	const char	*old_path = "./assets/maps/";
+	const char	*new_path = "./assets/maps/multi/";
+	size_t		new_length;
+	char		*pos;
+	char		*new_filename;
 
-	char *pos = strstr(filename, old_path);
+	pos = strstr(filename, old_path);
 	if (pos)
 	{
-		size_t new_length = strlen(filename) - strlen(old_path) + strlen(new_path);
-		char *new_filename = gc_malloc(game->mem, new_length + 1);
-		
-		size_t prefix_length = pos - filename;
-		strncpy(new_filename, filename, prefix_length);
-		new_filename[prefix_length] = '\0';
+		new_length = ft_strlen(filename) - ft_strlen(old_path) + ft_strlen(new_path);
+		new_filename = gc_malloc(game->mem, new_length + 1);
+		strncpy(new_filename, filename, pos - filename);
+		new_filename[pos - filename] = '\0';
 		strcat(new_filename, new_path);
-		strcat(new_filename, pos + strlen(old_path));
+		strcat(new_filename, pos + ft_strlen(old_path));
 		strcpy(filename, new_filename);
 		gc_free(game->mem, new_filename);
 	}
