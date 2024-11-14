@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   game_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 11:52:54 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 #include "../../includes/cub3d.h"
@@ -83,6 +84,9 @@ static void	game_engine(t_game *game)
 	set_anim(game);
 	game_multi_death(game);
 	render_multithreaded(game);
+	chat_draw(game);
+	show_message(game);
+	draw_hud(game);
 	if (is_a_teleporter(game->map[p->floor][(int)p->y][(int)p->x]))
 		game->menu->message = TELEPORT;
 	if (game->menu->message != NOTHING)

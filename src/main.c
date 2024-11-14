@@ -251,7 +251,8 @@ void	reset_game(t_game *game)
 
 void	hooks(t_game *game)
 {
-	mlx_mouse_move(game->mlx, game->win, game->screen_width >> 1 , game->screen_height >> 1 );
+	mlx_mouse_move(game->mlx, game->win, game->screen_width >> 1
+		, game->screen_height >> 1 );
 	mlx_hook(game->win, 6, 1L << 6, handle_mouse_move, game);
 	mlx_hook(game->win, 4, 1L << 2, handle_mouse_key_press, game);
 	mlx_hook(game->win, 5, 1L << 3, handle_mouse_key_release, game);
@@ -307,6 +308,6 @@ int	main(int ac, char **av)
 		game.screen_height, "Cub3D");
 	game.is_running = true;
 	init_thread_pool(&game, 4);
-	// music_launch(&game);
+	music_launch(&game);
 	return (hooks(&game), 0);
 }
