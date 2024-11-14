@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 01:01:10 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:24:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,6 @@ void	cast_floor(t_game *game, t_floorcast *floorcast)
 	get_step_floorcast(game, floorcast, floorcast->y);
 	x = -1;
 	while (++x < game->screen_width)
-		secure_pixel_put(game, x, floorcast->y, get_color(game, floorcast, x, floorcast->y));
+		secure_pixel_put(game, x, floorcast->y,
+			get_color(game, floorcast, x, floorcast->y));
 }

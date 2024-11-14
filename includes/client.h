@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:09:52 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 11:09:54 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:19:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int			join_server(t_game *game);
 void		*discover_servers_thread(void *arg);
 void		*receive_updates(void *args);
 void		update_door(t_game *game, t_game_message msg);
-void		add_connection_msg(t_game *game, char *pseudo);
+void		add_connection_msg(t_game *game, char *pseudo, t_game_message msg);
 void		remove_player(t_game *game, int player_id);
 void		add_player(t_game *game, t_game_message msg);
 void		update_player_position(t_game *game, t_game_message msg);

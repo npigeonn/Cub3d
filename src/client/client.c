@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 11:32:41 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:07:53 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	manage_position(t_game *game, t_game_message msg)
 		game->player->health = 0;
 }
 
-void replace_path(t_game *game, char *filename)
+void	replace_path(t_game *game, char *filename)
 {
 	const char	*old_path = "./assets/maps/";
 	const char	*new_path = "./assets/maps/multi/";
@@ -34,7 +34,8 @@ void replace_path(t_game *game, char *filename)
 	pos = strstr(filename, old_path);
 	if (pos)
 	{
-		new_length = ft_strlen(filename) - ft_strlen(old_path) + ft_strlen(new_path);
+		new_length = ft_strlen(filename) - ft_strlen(old_path)
+			+ ft_strlen(new_path);
 		new_filename = gc_malloc(game->mem, new_length + 1);
 		strncpy(new_filename, filename, pos - filename);
 		new_filename[pos - filename] = '\0';
@@ -45,6 +46,28 @@ void replace_path(t_game *game, char *filename)
 	}
 }
 
+int	receive_data(t_game *game, size_t file_size, int server_socket, FILE *file)
+{
+	size_t	total_received;
+	size_t	bytes_received;
+	size_t	bytes_to_receive;
+	char	buffer[1024];
+
+	while (total_received < file_size)
+	{
+		if (file_size - total_received < sizeof(buffer))
+			bytes_to_receive = file_size - total_received;
+		else
+			bytes_to_receive = sizeof(buffer);
+		bytes_received = recv(server_socket, buffer, bytes_to_receive, 0);
+		if (bytes_received <= 0)
+			return (0);
+		fwrite(buffer, 1, bytes_received, file);
+		total_received += bytes_received;
+	}
+	return (1);
+}
+
 char	*receive_file_from_server(t_game *game, int server_socket)
 {
 	char			filename[256];
@@ -52,8 +75,6 @@ char	*receive_file_from_server(t_game *game, int server_socket)
 	FILE			*file;
 	t_game_message	msg;
 	long			file_size;
-	size_t			total_received;
-	ssize_t			bytes_received;
 
 	recv(server_socket, filename, sizeof(filename), 0);
 	replace_path(game, filename);
@@ -61,19 +82,11 @@ char	*receive_file_from_server(t_game *game, int server_socket)
 	if (!file)
 		return (NULL);
 	recv(server_socket, &file_size, sizeof(file_size), 0);
-	total_received = 0;
-	while (total_received < file_size)
+	if (!receive_data(game, file_size, server_socket, file))
 	{
-		size_t bytes_to_receive = (file_size - total_received < sizeof(buffer)) ? (file_size - total_received) : sizeof(buffer);
-		bytes_received = recv(server_socket, buffer, bytes_to_receive, 0);
-		if (bytes_received <= 0)
-		{
-			fclose(file);
-			remove(filename);
-			return (NULL);
-		}
-		fwrite(buffer, 1, bytes_received, file);
-		total_received += bytes_received;
+		fclose(file);
+		remove(filename);
+		return (NULL);
 	}
 	fclose(file);
 	return (gc_strdup(game->mem, filename));

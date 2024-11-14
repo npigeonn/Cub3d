@@ -6,17 +6,17 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:05:54 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 11:14:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:19:31 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	add_connection_msg(t_game *game, char *pseudo)
+void	add_connection_msg(t_game *game, char *pseudo, t_game_message msg)
 {
 	t_message	*new_msg;
 
-	if (pseudo[0] == '\0')
+	if (pseudo[0] == '\0' || msg.type == MSG_GET_PLAYER)
 		return ;
 	new_msg = gc_malloc(game->mem, sizeof(t_message));
 	ft_strlcpy(new_msg->message, pseudo, MAX_PSEUDO_LENGTH);

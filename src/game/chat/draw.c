@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:51:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/24 14:04:09 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:22:37 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,6 @@ void	draw_text_max_right(t_game *game, t_draw_info info)
 	}
 }
 
-static void	draw_wrapped_text_left3(t_game *game, t_draw_info info, char *temp,
-int i)
-{
-	if (!info.str[i])
-		return ;
-	draw_text_left(game, info);
-}
-
 static int	draw_wrapped_text_left2(t_game *game, t_draw_info info, int i,
 int *current_width)
 {
@@ -80,12 +72,26 @@ int *current_width)
 	return (1);
 }
 
+void	draw_wrapped_text_left_loop(t_game *game, int i, int line_length,
+t_draw_info info)
+{
+	t_draw_info	info2;
+	char		temp[1024];
+
+	ft_strlcpy(temp, &info.str[i - line_length], line_length + 1);
+	temp[line_length] = '\0';
+	info2 = init_draw_info(info.height, temp, info.x, info.y);
+	info2.color = info.color;
+	info2.max_width = info.max_width;
+	draw_text_left(game, info2);
+	info.y += info.height * 0.8;
+}
+
 void	draw_wrapped_text_left(t_game *game, t_draw_info info)
 {
-	int		i;
-	int		current_width;
-	char	temp[1024];
-	int		line_length;
+	int			i;
+	int			current_width;
+	int			line_length;
 
 	i = 0;
 	current_width = 0;
@@ -99,16 +105,12 @@ void	draw_wrapped_text_left(t_game *game, t_draw_info info)
 			line_length++;
 			i++;
 		}
-		ft_strlcpy(temp, &info.str[i - line_length], line_length + 1);
-		temp[line_length] = '\0';
-		t_draw_info info2 = init_draw_info(info.height, temp, info.x, info.y);
-		info2.color = info.color;
-		info2.max_width = info.max_width;
+		draw_wrapped_text_left_loop(game, i, line_length, info);
 		current_width = 0;
-		draw_text_left(game, info2);
-		info.y += info.height * 0.8;
 	}
-	draw_wrapped_text_left3(game, info, temp, i);
+	if (!info.str[i])
+		return ;
+	draw_text_left(game, info);
 }
 
 void	draw_transparent_rectangle(t_game *game, t_draw_info info)

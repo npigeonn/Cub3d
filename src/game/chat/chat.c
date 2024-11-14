@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   chat.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 13:24:33 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:01:55 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/14 13:23:32 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,16 @@ static t_draw_info	get_default_draw_info(int height, int width, int x, int y)
 	return (info);
 }
 
+void	draw_basic_message(t_game *game, t_draw_info info)
+{
+	info.x += 10;
+	info.y += 10;
+	info.color = 0x000000;
+	info.height = 22;
+	ft_strcpy(info.str, "Enter a message");
+	draw_text_max_right(game, info);
+}
+
 void	chat_draw(t_game *game)
 {
 	const int	width = game->screen_width / 2.5;
@@ -71,10 +81,5 @@ void	chat_draw(t_game *game)
 	if (game->chatbox->message[0] != '\0')
 		draw_text_max_right(game, info);
 	else
-	{
-		ft_strcpy(info.str, "Enter a message");
-		info.x = width + 40;
-		info.y = y + height + 14;
-		draw_text_right(game, info);
-	}
+		draw_basic_message(game, info);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/14 12:23:53 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/14 13:59:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,4 +103,5 @@ void	parsing(char **av, t_game *game)
 	game->check_w = 0;
 	floodfill(game);
 	door_ennemi_ammo_health_mngmt(game);
+	printf("color floor: %d\n", game->textures->color_f);
 }

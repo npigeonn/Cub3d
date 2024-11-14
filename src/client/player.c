@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:19:15 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/14 13:19:29 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ void	add_player(t_game *game, t_game_message msg)
 	new_player->next = NULL;
 	new_player->type = SPRITE_PLAYER;
 	ft_strlcpy(new_player->pseudo, msg.pseudo, MAX_PSEUDO_LENGTH);
-	if (msg.type != MSG_GET_PLAYER)
-		add_connection_msg(game, msg.pseudo);
+	add_connection_msg(game, msg.pseudo, msg);
 	if (!game->sprites)
 		game->sprites = new_player;
 	else
