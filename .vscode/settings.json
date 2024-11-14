@@ -60,6 +60,7 @@
 	"cub3d.h": "c",
 	"alc.h": "c",
 	"keysym.h": "c",
-	"xfixes.h": "c"
+	"xfixes.h": "c",
+	"libft.h": "c"
 }
 }
