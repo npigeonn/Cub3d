@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/09 09:44:16 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 12:10:57 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/15 09:44:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,10 @@ void	add_teleporter(t_game *game, int x, int y, int floor)
 	tp->floor1 = 0;
 	tp->next = game->sprites;
 	tp->type = SPRITE_TELEPORTER;
+	tp->scale = 0.4;
+	tp->z_offset = 1;
+	tp->dir = 150;
+	tp->spritecast = gc_malloc(game->mem, sizeof(t_spritecast));
 	game->sprites = tp;
 }
 

@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   game.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/11/15 09:29:14 by npigeon          ###   ########.fr       */
+=======
+/*   Updated: 2024/11/15 10:19:37 by ybeaucou         ###   ########.fr       */
+>>>>>>> 23c4350 (norme)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,8 +379,7 @@ void	draw_text(t_game *data, t_draw_info info);
 void	draw_text_left(t_game *game, t_draw_info info);
 void	draw_text_right(t_game *game, t_draw_info info);
 void	draw_char(t_game *data, t_draw_info info);
-void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite,
-			float sprite_dir, float scale, float z_offset);
+void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite);
 void	draw_sprites(t_game *game);
 void	draw_rounded_rectangle(t_game *game, t_draw_info info);
 void	crosshair(t_game *game);

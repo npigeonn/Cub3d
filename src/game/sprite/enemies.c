@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 13:54:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/15 12:28:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,27 +50,31 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 	new->shoot_delay = 0;
 	new->type = SPRITE_ENEMY;
 	new->animation = 0;
+	new->dir = 0;
+	new->scale = 1;
+	new->z_offset = 0;
+	new->spritecast = gc_malloc(game->mem, sizeof(t_spritecast));
 	game->sprites = new;
 }
 
-bool	has_line_of_sight(t_game *game, t_point enemy_pos, t_point player_pos, float enemy_facing_angle, float fov_angle)
+bool	has_line_of_sight(t_game *game, t_sprite *sprite)
 {
-	float dx = player_pos.x - enemy_pos.x;
-	float dy = player_pos.y - enemy_pos.y;
+	float dx = game->player->x - sprite->x;
+	float dy = game->player->y - sprite->y;
 	float distance = sqrt(dx * dx + dy * dy);
 
 	float angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
-	float angle_diff = fabsf(angle_to_player - enemy_facing_angle);
+	float angle_diff = fabsf(angle_to_player - sprite->dir);
 
-	if (angle_diff <= fov_angle * 0.5)
+	if (angle_diff <= sprite->fov * 0.5)
 	{
 		float step_x = dx / distance;
 		float step_y = dy / distance;
 		for (float t = 0; t < distance; t += 0.1f)
 		{
-			enemy_pos.x += step_x * 0.1f;
-			enemy_pos.y += step_y * 0.1f;
-			if (!can_move(game->map, game->door, enemy_pos.x, enemy_pos.y, enemy_pos.floor))
+			sprite->x += step_x * 0.1f;
+			sprite->y += step_y * 0.1f;
+			if (!can_move(game->map, game->door, sprite->x, sprite->y, sprite->floor))
 				return (false);
 		}
 		return (true);
@@ -97,7 +101,7 @@ void	damages_red_draw(t_game *game, int y)
 			/ max_dist_x + dist_y)));
 }
 
-#define COLLISION_THRESHOLD 0.25f
+#define COLLISION_THRESHOLD 0.12f
 
 static inline float distance_squared(float x1, float y1, float x2, float y2)
 {
@@ -147,70 +151,112 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile, float x
 	return (false);
 }
 
-void	update_projectiles(t_game *game)
+void	projectile_move(t_game *game, t_projectile *projectile, bool *collision)
 {
-	t_projectile *current = game->projectiles;
-	t_projectile *prev = NULL;
-
-	while (current)
+	float	x_ray;
+	float	y_ray;
+	float	distance;
+	
+	distance = sqrt((cos(projectile->direction * (M_PI / 180.0f)) * projectile->speed)
+		* (cos(projectile->direction * (M_PI / 180.0f)) * projectile->speed)
+		+ (sin(projectile->direction * (M_PI / 180.0f)) * projectile->speed)
+		* (sin(projectile->direction * (M_PI / 180.0f)) * projectile->speed));
+	x_ray = projectile->x;
+	y_ray = projectile->y;
+	for (float traveled = 0; traveled < distance; traveled += 0.1)
 	{
-		float x_old = current->x;
-		float y_old = current->y;
+		x_ray += cos(projectile->direction * (M_PI / 180.0f)) * 0.1;
+		y_ray += sin(projectile->direction * (M_PI / 180.0f)) * 0.1;
 
-		float dx = cos(current->direction * (M_PI / 180.0f)) * current->speed;
-		float dy = sin(current->direction * (M_PI / 180.0f)) * current->speed;
-
-		float distance = sqrt(dx * dx + dy * dy);
-		bool collision = false;
-
-		float x_ray = x_old;
-		float y_ray = y_old;
-		float step = 0.1f;
-
-		for (float traveled = 0; traveled < distance; traveled += step)
+		if (!can_move(game->map, game->door, x_ray, y_ray, projectile->floor)
+			|| check_collision_with_entity(game, projectile, x_ray, y_ray))
 		{
-			x_ray += cos(current->direction * (M_PI / 180.0f)) * step;
-			y_ray += sin(current->direction * (M_PI / 180.0f)) * step;
-
-			if (!can_move(game->map, game->door, x_ray, y_ray, current->floor) || check_collision_with_entity(game, current, x_ray, y_ray))
-			{
-				collision = true;
-				break;
-			}
-			current->x = x_ray;
-			current->y = y_ray;
+			*collision = true;
+			break;
 		}
-		if (!collision)
-		{
-			current->x = x_old + dx;
-			current->y = y_old + dy;
-		}
-		if (collision)
-		{
-			if (prev)
-				prev->next = current->next;
-			else
-				game->projectiles = current->next;
-
-			t_projectile *temp = current;
-			current = current->next;
-			gc_free(game->mem, temp);
-		}
-		else
-		{
-			prev = current;
-			current = current->next;
-		}
+		projectile->x = x_ray;
+		projectile->y = y_ray;
 	}
 }
 
-void	shoot_at_player(t_sprite *enemy, t_point player_pos, t_game *game)
+void	projectile_collision(t_game *game, t_projectile **projectile,
+t_projectile **prev, int collision)
 {
-	float dx = player_pos.x - enemy->x;
-	float dy = player_pos.y - enemy->y;
-	float angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
-	float angle_diff = fmodf(fabsf(angle_to_player - enemy->direction), 360.0f);
-		
+	t_projectile	*temp;
+
+	if (collision)
+	{
+		temp = *projectile;
+		if (*prev)
+			(*prev)->next = (*projectile)->next;
+		else
+			game->projectiles = (*projectile)->next;
+		*projectile = (*projectile)->next;
+		gc_free(game->mem, temp);
+	}
+	else
+	{
+		*prev = *projectile;
+		*projectile = (*projectile)->next;
+	}
+}
+
+void	update_projectiles(t_game *game)
+{
+	t_projectile	*current;
+	t_projectile	*prev;
+	float			x_old;
+	float			y_old;
+	bool			collision;
+
+	current = game->projectiles;
+	prev = NULL;
+	while (current)
+	{
+		x_old = current->x;
+		y_old = current->y;
+		collision = false;
+		projectile_move(game, current, &collision);
+		if (!collision)
+		{
+			current->x = x_old + cos(current->direction
+					* (M_PI / 180.0f)) * current->speed;
+			current->y = y_old + sin(current->direction
+					* (M_PI / 180.0f)) * current->speed;
+		}
+		projectile_collision(game, &current, &prev, collision);
+	}
+}
+
+void	add_projectil(t_sprite *enemy, t_game *game, float angle_to_player)
+{
+	t_projectile	*new_projectile;
+
+	new_projectile = gc_malloc(game->mem, sizeof(t_projectile));
+	new_projectile->x = enemy->x;
+	new_projectile->y = enemy->y;
+	new_projectile->direction = angle_to_player;
+	new_projectile->speed = 2000;
+	new_projectile->next = NULL;
+	new_projectile->owner = NULL;
+	new_projectile->enemy = enemy;
+	new_projectile->next = game->projectiles;
+	new_projectile->floor = enemy->floor;
+	new_projectile->damage = 0.09f;
+	game->projectiles = new_projectile;
+}
+
+void	shoot_at_player(t_sprite *enemy, t_game *game)
+{
+	float	dx;
+	float	dy;
+	float	angle_to_player;
+	float	angle_diff;
+
+	dx = game->player->x - enemy->x;
+	dy = game->player->y - enemy->y;
+	angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
+	angle_diff = fmodf(fabsf(angle_to_player - enemy->direction), 360.0f);
 	if (angle_diff > 180.0f)
 		angle_diff = 360.0f - angle_diff;
 	if (enemy->animation > 0)
@@ -219,113 +265,125 @@ void	shoot_at_player(t_sprite *enemy, t_point player_pos, t_game *game)
 		enemy->selected_anim = 0;
 	if (angle_diff < 5.0f && enemy->shoot_delay <= 0)
 	{
-		t_projectile *new_projectile = gc_malloc(game->mem, sizeof(t_projectile));
+		add_projectil(enemy, game, angle_to_player);
 		enemy->selected_anim = 1;
 		enemy->animation = 5;
-		
-		if (new_projectile)
-		{
-			new_projectile->x = enemy->x;
-			new_projectile->y = enemy->y;
-			new_projectile->direction = angle_to_player;
-			new_projectile->speed = 2000;
-			new_projectile->next = NULL;
-			new_projectile->owner = NULL;
-			new_projectile->enemy = enemy;
-			new_projectile->next = game->projectiles; 
-			new_projectile->floor = enemy->floor;
-			new_projectile->damage = 0.09f;
-			game->projectiles = new_projectile;
-		}
 		enemy->shoot_delay = 1;
 	}
 	else if (enemy->shoot_delay > 0)
 		enemy->shoot_delay -= 0.6 * game->delta_time;
 }
 
+void	death_enemies_animation(t_game *game, t_sprite *current)
+{
+	if (current->type == SPRITE_ENEMY && current->animation > 0)
+	{
+		current->animation -= game->delta_time * 2.5;
+		if (current->animation <= 0)
+			current->selected_anim = 4;
+		else if (current->animation <= 0.5)
+			current->selected_anim = 3;
+		else if (current->animation <= 1)
+			current->selected_anim = 2;
+		else if (current->animation <= 1.5)
+			current->selected_anim = 1;
+		else if (current->animation <= 2)
+			current->selected_anim = 0;
+	}
+}
+
+void	init_update(t_game *game, t_sprite *current)
+{
+	t_spritecast	*sp;
+
+	sp = current->spritecast;
+	sp->dx = game->player->x - current->x;
+	sp->dy = game->player->y - current->y;
+	sp->distance_squared = sp->dx * sp->dx + sp->dy * sp->dy;
+	sp->distance = sqrt(sp->distance_squared);
+}
+
+void	update_enemies_patrol_move(t_game *game, t_sprite *current)
+{
+	float	new_x;
+	float	new_y;
+
+	new_x = current->x + current->dir_x * 0.02;
+	new_y = current->y + current->dir_y * 0.02;
+	if (can_move(game->map, game->door, new_x, new_y, current->floor))
+	{
+		current->x = new_x;
+		current->y = new_y;
+	}
+	else
+	{
+		current->direction = rand() % 360;
+		current->frame_count = 0;
+	}
+	if (current->floor == game->player->floor && current->spritecast->distance
+		< 5 && has_line_of_sight(game, current))
+	{
+		current->state = CHASE;
+		current->selected_anim = 0;
+	}
+}
+
+void	update_enemies_patrol(t_game *game, t_sprite *current)
+{
+	if (current->frame_count % 220 == 0)
+		current->direction = rand() % 360;
+	current->animation += game->delta_time;
+	if (current->animation >= 2)
+		current->animation = 0.5;
+	if (current->animation >= 0.5 && current->animation < 1)
+		current->selected_anim = 1;
+	else if (current->animation >= 1 && current->animation < 1.5)
+		current->selected_anim = 2;
+	else if (current->animation >= 1.5 && current->animation < 2)
+		current->selected_anim = 3;
+	current->spritecast->angle_in_radians = current->direction * (M_PI / 180);
+	current->dir_x = cos(current->spritecast->angle_in_radians);
+	current->dir_y = sin(current->spritecast->angle_in_radians);
+	update_enemies_patrol_move(game, current);
+}
+
+void	update_enemies_chase(t_game *game, t_sprite *current)
+{
+	float	dx;
+	float	dy;
+	float	angle_in_radians;
+
+	dx = game->player->x - current->x;
+	dy = game->player->y - current->y;
+	angle_in_radians = current->direction * (M_PI / 180);
+	current->direction = atan2(dy, dx) * (180 / M_PI);
+	current->dir_x = cos(angle_in_radians);
+	current->dir_y = sin(angle_in_radians);
+	if (current->spritecast->distance < 7
+		&& current->floor == game->player->floor)
+		shoot_at_player(current, game);
+	else
+		current->state = PATROL;
+}
+
 void	update_enemies(t_game *game)
 {
-	t_sprite *current = game->sprites;
-	t_point player_pos = {game->player->x, game->player->y, game->player->floor};
+	t_sprite	*current;
 
+	current = game->sprites;
 	while (current)
 	{
 		if (current->type != SPRITE_ENEMY || current->health <= 0)
 		{
-			if (current->type == SPRITE_ENEMY && current->animation > 0)
-			{
-				current->animation -=  game->delta_time * 2.5;
-				if (current->animation <= 0)
-					current->selected_anim = 4;
-				else if (current->animation <= 0.5)
-					current->selected_anim = 3;
-				else if (current->animation <= 1)
-					current->selected_anim = 2;
-				else if (current->animation <= 1.5)
-					current->selected_anim = 1;
-				else if (current->animation <= 2)
-					current->selected_anim = 0;
-			}
+			death_enemies_animation(game, current);
 			current = current->next;
 			continue ;
 		}
-		t_point enemy_pos = {current->x, current->y, current->floor};
-		
-		float dx = player_pos.x - current->x;
-		float dy = player_pos.y - current->y;
-		float distance_squared = dx * dx + dy * dy;
-		float distance = sqrt(distance_squared);
-
+		init_update(game, current);
 		if (current->state == PATROL)
-		{
-			if (current->frame_count % 220 == 0)
-				current->direction = rand() % 360;
-			current->animation += game->delta_time;
-			if (current->animation >= 2)
-				current->animation = 0.5;
-			if (current->animation >= 0.5 && current->animation < 1)
-				current->selected_anim = 1;
-			else if (current->animation >= 1 && current->animation < 1.5)
-				current->selected_anim = 2;
-			else if (current->animation >= 1.5 && current->animation < 2)
-				current->selected_anim = 3;
-			
-			float angle_in_radians = current->direction * (M_PI / 180);
-			current->dir_x = cos(angle_in_radians);
-			current->dir_y = sin(angle_in_radians);
-			
-			float new_x = current->x + current->dir_x * 0.02;
-			float new_y = current->y + current->dir_y * 0.02;
-			if (can_move(game->map, game->door, new_x, new_y, current->floor))
-			{
-				current->x = new_x;
-				current->y = new_y;
-			}
-			else
-			{
-				current->direction = rand() % 360;
-				current->frame_count = 0;
-			}
-			if (current->floor == game->player->floor && distance < 5 && has_line_of_sight(game, enemy_pos, player_pos, current->direction, current->fov))
-			{
-				current->state = CHASE;
-				current->selected_anim = 0;
-			}
-		}
+			update_enemies_patrol(game, current);
 		else if (current->state == CHASE)
-		{
-			float dx = game->player->x - current->x;
-			float dy = game->player->y - current->y;
-			current->direction = atan2(dy, dx) * (180 / M_PI);
-			float angle_in_radians = current->direction * (M_PI / 180);
-			current->dir_x = cos(angle_in_radians);
-			current->dir_y = sin(angle_in_radians);
-			
-			if (distance < 7 && current->floor == game->player->floor)
-				shoot_at_player(current, player_pos, game);
-			else 
-				current->state = PATROL;
-		}
+			update_enemies_chase(game, current);
 		current->frame_count++;
 		current = current->next;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   health_point.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/15 09:44:19 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/15 12:30:25 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void	draw_anim_health(t_game *game, t_sprite *sprite, t_image *im_health)
 	if ((int)time_sprites > 18000000)
 		time_sprites = 0;
 	sprite->selected_anim = (int)time_sprites % 18;
-	draw_sprite(game, im_health, sprite, 0, 0.2, 2);
+	draw_sprite(game, im_health, sprite);
 }
 
 void	on_life(t_game *game)

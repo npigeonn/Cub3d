@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:06:06 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 11:06:13 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/15 11:39:14 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,39 @@ enum e_sprite_type
 	SPRITE_TELEPORTER
 };
 
-typedef struct s_sprite
+typedef	struct s_spritecast
 {
+	float			r_x;
+	float			r_y;
+	float			inv_det;
+	float			transform_x;
+	float			transform_y;
+	float			player_angle;
+	float			relative_angle;
+	int				tex_x;
+	int				tex_x_base;
+	int				screen_x;
+	int				height;
+	int				width;
+	int				draw_start_y;
+	int				draw_end_y;
+	int				stripe_start;
+	int				stripe_end;
+	float			step;
+	float			tex_pos;
+	int				bpp;
+	char			*texture_data;
+	int				anim_frame;
+	float			dx;
+	float			dy;
+	float			angle_in_radians;
+	float			distance;
+	float			distance_squared;
+	struct s_image	*texture;
+}	t_spritecast;
+
+typedef struct s_sprite
+{ 
 	float			x;
 	float			y;
 	float			x1;
@@ -51,6 +82,10 @@ typedef struct s_sprite
 	int				player_id;
 	int				ammo;
 	char			pseudo[32];
+	float			dir;
+	float			scale;
+	float			z_offset;
+	t_spritecast	*spritecast;
 	struct s_sprite	*next;
 }	t_sprite;
 

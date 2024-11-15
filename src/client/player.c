@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:19:15 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 13:19:29 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/15 09:36:32 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,10 @@ void	add_player(t_game *game, t_game_message msg)
 	new_player->floor = msg.floor;
 	new_player->next = NULL;
 	new_player->type = SPRITE_PLAYER;
+	new_player->dir = 0;
+	new_player->scale = 1;
+	new_player->z_offset = 0;
+	new_player->spritecast = gc_malloc(game->mem, sizeof(t_spritecast));
 	ft_strlcpy(new_player->pseudo, msg.pseudo, MAX_PSEUDO_LENGTH);
 	add_connection_msg(game, msg.pseudo, msg);
 	if (!game->sprites)

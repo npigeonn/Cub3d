@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:38:19 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/13 12:09:22 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/15 09:36:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,10 @@ void	add_ammo(t_game *game, float x, float y, int floor)
 	new_ammo->still_exist = 1;
 	new_ammo->next = game->sprites;
 	new_ammo->type = SPRITE_AMMO;
+	new_ammo->dir = 150;
+	new_ammo->scale = 0.2;
+	new_ammo->z_offset = 2.1;
+	new_ammo->spritecast = gc_malloc(game->mem, sizeof(t_spritecast));
 	game->sprites = new_ammo;
 }
 
@@ -39,6 +43,10 @@ void	add_health(t_game *game, float x, float y, int floor)
 	new_health->still_exist = 1;
 	new_health->next = game->sprites;
 	new_health->type = SPRITE_HEALTH;
+	new_health->dir = 0;
+	new_health->scale = 0.2;
+	new_health->z_offset = 2;
+	new_health->spritecast = gc_malloc(game->mem, sizeof(t_spritecast));
 	game->sprites = new_health;
 }
 
@@ -53,6 +61,10 @@ void	add_exit(t_game *game, float x, float y, int floor)
 	new_exit->floor = floor;
 	new_exit->next = game->sprites;
 	new_exit->type = SPRITE_EXIT;
+	new_exit->scale = 1.5;
+	new_exit->z_offset = 0.005;
+	new_exit->dir = 150;
+	new_exit->spritecast = gc_malloc(game->mem, sizeof(t_spritecast));
 	game->sprites = new_exit;
 }
 
