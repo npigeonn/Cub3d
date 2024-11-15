@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mouse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/15 11:37:55 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,11 @@ void	send_shoot(t_game *game)
 int	handle_mouse_key_press2(int keycode, int x, int y, t_game *game)
 {
 	const int	status = game->menu->status;
-
 	if ((status == PLAYING || status == MULTI_PLAYER)
 		&& keycode == 1 && game->player->ammo > 0 && game->player->health > 0)
 	{
 		game->player->anim_shoot = 1;
-		pthread_mutex_lock(&game->mutex_music);
 		game->player->is_shooting = 1;
-		pthread_mutex_unlock(&game->mutex_music);
 		game->player->ammo--;
 		game->player->stats->nb_shoot++;
 		if (game->menu->status == MULTI_PLAYER)

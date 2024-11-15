@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 13:48:15 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/15 12:13:31 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	draw_fps(t_game *game, double fps)
 	info = init_draw_info(30, "FPS: ", 5, 20);
 	info.color = 0xFFFFF;
 	draw_text_left(game, info);
-	ft_strcpy(info.str, gc_itoa(game->mem, fps));
+	ft_strcpy(info.str, gc_itoa(game->mem, (int)fps));
 	info.x = 60;
 	draw_text_left(game, info);
 }
@@ -99,8 +99,8 @@ void	calculate_fps(t_game *game)
 	static double	fps = 0.0;
 	double			elapsed_time;
 
-	elapsed_time = (c_time.tv_sec + c_time.tv_usec / 1e6) - last_time;
 	gettimeofday(&c_time, NULL);
+	elapsed_time = (c_time.tv_sec + c_time.tv_usec / 1e6) - last_time;
 	frame_count++;
 	if (elapsed_time >= 1.0)
 	{

@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 12:10:55 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/15 09:29:14 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,6 +321,7 @@ typedef struct s_game
 	int						y_minimap;
 	int						clr;
 	int						music_dif;
+	int						arg_map;
 	pthread_t				thread;
 	int						nb_floor;
 	t_door					*door;

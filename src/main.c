@@ -35,10 +35,6 @@ ennemi qui se dirige vers toi un peu moins vite quand cest dans le champs de vis
 
 MODES DE JEU
 
-sortir solo multi
-melee generale multi infini ou avec une lim de kill
-melee fornite
-
 9-11  
 N : parsing gestion des cles
 Y : mob ennemi/teleporteur/sortie/munition /cles / affichage pero

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/14 13:59:08 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/15 09:40:54 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	file_dot_cub(char *file_map)
 static int	op_in(char **av, t_game *game)
 {
 	int	fd;
+	int	i;
 
 	if (!av[1] || !av[2] && (!ft_strcmp(av[1], "--volume=true")
 			|| !ft_strcmp(av[1], "--volume=false")))
@@ -44,17 +45,16 @@ static int	op_in(char **av, t_game *game)
 		gc_exit(game->mem, err("Too many arguments\n"));
 	if (!ft_strcmp(av[1], "--volume=true"))
 		game->music_dif = 1;
-	else
-		game->music_dif = 0;
+	game->arg_map = 1;
 	if (av[2])
-		av[1] = av[2];
-	if (!file_dot_cub(av[1]))
+		game->arg_map = 2;
+	if (!file_dot_cub(av[game->arg_map]))
 		gc_exit(game->mem, err("File without .cub\n"));
-	fd = open(av[1], O_RDONLY);
+	fd = open(av[game->arg_map], O_RDONLY);
 	if (fd <= 0)
 		gc_exit(game->mem, err("Impossible to open this file\n"));
 	close(fd);
-	fd = open(av[1], O_RDONLY | O_DIRECTORY);
+	fd = open(av[game->arg_map], O_RDONLY | O_DIRECTORY);
 	if (fd > -1)
 		return (close(fd), gc_exit(game->mem, err("Is a folder\n")), 1);
 	return (0);
@@ -93,7 +93,7 @@ void	parsing(char **av, t_game *game)
 {
 	op_in(av, game);
 	init_data(game);
-	textures(av[1], game);
+	textures(av[game->arg_map], game);
 	map_set_up(av, game);
 	if (count_spawns(game) != 1)
 		gc_exit(game->mem, err("Need ONE spawn\n"));
@@ -103,5 +103,5 @@ void	parsing(char **av, t_game *game)
 	game->check_w = 0;
 	floodfill(game);
 	door_ennemi_ammo_health_mngmt(game);
-	printf("color floor: %d\n", game->textures->color_f);
+	printf("color floor: %d\n", game->textures->color_c);
 }

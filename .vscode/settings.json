@@ -61,6 +61,7 @@
 	"alc.h": "c",
 	"keysym.h": "c",
 	"xfixes.h": "c",
-	"libft.h": "c"
+	"libft.h": "c",
+	"stdio.h": "c"
 }
 }

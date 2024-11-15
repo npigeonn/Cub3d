@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/26 02:56:17 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 12:59:26 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/15 09:09:35 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ bool is_a_player(char *line)
 	return (true);
 }
 
-void	ld_stats_extension(t_player_stats *stats, char *line,
+	void	ld_stats_extension(t_player_stats **stats, char *line,
 	int *num_players, FILE *file)
 {
 	int	i;
@@ -54,12 +54,12 @@ void	ld_stats_extension(t_player_stats *stats, char *line,
 			i--;
 			continue;
 		}
-		sscanf(line, "%49[^,], %d, %d, %d, %d, %f", stats[i].name,
-			&stats[i].games_played,
-			&stats[i].victories,
-			&stats[i].defeats,
-			&stats[i].kills,
-			&stats[i].play_time_hours);
+		sscanf(line, "%49[^,], %d, %d, %d, %d, %f", stats[i]->name,
+			&stats[i]->games_played,
+			&stats[i]->victories,
+			&stats[i]->defeats,
+			&stats[i]->kills,
+			&stats[i]->play_time_hours);
 	}
 }
 
@@ -80,7 +80,7 @@ t_player_stats*	load_player_stats(t_game *game, const char *filename, int *num_p
 	}
 	rewind(file);
 	stats = gc_malloc(game->mem, sizeof(t_player_stats) * (*num_players));
-	ld_stats_extension(stats, line, num_players, file);
+	ld_stats_extension(&stats, line, num_players, file);
 	fclose(file);
 	return (stats);
 }

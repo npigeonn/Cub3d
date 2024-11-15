@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/13 10:44:20 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/15 09:44:19 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void	life(t_game *game)
 	{
 		game->time_regen += game->delta_time * 10;
 		if ((int)game->time_regen > 18000000)
-			game->time_regen = 100;
-		if (game->time_regen > 100 && game->player->health < 0.9999)
+			game->time_regen = 150;
+		if (game->time_regen > 150 && game->player->health < 0.9999)
 			game->player->health += 0.00015;
 		if (game->player->health > 1)
 			game->player->health = 1;

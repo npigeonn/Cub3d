@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 10:57:25 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/15 09:21:35 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ void	init_player(t_game	*game, int malloc)
 	game->player->stats->nb_shoot = 0;
 	game->player->stats->distanc_travel = 0;
 	game->player->animation = 0;
+	game->music_dif = 0;
 	pthread_mutex_init(&game->mutex, NULL);
 	pthread_mutex_init(&game->mutex_music, NULL);
 	game->player->selected_anim = 0;

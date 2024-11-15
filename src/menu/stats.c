@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 18:50:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:39:29 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/15 12:00:47 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	draw_player_stats_row(t_game *game, t_player_stats player, int x, int y, in
 	draw_stat_info(game, gc_itoa(game->mem, player.victories), x + stats_width - padding - 312, text_y);
 	draw_stat_info(game, gc_itoa(game->mem, player.defeats), x + stats_width - padding - 207, text_y);
 	draw_stat_info(game, gc_itoa(game->mem, player.kills), x + stats_width - padding - 138, text_y);
-	draw_stat_info(game, gc_itoa(game->mem, player.play_time_hours), x + stats_width - padding - 20, text_y);
+	draw_stat_info(game, gc_itoa(game->mem, (int)(player.play_time_hours)), x + stats_width - padding - 20, text_y);
 }
 
 void	draw_back_button(t_game *game, int x, int y, int stats_height)

@@ -6,7 +6,7 @@
 /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:52:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/07 16:35:18 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/15 09:34:55 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	nb_floors(char **av, t_game *game)
 	char	*line;
 
 	i = 0;
-	fd = open(av[1], O_RDONLY);
+	fd = open(av[game->arg_map], O_RDONLY);
 	line = go_to_the_map_line(game->mem, fd, game->map_begin);
 	if (!line)
 		gc_exit(game->mem, err("Empty file\n"));
@@ -56,7 +56,7 @@ void	size_floors(char **av, t_game *game, int floor)
 	int		i;
 	char	*line;
 
-	fd = open(av[1], O_RDONLY);
+	fd = open(av[game->arg_map], O_RDONLY);
 	line = go_to_the_map_line(game->mem, fd, game->map_begin);
 	j = 0;
 	while (j < floor)
@@ -85,7 +85,7 @@ void	map_ready(char **av, t_game *game, int floor)
 	int		i;
 	char	*line;
 
-	fd = open(av[1], O_RDONLY);
+	fd = open(av[game->arg_map], O_RDONLY);
 	line = go_to_the_map_line(game->mem, fd, game->map_begin);
 	j = -1;
 	while (++j < floor)
