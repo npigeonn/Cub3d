@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:19:15 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/15 09:36:32 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/18 16:36:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,24 @@ void	update_player_position(t_game *game, t_game_message msg)
 	}
 }
 
+void	add_player_to_node(t_game *game, t_sprite *new_player)
+{
+	t_sprite	*current;
+
+	if (!game->sprites)
+		game->sprites = new_player;
+	else
+	{
+		current = game->sprites;
+		while (current->next)
+			current = current->next;
+		current->next = new_player;
+	}
+}
+
 void	add_player(t_game *game, t_game_message msg)
 {
 	t_sprite	*new_player;
-	t_sprite	*current;
 
 	new_player = gc_malloc(game->mem, sizeof(t_sprite));
 	ft_bzero(new_player, sizeof(t_sprite));
@@ -52,15 +66,7 @@ void	add_player(t_game *game, t_game_message msg)
 	new_player->spritecast = gc_malloc(game->mem, sizeof(t_spritecast));
 	ft_strlcpy(new_player->pseudo, msg.pseudo, MAX_PSEUDO_LENGTH);
 	add_connection_msg(game, msg.pseudo, msg);
-	if (!game->sprites)
-		game->sprites = new_player;
-	else
-	{
-		current = game->sprites;
-		while (current->next)
-			current = current->next;
-		current->next = new_player;
-	}
+	add_player_to_node(game, new_player);
 }
 
 static t_message	*get_message_deconnection(t_game *game, char *pseudo)

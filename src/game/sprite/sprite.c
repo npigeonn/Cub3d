@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 13:51:45 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/15 12:28:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/19 13:14:26 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,11 @@ void	init_spritecast(t_game *game, t_sprite *sprite, t_image *texture)
 	sp->texture = texture;
 }
 
-int	get_spritecast_info(t_game *game, t_sprite *sp, int *sprite_index,
-int sprite_order)
+int	get_spritecast_info(t_game *game, t_sprite *sp, int *sprite_index)
 {
 	t_spritecast	*spc;
 
 	spc = sp->spritecast;
-	*sprite_index = sprite_order[sprite_index];
 	if (*sprite_index >= spc->texture->nb_sprite || *sprite_index < 0)
 		*sprite_index = 0;
 	spc->screen_x = (int)(game->cen_x
@@ -165,8 +163,9 @@ void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite)
 	init_spritecast(game, sprite, texture);
 	sprite_index = (int)((sp->relative_angle + M_PI) / (2 * M_PI)
 			* texture->nb_sprite) % texture->nb_sprite;
+	sprite_index = sprite_order[sprite_index];
 	if (sp->transform_y <= 0 || !get_spritecast_info(game, sprite,
-			&sprite_index, sprite_order))
+			&sprite_index))
 		return ;
 	stripe = sp->stripe_start - 1;
 	while (++stripe < sp->stripe_end)
@@ -224,32 +223,60 @@ t_sprite **next)
 	*next = (*next)->next;
 }
 
-void	sort_sprites(t_game *game, t_sprite **head)
+static t_sprite	*merge_sorted_lists(t_game *game, t_sprite *left,
+t_sprite *right)
 {
-	bool		swapped;
-	t_sprite	*current;
-	t_sprite	*prev;
-	t_sprite	*next_sprite;
+	t_sprite	*result;
 
-	prev = NULL;
-	swapped = true;
-	if (*head == NULL || (*head)->next == NULL)
-		return ;
-	while (swapped)
+	if (!left)
+		return (right);
+	if (!right)
+		return (left);
+	if (calculate_distance(game, left) >= calculate_distance(game, right))
 	{
-		swapped = false;
-		prev = NULL;
-		current = *head;
-		while (current->next != NULL)
+		result = left;
+		result->next = merge_sorted_lists(game, left->next, right);
+	}
+	else
+	{
+		result = right;
+		result->next = merge_sorted_lists(game, left, right->next);
+	}
+	return (result);
+}
+
+static void	split_list(t_sprite *source, t_sprite **left, t_sprite **right)
+{
+	t_sprite	*fast;
+	t_sprite	*slow;
+
+	slow = source;
+	fast = source->next;
+	while (fast)
+	{
+		fast = fast->next;
+		if (fast)
 		{
-			next_sprite = current->next;
-			if (calculate_distance(game, current)
-				< calculate_distance(game, next_sprite))
-				sort_sprites_swap(&prev, &current, &next_sprite, &swapped);
-			else
-				sort_sprites_not_swap(&prev, &current, &next_sprite);
+			slow = slow->next;
+			fast = fast->next;
 		}
 	}
+	*left = source;
+	*right = slow->next;
+	slow->next = NULL;
+}
+
+void	sort_sprites(t_game *game, t_sprite **head)
+{
+	t_sprite	*left;
+	t_sprite	*right;
+
+	if (!head || !*head || !(*head)->next)
+		return ;
+	split_list(*head, &left, &right);
+	sort_sprites(game, &left);
+	sort_sprites(game, &right);
+	*head = merge_sorted_lists(game, left, right);
 }
 
 int	is_player_in_front(t_sprite *enemy, t_player *player)
@@ -303,7 +330,7 @@ void	draw_sprites(t_game *game)
 {
 	t_sprite	*current;
 
-	// sort_sprites(game, &game->sprites); TODO: Fix this
+	sort_sprites(game, &game->sprites);
 	current = game->sprites;
 	while (current)
 	{

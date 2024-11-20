@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mouse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/15 11:37:55 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/19 13:38:03 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 		update_multiplayer_click(game, x, y, keycode);
 	else if (status == SERVER_CREATE)
 		update_create_server_menu_text(game, x, y, keycode);
-	else if (status == JOIN_SERVER)
+	else if (status == JOIN_SERVER && keycode == 1)
 		update_join_server_menu_text(game, x, y, keycode);
 	else if (status == MAIN_MENU)
 		update_main_menu_click(game, x, y, keycode);

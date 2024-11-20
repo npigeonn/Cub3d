@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   game_over.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 08:35:41 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/15 11:38:00 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/19 13:16:37 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	update_game_over_click(t_game *game, int mouse_x, int mouse_y, int keycode)
+void	update_game_over_click(t_game *game, int mouse_x, int mouse_y,
+int keycode)
 {
 	if (keycode != 1)
 		return ;
@@ -30,20 +31,22 @@ void	update_game_over_button(t_game *game, int mouse_x, int mouse_y)
 	const int	y = game->screen_height * 0.25;
 
 	game->menu->button_selected = 0;
-	if (mouse_x >= (game->screen_width - btn_width) * 0.5 && mouse_x <= (game->screen_width + btn_width) * 0.5)
+	if (mouse_x >= (game->screen_width - btn_width) * 0.5
+		&& mouse_x <= (game->screen_width + btn_width) * 0.5)
 	{
-		if (mouse_y >= y + 2 * (btn_height + spacing) && mouse_y <= y + 2 * (btn_height + spacing) + btn_height)
+		if (mouse_y >= y + 2 * (btn_height + spacing)
+			&& mouse_y <= y + 2 * (btn_height + spacing) + btn_height)
 			game->menu->button_selected = 1;
 	}
 }
 
 void	apply_fade_to(t_game *game, int color)
 {
-	int	x;
-	int	y;
-	int	clr;
-	int	new_color;
-	const float alpha = game->fade_progress;
+	int			x;
+	int			y;
+	int			clr;
+	int			new_color;
+	const float	alpha = game->fade_progress;
 
 	y = 0;
 	while (y < game->screen_height)
@@ -52,7 +55,7 @@ void	apply_fade_to(t_game *game, int color)
 		while (x < game->screen_width)
 		{
 			clr = get_pixel_color_from_image(game, x, y);
-			new_color = blend_colors(clr, color, alpha); // color
+			new_color = blend_colors(clr, color, alpha);
 			pixel_put(game, x, y, new_color);
 			x++;
 		}
@@ -61,6 +64,57 @@ void	apply_fade_to(t_game *game, int color)
 	game->fade_progress += 0.005;
 }
 
+static void	draw_game_over_bg(t_game *game)
+{
+	t_draw_info	info;
+
+	info = init_draw_info(game->screen_height, "", 0, 0);
+	info.width = game->screen_width;
+	info.color = 0x850606;
+	draw_rectangle(game, info);
+	x_fixes_cursor(game, 's');
+}
+
+static void	draw_game_over_text(t_game *game)
+{
+	t_draw_info	info;
+
+	info = init_draw_info(70, "You are dead.",
+			game->screen_width >> 1, game->screen_height * 0.4);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	draw_text(game, info);
+}
+
+static void	draw_main_menu_button(t_game *game, int x, int y, int btn_width)
+{
+	t_draw_info	info;
+	t_draw_info	info2;
+	const int	btn_height = game->screen_height * 0.1;
+
+	info2 = init_draw_info(btn_height, "", x, y);
+	info2.color = MENU_BUTTON_COLOR;
+	info2.width = btn_width;
+	draw_rectangle(game, info2);
+	info = init_draw_info(0, "Main menu", x + btn_width / 2,
+			y + btn_height * 0.33 - 5);
+	info.color = MENU_BUTTON_TEXT_COLOR;
+	info.height = btn_height * 0.5;
+	draw_text(game, info);
+}
+
+static void	draw_main_menu_button_hover(t_game *game, int x, int y,
+int btn_width)
+{
+	t_draw_info	info;
+	const int	btn_height = game->screen_height * 0.1;
+
+	info = init_draw_info(0, "", x - 4, y - 4);
+	info.width = btn_width + 8;
+	info.height = btn_height + 8;
+	info.color = MENU_BUTTON_SELECTED_COLOR;
+	info.radius = 10;
+	draw_rounded_rectangle(game, info);
+}
 
 void	draw_game_over(t_game *game)
 {
@@ -69,35 +123,13 @@ void	draw_game_over(t_game *game)
 	const int	spacing = game->screen_height * 0.05;
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.25;
-	t_draw_info	info2;
-	t_draw_info	info;
 
-	info = init_draw_info(game->screen_height, "", 0, 0);
-	info.width = game->screen_width;
-	info.color = 0x850606;
-	draw_rectangle(game, info);
-	x_fixes_cursor(game, 's');
-	info = init_draw_info(70, "You are dead.", game->screen_width >> 1, game->screen_height * 0.4);
-	info.color = MENU_BUTTON_TEXT_COLOR;
-	draw_text(game, info);
-	info2 = init_draw_info(0, "", x - 4, y + 2 * (btn_height + spacing) - 4);
-	info2.width = btn_width + 8;
-	info2.height = btn_height + 8;
-	info2.color = MENU_BUTTON_SELECTED_COLOR;
-	info2.radius = 10;
+	draw_game_over_bg(game);
+	draw_game_over_text(game);
 	if (game->menu->button_selected == 1)
-		draw_rounded_rectangle(game, info2);
-	info = init_draw_info(0, "", x, y + 2 * (btn_height + spacing));
-	info2 = init_draw_info(btn_height, "", x, y + 2 * (btn_height + spacing));
-	info2.color = MENU_BUTTON_COLOR;
-	info2.width = btn_width;
-	draw_rectangle(game, info2);
-	info.color = MENU_BUTTON_TEXT_COLOR;
-	ft_strcpy(info.str, "Main menu");
-	info.y = y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;
-	info.height = btn_height * 0.5;
-	info.x = x + btn_width / 2;
-	draw_text(game, info);
+		draw_main_menu_button_hover(game, x, y + 2 * (btn_height + spacing),
+			btn_width);
+	draw_main_menu_button(game, x, y + 2 * (btn_height + spacing), btn_width);
 	game->chatbox->visible = false;
 	game->chatbox->is_writting = false;
 }

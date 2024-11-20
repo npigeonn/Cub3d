@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_key_name.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 15:40:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 12:13:28 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/19 13:18:00 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ char	*get_key_name(t_game *game, int keycode)
 	if (keycode == 65474)
 		return ("F5");
 	if (keycode == 65475)
-		return ("F6"); 
+		return ("F6");
 	if (keycode == 65476)
 		return ("F7");
 	if (keycode == 65477)

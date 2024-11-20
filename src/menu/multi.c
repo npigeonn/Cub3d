@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 10:04:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 11:01:07 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/19 13:47:03 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,13 @@ void	draw_rounded_rectangle(t_game *game, t_draw_info info)
 void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode)
 {
 	if (keycode != 1) return;
-	pthread_mutex_lock(&game->game_lock);
+	// pthread_mutex_lock(&game->game_lock);
 	if (game->menu->button_selected == 3)
 		game->menu->status = MAIN_MENU;
 	else if (game->menu->button_selected == 2)
 	{
 		game->menu->status = SERVER_CREATE;
-		pthread_mutex_unlock(&game->game_lock);
+		// pthread_mutex_unlock(&game->game_lock);
 		pthread_join(game->discover_servers_thread, NULL);
 		return ;
 	}
@@ -96,13 +96,12 @@ void	update_multiplayer_click(t_game *game, int moux_x, int mouse_y, int keycode
 		}
 	}
 	game->menu->button_selected = 0;
-	pthread_mutex_unlock(&game->game_lock);
+	// pthread_mutex_unlock(&game->game_lock);
 }
-
 
 void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 {
-	pthread_mutex_lock(&game->game_lock);
+	// pthread_mutex_lock(&game->game_lock);
 	const int	btn_width = game->screen_width * 0.25;
 	const int	btn_height = game->screen_height * 0.1;
 	const int	spacing = game->screen_height * 0.05;
@@ -125,7 +124,7 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 			mouse_y >= server_y_offset && mouse_y <= server_y_offset + 80)
 		{
 			game->menu->server_selected = i;
-			pthread_mutex_unlock(&game->game_lock);
+			// pthread_mutex_unlock(&game->game_lock);
 			return ;
 		}
 		server_y_offset += 60;
@@ -146,7 +145,7 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 		else if (mouse_y >= btn_y_start + 2 * (btn_height + spacing) && mouse_y <= btn_y_start + 3 * btn_height + 2 * spacing)
 			game->menu->button_selected = 3;
 	}
-	pthread_mutex_unlock(&game->game_lock);
+	// pthread_mutex_unlock(&game->game_lock);
 	check_mouse_on_gear(game, mouse_x, mouse_y);
 }
 
