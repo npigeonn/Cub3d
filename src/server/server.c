@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 09:38:57 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/29 17:40:32 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,29 +104,24 @@ void	main_server(void	*arg)
 void	copy_sprite(t_game *game, t_server *server)
 {
 	t_sprite	*current;
-	
+	t_sprite	*new_sprite;
+
 	current = game->sprites;
-	
-	while(current)
+	while (current)
 	{
-		t_sprite	*new_sprite = gc_malloc(game->mem, sizeof(t_sprite));
+		new_sprite = gc_malloc(game->mem, sizeof(t_sprite));
 		if (new_sprite)
 		{
 			ft_memcpy(new_sprite, current, sizeof(t_sprite));
 			new_sprite->next = server->sprites;
 			server->sprites = new_sprite;
 		}
-		current = current->next;	
+		current = current->next;
 	}
 }
 
-void	create_server(t_game *game)
+void	create_server_init(t_game *game, t_server *server)
 {
-	pthread_t	server_thread;
-	int			is_good;
-	t_server	*server;
-
-	is_good = 0;
 	server = gc_malloc(game->mem, sizeof(t_server));
 	server->nb_player = 0;
 	server->game_queue = NULL;
@@ -144,6 +139,16 @@ void	create_server(t_game *game)
 	server->last_time = game->last_time;
 	server->av = game->av;
 	server->mem = game->mem;
+}
+
+void	create_server(t_game *game)
+{
+	pthread_t	server_thread;
+	int			is_good;
+	t_server	*server;
+
+	is_good = 0;
+	create_server_init(game, server);
 	ft_strcpy(server->name, game->client->name);
 	pthread_mutex_init(server->game_lock, NULL);
 	pthread_create(&server_thread, NULL, (void *)main_server, (void *)server);

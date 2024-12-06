@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 14:37:17 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/05 11:33:06 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:36:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ t_sprite	*find_player_by_pseudo(t_server *server, char *pseudo)
 	current = server->sprites;
 	while (current)
 	{
-		if (current->type == SPRITE_PLAYER && ft_strcmp(current->pseudo, pseudo) == 0)
+		if (current->type == SPRITE_PLAYER
+			&& ft_strcmp(current->pseudo, pseudo) == 0)
 			return (current);
 		current = current->next;
 	}

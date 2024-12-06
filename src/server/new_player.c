@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 21:43:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 13:06:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:37:56 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static void	new_player_add(t_server *server, int i, int socket, char *pseudo)
 	msg.floor = server->floor;
 	msg.health = 1;
 	msg.height = 0;
-	// msg.ammo = 30;
+	msg.ammo = 30;
 	ft_strcpy(msg.pseudo, pseudo);
 	add_game_message_to_queue(server, msg);
 }

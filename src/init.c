@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/15 09:21:35 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/27 15:04:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void	init_var(t_game *game, int malloc)
 	game->half_cen_y = game->screen_height * .5 * .5;
 	game->fade_progress = 0;
 	if (malloc)
-		game->wall_distances = gc_malloc(game->mem, sizeof(float) * game->screen_width);
+		game->wall_distances = gc_malloc(game->mem, sizeof(float)
+				* game->screen_width);
 	ft_bzero(game->wall_distances, game->screen_width);
 	gettimeofday(&game->last_time, NULL);
 }
@@ -90,6 +91,23 @@ void	init_player_keycode(t_game *game, int malloc)
 	game->player->key->chat2 = NULL;
 }
 
+void	init_player2(t_game *game, int malloc)
+{
+	game->servers = NULL;
+	game->player->stats->nb_kills = 0;
+	game->player->stats->temps = gettimeofday(NULL, NULL);
+	game->player->stats->nb_degats = 0;
+	game->player->stats->nb_hit = 0;
+	game->player->stats->nb_shoot = 0;
+	game->player->stats->distanc_travel = 0;
+	game->player->animation = 0;
+	game->music_dif = 0;
+	pthread_mutex_init(&game->mutex, NULL);
+	pthread_mutex_init(&game->mutex_music, NULL);
+	game->player->selected_anim = 0;
+	init_player_keycode(game, malloc);
+}
+
 void	init_player(t_game	*game, int malloc)
 {
 	if (malloc)
@@ -116,17 +134,5 @@ void	init_player(t_game	*game, int malloc)
 	game->player->being_tpted = 0;
 	game->player->telep_signal = 0;
 	game->time_regen = 0;
-	game->servers = NULL;
-	game->player->stats->nb_kills = 0;
-	game->player->stats->temps = gettimeofday(NULL, NULL);
-	game->player->stats->nb_degats = 0;
-	game->player->stats->nb_hit = 0;
-	game->player->stats->nb_shoot = 0;
-	game->player->stats->distanc_travel = 0;
-	game->player->animation = 0;
-	game->music_dif = 0;
-	pthread_mutex_init(&game->mutex, NULL);
-	pthread_mutex_init(&game->mutex_music, NULL);
-	game->player->selected_anim = 0;
-	init_player_keycode(game, malloc);
+	init_player2(game, malloc);
 }

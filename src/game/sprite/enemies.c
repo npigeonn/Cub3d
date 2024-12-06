@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/15 12:28:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:10:50 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,28 +57,43 @@ void	add_enemies(t_game *game, int x, int y, int floor)
 	game->sprites = new;
 }
 
+static bool	is_within_fov(float angle_diff, float fov)
+{
+	return (angle_diff <= fov * 0.5f);
+}
+
+static bool	check_line_of_sight(t_game *game, t_sprite *sprite,
+float dx, float dy)
+{
+	const float	distance = sqrt(dx * dx + dy * dy);
+	const float	step_x = dx / distance;
+	const float	step_y = dy / distance;
+	float		t;
+	float		ray[2];
+
+	t = 0;
+	while (t < distance)
+	{
+		sprite->x += step_x * 0.1f;
+		sprite->y += step_y * 0.1f;
+		ray[0] = sprite->x;
+		ray[1] = sprite->y;
+		if (!can_move(game->map, game->door, ray, sprite->floor))
+			return (false);
+		t += 0.1f;
+	}
+	return (true);
+}
+
 bool	has_line_of_sight(t_game *game, t_sprite *sprite)
 {
-	float dx = game->player->x - sprite->x;
-	float dy = game->player->y - sprite->y;
-	float distance = sqrt(dx * dx + dy * dy);
+	const float	dx = game->player->x - sprite->x;
+	const float	dy = game->player->y - sprite->y;
+	const float	angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
+	const float	angle_diff = fabsf(angle_to_player - sprite->dir);
 
-	float angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
-	float angle_diff = fabsf(angle_to_player - sprite->dir);
-
-	if (angle_diff <= sprite->fov * 0.5)
-	{
-		float step_x = dx / distance;
-		float step_y = dy / distance;
-		for (float t = 0; t < distance; t += 0.1f)
-		{
-			sprite->x += step_x * 0.1f;
-			sprite->y += step_y * 0.1f;
-			if (!can_move(game->map, game->door, sprite->x, sprite->y, sprite->floor))
-				return (false);
-		}
-		return (true);
-	}
+	if (is_within_fov(angle_diff, sprite->fov))
+		return (check_line_of_sight(game, sprite, dx, dy));
 	return (false);
 }
 
@@ -88,54 +103,61 @@ void	damages_red_draw(t_game *game, int y)
 	float	alpha;
 	float	max_dist_x;
 	float	max_dist_y;
+	float	dist_y;
 
-	max_dist_x =  game->cen_x * 0.5;
+	max_dist_x = game->cen_x * 0.5;
 	max_dist_y = game->cen_y * 0.5;
 	alpha = 0.2 * (1 - game->player->health);
-	float dist_y = abs(y - game->cen_y) / max_dist_y;
-
+	dist_y = abs(y - game->cen_y) / max_dist_y;
 	x = -1;
 	while (++x <= game->screen_width)
-		pixel_put(game, x, y,  blend_colors(get_pixel_color_from_image(game,
-			x, y), 9830400, alpha * (1 + abs(x -  game->cen_x)
-			/ max_dist_x + dist_y)));
+		pixel_put(game, x, y, blend_colors(get_pixel_color_from_image(game,
+					x, y), 9830400, alpha * (1 + abs(x - game->cen_x)
+					/ max_dist_x + dist_y)));
 }
 
 #define COLLISION_THRESHOLD 0.12f
 
-static inline float distance_squared(float x1, float y1, float x2, float y2)
+static inline float	distance_squared(float x1, float y1, float x2, float y2)
 {
-	float dx = x2 - x1;
-	float dy = y2 - y1;
+	const float	dx = x2 - x1;
+	const float	dy = y2 - y1;
+
 	return (dx * dx + dy * dy);
 }
 
-bool	check_collision_with_entity(t_game *game, t_projectile *projectile, float x, float y)
+static bool	check_enemy_collision(t_game *game, t_projectile *projectile,
+t_sprite *current, float ray[2])
 {
-	t_sprite *current = game->sprites;
-
-	while (current)
+	if (current->type == SPRITE_ENEMY && current->health > 0
+		&& current->floor == projectile->floor
+		&& current != projectile->enemy)
 	{
-		if (current->type == SPRITE_ENEMY && current->health > 0 && current->floor == projectile->floor && current != projectile->enemy)
+		if (distance_squared(current->x, current->y, ray[0], ray[1])
+			< COLLISION_THRESHOLD)
 		{
-			if (distance_squared(current->x, current->y, x, y) < COLLISION_THRESHOLD)
+			if (projectile->owner == game->player)
+				game->player->stats->nb_hit++;
+			current->health -= projectile->damage;
+			if (current->health <= 0)
 			{
-				if (projectile->owner == game->player)
-					game->player->stats->nb_hit++;
-				current->health -= projectile->damage;
-				if (current->health <= 0)
-				{
-					game->player->stats->nb_kills++;
-					current->animation = 2;
-				}
-				return (true);
+				game->player->stats->nb_kills++;
+				current->animation = 2;
 			}
+			return (true);
 		}
-		current = current->next;
 	}
-	if (game->player->floor == projectile->floor && projectile->owner != game->player)
+	return (false);
+}
+
+static bool	check_player_collision(t_game *game, t_projectile *projectile,
+float x, float y)
+{
+	if (game->player->floor == projectile->floor
+		&& projectile->owner != game->player)
 	{
-		if (distance_squared(game->player->x, game->player->y, x, y) < COLLISION_THRESHOLD)
+		if (distance_squared(game->player->x, game->player->y, x, y)
+			< COLLISION_THRESHOLD)
 		{
 			game->player->stats->nb_degats += projectile->damage;
 			game->player->health -= projectile->damage;
@@ -151,31 +173,46 @@ bool	check_collision_with_entity(t_game *game, t_projectile *projectile, float x
 	return (false);
 }
 
-void	projectile_move(t_game *game, t_projectile *projectile, bool *collision)
+bool	check_collision_with_entity(t_game *game, t_projectile *projectile,
+float ray[2])
 {
-	float	x_ray;
-	float	y_ray;
-	float	distance;
-	
-	distance = sqrt((cos(projectile->direction * (M_PI / 180.0f)) * projectile->speed)
-		* (cos(projectile->direction * (M_PI / 180.0f)) * projectile->speed)
-		+ (sin(projectile->direction * (M_PI / 180.0f)) * projectile->speed)
-		* (sin(projectile->direction * (M_PI / 180.0f)) * projectile->speed));
-	x_ray = projectile->x;
-	y_ray = projectile->y;
-	for (float traveled = 0; traveled < distance; traveled += 0.1)
-	{
-		x_ray += cos(projectile->direction * (M_PI / 180.0f)) * 0.1;
-		y_ray += sin(projectile->direction * (M_PI / 180.0f)) * 0.1;
+	t_sprite	*current;
 
-		if (!can_move(game->map, game->door, x_ray, y_ray, projectile->floor)
-			|| check_collision_with_entity(game, projectile, x_ray, y_ray))
-		{
+	current = game->sprites;
+	while (current)
+	{
+		if (check_enemy_collision(game, projectile, current, ray))
+			return (true);
+		current = current->next;
+	}
+	if (check_player_collision(game, projectile, ray[0], ray[1]))
+		return (true);
+	return (false);
+}
+
+void	projectile_move(t_game *game, t_projectile *p, bool *collision)
+{
+	float	distance;
+	float	traveled;
+	float	ray[2];
+
+	distance = sqrt((cos(p->direction * (M_PI / 180.0f)) * p->speed)
+			* (cos(p->direction * (M_PI / 180.0f)) * p->speed)
+			+ (sin(p->direction * (M_PI / 180.0f)) * p->speed)
+			* (sin(p->direction * (M_PI / 180.0f)) * p->speed));
+	ray[0] = p->x;
+	ray[1] = p->y;
+	traveled = 0;
+	while (traveled < distance && !*collision)
+	{
+		ray[0] += cos(p->direction * (M_PI / 180.0f)) * 0.1;
+		ray[1] += sin(p->direction * (M_PI / 180.0f)) * 0.1;
+		if (!can_move(game->map, game->door, ray, p->floor)
+			|| check_collision_with_entity(game, p, ray))
 			*collision = true;
-			break;
-		}
-		projectile->x = x_ray;
-		projectile->y = y_ray;
+		p->x = ray[0];
+		p->y = ray[1];
+		traveled += 0.1;
 	}
 }
 
@@ -305,15 +342,14 @@ void	init_update(t_game *game, t_sprite *current)
 
 void	update_enemies_patrol_move(t_game *game, t_sprite *current)
 {
-	float	new_x;
-	float	new_y;
+	float	ray[2];
 
-	new_x = current->x + current->dir_x * 0.02;
-	new_y = current->y + current->dir_y * 0.02;
-	if (can_move(game->map, game->door, new_x, new_y, current->floor))
+	ray[0] = current->x + current->dir_x * 0.02;
+	ray[1] = current->y + current->dir_y * 0.02;
+	if (can_move(game->map, game->door, ray, current->floor))
 	{
-		current->x = new_x;
-		current->y = new_y;
+		current->x = ray[0];
+		current->y = ray[1];
 	}
 	else
 	{

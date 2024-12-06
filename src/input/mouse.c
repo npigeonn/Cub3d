@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/19 13:38:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:23:19 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ void	send_shoot(t_game *game)
 int	handle_mouse_key_press2(int keycode, int x, int y, t_game *game)
 {
 	const int	status = game->menu->status;
+
 	if ((status == PLAYING || status == MULTI_PLAYER)
 		&& keycode == 1 && game->player->ammo > 0 && game->player->health > 0)
 	{
@@ -59,7 +60,8 @@ int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 {
 	const int	status = game->menu->status;
 
-	if (status == OPTIONS_KEYBOARD || status == OPTIONS_MOUSE || status == OPTIONS_SOUND)
+	if (status == OPTIONS_KEYBOARD || status == OPTIONS_MOUSE
+		|| status == OPTIONS_SOUND)
 		update_option_menu_click(game, x, y, keycode);
 	else if (status == SERVERS)
 		update_multiplayer_click(game, x, y, keycode);
@@ -71,7 +73,8 @@ int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 		update_main_menu_click(game, x, y, keycode);
 	else if (status == SERVER_DISCONNECTED || status == SERVER_FULL)
 		update_server_error_click(game, x, y, keycode);
-	else if ((status == GAME_OVER || status == GAME_SUCCESS) && game->fade_progress >= 1)
+	else if ((status == GAME_OVER || status == GAME_SUCCESS)
+		&& game->fade_progress >= 1)
 		update_game_over_click(game, x, y, keycode);
 	else if (status == CHATING)
 		handle_mouse_chat(game, x, y, keycode);
@@ -82,11 +85,13 @@ int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 
 static void	handle_mouse_game(t_game *game, int x, int y)
 {
-	float		rotation = (x - game->cen_x) * ((game->menu->mouse_sensitivity / 20.0f) * ROTATION_SPEED);
+	float		rotation;
 	const float	old_dir_x = game->player->dir_x;
 	const float	old_plane_x = game->player->plane_x;
 	t_player	*p;
 
+	rotation = (x - game->cen_x) * ((game->menu->mouse_sensitivity / 20.0f)
+			* ROTATION_SPEED);
 	if (x == game->cen_x || game->player->health <= 0)
 		return ;
 	p = game->player;
@@ -98,14 +103,17 @@ static void	handle_mouse_game(t_game *game, int x, int y)
 	p->plane_y = old_plane_x * sin(rotation) + p->plane_y * cos(rotation);
 	if (game->menu->status == MULTI_PLAYER)
 		send_update_position(game);
-	mlx_mouse_move(game->mlx, game->win, game->cen_x, game->screen_height * 0.5);
+	mlx_mouse_move(game->mlx, game->win, game->cen_x,
+		game->screen_height * 0.5);
 }
 
 int	handle_mouse_move(int x, int y, t_game *game)
 {
 	if (game->menu->status == MAIN_MENU)
 		update_main_menu_button(game, x, y);
-	else if (game->menu->status == OPTIONS_KEYBOARD || game->menu->status == OPTIONS_MOUSE || game->menu->status == OPTIONS_SOUND)
+	else if (game->menu->status == OPTIONS_KEYBOARD
+		|| game->menu->status == OPTIONS_MOUSE
+		|| game->menu->status == OPTIONS_SOUND)
 		update_option_menu_button(game, x, y);
 	else if (game->menu->status == SERVERS)
 		update_multiplayer_menu(game, x, y);
@@ -116,7 +124,8 @@ int	handle_mouse_move(int x, int y, t_game *game)
 	else if (game->menu->status == SERVER_DISCONNECTED
 		|| game->menu->status == SERVER_FULL)
 		update_server_error_button(game, x, y);
-	else if ((game->menu->status == GAME_OVER || game->menu->status == GAME_SUCCESS) && game->fade_progress >= 1)
+	else if ((game->menu->status == GAME_OVER
+			|| game->menu->status == GAME_SUCCESS) && game->fade_progress >= 1)
 		update_game_over_button(game, x, y);
 	else if (game->menu->status == GET_PSEUDO)
 		update_get_pseudo_button(game, x, y);

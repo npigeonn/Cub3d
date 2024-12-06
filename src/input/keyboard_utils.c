@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   keyboard_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 03:03:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 10:44:44 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/29 17:28:56 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	use_item(t_game *game)
 	{
 		game->player->x_tel = (int)game->player->x;
 		game->player->y_tel = (int)game->player->y;
-		game->player->f_tel = (int)game->player->floor;		
+		game->player->f_tel = (int)game->player->floor;
 		game->player->being_tpted = 1;
 		pthread_mutex_lock(&game->mutex_music);
 		game->player->telep_signal = 1;
@@ -37,18 +37,18 @@ int	tablen(char **tab)
 	return (i);
 }
 
-int	can_move(char ***map, t_door *doors, float x, float y, int floor)
+int	can_move(char ***map, t_door *doors, float ray[2], int floor)
 {
 	t_door		*door;
 	int			check_x;
 	int			check_y;
 	const float	buffer = 0.13;
 
-	check_y = (int)(y - buffer) - 1;
-	while (++check_y <= (int)(y + buffer))
+	check_y = (int)(ray[1] - buffer) - 1;
+	while (++check_y <= (int)(ray[1] + buffer))
 	{
-		check_x = (int)(x - buffer) - 1;
-		while (++check_x <= (int)(x + buffer))
+		check_x = (int)(ray[0] - buffer) - 1;
+		while (++check_x <= (int)(ray[0] + buffer))
 		{
 			if (check_x < 0 || check_y < 0 || check_y >= tablen(map[floor])
 				|| check_x >= (int)ft_strlen(map[floor][check_y]))
@@ -63,7 +63,7 @@ int	can_move(char ***map, t_door *doors, float x, float y, int floor)
 			}
 		}
 	}
-	return (true);  
+	return (true);
 }
 
 void	chatting_mode(t_game *game)

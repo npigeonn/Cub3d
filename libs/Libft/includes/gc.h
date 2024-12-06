@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 17:23:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 10:54:30 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/21 17:58:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ typedef struct s_block_info
 	void	*ptr3;
 	void	*ptr4;
 	void	*ptr5;
-	void	*ptr6;	
+	void	*ptr6;
 }	t_block_info;
 
 typedef struct s_memory_block

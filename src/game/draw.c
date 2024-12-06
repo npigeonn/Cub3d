@@ -6,15 +6,17 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 14:55:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/13 13:26:07 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/27 16:54:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
 int	get_index_char(char c)
-{
-	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
+	{
+	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789"
+		"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUu"
+		"VvWwXxYyZz.";
 	int			i;
 
 	i = -1;
@@ -30,28 +32,39 @@ int	get_index_char(char c)
 	return (-1);
 }
 
-int	get_char_width(t_image *img, char c)
+int	get_char_width_return(int left_bound, int right_bound)
 {
-	int	index = get_index_char(c);
-	int	left_bound = 480;
-	int	right_bound = -1;
-	int	char_x = (index % 10) * 480;
-	int	char_y = (index / 10) * 480;
-	
-	for (int y = 0; y < 480; y++)
-	{
-		for (int x = 0; x < 480; x++)
-		{
-			if (!is_pixel_transparent(img, x + char_x, y + char_y))
-			{
-				if (x < left_bound) left_bound = x;
-				if (x > right_bound) right_bound = x;
-			}
-		}
-	}
 	if (left_bound > right_bound)
 		return (0);
 	return (right_bound - left_bound + 1);
+}
+
+int	get_char_width(t_image *img, char c)
+{
+	int			left_bound;
+	int			right_bound;
+	const int	char_x = (get_index_char(c) % 10) * 480;
+	const int	char_y = (get_index_char(c) / 10) * 480;
+	int			pos[2];
+
+	left_bound = 480;
+	right_bound = -1;
+	pos[0] = -1;
+	while (++pos[0] < 480)
+	{
+		pos[1] = -1;
+		while (++pos[1] < 480)
+		{
+			if (!is_pixel_transparent(img, pos[1] + char_x, pos[0] + char_y))
+			{
+				if (pos[1] < left_bound)
+					left_bound = pos[1];
+				if (pos[1] > right_bound)
+					right_bound = pos[1];
+			}
+		}
+	}
+	return (get_char_width_return(left_bound, right_bound));
 }
 
 int	get_char_width_opti(t_game *game, char x)
@@ -61,15 +74,18 @@ int	get_char_width_opti(t_game *game, char x)
 
 void	set_width_all_letter(t_game *game)
 {
-	const char	list[97] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz.";
+	const char	list[96] = "!#$&(),;@[]:?_\"|\\\\/*<>%-'`~£$+=+0123456789"
+		"AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUu"
+		"VvWwXxYyZz.";
 	int			i;
+	int			width;
+	int			index;
 
 	i = -1;
 	while (list[++i])
 	{
-		int width = get_char_width(game->images->alphanum_sprite, list[i]);
-		int index = get_index_char(list[i]);
-		
+		width = get_char_width(game->images->alphanum_sprite, list[i]);
+		index = get_index_char(list[i]);
 		if (index >= 0 && index < 96)
 			game->menu->width_letter[index] = width;
 	}
@@ -123,40 +139,57 @@ void	get_pos_char(char c, int *x, int *y)
 	*y = index / 10;
 }
 
+static int	get_original_pixel_index(t_image *img, int src_x, int src_y)
+{
+	return (src_y * img->size_line + src_x * (img->bpp / 8));
+}
+
+static void	draw_char_pixel(t_game *game, t_draw_info *info, t_image *img,
+int info_tab[4])
+{
+	int	src_x;
+	int	src_y;
+	int	pixel_index;
+
+	src_x = (info_tab[3] * 480 / info->height) + (info_tab[0] * 480);
+	src_y = (info_tab[2] * 480 / info->height) + (info_tab[1] * 480);
+	pixel_index = get_original_pixel_index(img, src_x, src_y);
+	if (img->data[pixel_index] != 0)
+		pixel_put(game, info->x + info_tab[3], info->y + info_tab[2],
+			info->color);
+}
+
 void	draw_char(t_game *game, t_draw_info info)
 {
-	int			x1, y1;
-	int			pos_x, pos_y;
-	int			original_pixel_index;
-	t_image		*img = game->images->alphanum_sprite;
+	t_image	*img;
+	int		info_tab[4];
 
-	get_pos_char(info.c, &pos_x, &pos_y);
-	for (y1 = 0; y1 < info.height; y1++)
+	img = game->images->alphanum_sprite;
+	get_pos_char(info.c, &info_tab[0], &info_tab[1]);
+	info_tab[2] = -1;
+	while (++info_tab[2] < info.height)
 	{
-		for (x1 = 0; x1 < info.height; x1++)
-		{
-			int source_x = (x1 * 480 / info.height) + (pos_x * 480);
-			int source_y = (y1 * 480 / info.height) + (pos_y * 480);
-			original_pixel_index = source_y * img->size_line
-				+ source_x * img->bpp * 0.125;
-			if (game->images->alphanum_sprite->data[original_pixel_index] != 0)
-				pixel_put(game, info.x + x1, info.y + y1, info.color);
-		}
+		info_tab[3] = -1;
+		while (++info_tab[3] < info.height)
+			draw_char_pixel(game, &info, img, info_tab);
 	}
 }
 
 int	get_text_width(t_game *game, char *str, int height)
 {
-	int	total_width = 0;
+	int	total_width;
 	int	i;
+	int	char_width;
 
-	for (i = 0; str[i]; i++)
+	total_width = 0;
+	i = -1;
+	while (str[++i])
 	{
 		if (str[i] == ' ')
 			total_width += height * 0.33;
 		else if (str[i] != '\n')
 		{
-			int char_width = game->menu->width_letter[get_index_char(str[i])];
+			char_width = game->menu->width_letter[get_index_char(str[i])];
 			total_width += (char_width * height / 480) + 3;
 		}
 	}
@@ -215,6 +248,7 @@ void	draw_text_left(t_game *game, t_draw_info info)
 		}
 	}
 }
+
 void	draw_text_right(t_game *game, t_draw_info info)
 {
 	int			i;
@@ -238,19 +272,19 @@ void	draw_text_right(t_game *game, t_draw_info info)
 			info.c = info.str[i];
 			draw_char(game, info);
 			char_width = get_char_width_opti(game, info.c);
-			info.x += char_width *info. height / 480 + 3;
+			info.x += char_width * info.height / 480 + 3;
 		}
 	}
 }
 
-void draw_rectangle(t_game *game, t_draw_info info)
+void	draw_rectangle(t_game *game, t_draw_info info)
 {
 	int		size_line;
 	char	*data;
 	int		off_base;
 	int		*line_buffer;
 	int		i[2];
-	
+
 	size_line = game->images->base->size_line;
 	data = game->images->base->data;
 	off_base = info.y * size_line + info.x * game->images->base->bpp * 0.125;
@@ -269,5 +303,5 @@ void draw_rectangle(t_game *game, t_draw_info info)
 	while (++i[0] < info.height)
 		ft_memcpy(data + off_base + i[0] * size_line,
 			line_buffer, info.width * sizeof(int));
-	gc_free(game->mem, line_buffer); 
+	gc_free(game->mem, line_buffer);
 }

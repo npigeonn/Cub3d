@@ -6,13 +6,14 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 14:49:39 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/06 13:22:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:37:06 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-t_game_message_queue	*create_game_message_queue(t_server *server, t_game_message msg)
+t_game_message_queue	*create_game_message_queue(t_server *server,
+t_game_message msg)
 {
 	t_game_message_queue	*new_node;
 

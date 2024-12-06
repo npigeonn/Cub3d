@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/18 15:54:48 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:51:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct s_draw_info
 	int		radius;
 	int		max_width;
 	float	alpha;
+	int 	padding;
 }	t_draw_info;
 
 enum e_weapon
@@ -405,9 +406,8 @@ void	update_door_animation(t_game *game);
 
 //wall
 void	draw_wall(t_game *game, t_raycast *raycast);
-void	draw_vertical_line_with_texture(t_game *game, int x,
-			int draw_start, int draw_end, t_image *texture,
-			float wall_x, int line_height);
+void	draw_vertical_line_with_texture(t_game *game, t_raycast *raycast,
+			t_image *texture, float wall_x);
 
 //ennemies
 void	update_enemies(t_game *game);

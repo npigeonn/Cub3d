@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   game_loop.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 14:35:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 11:52:54 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/27 15:16:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "../../includes/cub3d.h"
 
@@ -23,7 +21,8 @@ void	draw_hud(t_game *game)
 		animation_teleportation(game);
 	health_point_draw(game);
 	ammo_written(game);
-	if (game->player->health <= 0 && (game->menu->status == CHATING || game->menu->status == MULTI_PLAYER))
+	if (game->player->health <= 0 && (game->menu->status == CHATING
+			|| game->menu->status == MULTI_PLAYER))
 		draw_dead_screen_multiplayer(game);
 	calculate_fps(game);
 }
@@ -32,7 +31,8 @@ static void	game_multi_death(t_game *game)
 {
 	t_sprite	*current;
 
-	if ((game->menu->status != MULTI_PLAYER && game->menu->status != CHATING) || game->player->health > 0)
+	if ((game->menu->status != MULTI_PLAYER && game->menu->status != CHATING)
+		|| game->player->health > 0)
 		return ;
 	current = game->sprites;
 	while (current)
@@ -111,14 +111,8 @@ static void	create_join_server(t_game *game)
 	}
 }
 
-void	draw_success(t_game *game)
+static void	draw_success_background(t_game *game)
 {
-	const int	btn_width = game->screen_width * 0.25;
-	const int	btn_height = game->screen_height * 0.1;
-	const int	spacing = game->screen_height * 0.05;
-	const int	x = (game->screen_width - btn_width) * 0.5;
-	const int	y = game->screen_height * 0.25;
-	t_draw_info	info2;
 	t_draw_info	info;
 
 	info = init_draw_info(game->screen_height, "", 0, 0);
@@ -126,27 +120,58 @@ void	draw_success(t_game *game)
 	info.color = 3289650;
 	draw_rectangle(game, info);
 	x_fixes_cursor(game, 's');
-	info = init_draw_info(70, "MISSION SUCCEED", game->screen_width >> 1, game->screen_height * 0.4);
+	info = init_draw_info(70, "MISSION SUCCEED",
+			game->screen_width >> 1, game->screen_height * 0.4);
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text(game, info);
-	info2 = init_draw_info(0, "", x - 4, y + 2 * (btn_height + spacing) - 4);
-	info2.width = btn_width + 8;
-	info2.height = btn_height + 8;
-	info2.color = MENU_BUTTON_SELECTED_COLOR;
-	info2.radius = 10;
-	if (game->menu->button_selected == 1)
-		draw_rounded_rectangle(game, info2);
-	info = init_draw_info(0, "", x, y + 2 * (btn_height + spacing));
-	info2 = init_draw_info(btn_height, "", x, y + 2 * (btn_height + spacing));
+}
+
+static void	draw_main_menu_button(t_game *game, int x, int y)
+{
+	t_draw_info	info;
+	t_draw_info	info2;
+	const int	btn_width = game->screen_width * 0.25;
+	const int	btn_height = game->screen_height * 0.1;
+
+	info2 = init_draw_info(btn_height, "", x, y);
 	info2.color = MENU_BUTTON_COLOR;
 	info2.width = btn_width;
 	draw_rectangle(game, info2);
+	info = init_draw_info(0, "", x, y);
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	ft_strcpy(info.str, "Main menu");
-	info.y = y + 2 * (btn_height + spacing) + btn_height * 0.33 - 5;
+	info.y += btn_height * 0.33 - 5;
 	info.height = btn_height * 0.5;
-	info.x = x + btn_width / 2;
+	info.x += btn_width / 2;
 	draw_text(game, info);
+}
+
+static void	draw_selected_button(t_game *game, int x, int y)
+{
+	t_draw_info	info;
+	const int	btn_width = game->screen_width * 0.25;
+	const int	btn_height = game->screen_height * 0.1;
+
+	info = init_draw_info(0, "", x - 4, y - 4);
+	info.width = btn_width + 8;
+	info.height = btn_height + 8;
+	info.color = MENU_BUTTON_SELECTED_COLOR;
+	info.radius = 10;
+	draw_rounded_rectangle(game, info);
+}
+
+void	draw_success(t_game *game)
+{
+	const int	btn_width = game->screen_width * 0.25;
+	const int	btn_height = game->screen_height * 0.1;
+	const int	spacing = game->screen_height * 0.05;
+	const int	x = (game->screen_width - btn_width) * 0.5;
+	const int	y = game->screen_height * 0.25 + 2 * (btn_height + spacing);
+
+	draw_success_background(game);
+	if (game->menu->button_selected == 1)
+		draw_selected_button(game, x, y);
+	draw_main_menu_button(game, x, y);
 	game->chatbox->visible = false;
 	game->chatbox->is_writting = false;
 }
@@ -156,36 +181,17 @@ static void	victory_screen(t_game *game)
 	t_player	*p;
 
 	p = game->player;
-	if (p->health <= 0 && game->menu->status != CHATING && game->menu->status != MULTI_PLAYER)
+	if (p->health <= 0 && game->menu->status != CHATING
+		&& game->menu->status != MULTI_PLAYER)
 		game->menu->status = GAME_OVER;
 	if (game->map[p->floor][(int)p->y][(int)p->x] == 'e')
 		game->menu->status = GAME_SUCCESS;
 }
 
-int	game_loop(t_game *game)
+void	game_loop2(t_game *game, int status)
 {
-	int	status;
-
-	status = game->menu->status;
-	ft_memset(game->images->base->data, 0, game->screen_width
-		* game->screen_height * 4);
-	if (status == GET_PSEUDO)
-		draw_get_pseudo_menu(game);
-	else if (status == MAIN_MENU)
-		draw_main_menu(game);
-	else if (status == OPTIONS_KEYBOARD || status == OPTIONS_MOUSE || status == OPTIONS_SOUND)
-		draw_options_menu(game);
-	else if (status == SERVERS)
-		draw_multiplayer_menu(game);
-	else if (status == SERVER_CREATE)
-		draw_create_server_menu(game);
-	else if (status == JOIN_SERVER)
-		draw_join_server_menu(game);
-	else if (status == SERVER_DISCONNECTED || status == SERVER_FULL)
-		draw_server_error_menu(game);
-	else if (status == STATS)
-		draw_stats_menu(game);
-	else if (status == PLAYING || status == MULTI_PLAYER || status == CHATING || (status == GAME_OVER && game->fade_progress < 1))
+	if (status == PLAYING || status == MULTI_PLAYER || status == CHATING
+		|| (status == GAME_OVER && game->fade_progress < 1))
 		game_engine(game);
 	if (status == GAME_OVER)
 	{
@@ -206,5 +212,32 @@ int	game_loop(t_game *game)
 	mlx_put_image_to_window(game->mlx, game->win, game->images->base->img,
 		0, 0);
 	victory_screen(game);
+}
+
+int	game_loop(t_game *game)
+{
+	int	status;
+
+	status = game->menu->status;
+	ft_memset(game->images->base->data, 0, game->screen_width
+		* game->screen_height * 4);
+	if (status == GET_PSEUDO)
+		draw_get_pseudo_menu(game);
+	else if (status == MAIN_MENU)
+		draw_main_menu(game);
+	else if (status == OPTIONS_KEYBOARD || status == OPTIONS_MOUSE
+		|| status == OPTIONS_SOUND)
+		draw_options_menu(game);
+	else if (status == SERVERS)
+		draw_multiplayer_menu(game);
+	else if (status == SERVER_CREATE)
+		draw_create_server_menu(game);
+	else if (status == JOIN_SERVER)
+		draw_join_server_menu(game);
+	else if (status == SERVER_DISCONNECTED || status == SERVER_FULL)
+		draw_server_error_menu(game);
+	else if (status == STATS)
+		draw_stats_menu(game);
+	game_loop2(game, status);
 	return (0);
 }

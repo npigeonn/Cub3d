@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 10:49:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/19 16:23:14 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:11:13 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ typedef struct	s_key_binding
 
 //utils
 void	chatting_mode(t_game *game);
-int		can_move(char ***map, t_door *door, float x, float y, int floor);
+int		can_move(char ***map, t_door *door, float ray[2], int floor);
 void	use_item(t_game *game);
 
 //keyboard

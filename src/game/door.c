@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 10:16:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/12 09:14:06 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/27 16:00:58 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,26 @@ t_door	*get_door(t_door *door, int x, int y, int floor)
 	current = door;
 	while (current)
 	{
-		if ((int)current->x == x && (int)current->y == y && current->floor == floor)
+		if ((int)current->x == x && (int)current->y == y
+			&& current->floor == floor)
 			return (current);
 		current = current->next;
 	}
 	return (NULL);
+}
+
+void	send_door_msg(t_game *game, t_door *door)
+{
+	t_game_message	msg_door;
+
+	ft_bzero(&msg_door, sizeof(t_game_message));
+	msg_door.type = MSG_DOOR;
+	msg_door.x = door->x;
+	msg_door.y = door->y;
+	msg_door.floor = door->floor;
+	msg_door.open = door->open;
+	msg_door.player_id = game->client->player_id;
+	send(game->client->sock, &msg_door, sizeof(t_game_message), 0);
 }
 
 void	use_door_in_view(t_game *game)
@@ -34,33 +49,22 @@ void	use_door_in_view(t_game *game)
 	t_door			*door;
 	int				x;
 	int				y;
-	float			distance = 1;
 
 	if (game->menu->message != CLOSE_DOOR && game->menu->message != OPEN_DOOR)
 		return ;
-
-	x = (int)(player->x + player->dir_x * distance);
-	y = (int)(player->y + player->dir_y * distance);
-
+	x = (int)(player->x + player->dir_x * 1);
+	y = (int)(player->y + player->dir_y * 1);
 	door = get_door(game->door, x, y, player->floor);
 	if (door)
 	{
 		door->open = !door->open;
-		t_game_message	msg_door;
-		ft_bzero(&msg_door, sizeof(t_game_message));
-		msg_door.type = MSG_DOOR;
-		msg_door.x = door->x;
-		msg_door.y = door->y;
-		msg_door.floor = door->floor;
-		msg_door.open = door->open;
-		msg_door.player_id = game->client->player_id;
-		send(game->client->sock, &msg_door, sizeof(t_game_message), 0);
+		send_door_msg(game, door);
 	}
 }
 
 void	add_door(t_game *game, int x, int y, int floor)
 {
-	t_door *new_door;
+	t_door	*new_door;
 
 	new_door = gc_malloc(game->mem, sizeof(t_door));
 	new_door->x = x;
@@ -68,31 +72,58 @@ void	add_door(t_game *game, int x, int y, int floor)
 	new_door->floor = floor;
 	new_door->open = false;
 	new_door->animation = 0;
-    new_door->next = game->door;
-    game->door = new_door;
+	new_door->next = game->door;
+	game->door = new_door;
 }
 
-void draw_door(t_game *game, t_raycast *r, t_door *door)
+static float	calculate_perp_wall_dist(t_raycast *r, t_game *game)
 {
-	t_image *texture = game->textures->door;
+	if (r->side == SIDE_EAST || r->side == SIDE_WEST)
+		return ((r->map_x - game->player->x + (1 - r->step_x) * 0.5)
+			/ r->ray_dir_x);
+	return ((r->map_y - game->player->y + (1 - r->step_y) * 0.5)
+		/ r->ray_dir_y);
+}
 
-	float perp_wall_dist = (r->side == SIDE_EAST || r->side == SIDE_WEST)
-		? (r->map_x - game->player->x + (1 - r->step_x) * 0.5) / r->ray_dir_x
-		: (r->map_y - game->player->y + (1 - r->step_y) * 0.5) / r->ray_dir_y;
+static void	calculate_draw_limits(t_raycast *doorcast, t_game *game,
+		float perp_wall_dist)
+{
+	doorcast->line_height = (int)(game->screen_height / perp_wall_dist);
+	doorcast->draw_start = game->screen_height * 0.5
+		- doorcast->line_height * 0.5
+		- (int)(game->player->height * doorcast->line_height);
+	doorcast->draw_end = doorcast->draw_start + doorcast->line_height - 1;
+	if (doorcast->draw_start < 0)
+		doorcast->draw_start = 0;
+	if (doorcast->draw_end >= game->screen_height)
+		doorcast->draw_end = game->screen_height - 1;
+}
 
-	int line_height = (int)(game->screen_height / perp_wall_dist);
-	int draw_start = game->screen_height * 0.5 - line_height * 0.5 - (int)(game->player->height * line_height);
-	int draw_end = draw_start + line_height - 1;
+static float	calculate_wall_x(t_raycast *r, t_game *game, float perp_dist)
+{
+	float	wall_x;
 
-	if (draw_start < 0) draw_start = 0;
-	if (draw_end >= game->screen_height) draw_end = game->screen_height - 1;
+	if (r->side == SIDE_EAST || r->side == SIDE_WEST)
+		wall_x = game->player->y + perp_dist * r->ray_dir_y;
+	else
+		wall_x = game->player->x + perp_dist * r->ray_dir_x;
+	return (wall_x - floor(wall_x));
+}
 
-	float wall_x = (r->side == SIDE_EAST || r->side == SIDE_WEST)
-		? (game->player->y + perp_wall_dist * r->ray_dir_y)
-		: (game->player->x + perp_wall_dist * r->ray_dir_x);
-	wall_x -= floor(wall_x);
+void	draw_door(t_game *game, t_raycast *r)
+{
+	t_image		*texture;
+	t_raycast	doorcast;
+	float		perp_wall_dist;
+	float		wall_x;
+
+	texture = game->textures->door;
+	perp_wall_dist = calculate_perp_wall_dist(r, game);
+	calculate_draw_limits(&doorcast, game, perp_wall_dist);
+	wall_x = calculate_wall_x(r, game, perp_wall_dist);
 	game->wall_distances[r->x] = perp_wall_dist;
-	draw_vertical_line_with_texture(game, r->x, draw_start, draw_end, texture, wall_x, line_height);
+	doorcast.x = r->x;
+	draw_vertical_line_with_texture(game, &doorcast, texture, wall_x);
 }
 
 void	update_door_animation(t_game *game)
@@ -100,7 +131,8 @@ void	update_door_animation(t_game *game)
 	t_door	*current;
 
 	current = game->door;
-	if (current)
+	if (!current)
+		return ;
 	while (current)
 	{
 		if (current->open)
@@ -121,7 +153,7 @@ void	update_door_animation(t_game *game)
 
 bool	visible_door(t_door *door)
 {
-	const float anim = door->animation; 
+	const float	anim = door->animation;
 
 	if (anim == 0)
 		return (true);
@@ -134,29 +166,39 @@ bool	visible_door(t_door *door)
 	return (false);
 }
 
+void	handle_door2(t_game *game, t_door *door, float distance,
+t_raycast *raycast)
+{
+	if (visible_door(door))
+		draw_door(game, raycast);
+	if (distance < 0.4)
+	{
+		if (door->open)
+			game->menu->message = CLOSE_DOOR;
+		else
+			game->menu->message = OPEN_DOOR;
+	}
+}
+
 int	handle_door(t_game *game, t_raycast *raycast)
 {
 	t_door		*door;
-	float		distance = raycast->perp_wall_dist;
+	float		distance;
 
+	distance = raycast->perp_wall_dist;
 	if (raycast->side == SIDE_EAST || raycast->side == SIDE_WEST)
-		distance = (raycast->map_x - game->player->x + (1 - raycast->step_x) * 0.5) / raycast->ray_dir_x;
+		distance = (raycast->map_x - game->player->x + (1 - raycast->step_x)
+				* 0.5) / raycast->ray_dir_x;
 	else
-		distance = (raycast->map_y - game->player->y + (1 - raycast->step_y) * 0.5) / raycast->ray_dir_y;
+		distance = (raycast->map_y - game->player->y + (1 - raycast->step_y)
+				* 0.5) / raycast->ray_dir_y;
 	if (game->map[game->player->floor][raycast->map_y][raycast->map_x] == 'D')
 	{
-		door = get_door(game->door, raycast->map_x, raycast->map_y, game->player->floor);
+		door = get_door(game->door, raycast->map_x, raycast->map_y,
+				game->player->floor);
 		if (!door)
 			return (0);
-		if (visible_door(door))
-			draw_door(game, raycast, door);
-		if (distance < 0.4)
-		{
-			if (door->open)
-				game->menu->message = CLOSE_DOOR;	
-			else
-				game->menu->message = OPEN_DOOR;
-		}
+		handle_door2(game, door, distance, raycast);
 		if (visible_door(door))
 			return (1);
 	}

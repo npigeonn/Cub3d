@@ -3,42 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   sound_global.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 10:58:52 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/13 11:36:22 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/27 17:02:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-// #include "../../includes/cub3d.h"
-
-// void	*test_music(void *arg)
-// { // tir - mort d'un ennemi - bruit qd degats - game over - success - teleportations - portes 
-// 	t_game *game = (t_game *)arg;
-// 	// Sound	sound; "./assets/sound/gunshot.wav"
-// 	Music music;
-	
-// 	printf("1\n");
-// 	InitAudioDevice();
-// 	music = LoadMusicStream("./assets/sound/ps.wav");
-// 	printf("2\n");
-// 	PlayMusicStream(music);
-// 	while (1)
-// 	{
-// 		UpdateMusicStream(music);
-// 		sleep(0.5);
-// 	}
-// 	UnloadMusicStream(music);
-// 	CloseAudioDevice();
-// }
-
-// void	music_launch(t_game *game)
-// {
-// 	if (pthread_create(&game->thread, \
-// 		NULL, test_music, game) != 0)
-// 		gc_exit(game->mem, err("pb music\n"));
-// }
-
 
 #include "../../includes/cub3d.h"
 

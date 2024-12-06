@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:04:30 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 11:05:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/27 15:45:29 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct s_raycast
 	int			draw_start;
 	int			draw_end;
 	int			x;
+	float		wall_x;
 	t_floorcast	floorcast;
 }	t_raycast;
 

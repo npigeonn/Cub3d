@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:06:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 11:08:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:54:34 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct s_game_message
 	float			health;
 	int				floor;
 	int				open;
+	int				ammo;
 	char			message[MAX_MESSAGE_LENGTH];
 	int				file_size;
 	float			animation;

@@ -3,14 +3,11 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 12:23:37 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 11:51:43 by npigeon          ###   ########.fr       */
+/*   Updated: 2024/11/29 17:20:49 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
-
-
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
@@ -43,6 +40,33 @@ void	create_task(t_game *game, int x, t_task_type type)
 	pthread_mutex_unlock(&game->pool->queue_mutex);
 }
 
+void	worker_use_task(t_thread_pool *pool, t_task *task)
+{
+	pthread_mutex_unlock(&pool->queue_mutex);
+	if (task != NULL)
+	{
+		if (task->type == RAYCAST)
+		{
+			task->raycast->x = task->x;
+			cast_rays(task->game, task->raycast);
+		}
+		else if (task->type == CAST_FLOOR)
+		{
+			task->floorcast->y = task->x;
+			cast_floor(task->game, task->floorcast);
+		}
+		else if (task->type == FILTER_RED)
+			damages_red_draw(task->game, task->x);
+	}
+	pthread_mutex_lock(&pool->queue_mutex);
+}
+
+void	worker_send_signal(t_thread_pool *pool)
+{
+	if (pool->tasks_remaining == 0)
+		pthread_cond_broadcast(&pool->all_tasks_done_cond);
+}
+
 void	*worker_thread(void *arg)
 {
 	t_thread_pool	*pool;
@@ -54,7 +78,6 @@ void	*worker_thread(void *arg)
 		pthread_mutex_lock(&pool->queue_mutex);
 		while (pool->task_queue == NULL && !pool->shutdown)
 			pthread_cond_wait(&pool->queue_cond, &pool->queue_mutex);
-		
 		if (pool->shutdown && pool->task_queue == NULL)
 		{
 			pthread_mutex_unlock(&pool->queue_mutex);
@@ -66,25 +89,8 @@ void	*worker_thread(void *arg)
 			pool->task_queue = task->next;
 			pool->tasks_remaining--;
 		}
-		pthread_mutex_unlock(&pool->queue_mutex);
-		if (task != NULL)
-		{
-			if (task->type == RAYCAST)
-			{
-				task->raycast->x = task->x;
-				cast_rays(task->game, task->raycast);
-			}
-			else if (task->type == CAST_FLOOR)
-			{
-				task->floorcast->y = task->x;
-				cast_floor(task->game, task->floorcast);
-			}
-			else if (task->type == FILTER_RED)
-				damages_red_draw(task->game, task->x);
-		}
-		pthread_mutex_lock(&pool->queue_mutex);
-		if (pool->tasks_remaining == 0)
-			pthread_cond_broadcast(&pool->all_tasks_done_cond);
+		worker_use_task(pool, task);
+		worker_send_signal(pool);
 		pthread_mutex_unlock(&pool->queue_mutex);
 	}
 	return (NULL);
@@ -93,13 +99,15 @@ void	*worker_thread(void *arg)
 void	destroy_thread_pool(t_block_info *param)
 {
 	t_thread_pool	*pool;
+	int				i;
 
 	pool = (t_thread_pool *)param->ptr;
 	pthread_mutex_lock(&pool->queue_mutex);
 	pool->shutdown = 1;
 	pthread_cond_broadcast(&pool->queue_cond);
 	pthread_mutex_unlock(&pool->queue_mutex);
-	for (int i = 0; i < pool->num_threads; i++)
+	i = -1;
+	while (++i < pool->num_threads)
 		pthread_join(pool->threads[i], NULL);
 	pthread_mutex_destroy(&pool->queue_mutex);
 	pthread_cond_destroy(&pool->queue_cond);
@@ -113,7 +121,7 @@ void	wait_for_all_tasks(t_thread_pool *pool)
 	pthread_mutex_lock(&pool->queue_mutex);
 	while (pool->tasks_remaining > 0)
 		pthread_cond_wait(&pool->all_tasks_done_cond, &pool->queue_mutex);
-	pthread_mutex_unlock(&pool->queue_mutex);;
+	pthread_mutex_unlock(&pool->queue_mutex);
 }
 
 void	free_all_pool(t_game *game)
@@ -169,21 +177,10 @@ void	render_multithreaded(t_game *game)
 	draw_hud(game);
 }
 
-void	init_thread_pool(t_game *game, int num_threads)
+void	create_threads(t_game *game, t_thread_pool *pool, int num_threads)
 {
-	t_thread_pool	*pool;
-	int				i;
+	int	i;
 
-	pool = gc_malloc(game->mem, sizeof(t_thread_pool));
-	pool->num_threads = num_threads;
-	pool->task_queue = NULL;
-	pool->tasks_remaining = 0;
-	pool->game = game;
-	pool->shutdown = 0;
-	pthread_mutex_init(&pool->queue_mutex, NULL);
-	pthread_cond_init(&pool->queue_cond, NULL);
-	pthread_cond_init(&pool->all_tasks_done_cond, NULL);
-	pool->threads = gc_malloc(game->mem, sizeof(pthread_t) * num_threads);
 	i = -1;
 	while (++i < num_threads)
 	{
@@ -195,8 +192,25 @@ void	init_thread_pool(t_game *game, int num_threads)
 			return ;
 		}
 	}
-	game->pool = pool;
+}
+
+void	init_thread_pool(t_game *game, int num_threads)
+{
+	t_thread_pool	*pool;
 	t_block_info	*param;
+
+	pool = gc_malloc(game->mem, sizeof(t_thread_pool));
+	pool->num_threads = num_threads;
+	pool->task_queue = NULL;
+	pool->tasks_remaining = 0;
+	pool->game = game;
+	pool->shutdown = 0;
+	pthread_mutex_init(&pool->queue_mutex, NULL);
+	pthread_cond_init(&pool->queue_cond, NULL);
+	pthread_cond_init(&pool->all_tasks_done_cond, NULL);
+	pool->threads = gc_malloc(game->mem, sizeof(pthread_t) * num_threads);
+	create_threads(game, pool, num_threads);
+	game->pool = pool;
 	param = gc_malloc(pool->game->mem, sizeof(t_block_info));
 	param->ptr = pool;
 	gc_add_memory_block(pool->game->mem, NULL, destroy_thread_pool, param);

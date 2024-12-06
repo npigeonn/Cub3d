@@ -6,41 +6,50 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:16:55 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/07 13:50:05 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/11/29 17:37:43 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-#define COLLISION_THRESHOLD 0.25f
+#define COLLISION 0.25f
 
-static inline float distance_squared(float x1, float y1, float x2, float y2)
+static inline float	distance_squared(float x1, float y1, float x2, float y2)
 {
-	float dx = x2 - x1;
-	float dy = y2 - y1;
+	const float	dx = x2 - x1;
+	const float	dy = y2 - y1;
+
 	return (dx * dx + dy * dy);
 }
 
-bool	check_collision_with_entity_server(t_server *server, t_projectile *projectile, float x, float y)
+void	send_heal_server(t_server *server, t_sprite *current)
 {
-	t_sprite *current = server->sprites;
+	t_game_message	msg;
 
+	ft_bzero(&msg, sizeof(t_game_message));
+	msg.type = MSG_PLAYER_HIT;
+	msg.health = current->health;
+	msg.player_id = current->player_id;
+	add_game_message_to_queue(server, msg);
+}
+
+bool	check_collision_with_entity_server(t_server *server,
+t_projectile *projectile, float x, float y)
+{
+	t_sprite	*current;
+
+	current = server->sprites;
 	while (current)
 	{
-		if ((current->type == SPRITE_ENEMY || current->type == SPRITE_PLAYER) && current->health > 0 && current->floor == projectile->floor && current != projectile->enemy)
+		if ((current->type == SPRITE_ENEMY || current->type == SPRITE_PLAYER)
+			&& current->health > 0 && current->floor == projectile->floor
+			&& current != projectile->enemy)
 		{
-			if (distance_squared(current->x, current->y, x, y) < COLLISION_THRESHOLD)
+			if (distance_squared(current->x, current->y, x, y) < COLLISION)
 			{
 				current->health -= projectile->damage;
 				if (current->type == SPRITE_PLAYER)
-				{
-					t_game_message msg;
-					ft_bzero(&msg, sizeof(t_game_message));
-					msg.type = MSG_PLAYER_HIT;
-					msg.health = current->health;
-					msg.player_id = current->player_id;
-					add_game_message_to_queue(server, msg);
-				}
+					send_heal_server(server, current);
 				if (current->health <= 0)
 					current->animation = 2;
 				return (true);
@@ -51,57 +60,61 @@ bool	check_collision_with_entity_server(t_server *server, t_projectile *projecti
 	return (false);
 }
 
+static void	move_projectile(t_projectile *current, t_server *server, float step,
+int square)
+{
+	float	traveled;
+	float	ray[2];
+
+	ray[0] = current->x;
+	ray[1] = current->y;
+	traveled = 0;
+	while (traveled < square)
+	{
+		ray[0] += cos(current->direction * (M_PI / 180.0f)) * step;
+		ray[1] += sin(current->direction * (M_PI / 180.0f)) * step;
+		if (!can_move(server->map, server->door, ray, current->floor)
+			|| check_collision_with_entity_server(server, current,
+				ray[0], ray[1]))
+			break ;
+		current->x = ray[0];
+		current->y = ray[1];
+		traveled += step;
+	}
+}
+
+static void	handle_collision(t_server *server, t_projectile *current,
+t_projectile *prev)
+{
+	if (prev)
+		prev->next = current->next;
+	else
+		server->projectiles = current->next;
+	gc_free(server->mem, current);
+}
+
 void	update_projectiles_server(t_server *server)
 {
-	t_projectile	*current = server->projectiles;
-	t_projectile	*prev = NULL;
+	t_projectile	*current;
+	t_projectile	*prev;
+	float			dx;
+	float			dy;
+	bool			collision;
 
+	current = server->projectiles;
+	prev = NULL;
 	while (current)
 	{
-		float x_old = current->x;
-		float y_old = current->y;
-
-		float dx = cos(current->direction * (M_PI / 180.0f)) * current->speed;
-		float dy = sin(current->direction * (M_PI / 180.0f)) * current->speed;
-
-		float distance = sqrt(dx * dx + dy * dy);
-		bool collision = false;
-
-		float x_ray = x_old;
-		float y_ray = y_old;
-		float step = 0.1f;
-
-		for (float traveled = 0; traveled < distance; traveled += step)
-		{
-			x_ray += cos(current->direction * (M_PI / 180.0f)) * step;
-			y_ray += sin(current->direction * (M_PI / 180.0f)) * step;
-
-			if (!can_move(server->map, server->door, x_ray, y_ray, current->floor) || check_collision_with_entity_server(server, current, x_ray, y_ray))
-			{
-				collision = true;
-				break;
-			}
-			current->x = x_ray;
-			current->y = y_ray;
-		}
-		if (!collision)
-		{
-			current->x = x_old + dx;
-			current->y = y_old + dy;
-		}
+		dx = cos(current->direction * (M_PI / 180.0f)) * current->speed;
+		dy = sin(current->direction * (M_PI / 180.0f)) * current->speed;
+		collision = false;
+		move_projectile(current, server, 0.1f, sqrt(dx * dx + dy * dy));
 		if (collision)
-		{
-			if (prev)
-				prev->next = current->next;
-			else
-				server->projectiles = current->next;
-
-			t_projectile *temp = current;
-			current = current->next;
-			gc_free(server->mem, temp);
-		}
+			handle_collision(server, current, prev);
 		else
 		{
+			current->x += dx;
+			current->y += dy;
 			prev = current;
 			current = current->next;
 		}

@@ -1,109 +1,20 @@
-// /* ************************************************************************** */
-// /*                                                                            */
-// /*                                                        :::      ::::::::   */
-// /*   main.c                                             :+:      :+:    :+:   */
-// /*                                                    +:+ +:+         +:+     */
-// /*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
-// /*                                                +#+#+#+#+#+   +#+           */
-// /*   Created: 2024/09/27 09:54:03 by npigeon           #+#    #+#             */
-// /*   Updated: 2024/09/27 11:44:59 by npigeon          ###   ########.fr       */
-// /*                                                                            */
-// /* ************************************************************************** */
-
-// # include "include/game.h"
-/* 
-
-mettre des textures sur les toit/ sol
-gestion des sauts
-gestion de la vie et des armes
-gestion de la minimap
-gerer le parsing, map trop grande /mal cerclee ...
-gerer l'image sortie / ennemi / animation de sortie / hud
-munitions
-affichage des poings a 0 munitions
-munitions au sol 
-differentes armes?
-ennemi qui se dirige vers toi un peu moins vite quand cest dans le champs de vision et degats
-
-
--des maps cools parce que cest le principal pour le correcteur
--un mode solo sortie / mode multi ensemble sortie/ mode melee generale
-
-
-
-
-
-MODES DE JEU
-
-9-11  
-N : parsing gestion des cles
-Y : mob ennemi/teleporteur/sortie/munition /cles / affichage pero
-
-
-14-19 
-N : gestion mode de jeu
-	preparer des maps
-	gere la minimap
-	la barre de vie
-	viseur
-	affichage des armes
-	munitions
-	gestion des armes / vie / munitions 
-
-Y :	mettre les textures toit/ sol
-	animations teleportation/ perte de vie / sortie
-
-	gestion des attaques ennemies 
-
-	serveur multijoueur
-
-21-25
-N : gerer les degats vision des ennemies
-	gerer le parsing du multijoueur avec les spawns > nbre de player dans le serveur
-	UN SEUL spawn si mode solo
-	sortie visuelle (arceus)
-	munitions visuelles? (cest la lettre M)
-
-
-Y : gerer les mouvements en meme temps ex: droite et haut
-	
-	
-
-
-	gerer les random textures?
-
-28 - 29
-	derniere modifs / leaks / normes
-	-augmenter vitesse des projectiles
-	- mieux gerer le champs de vision des bots
-	- la touche B et espace (ne plus prendre en compte)
-	- comprendre le freeze qui a lieu au bout d'1mn10 qd on joue
-	/ si on reste spectateur sans trop bouger ca peut durer jusqu a 2mn50 avec un freewe couteux pour l'ordinateur
-	/ le menu n'est pas pris en compte dans le freeze j'ai l'impression
-	/
-	- gerer les spawns pour le mode solo et multi
-	- modif la couleur d'un partenaire ? dans le multijoueur
-
-
-	- gere les leaks , PLUS AUCUN LEAK avant de commencer a  normer
-	- couper les fonctions avec les bons parametres aussi
-	-mettre dans les fichiers 
-	-normer le contenu
-
-*/
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/27 09:54:03 by npigeon           #+#    #+#             */
+/*   Updated: 2024/11/27 15:09:30 by ybeaucou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-# define KEY_W 119
-# define KEY_Z 122
-# define KEY_A 97
-# define KEY_S 115
-# define KEY_D 100
-# define KEY_Q 113
-
-void    destroy_mlx_img(t_block_info *params)
+void	destroy_mlx_img(t_block_info *params)
 {
-    mlx_destroy_image(params->ptr, params->ptr2);
+	mlx_destroy_image(params->ptr, params->ptr2);
 }
 
 void	destroy_mlx_display(t_block_info *params)
@@ -116,19 +27,21 @@ void	load_texture(t_game *game, t_image *img, char *path)
 {
 	t_block_info	*param;
 
-	img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width, &img->height);
+	img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width,
+			&img->height);
 	if (!img->img)
 	{
 		printf("%s\n", path);
 		game->is_running = false;
 		gc_exit(game->mem, err("Erreur lors du chargement de la texture\n"));
 	}
-	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line, &img->endian);
+	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line,
+			&img->endian);
 	param = gc_malloc(game->mem, sizeof(t_block_info));
-    param->ptr = game->mlx;
-    param->ptr2 = img->img;
-    gc_add_memory_block(game->mem, img->img, destroy_mlx_img, param);
-    gc_free(game->mem, param);
+	param->ptr = game->mlx;
+	param->ptr2 = img->img;
+	gc_add_memory_block(game->mem, img->img, destroy_mlx_img, param);
+	gc_free(game->mem, param);
 }
 
 void	init_img(t_game *game)
@@ -138,16 +51,21 @@ void	init_img(t_game *game)
 	game->images = gc_malloc(game->mem, sizeof(t_images));
 	game->images->alphanum_sprite = gc_malloc(game->mem, sizeof(t_image));
 	base = gc_malloc(game->mem, sizeof(t_image));
-	base->img = mlx_new_image(game->mlx, game->screen_width, game->screen_height);
-	base->data = mlx_get_data_addr(base->img, &base->bpp, &base->size_line, &base->endian);
+	base->img = mlx_new_image(game->mlx, game->screen_width,
+			game->screen_height);
+	base->data = mlx_get_data_addr(base->img, &base->bpp, &base->size_line,
+			&base->endian);
 	game->images->base = base;
-	load_texture(game, game->images->alphanum_sprite, "./assets/sprites/alphanum_sprite.xpm");
+	load_texture(game, game->images->alphanum_sprite,
+		"./assets/sprites/alphanum_sprite.xpm");
 	game->textures->bullet = gc_malloc(game->mem, sizeof(t_image));
 	load_texture(game, game->textures->bullet, "./assets/sprites/bullet.xpm");
 	game->textures->weapon = gc_malloc(game->mem, sizeof(t_image));
-	load_texture(game, game->textures->weapon, "./assets/sprites/weapons/PISGE0.xpm");
+	load_texture(game, game->textures->weapon,
+		"./assets/sprites/weapons/PISGE0.xpm");
 	game->textures->fire = gc_malloc(game->mem, sizeof(t_image));
-	load_texture(game, game->textures->fire, "assets/sprites/weapons/PISFA0.xpm");
+	load_texture(game, game->textures->fire,
+		"assets/sprites/weapons/PISFA0.xpm");
 	game->textures->ammo = gc_malloc(game->mem, sizeof(t_image));
 	load_texture(game, game->textures->ammo, "./assets/sprites/ammos.xpm");
 	game->textures->ammo->nb_sprite = 1;
@@ -173,7 +91,7 @@ void	init_floorcast(t_game *game, t_floorcast *f)
 	}
 }
 
-void	load_game_texture(t_game *game)
+void	load_game_texture_malloc(t_game *game)
 {
 	t_block_info	*param;
 
@@ -196,13 +114,10 @@ void	load_game_texture(t_game *game)
 	game->textures->enemy_death = gc_malloc(game->mem, sizeof(t_image));
 	game->textures->health = gc_malloc(game->mem, sizeof(t_image));
 	game->textures->exit = gc_malloc(game->mem, sizeof(t_image));
-	load_texture(game, game->textures->health, "./assets/sprites/heart.xpm");
-	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
-	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");
-	load_texture(game, game->textures->enemy, "./assets/sprites/enemy_spritesheet.xpm");
-	load_texture(game, game->textures->enemy_fire, "./assets/sprites/enemy_fire.xpm");
-	load_texture(game, game->textures->enemy_death, "./assets/sprites/enemy_death.xpm");
-	load_texture(game, game->textures->exit, "./assets/sprites/arceus.xpm");
+}
+
+void	load_game_texture2(t_game *game)
+{
 	game->textures->enemy->nb_sprite = 8;
 	game->textures->enemy->sprite_width = 64;
 	game->textures->enemy->sprite_height = 64;
@@ -221,6 +136,22 @@ void	load_game_texture(t_game *game)
 	game->textures->health->nb_sprite = 1;
 	game->textures->health->sprite_height = 160;
 	game->textures->health->sprite_width = game->textures->health->width;
+}
+
+void	load_game_texture(t_game *game)
+{
+	load_game_texture_malloc(game);
+	load_texture(game, game->textures->health, "./assets/sprites/heart.xpm");
+	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
+	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");
+	load_texture(game, game->textures->enemy,
+		"./assets/sprites/enemy_spritesheet.xpm");
+	load_texture(game, game->textures->enemy_fire,
+		"./assets/sprites/enemy_fire.xpm");
+	load_texture(game, game->textures->enemy_death,
+		"./assets/sprites/enemy_death.xpm");
+	load_texture(game, game->textures->exit, "./assets/sprites/arceus.xpm");
+	load_game_texture2(game);
 }
 
 void	reset_game(t_game *game)
@@ -247,8 +178,8 @@ void	reset_game(t_game *game)
 
 void	hooks(t_game *game)
 {
-	mlx_mouse_move(game->mlx, game->win, game->screen_width >> 1
-		, game->screen_height >> 1 );
+	mlx_mouse_move(game->mlx, game->win, game->screen_width >> 1,
+		game->screen_height >> 1);
 	mlx_hook(game->win, 6, 1L << 6, handle_mouse_move, game);
 	mlx_hook(game->win, 4, 1L << 2, handle_mouse_key_press, game);
 	mlx_hook(game->win, 5, 1L << 3, handle_mouse_key_release, game);
@@ -263,7 +194,7 @@ void	x_fixes_cursor(t_game *game, char to_do)
 {
 	if (to_do == 'h' && game->mouse)
 	{
-		XFixesHideCursor(((t_xvar *)(game->mlx))->display,\
+		XFixesHideCursor(((t_xvar *)(game->mlx))->display,
 			((t_win_list *)(game->win))->window);
 		game->mouse = 0;
 		return ;
@@ -273,7 +204,7 @@ void	x_fixes_cursor(t_game *game, char to_do)
 		return ;
 	else if (to_do == 's' && !game->mouse)
 	{
-		XFixesShowCursor(((t_xvar *)(game->mlx))->display,\
+		XFixesShowCursor(((t_xvar *)(game->mlx))->display,
 			((t_win_list *)(game->win))->window);
 		game->mouse = 1;
 		return ;
@@ -283,8 +214,8 @@ void	x_fixes_cursor(t_game *game, char to_do)
 int	main(int ac, char **av)
 {
 	t_game		game;
-	(void)ac;
 
+	(void)ac;
 	game.mem = gc_init();
 	game.mlx = mlx_init();
 	game.av = av;
@@ -301,7 +232,7 @@ int	main(int ac, char **av)
 	init_img(&game);
 	set_width_all_letter(&game);
 	game.win = mlx_new_window(game.mlx, game.screen_width,
-		game.screen_height, "Cub3D");
+			game.screen_height, "Cub3D");
 	game.is_running = true;
 	init_thread_pool(&game, 4);
 	if (game.music_dif)
