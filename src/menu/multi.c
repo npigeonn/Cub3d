@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 10:04:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/02 13:50:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/07 01:10:19 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,24 +202,23 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y)
 	check_button_hover_multi(game, mouse_x, mouse_y);
 }
 
-static void	handle_server_discovery_loop(
-	t_game *game, t_server_info **last_server, t_server_info **new_server,
-	int *server_exists)
+static void	handle_server_discovery_loop(t_game *game, t_server_info **last_server, t_server_info **new_server,
+int *server_exists, time_t now)
 {
 	t_server_info	*current;
 
 	current = game->servers;
 	while (current)
 	{
-		if (strcmp(current->ip, new_server->ip) == 0 &&
-			current->port == new_server->port)
+		if (strcmp(current->ip, (*new_server)->ip) == 0 &&
+			current->port == (*new_server)->port)
 		{
 			current->last_seen = now;
-			current->players = new_server->players;
-			current->ping = new_server->ping;
-			gc_free(game->mem, new_server->name);
-			gc_free(game->mem, new_server->ip);
-			gc_free(game->mem, new_server);
+			current->players = (*new_server)->players;
+			current->ping = (*new_server)->ping;
+			gc_free(game->mem, (*new_server)->name);
+			gc_free(game->mem, (*new_server)->ip);
+			gc_free(game->mem, (*new_server));
 			*server_exists = 1;
 			break ;
 		}
@@ -246,7 +245,7 @@ static void	handle_server_discovery(
 	new_server->next = NULL;
 	pthread_mutex_lock(&game->mutex);
 	handle_server_discovery_loop(game, &last_server, &new_server,
-		&server_exists);
+		&server_exists, now);
 	if (!server_exists)
 	{
 		if (last_server)

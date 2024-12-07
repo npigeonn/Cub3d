@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 18:50:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/21 18:27:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/07 04:03:57 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,21 +48,19 @@ void	update_stats_menu_keycode(t_game *game, int keycode)
 void	update_stats_menu_click(t_game *game, int x, int y, int keycode)
 {
 	const int	scroll_bar_x = (game->screen_width - game->screen_width * 0.6)
-		* 0.5 - 25 + game->screen_width * 0.6 + 5;
-	const int	scroll_width = 10;
+			* 0.5 - 25 + game->screen_width * 0.6 + 5;
 	const int	scroll_height = (game->menu->scroll_height * 27)
-		/ game->menu->nb_scroll;
+			/ game->menu->nb_scroll;
 	const int	scroll_bar_y = (game->screen_height - game->screen_height * 0.6)
-		* 0.25 + 95;
+			* 0.25 + 95;
 
 	update_stats_menu_keycode(game, keycode);
-	if (keycode == 1 && x >= scroll_bar_x && x <= scroll_bar_x + scroll_width
-		&& y >= scroll_bar_y
-		&& y <= scroll_bar_y + game->screen_height * 0.6 - 110)
+	if (keycode == 1 && x >= scroll_bar_x && x <= scroll_bar_x + 10
+		&& y >= scroll_bar_y && y <= scroll_bar_y + game->screen_height * 0.6 - 110)
 	{
 		game->menu->dragging = true;
-		game->menu->scroll = ((y - scroll_bar_y) * (game->menu->nb_scroll - 27))
-			/ (game->menu->scroll_height - scroll_height);
+		game->menu->scroll = ((float)(y - scroll_bar_y)
+			/ (game->screen_height * 0.6 - 110)) * (game->menu->nb_scroll - 27);
 		if (game->menu->scroll < 0)
 			game->menu->scroll = 0;
 		else if (game->menu->scroll > game->menu->nb_scroll - 27)
@@ -72,15 +70,17 @@ void	update_stats_menu_click(t_game *game, int x, int y, int keycode)
 
 void	is_dragging_scroll_bar(t_game *game, int y, int scroll_bar_y)
 {
+	int	delta_y = y - scroll_bar_y;
+	int	max_scroll_position = game->menu->scroll_height - game->menu->nb_scroll;
+		
 	if (game->menu->dragging)
 	{
-		game->menu->scroll = ((y - scroll_bar_y) * (game->menu->nb_scroll - 27))
-			/ (game->menu->scroll_height - (game->menu->scroll_height * 27)
-				/ game->menu->nb_scroll);
+		game->menu->scroll = ((float)delta_y / (game->menu->scroll_height - 27))
+			* max_scroll_position;
 		if (game->menu->scroll < 0)
 			game->menu->scroll = 0;
-		else if (game->menu->scroll > game->menu->nb_scroll - 27)
-			game->menu->scroll = game->menu->nb_scroll - 27;
+		else if (game->menu->scroll > max_scroll_position)
+			game->menu->scroll = max_scroll_position;
 	}
 }
 
@@ -88,12 +88,12 @@ void	update_stats_menu(t_game *game, int x, int y)
 {
 	const int	button_x = (game->screen_width - game->screen_width * 0.25) / 2;
 	const int	button_y = (game->screen_height - game->screen_height * 0.6)
-		* 0.25 + game->screen_height * 0.6 + 35;
+			* 0.25 + game->screen_height * 0.6 + 35;
 	const int	button_height = game->screen_height * 0.1;
 	const int	scroll_bar_x = (game->screen_width - game->screen_width * 0.6)
-		* 0.5 - 25 + game->screen_width * 0.6 + 5;
+			* 0.5 - 25 + game->screen_width * 0.6 + 5;
 	const int	scroll_bar_y = (game->screen_height - game->screen_height * 0.6)
-		* 0.25 + 95;
+			* 0.25 + 95;
 
 	game->menu->button_selected = 0;
 	if (x >= button_x && x <= button_x + game->screen_width * 0.25
@@ -242,7 +242,7 @@ int	draw_stats_menu_player_scroll(t_game *game, int x, int y, int stats_height)
 
 	player_stats = load_player_stats(game, "stats.txt", &num_players);
 	if (!player_stats)
-		return ;
+		return (-1);
 	i = -1;
 	while (++i < num_players && i < 27)
 	{
@@ -261,17 +261,15 @@ int	draw_stats_menu_player_scroll(t_game *game, int x, int y, int stats_height)
 
 void	draw_stats_menu(t_game *game)
 {
-	const int		stats_width = game->screen_width * 0.6;
-	const int		stats_height = game->screen_height * 0.6;
-	const int		x = (game->screen_width - stats_width) * 0.5;
-	const int		y = (game->screen_height - stats_height) * 0.25;
-	int				num_players;
+	const int	stats_width = game->screen_width * 0.6;
+	const int	stats_height = game->screen_height * 0.6;
+	const int	x = (game->screen_width - stats_width) * 0.5;
+	const int	y = (game->screen_height - stats_height) * 0.25;
+	int			num_players;
 
 	game->menu->scroll_height = stats_height - 110;
 	draw_stats_menu_bg(game, stats_width, stats_height);
 	draw_stats_menu_header(game, stats_width, stats_height);
-	draw_line(game, x + 20, y + 4 * 20, x + stats_width - 20, y + 4 * 20,
-		0xFFFFFF);
 	num_players = draw_stats_menu_player_scroll(game, x, y, stats_height);
 	game->menu->nb_scroll = num_players;
 	if (game->menu->scroll + 27 > num_players)

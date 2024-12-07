@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:56:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/20 18:51:59 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/07 01:40:57 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -568,10 +568,10 @@ void	draw_options_mouse(t_game *game)
 static void	draw_back_button_highlight(t_game *game)
 {
 	const float	button_width = (game->screen_width * 0.9) * 0.25;
-	const float	button_height = game->screen_height * 0.1;
+	const float	button_height = game->screen_height * 0.09;
 	const float	button_x = (game->screen_width - button_width) * 0.5;
 	const float	button_y = (game->screen_height - game->screen_height * 0.9)
-		* 0.5 + (game->screen_height * 0.9) * 0.9;
+		* 0.5 + (game->screen_height * 0.9) * 0.9 - 25;
 	t_draw_info	rect_info;
 
 	rect_info = init_draw_info(
@@ -585,10 +585,10 @@ static void	draw_back_button_highlight(t_game *game)
 static void	draw_back_button_base(t_game *game)
 {
 	const float	button_width = (game->screen_width * 0.9) * 0.25;
-	const float	button_height = game->screen_height * 0.1;
+	const float	button_height = game->screen_height * 0.09;
 	const float	button_x = (game->screen_width - button_width) * 0.5;
 	const float	button_y = (game->screen_height - game->screen_height * 0.9)
-		* 0.5 + (game->screen_height * 0.9) * 0.9;
+		* 0.5 + (game->screen_height * 0.9) * 0.9 - 25;
 	t_draw_info	rect_info;
 
 	rect_info = init_draw_info(
@@ -602,13 +602,13 @@ static void	draw_back_button_text(t_game *game)
 {
 	t_draw_info	info;
 	const float	button_width = (game->screen_width * 0.9) * 0.25;
-	const float	button_height = game->screen_height * 0.1;
+	const float	button_height = game->screen_height * 0.09;
 	const float	button_x = (game->screen_width - button_width) * 0.5;
 	const float	button_y = (game->screen_height - game->screen_height * 0.9)
-		* 0.5 + (game->screen_height * 0.9) * 0.9;
+		* 0.5 + (game->screen_height * 0.9) * 0.9 - 25;
 
 	info = init_draw_info(
-			button_height * 0.5, "Back", button_x + button_width * 0.5,
+			button_height * 0.6, "Back", button_x + button_width * 0.5,
 			button_y + button_height * 0.33 - 5);
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text(game, info);
@@ -628,7 +628,7 @@ void	draw_options_bg(t_game *game)
 	const float	rect_height = game->screen_height * 0.8;
 	const float	rect_x = (game->screen_width - rect_width) * 0.5;
 	const float	rect_y = (game->screen_height - rect_height)
-		* 0.7 - game->screen_height * 0.1;
+		* 0.7 - game->screen_height * 0.1 - 20;
 	t_draw_info	rect_info;
 
 	rect_info = init_draw_info(rect_height, "", rect_x, rect_y);
@@ -662,7 +662,7 @@ void	draw_options_button(t_game *game, float x, float y, int i)
 	}
 	draw_rectangle(game, info);
 	info = init_draw_info(game->screen_height * 0.8 * 0.095,
-			labels[i], text_x, 50);
+			labels[i], text_x, 30);
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text_left(game, info);
 }
@@ -682,7 +682,7 @@ void	draw_options_all_buttons(t_game *game, int start_y, int button_height)
 {
 	const float	section_width = game->screen_width * 0.9 / 3;
 	const float	rect_x = (game->screen_width - game->screen_width * 0.9) * 0.5;
-	const float	rect_y = (game->screen_height - game->screen_height * 0.8);
+	const float	rect_y = (game->screen_height - game->screen_height * 0.8) - 20;
 	int			i;
 
 	i = -1;
@@ -692,7 +692,7 @@ void	draw_options_all_buttons(t_game *game, int start_y, int button_height)
 			start_y - button_height * 0.5, i);
 		if (i < 3 - 1)
 			draw_section_separator(game, rect_x + section_width * (i + 1),
-				43, game->screen_height * 0.8 * 0.095);
+				23, game->screen_height * 0.8 * 0.095);
 	}
 }
 
@@ -700,7 +700,7 @@ void	draw_options_menu(t_game *game)
 {
 	const float	rect_x = (game->screen_width - game->screen_width * 0.9) * 0.5;
 	const float	rect_y = (game->screen_height - game->screen_height * 0.8)
-		* 0.7 - game->screen_height * 0.1;
+		* 0.7 - game->screen_height * 0.1 - 20;
 	const float	button_height = game->screen_height * 0.05;
 	const float	start_y = rect_y + game->screen_height * 0.8 * 0.03;
 	t_draw_info	line_info;

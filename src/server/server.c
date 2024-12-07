@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/29 17:40:32 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/07 04:42:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,10 @@ void	copy_sprite(t_game *game, t_server *server)
 	}
 }
 
-void	create_server_init(t_game *game, t_server *server)
+t_server	*create_server_init(t_game *game)
 {
+	t_server	*server;
+
 	server = gc_malloc(game->mem, sizeof(t_server));
 	server->nb_player = 0;
 	server->game_queue = NULL;
@@ -139,6 +141,7 @@ void	create_server_init(t_game *game, t_server *server)
 	server->last_time = game->last_time;
 	server->av = game->av;
 	server->mem = game->mem;
+	return (server);
 }
 
 void	create_server(t_game *game)
@@ -148,7 +151,7 @@ void	create_server(t_game *game)
 	t_server	*server;
 
 	is_good = 0;
-	create_server_init(game, server);
+	server = create_server_init(game);
 	ft_strcpy(server->name, game->client->name);
 	pthread_mutex_init(server->game_lock, NULL);
 	pthread_create(&server_thread, NULL, (void *)main_server, (void *)server);

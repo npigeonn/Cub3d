@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/11/09 18:56:03 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/12/07 01:11:41 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -105,8 +105,7 @@ SRC_INPUT = $(addprefix $(PATH_SRC)input/, \
 				key.c )
 
 SRC_SOUND = $(addprefix $(PATH_SRC)game/sound/, \
-				sound_global.c \
-				side_sounds.c )
+				sound_global.c )
 
 SRC_MULTITHREAD = $(addprefix $(PATH_SRC)multithread/, \
 				init.c )

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:21:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/20 19:01:15 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/07 04:26:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void	draw_server_error_menu(t_game *game)
 		+ btn_height * 0.33 - 5;
 	info.height = btn_height * 0.5;
 	info.x = x + btn_width / 2;
+	info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text(game, info);
 	game->chatbox->visible = false;
 	game->chatbox->is_writting = false;

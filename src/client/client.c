@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 13:07:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/07 05:07:42 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,7 @@ static int	manage_error(t_game *game, struct sockaddr_in serv_addr)
 {
 	if (inet_pton(AF_INET, game->client->ip, &serv_addr.sin_addr) <= 0)
 	{
+		printf("Invalid address/ Address not supported\n");
 		game->menu->status = SERVER_DISCONNECTED;
 		return (0);
 	}
