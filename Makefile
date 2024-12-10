@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
+#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/12/07 01:11:41 by ybeaucou         ###   ########.fr        #
+#    Updated: 2024/12/10 13:06:18 by npigeon          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,14 +24,23 @@ RM = rm -rf
 
 SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
 				draw.c \
+				draw2.c \
+				draw3.c \
+				draw4.c \
 				door.c \
+				door2.c \
+				door3.c \
 				wall.c \
+				wall2.c \
 				minimap.c \
+				minimap2.c \
 				crosshair.c \
 				health_point.c \
 				ammo.c \
 				add_letter_to_list.c \
 				game_loop.c \
+				game_loop2.c \
+				game_loop_utils.c \
 				dead.c )
 
 SRC_STATS =	$(addprefix $(PATH_SRC)stats/, \
@@ -90,13 +99,21 @@ SRC_CHAT =	$(addprefix $(PATH_SRC)game/chat/, \
 
 SRC_RAYCASTER = $(addprefix $(PATH_SRC)game/raycaster/, \
 				raycaster.c \
+				raycaster2.c \
 				ray.c \
 				floor.c )
 
 SRC_SPRITES = $(addprefix $(PATH_SRC)game/sprite/, \
 				teleporter.c \
 				sprite.c \
-				enemies.c )
+				sprites2.c \
+				draw_sprite.c \
+				sorting_sprites.c \
+				enemies.c \
+				ennemies2.c \
+				add_ennemies.c \
+				projectiles.c \
+				updates.c )
 	
 SRC_INPUT = $(addprefix $(PATH_SRC)input/, \
 				mouse.c \
@@ -105,7 +122,8 @@ SRC_INPUT = $(addprefix $(PATH_SRC)input/, \
 				key.c )
 
 SRC_SOUND = $(addprefix $(PATH_SRC)game/sound/, \
-				sound_global.c )
+				sound_global.c \
+				sound_global2.c )
 
 SRC_MULTITHREAD = $(addprefix $(PATH_SRC)multithread/, \
 				init.c )

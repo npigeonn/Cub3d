@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game_over.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 08:35:41 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/19 13:16:37 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/10 12:40:56 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ static void	draw_game_over_text(t_game *game)
 	draw_text(game, info);
 }
 
-static void	draw_main_menu_button(t_game *game, int x, int y, int btn_width)
+static void	draw_main_menu_button_gm(t_game *game, int x, int y, int btn_width)
 {
 	t_draw_info	info;
 	t_draw_info	info2;
@@ -102,7 +102,7 @@ static void	draw_main_menu_button(t_game *game, int x, int y, int btn_width)
 	draw_text(game, info);
 }
 
-static void	draw_main_menu_button_hover(t_game *game, int x, int y,
+static void	draw_main_menu_button_gm_hover(t_game *game, int x, int y,
 int btn_width)
 {
 	t_draw_info	info;
@@ -127,9 +127,9 @@ void	draw_game_over(t_game *game)
 	draw_game_over_bg(game);
 	draw_game_over_text(game);
 	if (game->menu->button_selected == 1)
-		draw_main_menu_button_hover(game, x, y + 2 * (btn_height + spacing),
+		draw_main_menu_button_gm_hover(game, x, y + 2 * (btn_height + spacing),
 			btn_width);
-	draw_main_menu_button(game, x, y + 2 * (btn_height + spacing), btn_width);
+	draw_main_menu_button_gm(game, x, y + 2 * (btn_height + spacing), btn_width);
 	game->chatbox->visible = false;
 	game->chatbox->is_writting = false;
 }

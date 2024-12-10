@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 20:22:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/19 13:01:21 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/10 12:38:31 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y)
 	check_mouse_on_gear(game, mouse_x, mouse_y);
 }
 
-static void	draw_selected_button(t_game *game)
+static void	draw_selected_button_main(t_game *game)
 {
 	t_draw_info	info;
 	const int	btn_width = game->screen_width * 0.25 + 4;
@@ -246,7 +246,7 @@ t_draw_info *info2)
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.22;
 
-	draw_selected_button(game);
+	draw_selected_button_main(game);
 	*info = init_draw_info(btn_height * 0.5, "Solo", x + btn_width * 0.5,
 			y + btn_height * 0.33 - 5);
 	info->color = MENU_BUTTON_TEXT_COLOR;

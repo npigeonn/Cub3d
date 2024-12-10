@@ -3,29 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   draw.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:51:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 13:22:37 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/10 12:27:00 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
-
-t_draw_info	init_draw_info(int height, char *str, int x, int y)
-{
-	t_draw_info	draw_info;
-
-	draw_info.width = 0;
-	draw_info.height = height;
-	ft_strcpy(draw_info.str, str);
-	draw_info.color = 0x00000;
-	draw_info.x = x;
-	draw_info.y = y;
-	draw_info.max_width = 0;
-	draw_info.alpha = 0.5;
-	return (draw_info);
-}
 
 void	draw_text_max_right(t_game *game, t_draw_info info)
 {

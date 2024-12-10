@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   multi.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 10:04:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/07 01:10:19 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/10 12:38:48 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -345,7 +345,7 @@ void	*discover_servers_thread(void *arg)
 }
 
 
-static void	draw_selected_button(t_game *game)
+static void	draw_selected_button_multi(t_game *game)
 {
 	t_draw_info	info;
 	const int	list_width = game->screen_width * 0.65;
@@ -437,7 +437,7 @@ void	draw_multiplayer_menu(t_game *game)
 		pthread_mutex_unlock(&game->mutex);
 	}
 
-	draw_selected_button(game);
+	draw_selected_button_multi(game);
 	const int remaining_space = game->screen_width - (list_x + list_width);
 	const int btn_x = list_x + list_width + (remaining_space - btn_width) * 0.5;
 	const int btn_y_start = game->screen_height * 0.25;

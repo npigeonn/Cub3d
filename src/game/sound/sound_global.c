@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sound_global.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 10:58:52 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/27 17:02:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/10 11:09:44 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,48 +28,22 @@ void	play_sound_mine(Sound s, int *it)
 	*it = 0;
 }
 
-void	*test_music(void *arg)
+void	play_sound_global(t_game *game, t_sound *sound, Music music)
 {
-	t_game	*game = (t_game *)arg;
-	t_block_info *block;
-	Music	music;
-	Sound	gunshot;
-	Sound	ammo;
-	Sound	pain;
-	Sound	life;
-	Sound	telep;
-
-	pthread_mutex_lock(&game->mutex_music);
-	music = LoadMusicStream("./assets/sound/ps.wav");
-	gunshot = LoadSound("./assets/sound/gunshot.wav");
-	ammo = LoadSound("./assets/sound/pickupammo.wav");
-	pain =  LoadSound("./assets/sound/dsplpain.wav");
-	life =  LoadSound("./assets/sound/lifeup.wav");
-	telep = LoadSound("./assets/sound/teleport.wav");
-	PlayMusicStream(music);
-	block = gc_malloc(game->mem, sizeof(t_block_info));
-	block->ptr = &music;
-	block->ptr2 = &gunshot;
-	block->ptr3 = &ammo;
-	block->ptr4 = &pain;
-	block->ptr5 = &life;
-	block->ptr6 = &telep;
-	// gc_add_memory_block(game->mem, &music, unload_mu, block);
-	pthread_mutex_unlock(&game->mutex_music);
 	while (1)
 	{
 		pthread_mutex_lock(&game->mutex_music);
 		UpdateMusicStream(music);
 		if (game->player->picking_up_ammo)
-			play_sound_mine(ammo, &game->player->picking_up_ammo);
+			play_sound_mine(sound->ammo, &game->player->picking_up_ammo);
 		if (game->player->is_shooting)
-			play_sound_mine(gunshot, &game->player->is_shooting);
+			play_sound_mine(sound->gunshot, &game->player->is_shooting);
 		if (game->player->injured)
-			play_sound_mine(pain, &game->player->injured);
+			play_sound_mine(sound->pain, &game->player->injured);
 		if (game->player->life_up)
-			play_sound_mine(life, &game->player->life_up);
+			play_sound_mine(sound->life, &game->player->life_up);
 		if (game->player->telep_signal)
-			play_sound_mine(telep, &game->player->telep_signal);
+			play_sound_mine(sound->telep, &game->player->telep_signal);
 		if (!game->is_running)
 		{
 			pthread_mutex_unlock(&game->mutex_music);
@@ -80,9 +54,34 @@ void	*test_music(void *arg)
 	}
 }
 
-void	music_launch(t_game *game)
+void	loading_sound(t_sound *sound)
 {
-	InitAudioDevice();
-	if (pthread_create(&game->thread, NULL, test_music, game) != 0)
-		gc_exit(game->mem, err("pb music\n"));
+	sound->gunshot = LoadSound("./assets/sound/gunshot.wav");
+	sound->ammo = LoadSound("./assets/sound/pickupammo.wav");
+	sound->pain = LoadSound("./assets/sound/dsplpain.wav");
+	sound->life = LoadSound("./assets/sound/lifeup.wav");
+	sound->telep = LoadSound("./assets/sound/teleport.wav");
+}
+
+void	*test_music(void *arg)
+{
+	t_game			*game;
+	t_block_info	*block;
+	Music			music;
+	t_sound			*sound;
+
+	game = (t_game *)arg;
+	pthread_mutex_lock(&game->mutex_music);
+	music = LoadMusicStream("./assets/sound/ps.wav");
+	loading_sound(sound);
+	PlayMusicStream(music);
+	block = gc_malloc(game->mem, sizeof(t_block_info));
+	block->ptr = &music;
+	block->ptr2 = &sound->gunshot;
+	block->ptr3 = &sound->ammo;
+	block->ptr4 = &sound->pain;
+	block->ptr5 = &sound->life;
+	block->ptr6 = &sound->telep;
+	pthread_mutex_unlock(&game->mutex_music);
+	play_sound_global(game, sound, music);
 }

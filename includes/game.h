@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/29 17:51:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2024/12/10 13:06:01 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,6 +218,16 @@ typedef struct s_textures
 	int		color_we;
 }	t_textures;
 
+typedef struct s_sound
+{
+	Sound	gunshot;
+	Sound	ammo;
+	Sound	pain;
+	Sound	life;
+	Sound	telep;
+	struct s_sound	*next;
+}	t_sound;
+
 typedef struct s_door
 {
 	int				x;
@@ -355,6 +365,7 @@ typedef struct s_game
 int		game_loop(t_game *game);
 int		handle_close(t_game *game);
 void	set_direction(t_game *game, int dir);
+void	set_direction2(t_game *game, int dir);
 void	x_fixes_cursor(t_game *game, char to_do);
 
 //menu
@@ -368,6 +379,14 @@ void	update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y);
 void	draw_multiplayer_menu(t_game *game);
 char	*get_key_name(t_game *game, int keycode);
 
+//text
+int		get_index_char(char c);
+int		get_char_width_return(int left_bound, int right_bound);
+int		get_char_width_opti(t_game *game, char x);
+void	set_width_all_letter(t_game *game);
+int		get_text_width(t_game *game, char *str, int height);
+
+
 //draw
 void	pixel_put(t_game *game, int x, int y, int color);
 void	secure_pixel_put(t_game *game, int x, int y, int color);
@@ -379,6 +398,11 @@ void	draw_char(t_game *data, t_draw_info info);
 void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite);
 void	draw_sprites(t_game *game);
 void	draw_rounded_rectangle(t_game *game, t_draw_info info);
+void	draw_success_background(t_game *game);
+void	draw_main_menu_button(t_game *game, int x, int y);
+void	draw_selected_button(t_game *game, int x, int y);
+void	victory_screen(t_game *game);
+void	draw_hud(t_game *game);
 void	crosshair(t_game *game);
 int		blend_colors(int bg_color, int fg_color, float alpha);
 int		get_pixel_color_from_image(t_game *game, int x, int y);
@@ -388,10 +412,17 @@ void	get_pos_char(char c, int *x, int *y);
 void	ammo_written(t_game *game);
 void	health_point_draw(t_game *game);
 void	apply_fade_to(t_game *game, int color);
+int		is_pixel_transparent(t_image *img, int x, int y);
+
+//fps
+void	calculate_fps(t_game *game);
+void	draw_fps(t_game *game, double fps);
 
 // mini map
 void	mini_map(t_game *game);
 void	print_wall_door_player(t_game *game);
+int		x_size_floor(t_game *game);
+int		y_size_floor(t_game *game);
 
 // sound
 void	*test_music(void *arg);
@@ -399,6 +430,11 @@ void	music_launch(t_game *game);
 
 //door
 int		handle_door(t_game *game, t_raycast *raycast);
+void	handle_door2(t_game *game, t_door *door, float distance,
+			t_raycast *raycast);
+bool	visible_door(t_door *door);
+void	draw_door(t_game *game, t_raycast *r);
+void	send_door_msg(t_game *game, t_door *door);
 void	add_door(t_game *game, int x, int y, int floor);
 t_door	*get_door(t_door *door, int x, int y, int floor);
 void	use_door_in_view(t_game *game);
@@ -408,12 +444,55 @@ void	update_door_animation(t_game *game);
 void	draw_wall(t_game *game, t_raycast *raycast);
 void	draw_vertical_line_with_texture(t_game *game, t_raycast *raycast,
 			t_image *texture, float wall_x);
+void	draw_vertical_line_color(t_game *game, t_raycast *raycast, int color);
+int		check_walls(t_game *game, int x, int y, int floor);
+bool	is_colored_wall(t_game *game, t_raycast *raycast);
+void	calculate_wall_distance(t_game *game, t_raycast *raycast);
+float	calculate_wall_xx(t_game *game, t_raycast *raycast);
+t_image	*select_texture(t_game *game, t_raycast *raycast);
 
 //ennemies
+void	init_update(t_game *game, t_sprite *current);
 void	update_enemies(t_game *game);
+void	update_enemies_patrol_move(t_game *game, t_sprite *current);
+void	update_enemies_chase(t_game *game, t_sprite *current);
 void	damages_red_draw(t_game *game, int y);
 void	draw_dead_screen_multiplayer(t_game *game);
 void	add_enemies(t_game *game, int x, int y, int floor);
+void	death_enemies_animation(t_game *game, t_sprite *current);
+void	shoot_at_player(t_sprite *enemy, t_game *game);
+bool	is_within_fov(float angle_diff, float fov);
+bool	check_line_of_sight(t_game *game, t_sprite *sprite,
+			float dx, float dy);
+bool	has_line_of_sight(t_game *game, t_sprite *sprite);
+
+
+//sprites
+void	sort_sprites(t_game *game, t_sprite **head);
+int		is_player_in_front(t_sprite *enemy, t_player *player);
+void	draw_sprites_enemies(t_game *game, t_sprite *current);
+void	draw_sprites2(t_game *game, t_sprite *current);
+void	sort_sprites_swap(t_sprite **prev, t_sprite **current, t_sprite **next,
+			int *swapped);
+void	sort_sprites_not_swap(t_sprite **prev, t_sprite **current,
+			t_sprite **next);
+t_sprite	*merge_sorted_lists(t_game *game, t_sprite *left,
+				t_sprite *right);
+void	split_list(t_sprite *source, t_sprite **left, t_sprite **right);
+void	init_spritecast(t_game *game, t_sprite *sprite, t_image *texture);
+int		get_spritecast_info(t_game *game, t_sprite *sp, int *sprite_index);
+void	get_spritecast_tex_x(t_game *game, t_sprite *sprite, int stripe,
+			int sprite_index);
+void	draw_player_pseudo(t_game *game, t_sprite *sprite);
+void	draw_vertical_sprite_band(t_game *game, t_sprite *sprite, int x);
+
+
+//projectile
+void	add_projectil(t_sprite *enemy, t_game *game, float angle_to_player);
+void	update_projectiles(t_game *game);
+void	projectile_move(t_game *game, t_projectile *p, bool *collision);
+void	projectile_collision(t_game *game, t_projectile **projectile,
+t_projectile **prev, int collision);
 
 // health
 void	on_life(t_game *game);
@@ -431,9 +510,6 @@ int		file_dot_xpm(char *file_textre);
 void	init_data(t_game *game);
 char	*switch_line(t_memory_table *mem, char *line, int fd);
 int		count_spawns(t_game *game);
-
-// walls
-int		check_walls(t_game *game, int x, int y, int floor);
 
 //teleporter
 int		is_a_teleporter(char c);
@@ -461,5 +537,9 @@ int		free_split(t_memory_table *mem, char **str);
 
 //server
 void	create_server(t_game *game);
+void	game_multi_death(t_game *game);
+void	set_anim(t_game *game);
+void	game_engine(t_game *game);
+void	create_join_server(t_game *game);
 
 #endif
