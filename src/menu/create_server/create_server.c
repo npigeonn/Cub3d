@@ -6,14 +6,14 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/14 13:49:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 12:52:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:16:56 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
 void	draw_button_with_selection(t_game *game, t_draw_info btn_info,
-int is_selected, const char *label)
+int is_selected, char *label)
 {
 	t_draw_info	info;
 

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 20:13:19 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/02 20:13:41 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 14:49:30 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	load_texture(t_game *game, t_image *img, char *path)
 	gc_free(game->mem, param);
 }
 
-void	load_game_texture_malloc(t_game *game)
+static void	load_game_texture_malloc(t_game *game)
 {
 	t_block_info	*param;
 
@@ -58,7 +58,7 @@ void	load_game_texture_malloc(t_game *game)
 	game->textures->exit = gc_malloc(game->mem, sizeof(t_image));
 }
 
-void	load_game_texture2(t_game *game)
+static void	load_game_texture2(t_game *game)
 {
 	game->textures->enemy->nb_sprite = 8;
 	game->textures->enemy->sprite_width = 64;

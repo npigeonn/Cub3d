@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/02 20:14:03 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 14:50:45 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,28 +82,11 @@ void	init_player_keycode(t_game *game, int malloc)
 	game->player->key->left2 = KEY_LEFT;
 	game->player->key->right2 = KEY_RIGHT;
 	game->player->key->use = KEY_F;
-	game->player->key->use2 = NULL;
+	game->player->key->use2 = 0;
 	game->player->key->escape = KEY_ESC;
-	game->player->key->escape2 = NULL;
+	game->player->key->escape2 = 0;
 	game->player->key->pause = KEY_P;
-	game->player->key->pause2 = NULL;
+	game->player->key->pause2 = 0;
 	game->player->key->chat = KEY_T;
-	game->player->key->chat2 = NULL;
-}
-
-void	init_player2(t_game *game, int malloc)
-{
-	game->servers = NULL;
-	game->player->stats->nb_kills = 0;
-	game->player->stats->temps = gettimeofday(NULL, NULL);
-	game->player->stats->nb_degats = 0;
-	game->player->stats->nb_hit = 0;
-	game->player->stats->nb_shoot = 0;
-	game->player->stats->distanc_travel = 0;
-	game->player->animation = 0;
-	game->music_dif = 0;
-	pthread_mutex_init(&game->mutex, NULL);
-	pthread_mutex_init(&game->mutex_music, NULL);
-	game->player->selected_anim = 0;
-	init_player_keycode(game, malloc);
+	game->player->key->chat2 = 0;
 }

@@ -6,13 +6,13 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:28:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 17:28:57 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:39:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	draw_back_button(t_game *game, int x, int y, int stats_height)
+void	draw_back_stats_button(t_game *game, int y, int stats_height)
 {
 	const int	button_x = (game->screen_width - game->screen_width * 0.25) / 2;
 	const int	button_y = y + stats_height + 35;

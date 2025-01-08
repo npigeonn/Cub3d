@@ -36,11 +36,9 @@ int	get_text_width(t_game *game, char *str, int height)
 void	draw_text(t_game *game, t_draw_info info)
 {
 	int			i;
-	t_image		*img;
 	int			text_width;
 	int			char_width;
 
-	img = game->images->alphanum_sprite;
 	text_width = get_text_width(game, info.str, info.height);
 	if (info.str == NULL)
 		return ;
@@ -65,9 +63,7 @@ void	draw_text_left(t_game *game, t_draw_info info)
 {
 	int			i;
 	int			char_width;
-	t_image		*img;
 
-	img = game->images->alphanum_sprite;
 	if (info.str == NULL)
 		return ;
 	i = -1;
@@ -89,11 +85,9 @@ void	draw_text_left(t_game *game, t_draw_info info)
 void	draw_text_right(t_game *game, t_draw_info info)
 {
 	int			i;
-	t_image		*img;
 	int			text_width;
 	int			char_width;
 
-	img = game->images->alphanum_sprite;
 	text_width = get_text_width(game, info.str, info.height);
 	if (info.str == NULL)
 		return ;

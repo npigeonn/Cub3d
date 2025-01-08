@@ -6,14 +6,13 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 12:21:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/07 04:26:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:13:57 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	update_server_error_click(t_game *game, int mouse_x, int mouse_y,
-int keycode)
+void	update_server_error_click(t_game *game, int keycode)
 {
 	if (keycode != 1)
 		return ;

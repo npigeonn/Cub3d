@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 19:06:07 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 18:02:18 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:34:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static void	draw_back_button_text(t_game *game)
 	draw_text(game, info);
 }
 
-void	draw_back_buttons(t_game *game)
+void	draw_back_option_buttons(t_game *game)
 {
 	if (game->menu->button_selected == 4)
 		draw_back_button_highlight(game);

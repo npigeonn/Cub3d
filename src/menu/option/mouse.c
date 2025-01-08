@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:57:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 17:11:46 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:31:32 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int option_y)
 	t_draw_info	info;
 
 	info = init_draw_info(
-			game->screen_height * 0.03, options[i],
+			game->screen_height * 0.03, (char *)options[i],
 			(panel_width - panel_width * 0.3) * 0.5 + panel_x, option_y);
 	info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text_left(game, info);

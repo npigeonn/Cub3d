@@ -6,20 +6,19 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 08:35:41 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 03:29:17 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:38:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-void	update_game_over_click(t_game *game, int mouse_x, int mouse_y,
-int keycode)
+void	update_game_over_click(t_game *game, int keycode)
 {
 	if (keycode != 1)
 		return ;
 	if (game->menu->button_selected == 1)
 	{
-		save_player_stats(game, "stats.txt");	
+		save_player_stats(game, "stats.txt");
 		reset_game(game);
 	}
 	game->menu->button_selected = 0;

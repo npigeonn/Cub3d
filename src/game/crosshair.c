@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:16:38 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/02 18:05:12 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 14:54:22 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,7 @@ void	create_projectile(t_game *game)
 {
 	t_projectile	*new_projectile;
 	t_player		*p;
-	float			angle;
 
-	angle = game->player->dir_x;
 	new_projectile = gc_malloc(game->mem, sizeof(t_projectile));
 	p = game->player;
 	new_projectile->x = p->x;
@@ -90,10 +88,8 @@ void	create_projectile(t_game *game)
 
 void	gun_draw(t_game *game)
 {
-	t_image		*im;
 	t_draw_info	info;
 
-	im = gc_malloc(game->mem, sizeof(t_image));
 	if (game->player->anim_shoot < 0)
 		game->player->anim_shoot = 0;
 	if (game->player->anim_shoot > 0)

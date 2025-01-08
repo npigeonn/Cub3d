@@ -63,10 +63,10 @@ void	damages_red_draw(t_game *game, int y)
 	max_dist_x = game->cen_x * 0.5;
 	max_dist_y = game->cen_y * 0.5;
 	alpha = 0.2 * (1 - game->player->health);
-	dist_y = abs(y - game->cen_y) / max_dist_y;
+	dist_y = (y - game->cen_y) / max_dist_y;
 	x = -1;
 	while (++x <= game->screen_width)
 		pixel_put(game, x, y, blend_colors(get_pixel_color_from_image(game,
-					x, y), 9830400, alpha * (1 + abs(x - game->cen_x)
+					x, y), 9830400, alpha * (1 + (x - game->cen_x)
 					/ max_dist_x + dist_y)));
 }

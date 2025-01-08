@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:11:28 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 13:11:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:29:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,12 @@ int server_y_offset)
 	draw_text_left(game, info3);
 }
 
-void	show_list_servers_loop(t_game *game, t_server_info *current, int list_x,
-int server_y_offset)
+static void	show_list_servers_loop(t_game *game, t_server_info *current,
+int list_x, int server_y_offset)
 {
-	t_draw_info	info;
-	const int	btn_height = game->screen_height * 0.1;
-	const int	list_width = game->screen_width * 0.65;
 	int			i;
 
 	i = 1;
-	info = init_draw_info(btn_height * 0.5, "Searching for servers...",
-			list_x + list_width * 0.5, 0);
-	info.color = MENU_BUTTON_SELECTED_COLOR;
 	while (current && server_y_offset < game->screen_height * 0.25 + 80 + 50
 		+ game->screen_height * 0.8)
 	{
@@ -60,7 +54,6 @@ int server_y_offset)
 
 void	show_list_servers(t_game *game, int list_x, int list_y)
 {
-	const int		btn_width = game->screen_width * 0.25;
 	const int		btn_height = game->screen_height * 0.1;
 	const int		list_width = game->screen_width * 0.65;
 	t_draw_info		info;

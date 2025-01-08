@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floor.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 01:01:10 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/15 11:05:34 by npigeon          ###   ########.fr       */
+/*   Updated: 2025/01/08 16:08:10 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ static int	get_color(t_game *game, t_floorcast *floorcast, int x, int y)
 		return (get_texture_color(floorcast, x, game->textures->ceil));
 	else if (y < floorcast->screen_mid)
 		return (game->textures->color_c);
+	return (-1);
 }
 
 static void	init_calc_floorcast(t_game *game, t_floorcast *f)
@@ -54,7 +55,7 @@ static void	get_step_floorcast(t_game *game, t_floorcast *f, int y)
 	f->p = y - f->screen_mid;
 	if (f->p == 0)
 		f->p = 1;
-	f->row_distance = f->pos_z / fabsf(f->p);
+	f->row_distance = f->pos_z / f->p;
 	f->floor_step_x = f->row_distance * f->diff_screen_x;
 	f->floor_step_y = f->row_distance * f->diff_screen_y;
 	f->floor_x = game->player->x + f->row_distance * f->ray_dir_x0;

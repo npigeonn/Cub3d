@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 02:35:22 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/02 20:18:56 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:15:24 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int	handle_mouse_key_release(int keycode, int x, int y, t_game *game)
 		set_key_flag(game, keycode, 0);
 		game->menu->dragging = false;
 	}
+	(void)x;
+	(void)y;
 	return (0);
 }
 
@@ -59,18 +61,18 @@ int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 		|| status == OPTIONS_SOUND)
 		update_option_menu_click(game, x, y, keycode);
 	else if (status == SERVERS)
-		update_multiplayer_click(game, x, y, keycode);
+		update_multiplayer_click(game, keycode);
 	else if (status == SERVER_CREATE)
 		update_create_server_menu_text(game, x, y, keycode);
 	else if (status == JOIN_SERVER && keycode == 1)
-		update_join_server_menu_text(game, x, y, keycode);
+		update_join_server_menu_text(game, x, y);
 	else if (status == MAIN_MENU)
-		update_main_menu_click(game, x, y, keycode);
+		update_main_menu_click(game, keycode);
 	else if (status == SERVER_DISCONNECTED || status == SERVER_FULL)
-		update_server_error_click(game, x, y, keycode);
+		update_server_error_click(game, keycode);
 	else if ((status == GAME_OVER || status == GAME_SUCCESS)
 		&& game->fade_progress >= 1)
-		update_game_over_click(game, x, y, keycode);
+		update_game_over_click(game, keycode);
 	else if (status == CHATING)
 		handle_mouse_chat(game, x, y, keycode);
 	else if (status == GET_PSEUDO)
@@ -78,7 +80,7 @@ int	handle_mouse_key_press(int keycode, int x, int y, t_game *game)
 	return (handle_mouse_key_press2(keycode, x, y, game));
 }
 
-static void	handle_mouse_game(t_game *game, int x, int y)
+static void	handle_mouse_game(t_game *game, int x)
 {
 	float		rotation;
 	const float	old_dir_x = game->player->dir_x;
@@ -125,7 +127,7 @@ int	handle_mouse_move(int x, int y, t_game *game)
 	else if (game->menu->status == GET_PSEUDO)
 		update_get_pseudo_button(game, x, y);
 	if (game->menu->status == PLAYING || game->menu->status == MULTI_PLAYER)
-		handle_mouse_game(game, x, y);
+		handle_mouse_game(game, x);
 	if (game->menu->status == STATS)
 		update_stats_menu(game, x, y);
 	return (0);

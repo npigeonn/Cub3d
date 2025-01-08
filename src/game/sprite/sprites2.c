@@ -63,7 +63,7 @@ int	get_spritecast_info(t_game *game, t_sprite *sp, int *sprite_index)
 	return (1);
 }
 
-void	get_spritecast_tex_x(t_game *game, t_sprite *sprite, int stripe,
+void	get_spritecast_tex_x(t_sprite *sprite, int stripe,
 int sprite_index)
 {
 	t_spritecast	*sp;
@@ -114,7 +114,7 @@ void	draw_sprite(t_game *game, t_image *texture, t_sprite *sprite)
 		if (stripe >= 0 && stripe < game->screen_width
 			&& sp->transform_y < game->wall_distances[stripe])
 		{
-			get_spritecast_tex_x(game, sprite, stripe, sprite_index);
+			get_spritecast_tex_x(sprite, stripe, sprite_index);
 			if (sp->tex_x_base >= 0 && sp->tex_x < texture->width)
 				draw_vertical_sprite_band(game, sprite, stripe);
 		}

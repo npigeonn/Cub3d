@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 09:30:57 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/02 15:03:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 14:54:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ void	draw_anim_health(t_game *game, t_sprite *sprite, t_image *im_health)
 void	on_life2(t_game *game, t_sprite *current)
 {
 	t_player		*p;
-	t_game_message	*msg;
 
 	p = game->player;
 	pthread_mutex_lock(&game->mutex_music);

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:05:54 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/02 18:41:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:54:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,4 +122,5 @@ void	*receive_updates(void *args)
 		if (!gestion_message(game, msg))
 			break ;
 	}
+	return (NULL);
 }

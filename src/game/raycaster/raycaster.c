@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   raycaster.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/10 11:13:59 by npigeon          ###   ########.fr       */
+/*   Updated: 2025/01/08 16:05:17 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	handle_close(t_game *game)
 	pthread_mutex_unlock(&game->mutex_music);
 	pthread_mutex_destroy(&game->mutex_music);
 	gc_exit(game->mem, 0);
+	return (0);
 }
 
 void	draw_menu_message(t_game *game, const char *action)

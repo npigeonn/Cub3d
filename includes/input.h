@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 10:49:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 16:42:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:19:28 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@
 
 typedef struct s_key_binding
 {
-	const char	*action;
-	const char	*key1;
-	const char	*key2;
+	char	*action;
+	char	*key1;
+	char	*key2;
 }	t_key_binding;
 
 //utils
@@ -48,6 +48,9 @@ void	send_update_position(t_game *game);
 void	handle_key(t_game *game);
 int		handle_key_press(int keycode, t_game *game);
 int		handle_key_release(int keycode, t_game *game);
+void	mouvement(t_game *game, t_player *p);
+void	handle_text_input(t_game *game, int keycode);
+bool	is_keyflag(t_game *game, int k);
 
 //mouse
 int		handle_mouse_move(int x, int y, t_game *game);

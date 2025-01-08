@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 11:28:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/02 18:54:25 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:15:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ void	update_get_pseudo_button(t_game *game, int mouse_x, int mouse_y)
 {
 	const int	btn_width = game->screen_width * 0.25;
 	const int	btn_height = game->screen_height * 0.08;
-	const int	spacing = game->screen_height * 0.06;
-	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.40;
 
 	game->menu->button_selected = 0;

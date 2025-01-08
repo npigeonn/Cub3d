@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:42:01 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 13:13:14 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:55:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	update_player_health(t_game *game, t_game_message msg)
 void	destroy_sprite_health(t_game *game, t_sprite *current,
 t_game_message msg)
 {
-	t_player	*player;
+	t_sprite	*player;
 
 	player = find_player_by_id(game->sprites, msg.player_id);
 	if (player)
@@ -53,7 +53,6 @@ t_game_message msg)
 void	destroy_sprite(t_game *game, t_game_message msg)
 {
 	t_sprite	*current;
-	t_sprite	*prev;
 
 	current = game->sprites;
 	while (current)

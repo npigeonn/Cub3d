@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sound_global.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 10:58:52 by npigeon           #+#    #+#             */
-/*   Updated: 2024/12/10 11:09:44 by npigeon          ###   ########.fr       */
+/*   Updated: 2025/01/08 16:31:22 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	unload_mu(t_block_info *param, t_game *game)
 	UnloadSound(*(Sound *)(param->ptr4));
 	UnloadSound(*(Sound *)(param->ptr5));
 	CloseAudioDevice();
+	(void)game;
 }
 
 void	play_sound_mine(Sound s, int *it)
@@ -71,6 +72,7 @@ void	*test_music(void *arg)
 	t_sound			*sound;
 
 	game = (t_game *)arg;
+	sound = gc_malloc(game->mem, sizeof(t_sound));
 	pthread_mutex_lock(&game->mutex_music);
 	music = LoadMusicStream("./assets/sound/ps.wav");
 	loading_sound(sound);
@@ -84,4 +86,5 @@ void	*test_music(void *arg)
 	block->ptr6 = &sound->telep;
 	pthread_mutex_unlock(&game->mutex_music);
 	play_sound_global(game, sound, music);
+	return (NULL);
 }

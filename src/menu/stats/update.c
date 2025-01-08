@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:26:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 18:18:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:41:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,6 @@ void	update_stats_menu_click(t_game *game, int x, int y, int keycode)
 {
 	const int	scroll_bar_x = (game->screen_width - game->screen_width * 0.6)
 		* 0.5 - 25 + game->screen_width * 0.6 + 5;
-	const int	scroll_height = (game->menu->scroll_height * 27)
-		/ (game->menu->nb_scroll + 1);
 	const int	scroll_bar_y = (game->screen_height - game->screen_height * 0.6)
 		* 0.25 + 95;
 

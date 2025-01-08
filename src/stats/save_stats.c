@@ -5,87 +5,144 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/07 19:45:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 03:26:10 by ybeaucou         ###   ########.fr       */
+/*   Created: 2025/01/08 16:52:37 by ybeaucou          #+#    #+#             */
+/*   Updated: 2025/01/08 22:17:17 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+#include "game.h"
 
-bool	save_player_stats(t_game *game, const char *filename)
+static bool	parse_player_stats(FILE *file, t_game *game, t_player_stats **stats,
+int *count)
 {
-	FILE *file;
-	t_player_stats *existing_stats = NULL;
-	t_player_stats	new_stats;
-	int num_existing_stats = 0;
-	int i, j;
-	bool found;
+	char	line[256];
+	int		i;
+
+	i = 0;
+	*count = 0;
+	while (fgets(line, sizeof(line), file))
+		if (is_a_player(line))
+			(*count)++;
+	rewind(file);
+	*stats = gc_malloc(game->mem, sizeof(t_player_stats) * (*count));
+	if (!*stats)
+		return (false);
+	while (i < *count && fgets(line, sizeof(line), file))
+	{
+		if (!is_a_player(line))
+			continue ;
+		sscanf(line, "%[^,],%d,%d,%d,%d,%f",
+			(*stats)[i].name, &(*stats)[i].games_played,
+			&(*stats)[i].victories, &(*stats)[i].defeats,
+			&(*stats)[i].kills, &(*stats)[i].play_time_hours);
+		i++;
+	}
+	return (true);
+}
+
+static void	add_new_player_stats(t_game *game, FILE file int count)
+{
+	int	victories;
+	int	defeats;
+
+	victories = 0;
+	defeats = 0;
+	if (game->menu->status == GAME_OVER)
+	{
+		victories = 0;
+		defeats = 1;
+	}
+	else
+	{
+		victories = 1;
+		defeats = 0;
+	}
+	fprintf(file, "%s,%d,%d,%d,%d,%.2f\n",
+		game->client->pseudo, 1, victories, defeats, 
+		game->player->stats->nb_kills, 0.0);
+}
+
+static void	update_or_add_stats(t_game *game, t_player_stats *stats, int count,
+FILE *file)
+{
+	bool	found;
+	int		i;
+
+	i = -1;
+	found = false;
+	while (++i < count)
+	{
+		if (strcmp(game->client->pseudo, stats[i].name) == 0)
+		{
+			stats[i].games_played++;
+			if (game->menu->status == GAME_OVER)
+				stats[i].defeats++;
+			else
+				stats[i].victories++;
+			stats[i].kills += game->player->stats->nb_kills;
+			found = true;
+			break ;
+		}
+	}
+	if (!found)
+		add_new_player_stats(game, file, count);
+}
+
+static bool	open_file_and_parse(const char *filename, t_game *game,
+t_player_stats **stats, int *count)
+{
+	FILE	*file;
 
 	file = fopen(filename, "r");
 	if (file)
 	{
-		char line[256];
-		while (fgets(line, sizeof(line), file))
+		if (!parse_player_stats(file, game, stats, count))
 		{
-			if (is_a_player(line))
-				num_existing_stats++;
-		}
-		rewind(file);
-		existing_stats = malloc(sizeof(t_player_stats) * num_existing_stats);
-		for (i = 0; i < num_existing_stats; i++)
-		{
-			fgets(line, sizeof(line), file);
-			if (!is_a_player(line))
-			{
-				i--;
-				continue;
-			}
-			sscanf(line, "%[^,],%d,%d,%d,%d,%f",
-				   existing_stats[i].name, &existing_stats[i].games_played,
-				   &existing_stats[i].victories, &existing_stats[i].defeats,
-				   &existing_stats[i].kills, &existing_stats[i].play_time_hours);
+			fclose(file);
+			return (false);
 		}
 		fclose(file);
 	}
 	else
-		num_existing_stats = 0;
-	found = false;
-	for (j = 0; j < num_existing_stats; j++)
-	{
-		if (strcmp(game->client->pseudo, existing_stats[j].name) == 0)
-		{
-			existing_stats[j].games_played += 1;
-			if (game->menu->status == GAME_OVER)
-				existing_stats[j].defeats += 1;
-			else
-				existing_stats[j].victories += 1;
-			existing_stats[j].kills += game->player->stats->nb_kills;
-			found = true;
-			break;
-		}
-	}
+		*count = 0;
+	return (true);
+}
+
+static bool	write_updated_stats(const char *filename, t_game *game,
+t_player_stats *stats, int count)
+{
+	FILE	*file;
+	int		i;
+
 	file = fopen(filename, "w");
 	if (!file)
-	{
-		free(existing_stats);
-		return false;
-	}
-	if (!found)
-	{
+		return (false);
+	update_or_add_stats(game, stats, count, file);
+	i = -1;
+	while (++i < count)
 		fprintf(file, "%s,%d,%d,%d,%d,%.2f\n",
-				game->client->pseudo, 1,
-				game->menu->status == GAME_OVER ? 0 : 1,
-				game->menu->status == GAME_OVER ? 1 : 0,
-				game->player->stats->nb_kills, 0.0);
-	}
-	for (i = 0; i < num_existing_stats; i++)
-	{
-		fprintf(file, "%s,%d,%d,%d,%d,%.2f\n",
-				existing_stats[i].name, existing_stats[i].games_played,
-				existing_stats[i].victories, existing_stats[i].defeats,
-				existing_stats[i].kills, existing_stats[i].play_time_hours);
-	}
+			stats[i].name, stats[i].games_played, stats[i].victories,
+			stats[i].defeats, stats[i].kills, stats[i].play_time_hours);
 	fclose(file);
-	free(existing_stats);
-	return true;
+	return (true);
+}
+
+bool	save_player_stats(t_game *game, const char *filename)
+{
+	t_player_stats	*stats;
+	int				count;
+
+	stats = NULL;
+	if (!open_file_and_parse(filename, game, &stats, &count))
+		return (false);
+	if (!write_updated_stats(filename, game, stats, count))
+	{
+		gc_free(game->mem, stats);
+		return (false);
+	}
+	gc_free(game->mem, stats);
+	return (true);
 }

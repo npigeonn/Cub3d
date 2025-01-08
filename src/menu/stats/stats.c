@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/25 18:50:42 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 19:32:41 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:42:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,11 @@ void	draw_stats_menu(t_game *game)
 	const int	stats_height = game->screen_height * 0.6;
 	const int	x = (game->screen_width - stats_width) * 0.5;
 	const int	y = (game->screen_height - stats_height) * 0.25;
-	int			num_players;
 
 	game->menu->scroll_height = stats_height - 110;
 	draw_stats_menu_bg(game, stats_width, stats_height);
 	draw_stats_menu_header(game, stats_width, stats_height);
-	num_players = draw_stats_menu_player_scroll(game, x, y, stats_height);
-	// draw_gear_icon(game, game->screen_width - game->screen_width * 0.035 - 17,
-	// 	15, game->screen_width * 0.035);
+	draw_stats_menu_player_scroll(game, x, y, stats_height);
+	draw_gear_icon(game, game->screen_width - game->screen_width * 0.035 - 17,
+		15, game->screen_width * 0.035);
 }

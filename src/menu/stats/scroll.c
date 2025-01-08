@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:27:17 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 19:32:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:40:14 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int	draw_stats_menu_player_scroll(t_game *game, int x, int y, int stats_height)
 		draw_player_stats_row(game, player_stats[i + game->menu->scroll],
 			player, i);
 	}
-	draw_back_button(game, x, y, stats_height);
+	draw_back_stats_button(game, y, stats_height);
 	player = init_draw_info(stats_height - 110, "", x - 25, y + 95);
 	draw_stats_scroll_bar(game, player, num_players);
 	gc_free(game->mem, player_stats);

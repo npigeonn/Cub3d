@@ -6,14 +6,13 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:51:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/02 18:51:10 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:22:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	update_main_menu_click(t_game *game, int mouse_x, int mouse_y,
-int keycode)
+void	update_main_menu_click(t_game *game, int keycode)
 {
 	if (keycode != 1)
 		return ;

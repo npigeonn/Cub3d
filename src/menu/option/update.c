@@ -6,13 +6,14 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 19:05:18 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/02 19:05:49 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:38:27 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	update_buton_click(t_game *game, int mouse_x, int mouse_y, int info[4])
+void	update_buton_option_click(t_game *game, int mouse_x, int mouse_y,
+int info[4])
 {
 	const int	key_x1 = (info[0] - info[0] * 0.5) * 0.5 + info[0] * 0.24;
 	const int	key_x2 = key_x1 + info[0] * 0.2;
@@ -74,9 +75,6 @@ void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y)
 		* 0.5;
 	const float	panel_y = (game->screen_height - (game->screen_height * 0.8))
 		* 0.7 - game->screen_height * 0.1;
-	const float	x = (game->screen_width - (game->screen_width * 0.9) * 0.25)
-		* 0.5;
-	const float	y = panel_y + (game->screen_height * 0.8) + 20;
 
 	game->menu->button_selected = 0;
 	if (mouse_x >= panel_x && mouse_x <= panel_x + (game->screen_width * 0.9)

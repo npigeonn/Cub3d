@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/08 03:36:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:42:10 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,8 @@ int	file_dot_cub(char *file_map)
 static int	op_in(char **av, t_game *game)
 {
 	int	fd;
-	int	i;
 
-	if (!av[1] || !av[2] && (!ft_strcmp(av[1], "--volume=true")
+	if ((!av[1] || !av[2]) && (!ft_strcmp(av[1], "--volume=true")
 			|| !ft_strcmp(av[1], "--volume=false")))
 		gc_exit(game->mem, err("No map mentionned\n"));
 	if (av[2] && ft_strcmp(av[1], "--volume=true")

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:05:01 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/06 20:56:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:41:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,9 @@ t_sprite *player)
 	float		ray[2];
 
 	t = 0;
-	if (fabsf(atan2(dy, dx) * (180.0f / M_PI) - enemy->direction)
-		<= enemy->fov * 0.5)
+	if (fabsf(fmodf(atan2(dy, dx) * (180.0f / M_PI) - enemy->direction
+				+ 360.0f, 360.0f) - 180.0f)
+		<= enemy->fov * 0.5f)
 	{
 		while (t < distance)
 		{

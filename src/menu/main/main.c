@@ -6,13 +6,13 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 20:22:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 13:42:19 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:21:29 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/cub3d.h"
 
-void	draw_gear_icon_loop(t_game *game, t_draw_info info, int i,
+static void	draw_gear_icon_loop(t_game *game, t_draw_info info, int i,
 const double angle_step)
 {
 	const double	angle = i * angle_step;
@@ -43,7 +43,6 @@ const double angle_step)
 void	draw_gear_icon(t_game *game, int x, int y, int size)
 {
 	t_draw_info		info;
-	const int		outer_radius = size / 2;
 	const double	angle_step = M_PI * 2 / 8;
 	const int		tooth_length = size / 8;
 	int				i;

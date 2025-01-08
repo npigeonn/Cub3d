@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 23:56:18 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/10/18 15:56:14 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:42:58 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ struct sockaddr_in *broadcast_addr)
 
 static void	thread_broadcast_server_info(t_server *server)
 {
-	int					broadcast_fd;
 	struct sockaddr_in	broadcast_addr;
 
 	ft_memset(&broadcast_addr, 0, sizeof(broadcast_addr));

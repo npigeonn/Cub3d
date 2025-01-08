@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:35:58 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 16:39:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:04:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,7 @@
 char	*receive_file_from_server(t_game *game, int server_socket)
 {
 	char			filename[256];
-	char			buffer[1024];
 	FILE			*file;
-	t_game_message	msg;
 	long			file_size;
 
 	recv(server_socket, filename, sizeof(filename), 0);
@@ -27,7 +25,7 @@ char	*receive_file_from_server(t_game *game, int server_socket)
 	if (!file)
 		return (NULL);
 	recv(server_socket, &file_size, sizeof(file_size), 0);
-	if (!receive_data(game, file_size, server_socket, file))
+	if (!receive_data(file_size, server_socket, file))
 	{
 		fclose(file);
 		remove(filename);
@@ -79,7 +77,7 @@ void	replace_path(t_game *game, char *filename)
 	}
 }
 
-int	receive_data(t_game *game, size_t file_size, int server_socket, FILE *file)
+int	receive_data(size_t file_size, int server_socket, FILE *file)
 {
 	size_t	total_received;
 	size_t	bytes_received;

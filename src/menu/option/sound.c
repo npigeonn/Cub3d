@@ -6,13 +6,13 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:55:23 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 18:02:02 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:39:07 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	update_sound_slider(t_game *game, int mouse_x, int mouse, int i)
+void	update_sound_slider(t_game *game, int mouse_x, int i)
 {
 	const float	panel_width = game->screen_width * 0.9;
 	const int	slider_x = (panel_width - panel_width * 0.3)
@@ -49,7 +49,7 @@ void	update_sound_options_interaction(t_game *game, int mouse_x, int mouse_y)
 		if (mouse_x >= slider_x && mouse_x <= slider_x + panel_width * 0.3
 			&& mouse_y >= slider_y
 			&& mouse_y <= slider_y + game->screen_height * 0.025)
-			update_sound_slider(game, mouse_x, mouse_y, i);
+			update_sound_slider(game, mouse_x, i);
 		slider_y += panel_height * 0.15;
 	}
 }
@@ -73,7 +73,7 @@ void	update_option_menu_button_sound(t_game *game, int mouse_x, int mouse_y)
 			&& mouse_y >= slider_y && mouse_y <= slider_y
 			+ game->screen_height * 0.025)
 		{
-			update_sound_slider(game, mouse_x, mouse_y, i);
+			update_sound_slider(game, mouse_x, i);
 			return ;
 		}
 		slider_y += panel_height * 0.15;
@@ -81,7 +81,8 @@ void	update_option_menu_button_sound(t_game *game, int mouse_x, int mouse_y)
 	game->menu->dragging = false;
 }
 
-void	draw_sound_slider(t_game *game, int i, const float slider_x, float slider_y)
+void	draw_sound_slider(t_game *game, int i, const float slider_x,
+float slider_y)
 {
 	const char	*labels[] = {
 		"Music Volume", "Effects Volume", "Menu Music Volume"
@@ -93,7 +94,7 @@ void	draw_sound_slider(t_game *game, int i, const float slider_x, float slider_y
 	values[1] = game->menu->effects_volume;
 	values[2] = game->menu->menu_music_volume;
 	label_info = init_draw_info(
-			game->screen_height * 0.03, labels[i],
+			game->screen_height * 0.03, (char *)labels[i],
 			slider_x, slider_y - game->screen_height * 0.025);
 	label_info.color = 0xFFFFFF;
 	draw_text_left(game, label_info);

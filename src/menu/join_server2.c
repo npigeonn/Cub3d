@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 13:15:23 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 13:15:31 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:13:42 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ int btn_x_start)
 
 void	update_join_server_menu_button(t_game *game, int mouse_x, int mouse_y)
 {
-	const int	spacing = game->screen_height * 0.06;
 	const int	btn_half_width = game->screen_width * 0.25 * 0.45;
 	const int	total_btn_width = 2 * btn_half_width + game->screen_width
 		* 0.02;
@@ -74,7 +73,7 @@ void	update_join_server_menu_button(t_game *game, int mouse_x, int mouse_y)
 	check_mouse_on_gear(game, mouse_x, mouse_y);
 }
 
-void	update_join_server_menu_text2(t_game *game)
+static void	update_join_server_menu_text2(t_game *game)
 {
 	if (game->menu->button_selected == 1)
 	{
@@ -91,8 +90,7 @@ void	update_join_server_menu_text2(t_game *game)
 	}
 }
 
-void	update_join_server_menu_text(t_game *game, int mouse_x, int mouse_y,
-int keycode)
+void	update_join_server_menu_text(t_game *game, int mouse_x, int mouse_y)
 {
 	const int	btn_width = game->screen_width * 0.25;
 	const int	btn_height = game->screen_height * 0.08;

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:06:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/05 18:51:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:52:18 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,11 @@ t_sprite	*get_target_player(t_server *server, t_sprite *current_enemy,
 
 //logic
 void		*logic_game(void *arg);
+void		loop_server(t_server *server);
+void		create_server(t_game *game);
+void		game_multi_death(t_game *game);
+void		game_engine(t_game *game);
+void		handle_client_receive_msg(t_server *server, int client_socket);
 
 //new player
 void		new_player(t_server *server, int new_socket, char *pseudo);
@@ -122,13 +127,15 @@ void		notify_players_of_connection(t_server *server, int player_id,
 void		notify_players_of_reconnection(t_server *server, int player_id,
 				char *pseudo);
 void		notify_players_of_disconnection(t_server *server, int id);
-void		notify_players_of_move(t_server *server, t_game_message msg);
 void		notify_players(t_server *server, t_game_message msg);
 
 //playe node
 void		add_player_node(t_server *server, int id, char *pseudo);
 void		update_player_node(t_server *server, char *pseudo,
 				t_game_message msg);
+void		notify_all_players(t_server *server, t_game_message msg);
+int			reconnect_player(t_server *server, t_sprite *player,
+				int socket);
 
 //queue
 void		add_game_message_to_queue(t_server *server, t_game_message msg);
@@ -137,5 +144,22 @@ void		add_game_message_to_queue(t_server *server, t_game_message msg);
 void		send_all_players(t_server *server, int id);
 void		send_reconnected_message(t_server *server, t_sprite *player,
 				char *pseudo);
+void		send_info(t_server *server, t_game_message msg);
+void		send_enemies(t_server *server, t_game_message msg);
+
+// projectile
+void		shoot_at_player_server(t_sprite *enemy, t_sprite *player_pos,
+				t_server *server);
+void		add_projectile(t_server *server, t_game_message msg);
+void		update_projectiles_server(t_server *server);
+
+// enemy
+void		update_enemies_server(t_server *server);
+
+void		set_anim(t_game *game);
+void		create_join_server(t_game *game);
+
+//utils
+float		distance_squared(float x1, float y1, float x2, float y2);
 
 #endif

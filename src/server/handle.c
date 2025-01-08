@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:17:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/29 17:37:26 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:46:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	handle_client_msg(t_server *server, t_game_message msg)
 {
-	int			i;
 	t_sprite	*player;
 
 	pthread_mutex_lock(server->game_lock);

@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/03 18:08:11 by ybeaucou          #+#    #+#              #
-#    Updated: 2025/01/07 19:53:21 by ybeaucou         ###   ########.fr        #
+#    Updated: 2025/01/08 14:45:19 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ LIBS_DIR = ./libs/
 INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(RAUDIO_HEADERS) -I./includes/
 
 # Compilation
-CFLAGS = -g3 -O0
+CFLAGS = -g3 -O0 -Wall -Wextra -Werror
 RM = rm -rf
 OBJS = $(SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o)
 
@@ -30,10 +30,10 @@ LIBS = -L$(MINILIBX_DIR) -lmlx \
 		-lX11 -lXfixes -lXext -lm 
 
 # Sources
-SRC = $(SRC_SOUND) $(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_MENU_CREATE_SERVER) \
+SRC = $(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_MENU_CREATE_SERVER) \
 		$(SRC_MENU_MAIN) $(SRC_MENU_MULTI) $(SRC_MENU_OPTION) $(SRC_MENU_STATS) \
 		$(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT) $(SRC_RAYCASTER) \
-		$(SRC_INPUT) $(SRC_SPRITES) $(SRC_STATS) $(SRC_MULTITHREAD)
+		$(SRC_INPUT) $(SRC_SPRITES) $(SRC_STATS) $(SRC_MULTITHREAD) $(SRC_SOUND)
 
 # Source Groups
 SRC_GAME = $(addprefix $(PATH_SRC)game/, draw.c draw2.c draw3.c draw4.c \

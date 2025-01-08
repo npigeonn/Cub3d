@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 16:58:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 18:21:14 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:51:55 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*existing_player(t_server *server, int new_socket)
 
 	pseudo[0] = '\0';
 	if (new_socket < 0)
-		return (pseudo);
+		return (gc_strdup(server->mem, pseudo));
 	recv(new_socket, pseudo, sizeof(pseudo), 0);
 	pthread_mutex_lock(server->game_lock);
 	player = find_player_by_pseudo(server, pseudo);
@@ -46,7 +46,7 @@ char	*existing_player(t_server *server, int new_socket)
 		{
 			close(new_socket);
 			pthread_mutex_unlock(server->game_lock);
-			return (pseudo);
+			return (gc_strdup(server->mem, pseudo));
 		}
 		else if (reconnect_player(server, player, new_socket))
 			return (NULL);

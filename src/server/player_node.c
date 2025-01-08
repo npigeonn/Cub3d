@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:03:47 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 17:13:16 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:48:05 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ t_sprite *p)
 void	detect_amo_and_health(t_server *server, t_sprite *p)
 {
 	t_sprite		*current;
-	t_game_message	msg;
 
 	current = server->sprites;
 	while (current)

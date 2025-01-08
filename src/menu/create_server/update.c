@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:31:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 17:32:21 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:13:07 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	update_server_name(t_game *game, int keycode, int len, char *field)
 	field[len + 1] = '\0';
 }
 
-void	update_create_server_menu_text2(t_game *game, int keycode)
+static void	update_create_server_menu_text2(t_game *game, int keycode)
 {
 	if (game->menu->button_selected == 1 && keycode == 1)
 	{
@@ -46,7 +46,6 @@ int keycode)
 {
 	const int	btn_width = game->screen_width * 0.25;
 	const int	btn_height = game->screen_height * 0.08;
-	const int	spacing = game->screen_height * 0.06;
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.33;
 

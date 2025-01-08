@@ -3,23 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   enemies.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 13:20:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/10 11:47:04 by npigeon          ###   ########.fr       */
+/*   Updated: 2025/01/08 16:21:51 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 #define COLLISION_THRESHOLD 0.12f
-
-static inline float	distance_squared(float x1, float y1, float x2, float y2)
-{
-	const float	dx = x2 - x1;
-	const float	dy = y2 - y1;
-
-	return (dx * dx + dy * dy);
-}
 
 void	shoot_at_player(t_sprite *enemy, t_game *game)
 {

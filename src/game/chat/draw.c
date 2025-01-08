@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   draw.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 18:51:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/10 12:27:00 by npigeon          ###   ########.fr       */
+/*   Updated: 2025/01/08 16:05:08 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	draw_text_max_right(t_game *game, t_draw_info info)
 {
 	int			i;
-	t_image		*img;
 	int			text_width;
 	int			index;
 

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 02:28:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 18:43:41 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:42:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,9 @@ int *num_players)
 			i--;
 			continue ;
 		}
-		sscanf(line, "%[^,],%d,%d,%d,%d,%f", stats[i].name, &stats[i].games_played,
-			&stats[i].victories, &stats[i].defeats, &stats[i].kills,
-			&stats[i].play_time_hours);
+		sscanf(line, "%[^,],%d,%d,%d,%d,%f", stats[i].name,
+			&stats[i].games_played, &stats[i].victories, &stats[i].defeats,
+			&stats[i].kills, &stats[i].play_time_hours);
 	}
 	fclose(file);
 	return (stats);

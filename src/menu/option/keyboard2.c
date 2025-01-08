@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 19:08:06 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/02 19:08:35 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:30:53 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int mouse_y)
 	info[4] = -1;
 	while (++info[4] < 8)
 	{
-		update_buton_click(game, mouse_x, mouse_y, info);
+		update_buton_option_click(game, mouse_x, mouse_y, info);
 		info[2] += 50;
 	}
 }

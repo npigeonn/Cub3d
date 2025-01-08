@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 17:47:10 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 16:30:42 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ typedef struct s_projectile
 	float				direction;
 	int					floor;
 	struct s_player		*owner;
-	struct s_prite		*enemy;
+	struct s_sprite		*enemy;
 	struct s_projectile	*next;
 }	t_projectile;
 
@@ -103,14 +103,14 @@ enum e_message
 
 typedef struct s_stats
 {
-	int		nb_kills;
-	int		nb_degats;
-	int		temps;
-	int		nb_games;
-	int		nb_win;
-	int		nb_shoot;
-	int		nb_hit;
-	float	distanc_travel;
+	int				nb_kills;
+	int				nb_degats;
+	struct timeval	temps;
+	int				nb_games;
+	int				nb_win;
+	int				nb_shoot;
+	int				nb_hit;
+	float			distanc_travel;
 }	t_stats;
 
 typedef struct s_keycode
@@ -369,12 +369,15 @@ int			handle_close(t_game *game);
 void		set_direction(t_game *game, int dir);
 void		set_direction2(t_game *game, int dir);
 void		x_fixes_cursor(t_game *game, char to_do);
+void		hooks(t_game *game);
+void		show_menu_message(t_game *game);
+void		reset_game(t_game *game);
+void		cast_rays(t_game *game, t_raycast *r);
+void		cast_floor(t_game *game, t_floorcast *floorcast);
 
 //menu
 void		draw_main_menu(t_game *game);
 void		update_main_menu_button(t_game *game, int mouse_x, int mouse_y);
-void		update_option_menu_slider(t_game *game, int mouse_x, int mouse_y,
-				int keycode);
 void		update_option_menu_button(t_game *game, int mouse_x, int mouse_y);
 void		draw_options_menu(t_game *game);
 void		update_multiplayer_menu(t_game *game, int mouse_x, int mouse_y);
@@ -418,6 +421,7 @@ int			is_pixel_transparent(t_image *img, int x, int y);
 //fps
 void		calculate_fps(t_game *game);
 void		draw_fps(t_game *game, double fps);
+void		calculate_delta_time(t_game *game);
 
 // mini map
 void		mini_map(t_game *game);
@@ -482,10 +486,13 @@ t_sprite	*merge_sorted_lists(t_game *game, t_sprite *left,
 void		split_list(t_sprite *source, t_sprite **left, t_sprite **right);
 void		init_spritecast(t_game *game, t_sprite *sprite, t_image *texture);
 int			get_spritecast_info(t_game *game, t_sprite *sp, int *sprite_index);
-void		get_spritecast_tex_x(t_game *game, t_sprite *sprite, int stripe,
+void		get_spritecast_tex_x(t_sprite *sprite, int stripe,
 				int sprite_index);
 void		draw_player_pseudo(t_game *game, t_sprite *sprite);
 void		draw_vertical_sprite_band(t_game *game, t_sprite *sprite, int x);
+float		calculate_distance(t_game *game, t_sprite *sprite);
+bool		check_collision_with_entity(t_game *game, t_projectile *projectile,
+				float ray[2]);
 
 //projectile
 void		add_projectil(t_sprite *enemy, t_game *game, float angle_to_player);
@@ -493,11 +500,6 @@ void		update_projectiles(t_game *game);
 void		projectile_move(t_game *game, t_projectile *p, bool *collision);
 void		projectile_collision(t_game *game, t_projectile **projectile,
 				t_projectile **prev, int collision);
-
-// health
-void		on_life(t_game *game);
-void		draw_anim_health(t_game *game, t_sprite *sprite,
-				t_image *im_health);
 
 // PARSING
 int			err(char *str);
@@ -511,8 +513,10 @@ int			file_dot_xpm(char *file_textre);
 void		init_data(t_game *game);
 char		*switch_line(t_memory_table *mem, char *line, int fd);
 int			count_spawns(t_game *game);
+int			check_allowed_char(t_game *game, int floor, int x, int y);
+void		search_departure_position(t_game *game);
 
-//teleporter
+// teleporter
 int			is_a_teleporter(char c);
 void		teleportation_check(t_game *game);
 void		use_teleporter(t_game *game);
@@ -536,11 +540,23 @@ int			free_map(t_game *game);
 int			free_map_copy(t_game *game);
 int			free_split(t_memory_table *mem, char **str);
 
-//server
-void		create_server(t_game *game);
-void		game_multi_death(t_game *game);
-void		set_anim(t_game *game);
-void		game_engine(t_game *game);
-void		create_join_server(t_game *game);
+// init
+void		init_var(t_game *game, int malloc);
+void		init_menu(t_game *game, int malloc);
+void		init_client(t_game *game, int malloc);
+void		init_player_keycode(t_game *game, int malloc);
+void		init_player(t_game	*game, int malloc);
+void		init_img(t_game *game);
+void		init_floorcast(t_game *game, t_floorcast *f);
+
+// load texture
+void		load_game_texture(t_game *game);
+void		load_texture(t_game *game, t_image *img, char *path);
+
+// collectable
+void		on_ammo(t_game *game);
+void		on_life(t_game *game);
+void		draw_anim_health(t_game *game, t_sprite *sprite,
+				t_image *im_health);
 
 #endif

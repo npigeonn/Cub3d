@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:55:57 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 13:15:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/08 15:12:15 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	draw_text_fields(t_game *game, int x, int y, int btn_width)
 	draw_text_field(game, info, game->client->ip);
 }
 
-static void	draw_button(t_game *game, int info_n[5], const char *label)
+static void	draw_button(t_game *game, int info_n[5], char *label)
 {
 	t_draw_info	info;
 	t_draw_info	info3;
