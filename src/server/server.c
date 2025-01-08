@@ -6,64 +6,11 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/07 04:42:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/03 17:07:18 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
-
-void	loop_server_event(t_server *server, struct epoll_event *events,
-struct epoll_event *event, int i)
-{
-	char	*pseudo;
-	int		new_socket;
-
-	if (events[i].data.fd == server->server_fd)
-	{
-		new_socket = accept(server->server_fd,
-				(struct sockaddr *)&(server->address),
-				(socklen_t *)&(server->addrlen));
-		pseudo = existing_player(server, new_socket);
-		if (pseudo && pseudo[0] != '\0')
-		{
-			event->events = EPOLLIN;
-			event->data.fd = new_socket;
-			epoll_ctl(server->epoll_fd, EPOLL_CTL_ADD, new_socket, event);
-			new_player(server, new_socket, pseudo);
-		}
-		gc_free(server->mem, pseudo);
-	}
-	else
-		handle_client_receive_msg(server, events[i].data.fd);
-}
-
-void	loop_server(t_server *server)
-{
-	struct epoll_event	event;
-	struct epoll_event	*events;
-	int					i;
-	int					num_events;
-
-	server->epoll_fd = 0;
-	server->epoll_fd = epoll_create1(0);
-	events = gc_malloc(server->mem, sizeof(struct epoll_event) * MAX_PLAYERS);
-	if (server->epoll_fd == -1)
-		exit(EXIT_FAILURE);
-	event.events = EPOLLIN;
-	event.data.fd = server->server_fd;
-	if (epoll_ctl(server->epoll_fd, EPOLL_CTL_ADD,
-			server->server_fd, &event) == -1)
-		exit(EXIT_FAILURE);
-	while (1)
-	{
-		num_events = epoll_wait(server->epoll_fd, events, MAX_PLAYERS, -1);
-		if (num_events == -1)
-			exit(EXIT_FAILURE);
-		i = -1;
-		while (++i < num_events)
-			loop_server_event(server, events, &event, i);
-	}
-}
 
 void	init_server(t_server *server, int *opt)
 {
@@ -87,7 +34,7 @@ void	init_server(t_server *server, int *opt)
 	pthread_mutex_unlock(server->game_lock);
 }
 
-void	main_server(void	*arg)
+static void	main_server(void	*arg)
 {
 	int			opt;
 	pthread_t	logic_game_thread;
@@ -120,7 +67,7 @@ void	copy_sprite(t_game *game, t_server *server)
 	}
 }
 
-t_server	*create_server_init(t_game *game)
+static t_server	*server_init(t_game *game)
 {
 	t_server	*server;
 
@@ -151,7 +98,7 @@ void	create_server(t_game *game)
 	t_server	*server;
 
 	is_good = 0;
-	server = create_server_init(game);
+	server = server_init(game);
 	ft_strcpy(server->name, game->client->name);
 	pthread_mutex_init(server->game_lock, NULL);
 	pthread_create(&server_thread, NULL, (void *)main_server, (void *)server);

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:06:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/29 17:54:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/05 18:51:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef enum s_message_type
 	MSG_BROADCAST_ENEMIES = 10,
 	MSG_PLAYER_HIT = 11,
 	MSG_PLAYER_SHOOT = 12,
+	MSG_DESTROY_SPRITE = 13,
 }	t_message_type;
 
 typedef struct s_game_message
@@ -105,6 +106,8 @@ int			init_broadcast(t_server *server);
 //find player
 t_sprite	*find_player_by_pseudo(t_server *server, char *pseudo);
 t_sprite	*find_player_by_id(t_sprite *players, int id);
+t_sprite	*get_target_player(t_server *server, t_sprite *current_enemy,
+				float *min_distance);
 
 //logic
 void		*logic_game(void *arg);
@@ -120,8 +123,7 @@ void		notify_players_of_reconnection(t_server *server, int player_id,
 				char *pseudo);
 void		notify_players_of_disconnection(t_server *server, int id);
 void		notify_players_of_move(t_server *server, t_game_message msg);
-void		notify_players_of_door(t_server *server, t_game_message msg);
-void		notify_players_of_chat(t_server *server, t_game_message msg);
+void		notify_players(t_server *server, t_game_message msg);
 
 //playe node
 void		add_player_node(t_server *server, int id, char *pseudo);

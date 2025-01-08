@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/29 17:36:58 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/03 17:02:17 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,46 @@ char *pseudo)
 	connect_msg.health = player->health;
 	ft_strcpy(connect_msg.pseudo, pseudo);
 	add_game_message_to_queue(server, connect_msg);
+}
+
+void	send_file_to_client(int client_socket, const char *filename)
+{
+	FILE	*file;
+	char	buffer[1024];
+	size_t	bytes_read;
+	long	file_size;
+
+	file = fopen(filename, "rb");
+	if (!file)
+		return ;
+	send(client_socket, filename, 256, 0);
+	fseek(file, 0, SEEK_END);
+	file_size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	send(client_socket, &file_size, sizeof(long), 0);
+	bytes_read = fread(buffer, 1, sizeof(buffer), file);
+	while (bytes_read > 0)
+	{
+		send(client_socket, buffer, bytes_read, 0);
+		bytes_read = fread(buffer, 1, sizeof(buffer), file);
+	}
+	fclose(file);
+}
+
+void	send_info(t_server *server, t_game_message msg)
+{
+	send(server->client_sockets[msg.player_id],
+		&msg, sizeof(t_game_message), 0);
+	send_file_to_client(server->client_sockets[msg.player_id], server->av[1]);
+	send_all_players(server, msg.player_id);
+}
+
+void	send_enemies(t_server *server, t_game_message msg)
+{
+	int	i;
+
+	i = -1;
+	while (++i < MAX_PLAYERS)
+		if (server->client_sockets[i] > 0)
+			send(server->client_sockets[i], &msg, sizeof(t_game_message), 0);
 }

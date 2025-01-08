@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/06 10:49:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/29 17:11:13 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/03 16:42:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 # define KEY_T 116
 # define KEY_F 102
 
-typedef struct	s_key_binding
+typedef struct s_key_binding
 {
 	const char	*action;
 	const char	*key1;

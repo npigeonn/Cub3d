@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 14:48:35 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/03 16:57:19 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,40 +91,19 @@ void	notify_players_of_disconnection(t_server *server, int id)
 				sizeof(t_game_message), 0);
 }
 
-void	notify_players_of_move(t_server *server, t_game_message msg)
+void	notify_players(t_server *server, t_game_message msg)
 {
-	int				i;
+	int	i;
 
-	msg.type = MSG_MOVE;
-	update_player_node(server, msg.pseudo, msg);
+	if (msg.type == MSG_MOVE)
+		update_player_node(server, msg.pseudo, msg);
 	i = -1;
 	while (++i < MAX_PLAYERS)
 		if (server->client_sockets[i] > 0 && i != msg.player_id)
 			send(server->client_sockets[i], &msg, sizeof(t_game_message), 0);
 }
 
-void	notify_players_of_door(t_server *server, t_game_message msg)
-{
-	int	i;
-
-	i = -1;
-	while (++i < MAX_PLAYERS)
-		if (server->client_sockets[i] > 0 && i != msg.player_id)
-			send(server->client_sockets[i], &msg,
-				sizeof(t_game_message), 0);
-}
-
-void	notify_players_of_chat(t_server *server, t_game_message msg)
-{
-	int	i;
-
-	i = -1;
-	while (++i < MAX_PLAYERS)
-		if (server->client_sockets[i] > 0 && i != msg.player_id)
-			send(server->client_sockets[i], &msg, sizeof(t_game_message), 0);
-}
-
-void	notify_players_of_hit(t_server *server, t_game_message msg)
+void	notify_all_players(t_server *server, t_game_message msg)
 {
 	int	i;
 

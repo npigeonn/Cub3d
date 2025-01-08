@@ -3,179 +3,113 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+         #
+#    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/09/27 10:00:01 by npigeon           #+#    #+#              #
-#    Updated: 2024/12/10 13:06:18 by npigeon          ###   ########.fr        #
+#    Created: 2025/01/03 18:08:11 by ybeaucou          #+#    #+#              #
+#    Updated: 2025/01/07 19:53:21 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-
 NAME = cub3D
 
+# Paths
 PATH_SRC = ./src/
 PATH_OBJ = ./objs/
-OBJS = ${SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o}
-LIBS = -L$(MINILIBX_DIR) -lmlx -L$(LIBFT_DIR) -lft -L$(RAUDIO_SRC) -lraudio -lX11 -lXfixes -lXext -lm 
-INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(RAUDIO_HEADERS) -I./includes/
-CFLAGS = -g3 -O0
 LIBS_DIR = ./libs/
+INCLUDES = -I$(MINILIBX_HEADERS) -I$(LIBFT_HEADERS) -I$(RAUDIO_HEADERS) -I./includes/
+
+# Compilation
+CFLAGS = -g3 -O0
 RM = rm -rf
+OBJS = $(SRC:$(PATH_SRC)%.c=$(PATH_OBJ)%.o)
 
-SRC_GAME =	$(addprefix $(PATH_SRC)game/, \
-				draw.c \
-				draw2.c \
-				draw3.c \
-				draw4.c \
-				door.c \
-				door2.c \
-				door3.c \
-				wall.c \
-				wall2.c \
-				minimap.c \
-				minimap2.c \
-				crosshair.c \
-				health_point.c \
-				ammo.c \
-				add_letter_to_list.c \
-				game_loop.c \
-				game_loop2.c \
-				game_loop_utils.c \
-				dead.c )
+# Libraries
+LIBS = -L$(MINILIBX_DIR) -lmlx \
+		-L$(LIBFT_DIR) -lft \
+		-L$(RAUDIO_SRC) -lraudio \
+		-lX11 -lXfixes -lXext -lm 
 
-SRC_STATS =	$(addprefix $(PATH_SRC)stats/, \
-				get_stats.c )
+# Sources
+SRC = $(SRC_SOUND) $(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_MENU_CREATE_SERVER) \
+		$(SRC_MENU_MAIN) $(SRC_MENU_MULTI) $(SRC_MENU_OPTION) $(SRC_MENU_STATS) \
+		$(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT) $(SRC_RAYCASTER) \
+		$(SRC_INPUT) $(SRC_SPRITES) $(SRC_STATS) $(SRC_MULTITHREAD)
 
-SRC_MENU =	$(addprefix $(PATH_SRC)menu/, \
-				option.c \
-				multi.c \
-				main.c \
-				create_server.c \
-				join_server.c \
-				server_disconnected.c \
-				game_over.c \
-				get_pseudo.c \
-				stats.c \
-				get_key_name.c )
+# Source Groups
+SRC_GAME = $(addprefix $(PATH_SRC)game/, draw.c draw2.c draw3.c draw4.c \
+				door.c door2.c door3.c wall.c wall2.c minimap.c minimap2.c \
+				crosshair.c health_point.c ammo.c add_letter_to_list.c \
+				game_loop.c game_loop2.c game_loop_utils.c dead.c)
+SRC_STATS = $(addprefix $(PATH_SRC)stats/, get_stats.c save_stats.c)
+SRC_MENU = $(addprefix $(PATH_SRC)menu/, join_server.c join_server2.c \
+				server_disconnected.c game_over.c get_pseudo.c \
+				get_key_name.c game_over_draw.c get_pseudo_handle.c func.c)
+SRC_MENU_CREATE_SERVER = $(addprefix $(PATH_SRC)menu/create_server/, create_server.c \
+							handle.c text_field.c update.c utils.c)
+SRC_MENU_MAIN = $(addprefix $(PATH_SRC)menu/main/, main.c draw.c check_update.c)
+SRC_MENU_MULTI = $(addprefix $(PATH_SRC)menu/multi/, discovery_delete.c discovery.c \
+					draw_shape.c multi.c update_check.c utils.c server_list.c)
+SRC_MENU_OPTION = $(addprefix $(PATH_SRC)menu/option/, keyboard.c keyboard2.c \
+						mouse.c mouse2.c option.c sound.c sound2.c update.c draw.c)
+SRC_MENU_STATS = $(addprefix $(PATH_SRC)menu/stats/, draw_menu.c scroll.c stats.c update.c)
+SRC_ALONE = $(addprefix $(PATH_SRC), main.c mlx_func.c init_texture.c init.c init2.c)
+SRC_PARSING = $(addprefix $(PATH_SRC)parsing/, free.c parsing.c teleportation.c \
+					floodfill.c textures.c lil_functions.c begin_pos.c map_crafting.c)
+SRC_SERVER = $(addprefix $(PATH_SRC)server/, broadcast.c enemies_shoot.c enemies.c \
+					find_player.c handle.c logic.c loop_server.c new_player.c \
+					notification.c player_node.c projectile.c queue.c \
+					send.c server.c utils.c)
+SRC_CLIENT = $(addprefix $(PATH_SRC)client/, client.c elements.c message.c \
+					player.c health_ammo.c get_map.c)
+SRC_CHAT = $(addprefix $(PATH_SRC)game/chat/, chat.c draw.c handle.c show_message.c)
+SRC_RAYCASTER = $(addprefix $(PATH_SRC)game/raycaster/, raycaster.c raycaster2.c \
+					ray.c floor.c)
+SRC_SPRITES = $(addprefix $(PATH_SRC)game/sprite/, teleporter.c sprite.c \
+					sprites2.c draw_sprite.c sorting_sprites.c enemies.c \
+					ennemies2.c add_ennemies.c projectiles.c updates.c)
+SRC_INPUT = $(addprefix $(PATH_SRC)input/, mouse.c keyboard.c keyboard_move.c \
+					keyboard_utils.c key.c)
+SRC_SOUND = $(addprefix $(PATH_SRC)game/sound/, sound_global.c sound_global2.c)
+SRC_MULTITHREAD = $(addprefix $(PATH_SRC)multithread/, init.c pool.c worker.c)
 
-SRC_ALONE =	$(addprefix $(PATH_SRC), \
-				main.c \
-				init.c )
-			
-SRC_PARSING = $(addprefix $(PATH_SRC)parsing/, \
-				free.c \
-				parsing.c \
-				teleportation.c \
-				floodfill.c \
-				textures.c \
-				lil_functions.c \
-				begin_pos.c \
-				map_crafting.c )
-
-SRC_SERVER = $(addprefix $(PATH_SRC)server/, \
-				server.c \
-				broadcast.c \
-				new_player.c \
-				find_player.c \
-				handle.c \
-				logic.c \
-				notification.c \
-				player_node.c \
-				queue.c \
-				send.c \
-				projectile.c )
-
-SRC_CLIENT = $(addprefix $(PATH_SRC)client/, \
-				client.c \
-				elements.c \
-				message.c \
-				player.c)
-
-SRC_CHAT =	$(addprefix $(PATH_SRC)game/chat/, \
-				chat.c \
-				draw.c \
-				handle.c \
-				show_message.c )
-
-SRC_RAYCASTER = $(addprefix $(PATH_SRC)game/raycaster/, \
-				raycaster.c \
-				raycaster2.c \
-				ray.c \
-				floor.c )
-
-SRC_SPRITES = $(addprefix $(PATH_SRC)game/sprite/, \
-				teleporter.c \
-				sprite.c \
-				sprites2.c \
-				draw_sprite.c \
-				sorting_sprites.c \
-				enemies.c \
-				ennemies2.c \
-				add_ennemies.c \
-				projectiles.c \
-				updates.c )
-	
-SRC_INPUT = $(addprefix $(PATH_SRC)input/, \
-				mouse.c \
-				keyboard.c \
-				keyboard_utils.c \
-				key.c )
-
-SRC_SOUND = $(addprefix $(PATH_SRC)game/sound/, \
-				sound_global.c \
-				sound_global2.c )
-
-SRC_MULTITHREAD = $(addprefix $(PATH_SRC)multithread/, \
-				init.c )
-
-SRC =	$(SRC_SOUND) $(SRC_ALONE) $(SRC_GAME) $(SRC_MENU) $(SRC_PARSING) $(SRC_SERVER) $(SRC_CLIENT) $(SRC_CHAT) $(SRC_RAYCASTER) $(SRC_INPUT) $(SRC_SPRITES) $(SRC_STATS) $(SRC_MULTITHREAD)
-
-############### MINILIBX ###############
-
+# Libraries Configuration
 MINILIBX_URL = https://github.com/42Paris/minilibx-linux.git
 MINILIBX_DIR = $(LIBS_DIR)minilibx-linux/
 MINILIBX_HEADERS = $(MINILIBX_DIR)
 MINILIBX = $(MINILIBX_DIR)/libmlx.a
 
-########################################
-
-################ LIBFT #################
-
 LIBFT_DIR = $(LIBS_DIR)Libft/
 LIBFT_HEADERS = $(LIBFT_DIR)includes/
 LIBFT = $(LIBFT_DIR)libft.a
-
-########################################
-
-################ RAUDIO ################
 
 RAUDIO_URL = https://github.com/raysan5/raudio.git
 RAUDIO_DIR = $(LIBS_DIR)raudio/
 RAUDIO_SRC = $(RAUDIO_DIR)src/
 RAUDIO_HEADERS = $(RAUDIO_SRC)
 RAUDIO = $(RAUDIO_SRC)/libraudio.a
-RAUDIO_DEFINE = -D RAUDIO_STANDALONE -D SUPPORT_MODULE_RAUDIO -D SUPPORT_FILEFORMAT_MP3 -D SUPPORT_FILEFORMAT_WAV -D 'TRACELOG(level, ...)'
+RAUDIO_DEFINE = -D RAUDIO_STANDALONE -D SUPPORT_MODULE_RAUDIO \
+					-D SUPPORT_FILEFORMAT_MP3 -D SUPPORT_FILEFORMAT_WAV \
+					-D 'TRACELOG(level, ...)'
 
-########################################
-
+# Rules
 all: $(NAME)
 
-$(OBJS): ./includes/* Makefile
-
 $(PATH_OBJ):
-	mkdir -p $@ $@menu $@parsing $@server $@client $@game $@game/sound $@game/chat $@game/raycaster $@game/sprite $@input $@stats $@multithread
+	mkdir -p $@ $@menu $@menu/create_server $@menu/main $@menu/multi $@menu/option \
+		$@menu/stats $@parsing $@server $@client \
+		$@game $@game/sound $@game/chat $@game/raycaster $@game/sprite \
+		$@input $@stats $@multithread
 
 $(PATH_OBJ)%.o: $(PATH_SRC)%.c | $(PATH_OBJ)
 	cc -c $(CFLAGS) $(INCLUDES) $< -o $@
 
-$(NAME): $(MINILIBX) $(RAUDIO) $(LIBFT) $(OBJS) ./includes/* Makefile
+$(NAME): $(MINILIBX) $(RAUDIO) $(LIBFT) $(OBJS)
 	cc $(CFLAGS) $(OBJS) $(LIBS) $(INCLUDES) -o $(NAME)
 
-# Compile libft
+# Libraries Rules
 $(LIBFT):
 	make -sC $(LIBFT_DIR)
 
-# Download minilibx-linux and compile it
 $(MINILIBX):
 	@echo "Downloading minilibx-linux..."
 	if [ ! -d $(MINILIBX_DIR) ]; then \
@@ -183,7 +117,6 @@ $(MINILIBX):
 	fi
 	make -sC $(MINILIBX_DIR)
 
-# Download raudio and compile it
 $(RAUDIO):
 	@echo "Downloading raudio..."
 	@if [ ! -d "$(RAUDIO_DIR)" ]; then \
@@ -207,5 +140,5 @@ fclean:
 	$(RM) $(RAUDIO_DIR)
 
 re: fclean all
-	
+
 .PHONY: all clean fclean re

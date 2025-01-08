@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:05:51 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/15 10:19:45 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/03 16:15:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include "input.h"
 # include "stats.h"
 # include "multithread.h"
+# include "menu.h"
 
 # include <X11/X.h>
 # include <X11/keysym.h>
@@ -40,5 +41,8 @@
 # define MENU_BUTTON_COLOR 0x002B36 
 # define MENU_BUTTON_SELECTED_COLOR 0x2F4F4F
 # define MENU_BUTTON_TEXT_COLOR 0xf2e9e9
+
+void	destroy_mlx_img(t_block_info *params);
+void	destroy_mlx_display(t_block_info *params);
 
 #endif

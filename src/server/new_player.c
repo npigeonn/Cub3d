@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/17 21:43:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/29 17:37:56 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/03 18:21:02 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	set_player_id(t_server *server, t_sprite *player)
 	}
 }
 
-static int	reconnect_player(t_server *server, t_sprite *player,
+int	reconnect_player(t_server *server, t_sprite *player,
 int socket)
 {
 	struct epoll_event	event;
@@ -100,31 +100,4 @@ int socket)
 	send_reconnected_message(server, player, player->pseudo);
 	pthread_mutex_unlock(server->game_lock);
 	return (1);
-}
-
-char	*existing_player(t_server *server, int new_socket)
-{
-	char			pseudo[MAX_PSEUDO_LENGTH];
-	t_sprite		*player;
-
-	pseudo[0] = '\0';
-	if (new_socket < 0)
-		return (pseudo);
-	recv(new_socket, pseudo, sizeof(pseudo), 0);
-	pthread_mutex_lock(server->game_lock);
-	player = find_player_by_pseudo(server, pseudo);
-	if (player)
-	{
-		if (player->player_id >= 0
-			&& server->client_sockets[player->player_id] >= 0)
-		{
-			close(new_socket);
-			pthread_mutex_unlock(server->game_lock);
-			return (pseudo);
-		}
-		else if (reconnect_player(server, player, new_socket))
-			return (NULL);
-	}
-	pthread_mutex_unlock(server->game_lock);
-	return (gc_strdup(server->mem, pseudo));
 }

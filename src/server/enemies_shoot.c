@@ -1,0 +1,136 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   enemies_shoot.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/03 17:05:01 by ybeaucou          #+#    #+#             */
+/*   Updated: 2025/01/06 20:56:20 by ybeaucou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "cub3d.h"
+
+void	add_projectile(t_server *server, t_game_message msg)
+{
+	t_projectile	*new_projectile;
+	t_sprite		*sprite;
+
+	sprite = find_player_by_id(server->sprites, msg.player_id);
+	new_projectile = gc_malloc(server->mem, sizeof(t_projectile));
+	new_projectile->x = msg.x;
+	new_projectile->y = msg.y;
+	new_projectile->direction = atan2(msg.dir_y, msg.dir_x) * (180.0f / M_PI);
+	new_projectile->speed = 2000;
+	new_projectile->next = NULL;
+	new_projectile->owner = NULL;
+	new_projectile->enemy = sprite;
+	new_projectile->next = server->projectiles;
+	new_projectile->floor = msg.floor;
+	new_projectile->damage = 0.2;
+	server->projectiles = new_projectile;
+	sprite->ammo--;
+}
+
+bool	has_line_of_sight_server(t_server *server, t_sprite *enemy,
+t_sprite *player)
+{
+	const float	dx = player->x - enemy->x;
+	const float	dy = player->y - enemy->y;
+	const float	distance = sqrt(dx * dx + dy * dy);
+	float		t;
+	float		ray[2];
+
+	t = 0;
+	if (fabsf(atan2(dy, dx) * (180.0f / M_PI) - enemy->direction)
+		<= enemy->fov * 0.5)
+	{
+		while (t < distance)
+		{
+			enemy->x += dx / distance * 0.1f;
+			enemy->y += dy / distance * 0.1f;
+			ray[0] = enemy->x;
+			ray[1] = enemy->y;
+			if (!can_move(server->map, server->door, ray, enemy->floor))
+				return (false);
+			t += 0.1f;
+		}
+		return (true);
+	}
+	return (false);
+}
+
+void	add_new_projectiles(t_server *server, t_sprite *enemy,
+float angle_to_player)
+{
+	t_projectile	*new_projectile;
+
+	new_projectile = gc_malloc(server->mem, sizeof(t_projectile));
+	new_projectile->x = enemy->x;
+	new_projectile->y = enemy->y;
+	new_projectile->direction = angle_to_player;
+	new_projectile->speed = 2000;
+	new_projectile->next = NULL;
+	new_projectile->owner = NULL;
+	new_projectile->enemy = enemy;
+	new_projectile->next = server->projectiles;
+	new_projectile->floor = enemy->floor;
+	new_projectile->damage = 0.09f;
+	server->projectiles = new_projectile;
+}
+
+void	shoot_at_player_server(t_sprite *enemy, t_sprite *player_pos,
+t_server *server)
+{
+	const float	dx = player_pos->x - enemy->x;
+	const float	dy = player_pos->y - enemy->y;
+	const float	angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
+	float		angle_diff;
+
+	angle_diff = fmodf(fabsf(angle_to_player - enemy->direction), 360.0f);
+	if (angle_diff > 180.0f)
+		angle_diff = 360.0f - angle_diff;
+	if (enemy->animation > 0)
+		enemy->animation -= 15 * server->delta_time;
+	if (enemy->animation < 0)
+		enemy->selected_anim = 0;
+	if (angle_diff < 5.0f && enemy->shoot_delay <= 0)
+	{
+		enemy->selected_anim = 1;
+		enemy->animation = 5;
+		enemy->shoot_delay = 1;
+		add_new_projectiles(server, enemy, angle_to_player);
+	}
+	else if (enemy->shoot_delay > 0)
+		enemy->shoot_delay -= 0.6 * server->delta_time;
+}
+
+t_sprite	*get_target_player(t_server *server, t_sprite *current_enemy,
+float *distance)
+{
+	t_sprite	*current;
+	float		dx;
+	float		dy;
+
+	current = server->sprites;
+	while (current)
+	{
+		if (current->type != SPRITE_PLAYER || current->player_id < 0
+			|| current->floor != current_enemy->floor)
+		{
+			current = current->next;
+			continue ;
+		}
+		dx = current->x - current_enemy->x;
+		dy = current->y - current_enemy->y;
+		if (sqrt(dx * dx + dy * dy) < *distance && sqrt(dx * dx + dy * dy) < 10
+			&& has_line_of_sight_server(server, current_enemy, current))
+		{
+			*distance = sqrt(dx * dx + dy * dy);
+			return (current);
+		}
+		current = current->next;
+	}
+	return (NULL);
+}

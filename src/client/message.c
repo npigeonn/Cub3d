@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:05:54 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 13:19:31 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/02 18:41:53 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,29 +73,6 @@ static void	add_msg_chat(t_game *game, t_game_message msg)
 	game->chatbox->messages = new_msg;
 }
 
-static void	update_player_health(t_game *game, t_game_message msg)
-{
-	t_sprite	*current;
-
-	current = game->sprites;
-	if (msg.player_id == game->client->player_id)
-	{
-		game->player->health = msg.health;
-		game->time_regen = 0;
-		return ;
-	}
-	while (current)
-	{
-		if (current->type == SPRITE_PLAYER
-			&& current->player_id == msg.player_id)
-		{
-			current->health = msg.health;
-			break ;
-		}
-		current = current->next;
-	}
-}
-
 static int	gestion_message(t_game *game, t_game_message msg)
 {
 	if (msg.type == MSG_FULL)
@@ -119,6 +96,8 @@ static int	gestion_message(t_game *game, t_game_message msg)
 		update_enemies_client(game, msg);
 	else if (msg.type == MSG_PLAYER_HIT)
 		update_player_health(game, msg);
+	else if (msg.type == MSG_DESTROY_SPRITE)
+		destroy_sprite(game, msg);
 	return (1);
 }
 

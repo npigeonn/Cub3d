@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/07 02:28:50 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/07 03:36:42 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/07 18:43:41 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,100 +40,46 @@ bool	is_a_player(char *line)
 	return (true);
 }
 
-// static void	fill_player_data(t_player_stats *player, char *line)
-// {
-// 	sscanf(line, "%49[^,],%d,%d,%d,%d,%f",
-// 		player->name,
-// 		&player->games_played,
-// 		&player->victories,
-// 		&player->defeats,
-// 		&player->kills,
-// 		&player->play_time_hours);
-// }
-
-// static int	init_load_player_stats(t_game *game, FILE *file,
-// const char *filename, int *num_players)
-// {
-// 	char	line[256];
-
-// 	if (!file)
-// 	{
-// 		printf("Error opening file: %s\n", filename);
-// 		return (0);
-// 	}
-// 	*num_players = 0;
-// 	while (fgets(line, sizeof(line), file))
-// 	{
-// 		if (is_a_player(line))
-// 			(*num_players)++;
-// 	}
-// 	return (1);
-// }
-
-// t_player_stats	*load_player_stats(t_game *game, const char *filename,
-// int *num_players)
-// {
-// 	FILE			*file;
-// 	t_player_stats	*stats;
-// 	char			line[256];
-// 	int				i;
-
-// 	file = fopen(filename, "r");
-// 	if (!init_load_player_stats(game, file, filename, num_players))
-// 		return (NULL);
-// 	rewind(file);
-// 	stats = gc_malloc(game->mem, sizeof(t_player_stats) * (*num_players));
-// 	i = 0;
-// 	while (i < *num_players)
-// 	{
-// 		fgets(line, sizeof(line), file);
-// 		if (!is_a_player(line))
-// 		{
-// 			i--;
-// 			continue ;
-// 		}
-// 		fill_player_data(&stats[i], line);
-// 		i++;
-// 	}
-// 	fclose(file);
-// 	return (stats);
-// }
-
-t_player_stats*	load_player_stats(t_game *game, const char *filename, int *num_players)
+bool	check_condition(FILE *file, int *num_players)
 {
-	FILE			*file;
-	t_player_stats	*stats;
-	char			line[256];
-	
-	file = fopen(filename, "r");
+	char	line[256];
+
 	if (!file)
-	{
-		printf("Error opening file: %s\n", filename);
-		return NULL;
-	}
+		return (false);
 	*num_players = 0;
 	while (fgets(line, sizeof(line), file))
 	{
 		if (is_a_player(line))
 			(*num_players)++;
 	}
+	return (true);
+}
+
+t_player_stats	*load_player_stats(t_game *game, const char *filename,
+int *num_players)
+{
+	FILE			*file;
+	t_player_stats	*stats;
+	char			line[256];
+	int				i;
+
+	file = fopen(filename, "r");
+	if (!check_condition(file, num_players))
+		return (NULL);
 	rewind(file);
 	stats = gc_malloc(game->mem, sizeof(t_player_stats) * (*num_players));
-	for (int i = 0; i < *num_players; i++)
+	i = -1;
+	while (++i < *num_players)
 	{
 		fgets(line, sizeof(line), file);
 		if (!is_a_player(line))
 		{
 			i--;
-			continue;
+			continue ;
 		}
-		sscanf(line, "%49[^,],%d,%d,%d,%d,%f",
-				stats[i].name,
-				&stats[i].games_played,
-				&stats[i].victories,
-				&stats[i].defeats,
-				&stats[i].kills,
-				&stats[i].play_time_hours);
+		sscanf(line, "%[^,],%d,%d,%d,%d,%f", stats[i].name, &stats[i].games_played,
+			&stats[i].victories, &stats[i].defeats, &stats[i].kills,
+			&stats[i].play_time_hours);
 	}
 	fclose(file);
 	return (stats);

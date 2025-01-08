@@ -6,21 +6,13 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:16:55 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/29 17:37:43 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/03 17:14:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
 #define COLLISION 0.25f
-
-static inline float	distance_squared(float x1, float y1, float x2, float y2)
-{
-	const float	dx = x2 - x1;
-	const float	dy = y2 - y1;
-
-	return (dx * dx + dy * dy);
-}
 
 void	send_heal_server(t_server *server, t_sprite *current)
 {

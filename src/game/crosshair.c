@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 10:16:38 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/09 15:35:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/02 18:05:12 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,8 @@ void	gun_draw(t_game *game)
 		info = init_draw_info(game->screen_height * 0.10, " ",
 				game->screen_width * 0.473, game->screen_height * 0.552);
 		draw_image(game, game->textures->fire, info);
-		create_projectile(game);
+		if (game->menu->status != MULTI_PLAYER)
+			create_projectile(game);
 	}
 	info = init_draw_info(game->screen_height * 0.33, " ",
 			game->screen_width * 0.38, game->screen_height * 0.61);

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:06:06 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/15 11:39:14 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/03 16:48:10 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ enum e_sprite_type
 	SPRITE_TELEPORTER
 };
 
-typedef	struct s_spritecast
+typedef struct s_spritecast
 {
 	float			r_x;
 	float			r_y;
@@ -58,7 +58,7 @@ typedef	struct s_spritecast
 }	t_spritecast;
 
 typedef struct s_sprite
-{ 
+{
 	float			x;
 	float			y;
 	float			x1;

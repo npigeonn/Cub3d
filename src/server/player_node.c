@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:03:47 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/11/14 10:57:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/03 17:13:16 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	add_player_node(t_server *server, int id, char *pseudo)
 	new_node->dir_y = 1;
 	new_node->floor = 0;
 	new_node->health = 100;
+	new_node->ammo = 30;
 	new_node->next = NULL;
 	if (!server->sprites)
 		server->sprites = new_node;
@@ -36,6 +37,50 @@ void	add_player_node(t_server *server, int id, char *pseudo)
 		while (current->next)
 			current = current->next;
 		current->next = new_node;
+	}
+}
+
+void	send_msg_destroy_sprite(t_server *server, t_sprite *current,
+t_sprite *p)
+{
+	t_game_message	msg;
+
+	current->still_exist = 0;
+	msg.type = MSG_DESTROY_SPRITE;
+	msg.x = current->x;
+	msg.y = current->y;
+	msg.floor = current->floor;
+	msg.player_id = p->player_id;
+	msg.health = p->health;
+	msg.ammo = p->ammo;
+	notify_all_players(server, msg);
+}
+
+void	detect_amo_and_health(t_server *server, t_sprite *p)
+{
+	t_sprite		*current;
+	t_game_message	msg;
+
+	current = server->sprites;
+	while (current)
+	{
+		if (current->type == SPRITE_AMMO && p->x == current->x
+			&& p->y == current->y && p->floor == current->floor
+			&& current->still_exist == 1)
+		{
+			p->ammo += 25;
+			send_msg_destroy_sprite(server, current, p);
+		}
+		if (current->type == SPRITE_HEALTH && p->x == current->x
+			&& p->y == current->y && p->floor == current->floor
+			&& current->still_exist == 1)
+		{
+			p->health += 25;
+			if (p->health > 1)
+				p->health = 1;
+			send_msg_destroy_sprite(server, current, p);
+		}
+		current = current->next;
 	}
 }
 
@@ -55,4 +100,5 @@ void	update_player_node(t_server *server, char *pseudo, t_game_message msg)
 	player->plane_x = msg.plane_x;
 	player->plane_y = msg.plane_y;
 	player->selected_anim = msg.selected_anim;
+	detect_amo_and_health(server, player);
 }

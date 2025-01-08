@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   game_over.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 08:35:41 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/10 12:40:56 by npigeon          ###   ########.fr       */
+/*   Updated: 2025/01/08 03:29:17 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ int keycode)
 	if (keycode != 1)
 		return ;
 	if (game->menu->button_selected == 1)
+	{
+		save_player_stats(game, "stats.txt");	
 		reset_game(game);
+	}
 	game->menu->button_selected = 0;
 	game->menu->text_field_selected = 0;
 }
@@ -38,51 +41,6 @@ void	update_game_over_button(t_game *game, int mouse_x, int mouse_y)
 			&& mouse_y <= y + 2 * (btn_height + spacing) + btn_height)
 			game->menu->button_selected = 1;
 	}
-}
-
-void	apply_fade_to(t_game *game, int color)
-{
-	int			x;
-	int			y;
-	int			clr;
-	int			new_color;
-	const float	alpha = game->fade_progress;
-
-	y = 0;
-	while (y < game->screen_height)
-	{
-		x = 0;
-		while (x < game->screen_width)
-		{
-			clr = get_pixel_color_from_image(game, x, y);
-			new_color = blend_colors(clr, color, alpha);
-			pixel_put(game, x, y, new_color);
-			x++;
-		}
-		y++;
-	}
-	game->fade_progress += 0.005;
-}
-
-static void	draw_game_over_bg(t_game *game)
-{
-	t_draw_info	info;
-
-	info = init_draw_info(game->screen_height, "", 0, 0);
-	info.width = game->screen_width;
-	info.color = 0x850606;
-	draw_rectangle(game, info);
-	x_fixes_cursor(game, 's');
-}
-
-static void	draw_game_over_text(t_game *game)
-{
-	t_draw_info	info;
-
-	info = init_draw_info(70, "You are dead.",
-			game->screen_width >> 1, game->screen_height * 0.4);
-	info.color = MENU_BUTTON_TEXT_COLOR;
-	draw_text(game, info);
 }
 
 static void	draw_main_menu_button_gm(t_game *game, int x, int y, int btn_width)
@@ -119,7 +77,7 @@ int btn_width)
 void	draw_game_over(t_game *game)
 {
 	const int	btn_width = game->screen_width * 0.25;
-	const int	btn_height = game->screen_height * 0.1;
+	const int	btn_h = game->screen_height * 0.1;
 	const int	spacing = game->screen_height * 0.05;
 	const int	x = (game->screen_width - btn_width) * 0.5;
 	const int	y = game->screen_height * 0.25;
@@ -127,9 +85,9 @@ void	draw_game_over(t_game *game)
 	draw_game_over_bg(game);
 	draw_game_over_text(game);
 	if (game->menu->button_selected == 1)
-		draw_main_menu_button_gm_hover(game, x, y + 2 * (btn_height + spacing),
+		draw_main_menu_button_gm_hover(game, x, y + 2 * (btn_h + spacing),
 			btn_width);
-	draw_main_menu_button_gm(game, x, y + 2 * (btn_height + spacing), btn_width);
+	draw_main_menu_button_gm(game, x, y + 2 * (btn_h + spacing), btn_width);
 	game->chatbox->visible = false;
 	game->chatbox->is_writting = false;
 }
