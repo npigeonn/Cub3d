@@ -46,9 +46,20 @@ bool	has_line_of_sight(t_game *game, t_sprite *sprite)
 	const float	dy = game->player->y - sprite->y;
 	const float	angle_to_player = atan2(dy, dx) * (180.0f / M_PI);
 	const float	angle_diff = fabsf(angle_to_player - sprite->dir);
+	t_sprite	*copy;
 
+	copy = gc_malloc(game->mem, sizeof(t_sprite));
+	ft_memcpy(copy, sprite, sizeof(t_sprite));
 	if (is_within_fov(angle_diff, sprite->fov))
-		return (check_line_of_sight(game, sprite, dx, dy));
+	{
+		if (check_line_of_sight(game, copy, dx, dy))
+		{
+			gc_free(game->mem, copy);
+			return (true);
+		}
+		return (false);
+	}
+	gc_free(game->mem, copy);
 	return (false);
 }
 

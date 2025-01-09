@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:05:01 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 16:41:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/09 13:09:49 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,21 @@ t_server *server)
 		enemy->shoot_delay -= 0.6 * server->delta_time;
 }
 
-t_sprite	*get_target_player(t_server *server, t_sprite *current_enemy,
-float *distance)
+t_sprite	*init_get_player(t_server *server, float *dx, float *dy, t_sprite *current)
+{
+	t_sprite	*copy;
+
+	*dx = current->x - server->current_enemy->x;
+	*dy = current->y - server->current_enemy->y;
+	copy = gc_malloc(server->mem, sizeof(t_sprite));
+	ft_memcpy(copy, current, sizeof(t_sprite));
+	return (copy);
+}
+
+t_sprite	*get_target_player(t_server *server, float *distance)
 {
 	t_sprite	*current;
+	t_sprite	*copy;
 	float		dx;
 	float		dy;
 
@@ -118,20 +129,20 @@ float *distance)
 	while (current)
 	{
 		if (current->type != SPRITE_PLAYER || current->player_id < 0
-			|| current->floor != current_enemy->floor)
+			|| current->floor != server->current_enemy->floor)
 		{
 			current = current->next;
 			continue ;
 		}
-		dx = current->x - current_enemy->x;
-		dy = current->y - current_enemy->y;
+		copy = init_get_player(server, &dx, &dy, current);
 		if (sqrt(dx * dx + dy * dy) < *distance && sqrt(dx * dx + dy * dy) < 10
-			&& has_line_of_sight_server(server, current_enemy, current))
+			&& has_line_of_sight_server(server, copy, current))
 		{
 			*distance = sqrt(dx * dx + dy * dy);
-			return (current);
+			return (gc_free(server->mem, copy), current);
 		}
 		current = current->next;
+		gc_free(server->mem, copy);
 	}
 	return (NULL);
 }

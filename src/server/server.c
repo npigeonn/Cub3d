@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/09 10:11:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/09 12:35:22 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,8 @@ void	create_server(t_game *game)
 	server = server_init(game);
 	ft_strcpy(server->name, game->client->name);
 	pthread_mutex_init(server->game_lock, NULL);
-	pthread_create(&server->main_server_thread, NULL, (void *)main_server, (void *)server);
+	pthread_create(&server->main_server_thread, NULL, (void *)main_server,
+		(void *)server);
 	while (!is_good)
 	{
 		pthread_mutex_lock(server->game_lock);

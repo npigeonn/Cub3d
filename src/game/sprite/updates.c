@@ -52,7 +52,8 @@ void	update_enemies_patrol_move(t_game *game, t_sprite *current)
 	}
 	else
 	{
-		current->direction = rand() % 360;
+		current->direction += (rand() % 60 - 30);
+		current->direction = fmod(current->direction, 360);
 		current->frame_count = 0;
 	}
 	if (current->floor == game->player->floor && current->spritecast->distance
@@ -65,8 +66,11 @@ void	update_enemies_patrol_move(t_game *game, t_sprite *current)
 
 void	update_enemies_patrol(t_game *game, t_sprite *current)
 {
+	float	target_angle;
+
 	if (current->frame_count % 220 == 0)
-		current->direction = rand() % 360;
+		current->direction += (rand() % 60 - 30);
+	current->direction = fmod(current->direction, 360);
 	current->animation += game->delta_time;
 	if (current->animation >= 2)
 		current->animation = 0.5;
@@ -76,9 +80,9 @@ void	update_enemies_patrol(t_game *game, t_sprite *current)
 		current->selected_anim = 2;
 	else if (current->animation >= 1.5 && current->animation < 2)
 		current->selected_anim = 3;
-	current->spritecast->angle_in_radians = current->direction * (M_PI / 180);
-	current->dir_x = cos(current->spritecast->angle_in_radians);
-	current->dir_y = sin(current->spritecast->angle_in_radians);
+	target_angle = current->direction * (M_PI / 180);
+	current->dir_x += (cos(target_angle) - current->dir_x) * 0.1;
+	current->dir_y += (sin(target_angle) - current->dir_y) * 0.1;
 	update_enemies_patrol_move(game, current);
 }
 
@@ -90,8 +94,8 @@ void	update_enemies_chase(t_game *game, t_sprite *current)
 
 	dx = game->player->x - current->x;
 	dy = game->player->y - current->y;
-	angle_in_radians = current->direction * (M_PI / 180);
 	current->direction = atan2(dy, dx) * (180 / M_PI);
+	angle_in_radians = current->direction * (M_PI / 180);
 	current->dir_x = cos(angle_in_radians);
 	current->dir_y = sin(angle_in_radians);
 	if (current->spritecast->distance < 7
