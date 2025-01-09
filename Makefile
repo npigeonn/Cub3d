@@ -6,7 +6,7 @@
 #    By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/03 18:08:11 by ybeaucou          #+#    #+#              #
-#    Updated: 2025/01/08 14:45:19 by ybeaucou         ###   ########.fr        #
+#    Updated: 2025/01/09 08:59:39 by ybeaucou         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ SRC_GAME = $(addprefix $(PATH_SRC)game/, draw.c draw2.c draw3.c draw4.c \
 				door.c door2.c door3.c wall.c wall2.c minimap.c minimap2.c \
 				crosshair.c health_point.c ammo.c add_letter_to_list.c \
 				game_loop.c game_loop2.c game_loop_utils.c dead.c)
-SRC_STATS = $(addprefix $(PATH_SRC)stats/, get_stats.c save_stats.c)
+SRC_STATS = $(addprefix $(PATH_SRC)stats/, get_stats.c save_stats.c save_stats2.c)
 SRC_MENU = $(addprefix $(PATH_SRC)menu/, join_server.c join_server2.c \
 				server_disconnected.c game_over.c get_pseudo.c \
 				get_key_name.c game_over_draw.c get_pseudo_handle.c func.c)
