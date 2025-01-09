@@ -50,7 +50,7 @@ SRC_MENU_MAIN = $(addprefix $(PATH_SRC)menu/main/, main.c draw.c check_update.c)
 SRC_MENU_MULTI = $(addprefix $(PATH_SRC)menu/multi/, discovery_delete.c discovery.c \
 					draw_shape.c multi.c update_check.c utils.c server_list.c)
 SRC_MENU_OPTION = $(addprefix $(PATH_SRC)menu/option/, keyboard.c keyboard2.c \
-						mouse.c mouse2.c option.c sound.c sound2.c update.c draw.c)
+						mouse.c mouse2.c option.c option2.c sound.c sound2.c update.c draw.c)
 SRC_MENU_STATS = $(addprefix $(PATH_SRC)menu/stats/, draw_menu.c scroll.c stats.c update.c)
 SRC_ALONE = $(addprefix $(PATH_SRC), main.c mlx_func.c init_texture.c init.c init2.c)
 SRC_PARSING = $(addprefix $(PATH_SRC)parsing/, free.c parsing.c teleportation.c \

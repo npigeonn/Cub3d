@@ -51,7 +51,7 @@ void	play_sound_global(t_game *game, t_sound *sound, Music music)
 			break ;
 		}
 		pthread_mutex_unlock(&game->mutex_music);
-		sleep(0.2);
+		usleep(200000);
 	}
 }
 

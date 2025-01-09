@@ -40,7 +40,7 @@ void	draw_text(t_game *game, t_draw_info info)
 	int			char_width;
 
 	text_width = get_text_width(game, info.str, info.height);
-	if (info.str == NULL)
+	if (info.str[0] == '\0')
 		return ;
 	info.x = info.x - (text_width >> 1);
 	info.y -= 7;
@@ -64,7 +64,7 @@ void	draw_text_left(t_game *game, t_draw_info info)
 	int			i;
 	int			char_width;
 
-	if (info.str == NULL)
+	if (info.str[0] == '\0')
 		return ;
 	i = -1;
 	info.y -= 7;
@@ -89,7 +89,7 @@ void	draw_text_right(t_game *game, t_draw_info info)
 	int			char_width;
 
 	text_width = get_text_width(game, info.str, info.height);
-	if (info.str == NULL)
+	if (info.str[0] == '\0')
 		return ;
 	info.x = info.x - text_width;
 	i = -1;

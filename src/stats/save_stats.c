@@ -10,10 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-#include "game.h"
+#include "cub3d.h"
 
 static bool	parse_player_stats(FILE *file, t_game *game, t_player_stats **stats,
 int *count)
@@ -43,7 +40,7 @@ int *count)
 	return (true);
 }
 
-static void	add_new_player_stats(t_game *game, FILE file int count)
+static void	add_new_player_stats(t_game *game, FILE *file)
 {
 	int	victories;
 	int	defeats;
@@ -88,7 +85,7 @@ FILE *file)
 		}
 	}
 	if (!found)
-		add_new_player_stats(game, file, count);
+		add_new_player_stats(game, file);
 }
 
 static bool	open_file_and_parse(const char *filename, t_game *game,
