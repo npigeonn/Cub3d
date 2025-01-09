@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 17:07:18 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:11:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,13 @@ void	init_server(t_server *server, int *opt)
 static void	main_server(void	*arg)
 {
 	int			opt;
-	pthread_t	logic_game_thread;
 	t_server	*server;
 
 	server = (t_server *)arg;
 	opt = 1;
 	server->addrlen = sizeof(server->address);
 	init_server(server, &opt);
-	pthread_create(&logic_game_thread, NULL, logic_game, arg);
+	pthread_create(&server->logic_game_thread, NULL, logic_game, arg);
 	loop_server(server);
 }
 
@@ -93,7 +92,6 @@ static t_server	*server_init(t_game *game)
 
 void	create_server(t_game *game)
 {
-	pthread_t	server_thread;
 	int			is_good;
 	t_server	*server;
 
@@ -101,7 +99,7 @@ void	create_server(t_game *game)
 	server = server_init(game);
 	ft_strcpy(server->name, game->client->name);
 	pthread_mutex_init(server->game_lock, NULL);
-	pthread_create(&server_thread, NULL, (void *)main_server, (void *)server);
+	pthread_create(&server->main_server_thread, NULL, (void *)main_server, (void *)server);
 	while (!is_good)
 	{
 		pthread_mutex_lock(server->game_lock);

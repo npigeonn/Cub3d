@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:03:47 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 15:48:05 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/09 10:00:57 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,15 +63,15 @@ void	detect_amo_and_health(t_server *server, t_sprite *p)
 	current = server->sprites;
 	while (current)
 	{
-		if (current->type == SPRITE_AMMO && p->x == current->x
-			&& p->y == current->y && p->floor == current->floor
+		if (current->type == SPRITE_AMMO && (int)p->x == (int)current->x
+			&& (int)p->y == (int)current->y && p->floor == current->floor
 			&& current->still_exist == 1)
 		{
 			p->ammo += 25;
 			send_msg_destroy_sprite(server, current, p);
 		}
-		if (current->type == SPRITE_HEALTH && p->x == current->x
-			&& p->y == current->y && p->floor == current->floor
+		if (current->type == SPRITE_HEALTH && (int)p->x == (int)current->x
+			&& (int)p->y == (int)current->y && p->floor == current->floor
 			&& current->still_exist == 1)
 		{
 			p->health += 25;

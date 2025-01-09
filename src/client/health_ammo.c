@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:42:01 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 15:55:04 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/09 09:55:37 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	destroy_sprite(t_game *game, t_game_message msg)
 	t_sprite	*current;
 
 	current = game->sprites;
+	printf("destroy sprite\n");
 	while (current)
 	{
 		if (current->x == msg.x && current->y == msg.y

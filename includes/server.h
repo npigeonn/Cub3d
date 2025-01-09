@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:06:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 15:52:18 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/09 09:36:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,8 @@ typedef struct s_server
 	t_sprite				*sprites;
 	t_projectile			*projectiles;
 	t_memory_table			*mem;
+	pthread_t				logic_game_thread;
+	pthread_t				main_server_thread;
 }	t_server;
 
 //broadcast
