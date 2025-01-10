@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 09:54:03 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/10 09:47:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/10 10:00:35 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	reset_game(t_game *game)
 	init_player(game, 0);
 	init_menu(game, 0);
 	init_client(game, 0);
+	load_game_texture(game);
 	free_map(game);
 	parsing(game->av, game);
 	init_img(game);
