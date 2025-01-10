@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/10 09:26:37 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/10 09:41:15 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ void	parsing(char **av, t_game *game)
 {
 	op_in(av, game);
 	init_data(game);
+	printf("av[game->arg_map] = %s\n", av[game->arg_map]);
 	textures(av[game->arg_map], game);
 	map_set_up(av, game);
 	if (count_spawns(game) != 1)
