@@ -50,23 +50,12 @@ void	draw_menu_message(t_game *game, const char *action)
 
 void	show_menu_message(t_game *game)
 {
-	const int	width = 350 + 160;
-	t_draw_info	info;
-
 	if (game->menu->message == OPEN_DOOR)
 		draw_menu_message(game, " to open");
 	else if (game->menu->message == CLOSE_DOOR)
 		draw_menu_message(game, " to close");
 	else if (game->menu->message == TELEPORT)
-	{
-		info = init_draw_info(40, "", (game->screen_width - width) * 0.5 - 80,
-				(game->screen_height - 40) * 0.5 - 120);
-		info.width = width;
-		info.height = 40;
-		info.color = MENU_BUTTON_COLOR;
-		draw_rectangle(game, info);
 		draw_menu_message(game, " to teleport");
-	}
 }
 
 void	calculate_delta_time(t_game *game)
