@@ -6,11 +6,39 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 09:54:03 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/10 10:00:35 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/10 11:59:39 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
+
+void	free_last_game_texture(t_game *game)
+{
+	mlx_destroy_image(game->mlx, game->textures->north->img);
+	mlx_destroy_image(game->mlx, game->textures->south->img);
+	mlx_destroy_image(game->mlx, game->textures->west->img);
+	mlx_destroy_image(game->mlx, game->textures->east->img);
+	mlx_destroy_image(game->mlx, game->textures->door->img);
+	mlx_destroy_image(game->mlx, game->textures->tp->img);
+	if (game->textures->color_f == -1)
+		mlx_destroy_image(game->mlx, game->textures->floor->img);
+	if (game->textures->color_c == -1)
+		mlx_destroy_image(game->mlx, game->textures->ceil->img);
+	// mlx_destroy_image(game->mlx, game->textures->enemy->img);
+	// mlx_destroy_image(game->mlx, game->textures->enemy_fire->img);
+	// mlx_destroy_image(game->mlx, game->textures->enemy_death->img);
+	gc_free(game->mem, game->textures->north);
+	gc_free(game->mem, game->textures->south);
+	gc_free(game->mem, game->textures->west);
+	gc_free(game->mem, game->textures->east);
+	gc_free(game->mem, game->textures->door);
+	gc_free(game->mem, game->textures->tp);
+	gc_free(game->mem, game->textures->floor);
+	gc_free(game->mem, game->textures->ceil);
+	// gc_free(game->mem, game->textures->enemy);
+	// gc_free(game->mem, game->textures->enemy_fire);
+	// gc_free(game->mem, game->textures->enemy_death);
+}
 
 void	reset_game(t_game *game)
 {
@@ -24,11 +52,12 @@ void	reset_game(t_game *game)
 		gc_free(game->mem, current);
 		current = next;
 	}
+	free_last_game_texture(game);
 	init_var(game, 0);
 	init_player(game, 0);
 	init_menu(game, 0);
 	init_client(game, 0);
-	load_game_texture(game);
+	// load_game_texture(game);
 	free_map(game);
 	parsing(game->av, game);
 	init_img(game);

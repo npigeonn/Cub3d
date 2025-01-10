@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 16:30:42 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/10 11:17:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -374,6 +374,7 @@ void		show_menu_message(t_game *game);
 void		reset_game(t_game *game);
 void		cast_rays(t_game *game, t_raycast *r);
 void		cast_floor(t_game *game, t_floorcast *floorcast);
+void		free_last_game_texture(t_game *game);
 
 //menu
 void		draw_main_menu(t_game *game);

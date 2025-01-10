@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 20:14:08 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 14:52:32 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/10 11:01:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,13 @@ static void	init_player2(t_game *game, int malloc)
 	game->player->stats->distanc_travel = 0;
 	game->player->animation = 0;
 	game->music_dif = 0;
-	pthread_mutex_init(&game->mutex, NULL);
-	pthread_mutex_init(&game->mutex_music, NULL);
 	game->player->selected_anim = 0;
-	init_player_keycode(game, malloc);
+	if (malloc)
+	{
+		pthread_mutex_init(&game->mutex, NULL);
+		pthread_mutex_init(&game->mutex_music, NULL);
+		init_player_keycode(game, malloc);
+	}
 }
 
 void	init_player(t_game	*game, int malloc)
