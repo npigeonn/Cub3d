@@ -12,15 +12,29 @@
 
 #include "../../includes/cub3d.h"
 
-static int	get_texture_color(t_floorcast *f, int x, t_image *t)
-{
-	const float	f_x = f->floor_x + x * f->floor_step_x;
-	const float	f_y = f->floor_y + x * f->floor_step_y;
-	const int	t_x = (int)(f_x * f->f_tex_width) % f->f_tex_width;
-	const int	t_y = (int)(f_y * f->f_tex_height) % f->f_tex_height;
+// static int	get_texture_color(t_floorcast *f, int x, t_image *t)
+// {
+// 	const float	f_x = f->floor_x + x * f->floor_step_x;
+// 	const float	f_y = f->floor_y + x * f->floor_step_y;
+// 	const int	t_x = (int)(f_x * f->f_tex_width) % f->f_tex_width;
+// 	const int	t_y = (int)(f_y * f->f_tex_height) % f->f_tex_height;
 
-	return (*((int *)(f->f_tex_data + t_y * t->size_line + t_x * f->f_bpp)));
+// 	return (*((int *)(f->f_tex_data + t_y * t->size_line + t_x * f->f_bpp)));
+// }
+
+static int get_texture_color(t_floorcast *f, int x, t_image *t)
+{
+    if (!f || !t || !f->f_tex_data)
+        return (0); // Retourner une couleur par défaut si les données sont invalides
+
+    const float f_x = f->floor_x + x * f->floor_step_x;
+    const float f_y = f->floor_y + x * f->floor_step_y;
+    const int t_x = (int)(f_x * f->f_tex_width) % f->f_tex_width;
+    const int t_y = (int)(f_y * f->f_tex_height) % f->f_tex_height;
+
+    return (*((int *)(f->f_tex_data + t_y * t->size_line + t_x * f->f_bpp)));
 }
+
 
 static int	get_color(t_game *game, t_floorcast *floorcast, int x, int y)
 {
