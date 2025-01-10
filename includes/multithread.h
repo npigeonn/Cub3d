@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 19:09:07 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 16:28:28 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/10 09:25:10 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,5 +65,6 @@ void	render_multithreaded(t_game *game);
 void	init_thread_pool(t_game *game, int num_threads);
 void	free_all_pool(t_game *game);
 void	create_threads(t_game *game, t_thread_pool *pool, int num_threads);
+void	destroy_thread_pool(t_thread_pool	*pool);
 
 #endif

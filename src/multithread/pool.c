@@ -6,18 +6,16 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 20:16:27 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 16:48:36 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/10 09:26:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static void	destroy_thread_pool(t_block_info *param)
+void	destroy_thread_pool(t_thread_pool	*pool)
 {
-	t_thread_pool	*pool;
 	int				i;
 
-	pool = (t_thread_pool *)param->ptr;
 	pthread_mutex_lock(&pool->queue_mutex);
 	pool->shutdown = 1;
 	pthread_cond_broadcast(&pool->queue_cond);
@@ -35,7 +33,6 @@ static void	destroy_thread_pool(t_block_info *param)
 void	init_thread_pool(t_game *game, int num_threads)
 {
 	t_thread_pool	*pool;
-	t_block_info	*param;
 
 	pool = gc_malloc(game->mem, sizeof(t_thread_pool));
 	pool->num_threads = num_threads;
@@ -49,10 +46,6 @@ void	init_thread_pool(t_game *game, int num_threads)
 	pool->threads = gc_malloc(game->mem, sizeof(pthread_t) * num_threads);
 	create_threads(game, pool, num_threads);
 	game->pool = pool;
-	param = gc_malloc(pool->game->mem, sizeof(t_block_info));
-	param->ptr = pool;
-	gc_add_memory_block(pool->game->mem, NULL, destroy_thread_pool, param);
-	gc_free(pool->game->mem, param);
 }
 
 void	free_all_pool(t_game *game)

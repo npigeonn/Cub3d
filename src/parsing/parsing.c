@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/03 15:44:55 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/08 15:42:10 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/10 09:26:37 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,5 +102,4 @@ void	parsing(char **av, t_game *game)
 	game->check_w = 0;
 	floodfill(game);
 	door_ennemi_ammo_health_mngmt(game);
-	printf("color floor: %d\n", game->textures->color_c);
 }

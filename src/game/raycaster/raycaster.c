@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 16:05:17 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/10 09:24:44 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	handle_close(t_game *game)
 	game->is_running = false;
 	pthread_mutex_unlock(&game->mutex_music);
 	pthread_mutex_destroy(&game->mutex_music);
+	destroy_thread_pool(game->pool);
 	gc_exit(game->mem, 0);
 	return (0);
 }
