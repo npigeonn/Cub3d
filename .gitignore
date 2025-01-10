@@ -3,5 +3,8 @@ cub3D
 ./objs/*
 ./libs/minilibx-linux/*
 ./libs/minilibx-linux/
+./libs/raudio/*
+./libs/raudio/
 *.a
 .vscode/
+stats.txt
