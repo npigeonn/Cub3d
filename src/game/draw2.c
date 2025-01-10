@@ -82,7 +82,7 @@ void	set_width_all_letter(t_game *game)
 	int			index;
 
 	i = -1;
-	while (list[++i])
+	while (++i < 96)
 	{
 		width = get_char_width(game->images->alphanum_sprite, list[i]);
 		index = get_index_char(list[i]);
