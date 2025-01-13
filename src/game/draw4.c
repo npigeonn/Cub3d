@@ -35,7 +35,9 @@ void	secure_pixel_put(t_game *game, int x, int y, int color)
 	pixel = (int *)(img->data + offset);
 	if (x < 0 || x >= game->screen_width || y < 0 || y >= game->screen_height)
 		return ;
-	if (*pixel == 0)
+	if (!img || !img->data)
+        return;
+	if (pixel && *pixel == 0)
 		*pixel = color;
 }
 

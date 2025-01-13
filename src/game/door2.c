@@ -16,6 +16,8 @@ void	send_door_msg(t_game *game, t_door *door)
 {
 	t_game_message	msg_door;
 
+	if (game->menu->status != MULTI_PLAYER && game->menu->status != CHATING)
+		return ;
 	ft_bzero(&msg_door, sizeof(t_game_message));
 	msg_door.type = MSG_DOOR;
 	msg_door.x = door->x;
@@ -36,17 +38,9 @@ void	update_door_animation(t_game *game)
 	while (current)
 	{
 		if (current->open)
-		{
-			current->animation += 0.2 * game->delta_time;
-			if (current->animation > 1.0)
 				current->animation = 1.0;
-		}
 		else
-		{
-			current->animation -= 0.2 * game->delta_time;
-			if (current->animation < 0.0)
 				current->animation = 0.0;
-		}
 		current = current->next;
 	}
 }
@@ -56,12 +50,6 @@ bool	visible_door(t_door *door)
 	const float	anim = door->animation;
 
 	if (anim == 0)
-		return (true);
-	if (anim >= 0.2 && anim <= 0.3)
-		return (true);
-	if (anim >= 0.5 && anim <= 0.6)
-		return (true);
-	if (anim >= 0.8 && anim <= 0.9)
 		return (true);
 	return (false);
 }
