@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 12:25:16 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:37:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	*logic_game(void *arg)
 	float					seconds;
 
 	server = (t_server *)arg;
-	while (1)
+	while (!server->stop)
 	{
 		pthread_mutex_lock(server->game_lock);
 		use_queue_server(server);
@@ -101,5 +101,7 @@ void	*logic_game(void *arg)
 			update_projectiles_server(server);
 			pthread_mutex_unlock(server->game_lock);
 		}
+		usleep(500);
 	}
+	return (NULL);
 }

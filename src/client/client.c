@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 11:18:22 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:53:59 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,9 @@ void	reset_enemies(t_game *game)
 		if (current->type == SPRITE_ENEMY)
 		{
 			next = current->next;
+			pthread_mutex_lock(game->server->game_lock);
 			gc_free(game->mem, current);
+			pthread_mutex_unlock(game->server->game_lock);
 			if (previous)
 				previous->next = next;
 			else

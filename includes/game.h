@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 11:57:33 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:21:01 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,13 +288,14 @@ typedef struct s_server_info
 
 typedef struct s_client
 {
-	int			sock;
-	char		pseudo[20];
-	char		name[20];
-	char		ip[16];
-	int			player_id;
-	t_sprite	*sprites;
-	pthread_t	thread;
+	int				sock;
+	char			pseudo[20];
+	char			name[20];
+	char			ip[16];
+	int				player_id;
+	t_sprite		*sprites;
+	pthread_t		thread;
+	pthread_mutex_t	mutex;
 }	t_client;
 
 # define MAX_MESSAGE_LENGTH 256

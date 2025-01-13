@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:42:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/06 21:47:35 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:21:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,9 +125,12 @@ void	*discover_servers_thread(void *arg)
 				sizeof(buffer) - 1, 0, (struct sockaddr *)&recv_addr,
 				&addr_len);
 		discover_servers_loop(game, buffer, recv_addr);
+		pthread_mutex_lock(&game->client->mutex);
 		if (game->menu->status != SERVERS)
 			break ;
+		pthread_mutex_unlock(&game->client->mutex);
 	}
+	pthread_mutex_unlock(&game->client->mutex);
 	close(game->sockfd);
 	return (NULL);
 }

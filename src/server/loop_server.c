@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:06:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 17:07:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:45:48 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ struct epoll_event *event, int i)
 			epoll_ctl(server->epoll_fd, EPOLL_CTL_ADD, new_socket, event);
 			new_player(server, new_socket, pseudo);
 		}
+		pthread_mutex_lock(server->game_lock);
 		gc_free(server->mem, pseudo);
+		pthread_mutex_unlock(server->game_lock);
 	}
 	else
 		handle_client_receive_msg(server, events[i].data.fd);
@@ -54,13 +56,16 @@ void	loop_server(t_server *server)
 	if (epoll_ctl(server->epoll_fd, EPOLL_CTL_ADD,
 			server->server_fd, &event) == -1)
 		exit(EXIT_FAILURE);
-	while (1)
+	while (!server->stop)
 	{
-		num_events = epoll_wait(server->epoll_fd, events, MAX_PLAYERS, -1);
+		num_events = epoll_wait(server->epoll_fd, events, MAX_PLAYERS, 1000);
+		if (num_events == 0)
+			continue;
 		if (num_events == -1)
 			exit(EXIT_FAILURE);
 		i = -1;
 		while (++i < num_events)
 			loop_server_event(server, events, &event, i);
+		usleep(500);
 	}
 }

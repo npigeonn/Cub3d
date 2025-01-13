@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 12:45:26 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:01:54 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ static t_server	*server_init(t_game *game)
 
 	server = gc_malloc(game->mem, sizeof(t_server));
 	server->nb_player = 0;
+	server->stop = false;
 	server->game_queue = NULL;
 	server->server_ready = false;
 	server->game_lock = gc_malloc(game->mem, sizeof(pthread_mutex_t));
@@ -85,29 +86,7 @@ static t_server	*server_init(t_game *game)
 	server->projectiles = game->projectiles;
 	server->delta_time = 0;
 	server->last_time = game->last_time;
-	int i;
-
-	// Comptez le nombre d'éléments dans game->av
-	for (i = 0; game->av[i]; i++)
-		;
-
-	// Allouez de la mémoire pour le tableau de pointeurs
-	server->av = gc_malloc(game->mem, (i + 1) * sizeof(char *));
-	if (!server->av)
-		gc_error(game->mem, "Allocation error");
-
-	// Copiez chaque chaîne
-	for (i = 0; game->av[i]; i++)
-	{
-		server->av[i] = gc_malloc(game->mem, strlen(game->av[i]) + 1); // +1 pour '\0'
-		if (!server->av[i])
-			gc_error(game->mem, "Allocation error");
-		strcpy(server->av[i], game->av[i]);
-	}
-
-	// Terminez le tableau par NULL
-	server->av[i] = NULL;
-
+	server->av = game->av;
 	server->mem = game->mem;
 	return (server);
 }
@@ -131,5 +110,5 @@ void	create_server(t_game *game)
 		usleep(200);
 	}
 	init_broadcast(server);
-	// game->server = server;
+	game->server = server;
 }

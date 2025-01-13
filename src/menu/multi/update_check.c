@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:41:14 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 15:27:52 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:23:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,13 @@ void	update_multiplayer_click(t_game *game, int keycode)
 {
 	if (keycode != 1)
 		return ;
+	pthread_mutex_lock(&game->client->mutex);
 	if (game->menu->button_selected == 3)
 		game->menu->status = MAIN_MENU;
 	else if (game->menu->button_selected == 2)
 	{
 		game->menu->status = SERVER_CREATE;
+		pthread_mutex_unlock(&game->client->mutex);
 		pthread_join(game->discover_servers_thread, NULL);
 		return ;
 	}
@@ -34,6 +36,7 @@ void	update_multiplayer_click(t_game *game, int keycode)
 	else if (game->menu->server_selected != 0)
 		get_ip_server(game);
 	game->menu->button_selected = 0;
+	pthread_mutex_unlock(&game->client->mutex);
 }
 
 void	check_button_hover_multi(t_game *game, int mouse_x, int mouse_y)

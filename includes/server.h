@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:06:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/09 12:54:22 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:02:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ typedef struct s_server
 	pthread_t				logic_game_thread;
 	pthread_t				main_server_thread;
 	t_sprite				*current_enemy;
+	bool					stop;
 }	t_server;
 
 //broadcast
