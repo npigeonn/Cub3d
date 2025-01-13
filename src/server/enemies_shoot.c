@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:05:01 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/09 13:09:49 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 09:40:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,8 @@ t_server *server)
 		enemy->shoot_delay -= 0.6 * server->delta_time;
 }
 
-t_sprite	*init_get_player(t_server *server, float *dx, float *dy, t_sprite *current)
+static t_sprite	*init_get_player(t_server *server, float *dx, float *dy,
+t_sprite *current)
 {
 	t_sprite	*copy;
 

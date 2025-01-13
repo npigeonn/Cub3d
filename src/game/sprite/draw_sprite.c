@@ -59,6 +59,23 @@ void	draw_sprites2(t_game *game, t_sprite *current)
 	}
 }
 
+void	draw_sprite_tp(t_game *game, t_sprite *current)
+{
+	t_sprite	sprite;
+
+	if (current->floor != game->player->floor
+		&& current->floor1 != game->player->floor)
+		return ;
+	ft_memcpy(&sprite, current, sizeof(t_sprite));
+	if (current->floor1 == game->player->floor)
+	{
+		sprite.x = current->x1;
+		sprite.y = current->y1;
+		sprite.floor = current->floor1;
+	}
+	draw_sprite(game, game->textures->tp, &sprite);
+}
+
 void	draw_sprites(t_game *game)
 {
 	t_sprite	*current;
@@ -70,12 +87,7 @@ void	draw_sprites(t_game *game)
 		if (game->menu->status == MULTI_PLAYER || game->menu->status == CHATING)
 			pthread_mutex_lock(&game->game_lock);
 		if (current->type == SPRITE_TELEPORTER)
-		{
-			if (current->floor == game->player->floor)
-				draw_sprite(game, game->textures->tp, current);
-			if (current->floor1 == game->player->floor)
-				draw_sprite(game, game->textures->tp, current);
-		}
+			draw_sprite_tp(game, current);
 		else if (current->type == SPRITE_EXIT
 			&& current->floor == game->player->floor)
 			draw_sprite(game, game->textures->exit, current);

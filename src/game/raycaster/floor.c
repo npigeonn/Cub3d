@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/19 01:01:10 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 16:08:10 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 09:15:05 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@ static int	get_texture_color(t_floorcast *f, int x, t_image *t)
 	const int	t_x = (int)(f_x * f->f_tex_width) % f->f_tex_width;
 	const int	t_y = (int)(f_y * f->f_tex_height) % f->f_tex_height;
 
+	if (t_x < 0 || t_y < 0)
+		return (0);
+	if (!f || !t || !t->data || !f->f_tex_data || !t->size_line || !f->f_bpp)
+		return (0);
 	return (*((int *)(f->f_tex_data + t_y * t->size_line + t_x * f->f_bpp)));
 }
 

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/10 11:50:53 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 09:12:01 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,6 @@ int	handle_close(t_game *game)
 	pthread_mutex_unlock(&game->mutex_music);
 	pthread_mutex_destroy(&game->mutex_music);
 	destroy_thread_pool(game->pool);
-	free_last_game_texture(game);
-	mlx_destroy_image(game->mlx, game->images->alphanum_sprite->img);
-	gc_free(game->mem, game->images->alphanum_sprite);
-	mlx_destroy_image(game->mlx, game->textures->bullet->img);
-	gc_free(game->mem, game->textures->bullet);
-	mlx_destroy_image(game->mlx, game->textures->weapon->img);
-	gc_free(game->mem, game->textures->weapon);
-	mlx_destroy_image(game->mlx, game->textures->fire->img);
-	gc_free(game->mem, game->textures->fire);
-	mlx_destroy_image(game->mlx, game->textures->ammo->img);
-	gc_free(game->mem, game->textures->ammo);
-	mlx_destroy_image(game->mlx, game->textures->health->img);
-	mlx_destroy_image(game->mlx, game->textures->exit->img);
-	gc_free(game->mem, game->textures->health);
-	gc_free(game->mem, game->textures->exit);
-	mlx_destroy_display(game->mlx);
-	free(game->mlx);
 	gc_exit(game->mem, 0);
 	return (0);
 }

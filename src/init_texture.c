@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 20:13:19 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/10 11:25:16 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 08:50:40 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	load_texture(t_game *game, t_image *img, char *path)
 {
+	t_block_info	*param;
+
 	img->img = mlx_xpm_file_to_image(game->mlx, path, &img->width,
 			&img->height);
 	if (!img->img)
@@ -24,10 +26,22 @@ void	load_texture(t_game *game, t_image *img, char *path)
 	}
 	img->data = mlx_get_data_addr(img->img, &img->bpp, &img->size_line,
 			&img->endian);
+	param = gc_malloc(game->mem, sizeof(t_block_info));
+	param->ptr = game->mlx;
+	param->ptr2 = img->img;
+	gc_add_memory_block(game->mem, img->img, destroy_mlx_img, param);
+	gc_free(game->mem, param);
 }
 
 static void	load_game_texture_malloc(t_game *game)
 {
+	t_block_info	*param;
+
+	param = gc_malloc(game->mem, sizeof(t_block_info));
+	param->ptr = game->mlx;
+	param->ptr2 = NULL;
+	gc_add_memory_block(game->mem, game->mlx, destroy_mlx_display, param);
+	gc_free(game->mem, param);
 	game->textures = gc_malloc(game->mem, sizeof(t_textures));
 	game->textures->east = gc_malloc(game->mem, sizeof(t_image));
 	game->textures->north = gc_malloc(game->mem, sizeof(t_image));
@@ -66,9 +80,10 @@ static void	load_game_texture2(t_game *game)
 	game->textures->health->sprite_width = game->textures->health->width;
 }
 
-void	load_game_texture(t_game *game)
+void	load_game_texture(t_game *game, int malloc)
 {
-	load_game_texture_malloc(game);
+	if (malloc)
+		load_game_texture_malloc(game);
 	load_texture(game, game->textures->health, "./assets/sprites/heart.xpm");
 	load_texture(game, game->textures->door, "./assets/sprites/ronflex.xpm");
 	load_texture(game, game->textures->tp, "./assets/sprites/kadabra.xpm");

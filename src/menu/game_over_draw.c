@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:53:32 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/03 16:32:35 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 09:10:20 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	apply_fade_to(t_game *game, int color)
 		}
 		y++;
 	}
-	game->fade_progress += 0.005;
+	game->fade_progress += 0.3 * game->delta_time;
 }
 
 void	draw_game_over_bg(t_game *game)

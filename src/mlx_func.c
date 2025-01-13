@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 20:11:33 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 14:50:34 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 08:45:31 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 void	destroy_mlx_img(t_block_info *params)
 {
-	mlx_destroy_image(params->ptr, params->ptr2);
+	if (params->ptr2 && params->ptr)
+		mlx_destroy_image(params->ptr, params->ptr2);
 }
 
 void	destroy_mlx_display(t_block_info *params)

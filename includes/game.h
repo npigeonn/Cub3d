@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/10 11:17:04 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 08:50:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -551,7 +551,7 @@ void		init_img(t_game *game);
 void		init_floorcast(t_game *game, t_floorcast *f);
 
 // load texture
-void		load_game_texture(t_game *game);
+void		load_game_texture(t_game *game, int malloc);
 void		load_texture(t_game *game, t_image *img, char *path);
 
 // collectable
