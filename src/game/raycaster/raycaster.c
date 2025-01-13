@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 09:12:01 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 11:38:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,19 @@
 
 int	handle_close(t_game *game)
 {
+	if (game->client->sock > 0)
+	{
+		close(game->client->sock);
+		game->client->sock = -1;
+		pthread_join(game->client->thread, NULL);
+	}
+	destroy_thread_pool(game->pool);
 	mlx_destroy_image(game->mlx, game->images->base->img);
 	mlx_destroy_window(game->mlx, game->win);
 	pthread_mutex_lock(&game->mutex_music);
 	game->is_running = false;
 	pthread_mutex_unlock(&game->mutex_music);
 	pthread_mutex_destroy(&game->mutex_music);
-	destroy_thread_pool(game->pool);
 	gc_exit(game->mem, 0);
 	return (0);
 }

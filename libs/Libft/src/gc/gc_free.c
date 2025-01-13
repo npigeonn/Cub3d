@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/23 18:40:38 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 13:22:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 11:39:03 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ static inline void	free_block(t_memory_block *block)
 	if (block->free_fun)
 		((void (*)(void *))block->free_fun)(block->ptr);
 	block->ptr = NULL;
-	free(block);
+	if (block)
+		free(block);
 	block = NULL;
 }
 

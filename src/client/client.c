@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 18:13:44 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/02 18:36:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 11:18:22 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ int	join_server(t_game *game)
 {
 	struct sockaddr_in	serv_addr;
 	char				pseudo[MAX_PSEUDO_LENGTH];
-	pthread_t			thread_id;
 
 	ft_strcpy(pseudo, game->client->pseudo);
 	reset_enemies(game);
@@ -116,6 +115,6 @@ int	join_server(t_game *game)
 	if (!manage_connection(game))
 		return (0);
 	pthread_mutex_init(&game->game_lock, NULL);
-	pthread_create(&thread_id, NULL, receive_updates, game);
+	pthread_create(&game->client->thread, NULL, receive_updates, game);
 	return (1);
 }

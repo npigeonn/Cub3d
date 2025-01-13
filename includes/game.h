@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 10:54:51 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 08:50:47 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/13 11:57:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <netdb.h>
 # include <pthread.h>
 # include "raudio.h"
+
+typedef struct s_server t_server;
 
 typedef struct s_projectile
 {
@@ -292,6 +294,7 @@ typedef struct s_client
 	char		ip[16];
 	int			player_id;
 	t_sprite	*sprites;
+	pthread_t	thread;
 }	t_client;
 
 # define MAX_MESSAGE_LENGTH 256
@@ -347,6 +350,7 @@ typedef struct s_game
 	t_projectile			*projectiles;
 	t_client				*client;
 	t_server_info			*servers;
+	t_server				*server;
 	pthread_t				discover_servers_thread;
 	pthread_mutex_t			game_lock;
 	float					fade_progress;
