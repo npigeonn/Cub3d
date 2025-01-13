@@ -69,9 +69,11 @@ void	draw_sprite_tp(t_game *game, t_sprite *current)
 	ft_memcpy(&sprite, current, sizeof(t_sprite));
 	if (current->floor1 == game->player->floor)
 	{
-		sprite.x = current->x1;
-		sprite.y = current->y1;
-		sprite.floor = current->floor1;
+		if (current->floor == game->player->floor)
+			draw_sprite(game, game->textures->tp, &sprite);
+		sprite.x = sprite.x1;
+		sprite.y = sprite.y1;
+		sprite.floor = sprite.floor1;
 	}
 	draw_sprite(game, game->textures->tp, &sprite);
 }
