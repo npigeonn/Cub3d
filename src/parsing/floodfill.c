@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floodfill.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/14 09:01:57 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:24:26 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,9 +104,7 @@ int	map_copy(t_game *game)
 		game->map_cy[i][j] = NULL;
 		while (--j >= 0)
 		{
-			pthread_mutex_lock(&game->mutex);
 			game->map_cy[i][j] = gc_strdup(game->mem, game->map[i][j]);
-			pthread_mutex_unlock(&game->mutex);
 			if (!game->map_cy[i][j])
 				return (gc_exit(game->mem, err("error system\n")), 1);
 		}
@@ -117,9 +115,9 @@ int	map_copy(t_game *game)
 void	floodfill(t_game *game)
 {
 	search_departure_position(game);
-	if (!map_copy(game)
-		|| !check_path(game, game->player->x, game->player->y,
-			game->player->floor))
-		gc_exit(game->mem, err("No exit...\n"));
-	free_map_copy(game);
 }
+	// if (!map_copy(game)
+	// 	|| !check_path(game, game->player->x, game->player->y,
+	// 		game->player->floor))
+	// 	gc_exit(game->mem, err("No exit...\n"));
+	// free_map_copy(game);
