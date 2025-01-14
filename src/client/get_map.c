@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:35:58 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 16:04:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 08:53:12 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,10 @@ int	receive_map_from_server(t_game *game, int client_socket)
 	if (!file)
 		return (0);
 	tmp = game->av;
+	pthread_mutex_lock(&game->mutex);
 	game->av = gc_malloc(game->mem, sizeof(char *) * 3);
 	game->av[0] = gc_strdup(game->mem, "cub3d");
+	pthread_mutex_unlock(&game->mutex);
 	game->av[1] = file;
 	game->av[2] = NULL;
 	parsing(game->av, game);

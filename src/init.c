@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 13:20:37 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 08:51:05 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	init_client(t_game *game, int malloc)
 	{
 		game->client = gc_malloc(game->mem, sizeof(t_client));
 		pthread_mutex_init(&game->client->mutex, NULL);
+		pthread_mutex_init(&game->mutex, NULL);
 		game->client->pseudo[0] = '\0';
 	}
 	game->client->name[0] = '\0';

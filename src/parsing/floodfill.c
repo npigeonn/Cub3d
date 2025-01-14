@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   floodfill.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/04 15:17:49 by npigeon           #+#    #+#             */
-/*   Updated: 2024/11/08 09:37:38 by npigeon          ###   ########.fr       */
+/*   Updated: 2025/01/14 09:01:57 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,9 @@ int	map_copy(t_game *game)
 		game->map_cy[i][j] = NULL;
 		while (--j >= 0)
 		{
+			pthread_mutex_lock(&game->mutex);
 			game->map_cy[i][j] = gc_strdup(game->mem, game->map[i][j]);
+			pthread_mutex_unlock(&game->mutex);
 			if (!game->map_cy[i][j])
 				return (gc_exit(game->mem, err("error system\n")), 1);
 		}

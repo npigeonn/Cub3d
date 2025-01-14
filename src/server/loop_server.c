@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:06:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 13:45:48 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 08:55:38 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ struct epoll_event *event, int i)
 			epoll_ctl(server->epoll_fd, EPOLL_CTL_ADD, new_socket, event);
 			new_player(server, new_socket, pseudo);
 		}
-		pthread_mutex_lock(server->game_lock);
+		pthread_mutex_lock(&server->mutex);
 		gc_free(server->mem, pseudo);
-		pthread_mutex_unlock(server->game_lock);
+		pthread_mutex_unlock(&server->mutex);
 	}
 	else
 		handle_client_receive_msg(server, events[i].data.fd);

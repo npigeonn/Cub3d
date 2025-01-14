@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 16:59:37 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/09 13:08:08 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 09:24:41 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	update_enemies_server(t_server *server)
 		}
 		min_distance = INFINITY;
 		server->current_enemy = current_enemy;
-		target_player = get_target_player(server, &min_distance);
+		target_player = get_target_player(server, &min_distance, current_enemy);
 		if (!target_player)
 			move_enemy_patrol(current_enemy, server);
 		else

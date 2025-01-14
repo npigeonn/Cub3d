@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:59 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 12:39:38 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 09:11:04 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ void	send_info(t_server *server, t_game_message msg)
 	send(server->client_sockets[msg.player_id],
 		&msg, sizeof(t_game_message), 0);
 	send_file_to_client(server->client_sockets[msg.player_id], server->av[1]);
+	printf("Map sent to player %d\n", msg.player_id);
 	send_all_players(server, msg.player_id);
 }
 

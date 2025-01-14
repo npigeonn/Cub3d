@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/14 11:06:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 13:02:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 09:24:12 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ typedef struct s_server
 	t_memory_table			*mem;
 	pthread_t				logic_game_thread;
 	pthread_t				main_server_thread;
+	pthread_mutex_t			mutex;
 	t_sprite				*current_enemy;
 	bool					stop;
 }	t_server;
@@ -110,7 +111,7 @@ int			init_broadcast(t_server *server);
 //find player
 t_sprite	*find_player_by_pseudo(t_server *server, char *pseudo);
 t_sprite	*find_player_by_id(t_sprite *players, int id);
-t_sprite	*get_target_player(t_server *server, float *min_distance);
+t_sprite	*get_target_player(t_server *server, float *min_distance, t_sprite *current_enemy);
 
 //logic
 void		*logic_game(void *arg);

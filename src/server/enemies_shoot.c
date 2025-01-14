@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 17:05:01 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 09:40:40 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 09:24:01 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,12 +114,13 @@ t_sprite *current)
 
 	*dx = current->x - server->current_enemy->x;
 	*dy = current->y - server->current_enemy->y;
+	
 	copy = gc_malloc(server->mem, sizeof(t_sprite));
 	ft_memcpy(copy, current, sizeof(t_sprite));
 	return (copy);
 }
 
-t_sprite	*get_target_player(t_server *server, float *distance)
+t_sprite	*get_target_player(t_server *server, float *distance, t_sprite *current_enemy)
 {
 	t_sprite	*current;
 	t_sprite	*copy;
@@ -130,7 +131,7 @@ t_sprite	*get_target_player(t_server *server, float *distance)
 	while (current)
 	{
 		if (current->type != SPRITE_PLAYER || current->player_id < 0
-			|| current->floor != server->current_enemy->floor)
+			|| current->floor != current_enemy->floor)
 		{
 			current = current->next;
 			continue ;

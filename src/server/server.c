@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:02:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 13:01:54 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 08:53:33 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,14 @@ static t_server	*server_init(t_game *game)
 {
 	t_server	*server;
 
+	pthread_mutex_lock(&game->mutex);
 	server = gc_malloc(game->mem, sizeof(t_server));
 	server->nb_player = 0;
 	server->stop = false;
 	server->game_queue = NULL;
 	server->server_ready = false;
 	server->game_lock = gc_malloc(game->mem, sizeof(pthread_mutex_t));
+	pthread_mutex_unlock(&game->mutex);
 	server->map = game->map;
 	server->x = game->player->x;
 	server->y = game->player->y;
@@ -88,6 +90,7 @@ static t_server	*server_init(t_game *game)
 	server->last_time = game->last_time;
 	server->av = game->av;
 	server->mem = game->mem;
+	server->mutex = game->mutex;
 	return (server);
 }
 

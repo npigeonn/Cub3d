@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 12:23:37 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 13:46:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 09:13:52 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ void	create_task(t_game *game, int x, t_task_type type)
 {
 	t_task	*task;
 
-	if (game->server)
-		pthread_mutex_lock(game->server->game_lock);
 	task = (t_task *)gc_malloc(game->mem, sizeof(t_task));
 	task->x = x;
 	task->game = game;
@@ -26,8 +24,6 @@ void	create_task(t_game *game, int x, t_task_type type)
 		task->raycast = gc_malloc(game->mem, sizeof(t_raycast));
 	else if (type == CAST_FLOOR)
 		task->floorcast = gc_malloc(game->mem, sizeof(t_floorcast));
-	if (game->server)
-		pthread_mutex_unlock(game->server->game_lock);
 	task->type = type;
 	pthread_mutex_lock(&game->pool->queue_mutex);
 	if (game->pool->task_queue == NULL)
