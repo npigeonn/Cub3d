@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 15:46:56 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/13 13:02:02 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:14:47 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	handle_close(t_game *game)
 		game->server->stop = true;
 		pthread_join(game->server->logic_game_thread, NULL);
 		pthread_join(game->server->main_server_thread, NULL);
+		pthread_join(game->server->broadcast_thread, NULL);
 	}
 	destroy_thread_pool(game->pool);
 	mlx_destroy_image(game->mlx, game->images->base->img);

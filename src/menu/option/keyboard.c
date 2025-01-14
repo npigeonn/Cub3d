@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:59:03 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/07 13:36:44 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:40:07 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,10 @@ void	draw_options_keyboard(t_game *game)
 	header_info.color = MENU_BUTTON_TEXT_COLOR;
 	draw_text(game, header_info);
 	i = -1;
-	while (++i < 8)
+	while (++i < 7)
 	{
 		draw_binding_option(game, bindings, i, info);
 		info[2] += 50;
 	}
+	gc_free(game->mem, bindings);
 }

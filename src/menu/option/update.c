@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 19:05:18 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 15:38:27 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:42:23 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,10 @@ int keycode)
 		update_option_menu_click_keyboard(game, mouse_x, mouse_y);
 	if (game->menu->status == OPTIONS_MOUSE)
 		update_mouse_options_interaction(game, mouse_x, mouse_y);
-	if (game->menu->status == OPTIONS_SOUND)
-		update_sound_options_interaction(game, mouse_x, mouse_y);
 	if (game->menu->button_selected == 1)
 		game->menu->status = OPTIONS_KEYBOARD;
 	else if (game->menu->button_selected == 2)
 		game->menu->status = OPTIONS_MOUSE;
-	else if (game->menu->button_selected == 3)
-		game->menu->status = OPTIONS_SOUND;
 	else if (game->menu->button_selected == 4)
 		game->menu->status = game->menu->last_status;
 	else
@@ -65,8 +61,6 @@ int panel_y)
 		game->menu->button_selected = 4;
 	if (game->menu->status == OPTIONS_MOUSE)
 		update_option_menu_button_mouse(game, mouse_x, mouse_y);
-	if (game->menu->status == OPTIONS_SOUND)
-		update_option_menu_button_sound(game, mouse_x, mouse_y);
 }
 
 void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y)

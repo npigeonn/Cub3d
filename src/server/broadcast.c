@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 23:56:18 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 15:42:58 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:13:50 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static void	thread_broadcast_server_info(t_server *server)
 	broadcast_addr.sin_family = AF_INET;
 	broadcast_addr.sin_port = htons(BROADCAST_PORT);
 	broadcast_addr.sin_addr.s_addr = htonl(INADDR_BROADCAST);
-	while (1)
+	while (!server->stop)
 	{
 		broadcast_server_info(server, &broadcast_addr);
 		sleep(5);
@@ -41,7 +41,6 @@ static void	thread_broadcast_server_info(t_server *server)
 
 int	init_broadcast(t_server *server)
 {
-	pthread_t	broadcast_thread;
 	int			broadcast;
 
 	broadcast = 1;
@@ -54,7 +53,7 @@ int	init_broadcast(t_server *server)
 		close(server->sock_bc);
 		return (-1);
 	}
-	pthread_create(&broadcast_thread, NULL,
+	pthread_create(&server->broadcast_thread, NULL,
 		(void *)thread_broadcast_server_info, server);
 	return (0);
 }

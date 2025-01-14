@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 19:52:38 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/14 09:01:00 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:23:02 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,7 @@ void	map_ready(char **av, t_game *game, int floor)
 			line = switch_line(game->mem, line, fd);
 		while (line && line[0] != '\n')
 		{
-			pthread_mutex_lock(&game->mutex);
 			game->map[j][i] = gc_strdup(game->mem, line);
-			pthread_mutex_unlock(&game->mutex);
 			if (!game->map[j][i])
 				gc_exit(game->mem, err("error system\n"));
 			i++;
@@ -106,10 +104,7 @@ void	map_ready(char **av, t_game *game, int floor)
 		game->map[j][i] = NULL;
 	}
 	game->map[j] = NULL;
-	pthread_mutex_lock(&game->mutex);
-	gc_free(game->mem, line);
-	pthread_mutex_unlock(&game->mutex);
-	return ((void)close(fd));
+	return ((void)gc_free(game->mem, line), (void)close(fd));
 }
 
 void	map_set_up(char **av, t_game *game)

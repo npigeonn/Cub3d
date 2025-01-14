@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 16:56:43 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 22:19:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:55:11 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,24 @@ void	draw_section_separator(t_game *game, float x, float y, float height)
 
 void	draw_options_all_buttons(t_game *game, int start_y, int button_height)
 {
-	const float	section_width = game->screen_width * 0.9 / 3;
-	const float	rect_x = (game->screen_width - game->screen_width * 0.9) * 0.5;
-	int			i;
+	// Largeur d'une section (la moitié de la zone où les boutons sont placés)
+	const float section_width = game->screen_width * 0.9 / 2;
 
-	i = -1;
-	while (++i < 3)
-	{
-		draw_options_button(game, rect_x + section_width * i,
-			start_y - button_height * 0.5, i);
-		if (i < 3 - 1)
-			draw_section_separator(game, rect_x + section_width * (i + 1),
-				23, game->screen_height * 0.8 * 0.095);
-	}
+	// Position horizontale de la première section
+	const float rect_x = (game->screen_width - section_width * 2) * 0.5;
+
+	// Position horizontale de la seconde section (rect_x + section_width)
+	const float rect_x2 = rect_x + section_width;
+
+	// Dessiner les boutons centrés dans chaque section
+	draw_options_button(game, rect_x + section_width * 0.5 - 250 * 0.5,
+			start_y - button_height * 0.5 - 2, 0);
+	draw_section_separator(game, game->screen_width * 0.5 - 1, // Au centre de l'écran
+			23, game->screen_height * 0.8 * 0.095);
+	draw_options_button(game, rect_x2 + section_width * 0.5 - 250 * 0.5,
+			start_y - button_height * 0.5 - 2, 1);
 }
+
 
 void	draw_options_menu(t_game *game)
 {
@@ -75,7 +79,5 @@ void	draw_options_menu(t_game *game)
 		draw_options_keyboard(game);
 	else if (game->menu->status == OPTIONS_MOUSE)
 		draw_options_mouse(game);
-	else if (game->menu->status == OPTIONS_SOUND)
-		draw_options_sound(game);
 	draw_back_option_buttons(game);
 }

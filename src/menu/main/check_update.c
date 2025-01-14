@@ -6,11 +6,19 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 18:51:04 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 15:22:20 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:37:35 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+static void	start_server(t_game *game)
+{
+	return ;
+	game->menu->status = SERVERS;
+	pthread_create(&game->discover_servers_thread, NULL,
+		discover_servers_thread, game);
+}
 
 void	update_main_menu_click(t_game *game, int keycode)
 {
@@ -22,11 +30,7 @@ void	update_main_menu_click(t_game *game, int keycode)
 		x_fixes_cursor(game, 'h');
 	}
 	else if (game->menu->button_selected == 2)
-	{
-		game->menu->status = SERVERS;
-		pthread_create(&game->discover_servers_thread, NULL,
-			discover_servers_thread, game);
-	}
+		start_server(game);
 	else if (game->menu->button_selected == 3)
 		game->menu->status = STATS;
 	else if (game->menu->button_selected == 4)
@@ -68,9 +72,6 @@ void	update_main_menu_button(t_game *game, int mouse_x, int mouse_y)
 	{
 		if (mouse_y >= y && mouse_y <= y + btn_height)
 			game->menu->button_selected = 1;
-		else if (mouse_y >= y + btn_height + spacing
-			&& mouse_y <= y + btn_height + spacing + btn_height)
-			game->menu->button_selected = 2;
 		else if (mouse_y >= y + 2 * (btn_height + spacing)
 			&& mouse_y <= y + 2 * (btn_height + spacing) + btn_height)
 			game->menu->button_selected = 3;

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 15:06:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/14 09:12:54 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:21:03 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ static void	use_type(t_server *server, t_game_message msg)
 {
 	if (msg.type == MSG_CONNECT)
 	{
-		printf("New player connected: %s\n", msg.pseudo);
 		send_info(server, msg);
 		notify_players_of_connection(server, msg.player_id, msg.pseudo);
 	}
@@ -68,19 +67,13 @@ static void	use_queue_server(t_server *server)
 {
 	t_game_message_queue	*current;
 
-	// pthread_mutex_lock(&server->mutex);
 	if (server->game_queue)
 	{
-		// pthread_mutex_unlock(&server->mutex);
 		current = server->game_queue;
 		server->game_queue = server->game_queue->next;
 		use_type(server, current->message);
-		// pthread_mutex_lock(&server->mutex);
 		gc_free(server->mem, current);
-		// pthread_mutex_unlock(&server->mutex);
 	}
-	// else
-	// 	pthread_mutex_unlock(&server->mutex);
 }
 
 void	*logic_game(void *arg)

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 20:22:05 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/08 15:21:29 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:34:28 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,9 @@ void	draw_main_menu(t_game *game)
 
 	draw_title_main_menu(game, &info, &info2);
 	info2.y += btn_height + spacing;
+	info2.color = 0x01161c;
 	draw_rectangle(game, info2);
+	info2.color = MENU_BUTTON_COLOR;
 	ft_strcpy(info.str, "Multi");
 	info.y += btn_height + spacing;
 	draw_text(game, info);
