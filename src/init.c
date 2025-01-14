@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 09:18:40 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/14 08:51:05 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/14 09:39:48 by npigeon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	init_var(t_game *game, int malloc)
 	game->half_cen_x = game->screen_width * .5 * .5;
 	game->half_cen_y = game->screen_height * .5 * .5;
 	game->fade_progress = 0;
+	game->server = NULL;
 	if (malloc)
 		game->wall_distances = gc_malloc(game->mem, sizeof(float)
 				* game->screen_width);
