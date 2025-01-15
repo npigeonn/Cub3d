@@ -26,18 +26,22 @@ void	pixel_put(t_game *game, int x, int y, int color)
 
 void	secure_pixel_put(t_game *game, int x, int y, int color)
 {
+	t_image	*img;
 	int		offset;
 	int		*pixel;
-	t_image	*img;
 
-	img = game->images->base;
-	offset = y * img->size_line + x * (img->bpp >> 3);
-	pixel = (int *)(img->data + offset);
 	if (x < 0 || x >= game->screen_width || y < 0 || y >= game->screen_height)
 		return ;
-	if (!img || !img->data)
+	img = game->images->base;
+	if (!img || !img->data || img->bpp <= 0 || img->size_line <= 0)
 		return ;
-	if (pixel && *pixel == 0)
+	offset = y * img->size_line + x * (img->bpp >> 3);
+	if (offset < 0 || offset >= img->size_line * game->screen_height)
+		return ;
+	pixel = (int *)(img->data + offset);
+	if (!pixel)
+		return ;
+	if (*pixel == 0)
 		*pixel = color;
 }
 

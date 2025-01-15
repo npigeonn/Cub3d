@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/02 19:05:18 by ybeaucou          #+#    #+#             */
-/*   Updated: 2025/01/14 11:42:23 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/15 08:44:21 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,19 @@ void	update_option_menu_button(t_game *game, int mouse_x, int mouse_y)
 	const float	panel_x = (game->screen_width - (game->screen_width * 0.9))
 		* 0.5;
 	const float	panel_y = (game->screen_height - (game->screen_height * 0.8))
-		* 0.7 - game->screen_height * 0.1;
+		* 0.7 - game->screen_height * 0.1 - 20;
+	const float	button_width = (game->screen_width * 0.9) / 2;
+	const float	button_height = (game->screen_height * 0.8) * 0.095;
 
 	game->menu->button_selected = 0;
 	if (mouse_x >= panel_x && mouse_x <= panel_x + (game->screen_width * 0.9)
-		&& mouse_y >= panel_y
-		&& mouse_y <= panel_y + (game->screen_height * 0.8) * 0.095)
+		&& mouse_y >= panel_y && mouse_y <= panel_y + button_height)
 	{
-		if (mouse_x <= panel_x + (game->screen_width * 0.9) * 0.33)
+		if (mouse_x <= panel_x + button_width)
 			game->menu->button_selected = 1;
-		else if (mouse_x >= panel_x + (game->screen_width * 0.9) * 0.33
-			&& mouse_x <= panel_x + 2 * (game->screen_width * 0.9) * 0.33)
+		else if (mouse_x > panel_x + button_width
+			&& mouse_x <= panel_x + 2 * button_width)
 			game->menu->button_selected = 2;
-		else if (mouse_x >= panel_x + 2 * (game->screen_width * 0.9) * 0.33)
-			game->menu->button_selected = 3;
 	}
 	update_option_menu_button2(game, mouse_x, mouse_y, panel_y);
 }
