@@ -97,5 +97,7 @@ void	draw_wall(t_game *game, t_raycast *raycast)
 		return ;
 	wall_x = calculate_wall_xx(game, raycast);
 	texture = select_texture(game, raycast);
+	if (!texture)
+		return ;
 	draw_vertical_line_with_texture(game, raycast, texture, wall_x);
 }

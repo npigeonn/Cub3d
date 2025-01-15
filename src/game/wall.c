@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wall.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: npigeon <npigeon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/11 13:13:26 by ybeaucou          #+#    #+#             */
-/*   Updated: 2024/12/10 11:57:44 by npigeon          ###   ########.fr       */
+/*   Updated: 2025/01/15 09:34:49 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,7 @@ t_image	*select_texture(t_game *game, t_raycast *raycast)
 		return (game->textures->west);
 	if (raycast->side == SIDE_NORTH)
 		return (game->textures->north);
-	return (game->textures->south);
+	if (raycast->side == SIDE_SOUTH)
+		return (game->textures->south);
+	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: ybeaucou <ybeaucou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 09:54:03 by npigeon           #+#    #+#             */
-/*   Updated: 2025/01/13 13:28:09 by ybeaucou         ###   ########.fr       */
+/*   Updated: 2025/01/15 09:41:05 by ybeaucou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,6 @@ int	main(int ac, char **av)
 	game.mlx = mlx_init();
 	game.av = av;
 	mlx_get_screen_size(game.mlx, &game.screen_width, &game.screen_height);
-	game.screen_height = 1080;
-	game.screen_width = 1920;
 	init_var(&game, 1);
 	init_player(&game, 1);
 	init_menu(&game, 1);
